@@ -29,7 +29,7 @@ list.html
 *.csv
 *.log
 *.json
-_현황_정리.md
+_*.md
 README.md
 # ★자산/개인정보 명시 차단(다른 세션이 이 폴더에 만든 것) — kor.topo.json은 kor_topo.js로 대체됨
 emails_extra.json
