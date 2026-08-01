@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#efe6d4">
 <title>전국 전통 스토리 지도 · 초인</title>
+<meta name="description" content="전국 90개 도시의 명소·인물·설화를 미디어아트 IP로 — 한국 전통 × 미디어아트 × AI × 디지털 헤리티지. 초인.">
+<meta property="og:title" content="전국 전통 스토리 지도 · 초인">
+<meta property="og:description" content="도시를 누르면 그 지역의 이야기가 미디어아트가 됩니다 — 전국 90개 도시 전통 IP 지도.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://tong.visitkorea.or.kr/cms/resource/38/3527138_image2_1.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +21,7 @@
  --bg:#f3ece0;--panel:#fbf7ef;--land:#e6dac2;--line:#e2d8c4;--line2:#d6c9b0;
  --ink:#3b3326;--t2:#6f6553;--t3:#a39880;--teal:#1d8a6a;--gold:#a9803a;
  --sans:'Pretendard',-apple-system,system-ui,sans-serif;--serif:'Nanum Myeongjo',serif;
+ --side-w:460px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;height:100%;}
@@ -25,6 +32,21 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .spacer{margin-left:auto;}
 .brand{display:flex;align-items:center;gap:6px;text-decoration:none;border:1px solid var(--line2);border-radius:999px;padding:5px 12px 5px 8px;color:var(--ink);font-size:13px;}
 .brand .mark{width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:800;}
+.brand .logoimg{width:26px;height:26px;border-radius:50%;object-fit:cover;}
+.inst{margin-top:6px;}
+.inst .pill{display:inline-block;font-size:12px;background:var(--land);border:1px solid var(--line2);border-radius:999px;padding:4px 11px;margin:3px 4px 3px 0;color:var(--ink);}
+.inst .lock{display:block;margin-top:8px;text-decoration:none;font-size:13px;background:var(--ink);color:var(--bg);border-radius:10px;padding:11px 14px;text-align:center;}
+.contacts{margin-top:6px;}
+.crow{padding:9px 11px;border:1px solid var(--line2);border-radius:10px;margin-bottom:7px;background:#fff;font-size:13px;}
+.crow.hit{border-color:var(--teal);background:#f3faf6;}
+.crow b{font-size:14px;}
+.ctag{display:inline-block;font-size:10px;background:var(--land);border-radius:6px;padding:1px 6px;color:var(--t2);margin-left:5px;}
+.cdept{color:var(--t3);font-size:12px;margin-left:5px;}
+.ckw{color:#2c6b54;font-size:11px;margin-top:3px;}
+.cmeta{font-size:12px;margin-top:4px;}
+.cmeta a{color:var(--teal);text-decoration:none;}
+.csrc{font-size:11px;color:var(--t3);margin-top:3px;}
+.csrc a{color:var(--t3);}
 .brand:hover{border-color:var(--ink);}
 .lang{display:flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;font-size:12px;}
 .lang button{border:0;background:transparent;color:var(--t2);padding:6px 12px;cursor:pointer;font-family:var(--sans);}
@@ -33,9 +55,12 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .legend span{display:flex;align-items:center;gap:5px;}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
 .wrap{display:flex;height:calc(100% - 110px);}
-#map{flex:2.4;min-width:0;position:relative;background:var(--bg);}
+#map{flex:1 1 auto;min-width:0;position:relative;background:var(--bg);}
 #map svg{width:100%;height:100%;display:block;cursor:grab;}
-#side{flex:1;max-width:380px;min-width:300px;border-left:1px solid var(--line);background:var(--panel);padding:22px 24px;overflow:auto;}
+#resizer{flex:0 0 7px;cursor:col-resize;background:var(--line);position:relative;}
+#resizer::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:3px;height:34px;border-radius:3px;background:var(--line2);}
+#resizer:hover{background:var(--gold);}
+#side{flex:0 0 var(--side-w);width:var(--side-w);min-width:300px;border-left:1px solid var(--line);background:var(--panel);padding:22px 26px;overflow:auto;}
 .cName{font-family:var(--serif);font-size:30px;font-weight:800;margin:0 0 2px;line-height:1.1;}
 .cRegion{font-size:13px;color:var(--t3);margin-bottom:16px;}
 .imgbox{width:100%;aspect-ratio:16/10;border-radius:12px;background:var(--land);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:12px;text-align:center;margin-bottom:18px;background-size:cover;background-position:center;}
@@ -43,6 +68,55 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .concept{font-family:var(--serif);font-size:19px;line-height:1.55;color:var(--ink);}
 .val{font-size:15px;color:var(--ink);}
 .val.soon{color:var(--t3);font-size:13px;}
+.exlist{margin-top:2px;}
+.exrow{border:1px solid var(--line2);border-radius:11px;padding:10px 12px;margin-bottom:8px;background:#fff;}
+.exrow.r3{border-color:#c99a3a;background:#fffaf0;}
+.exrow b{font-size:14.5px;font-family:var(--serif);}
+.ext{display:inline-block;font-size:10px;background:var(--land);border-radius:6px;padding:1px 7px;color:var(--t2);margin-left:6px;vertical-align:2px;}
+.exr{display:inline-block;font-size:10px;border-radius:6px;padding:1px 7px;margin-left:5px;vertical-align:2px;}
+.exr.r1{background:#eee7d6;color:#8a7f68;}
+.exr.r2{background:#e6f2eb;color:#2c6b54;}
+.exr.r3{background:#f6e2b8;color:#8a5a12;font-weight:700;}
+.exd{font-size:12.5px;color:var(--t2);margin-top:4px;line-height:1.5;}
+.exmeta{margin-top:7px;border-top:1px dashed var(--line2);padding-top:7px;display:grid;gap:4px;}
+.exmeta span{font-size:12px;color:var(--ink);line-height:1.45;}
+.exmeta span i{font-style:normal;color:var(--t3);margin-right:5px;}
+.exmore{font-size:12px;color:var(--teal);cursor:pointer;text-align:center;padding:4px;}
+.rev{display:inline-block;font-size:10px;border-radius:6px;padding:1px 7px;margin-left:5px;vertical-align:2px;color:#fff;font-weight:600;}
+.rev-발주{background:#b5476f;}.rev-공모{background:#2f6db5;}.rev-상설{background:#1d8a6a;}
+.rev-굿즈{background:#c99a3a;}.rev-라이선싱{background:#7a5bb0;}.rev-채널{background:#8a7f68;}
+.fit{display:inline-block;font-size:10px;border-radius:6px;padding:1px 7px;margin-left:5px;vertical-align:2px;background:#3b3326;color:#f3ece0;}
+.reqbtn{display:inline-block;margin-top:9px;text-decoration:none;font-size:12px;font-weight:600;color:var(--teal);border:1px solid var(--teal);border-radius:8px;padding:5px 11px;transition:.15s;}
+.reqbtn:hover{background:var(--teal);color:#fff;}
+.reqbtn.flag{display:block;margin-top:12px;text-align:center;background:var(--teal);color:#fff;font-size:13px;padding:11px;border:0;}
+.reqbtn.flag:hover{background:#166b52;}
+.flagvid{display:inline-block;font-size:11px;background:var(--teal);color:#fff;border-radius:6px;padding:2px 9px;margin-bottom:6px;}
+.pitch{margin-top:24px;padding:18px;border:1px solid var(--line2);border-radius:14px;background:#fbf7ef;}
+.pitch .ph{font-family:var(--serif);font-size:17px;font-weight:800;line-height:1.4;color:var(--ink);}
+.pitch .ps{font-size:13px;color:var(--t2);margin:6px 0 14px;line-height:1.55;}
+.pbtn{display:block;text-decoration:none;text-align:center;font-size:14px;padding:12px;border-radius:11px;margin-bottom:9px;border:1px solid var(--line2);color:var(--ink);}
+.pbtn.main{background:var(--teal);color:#fff;font-weight:700;border:0;}
+.pbtn.main:hover{background:#166b52;}
+.pbtn:hover{border-color:var(--ink);}
+.pmail{font-size:12.5px;color:var(--t2);margin-top:4px;text-align:center;}
+.pmail a{color:var(--teal);text-decoration:none;}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:6px;}
+.vcard{text-decoration:none;color:var(--ink);}
+.vthumb{display:block;position:relative;aspect-ratio:16/10;border-radius:10px;background:var(--land) center/cover no-repeat;border:1px solid var(--line2);overflow:hidden;}
+.vthumb .vplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;background:rgba(30,26,20,.18);opacity:.85;transition:.15s;}
+.vcard:hover .vplay{background:rgba(30,26,20,.35);opacity:1;}
+.vcard:hover .vthumb{border-color:var(--teal);}
+.vtitle{display:block;font-size:12px;margin-top:4px;line-height:1.35;color:var(--t2);}
+.golist{display:flex;flex-direction:column;gap:5px;margin-bottom:6px;}
+.gorow{display:flex;gap:8px;align-items:baseline;text-decoration:none;padding:7px 9px;border:1px solid var(--line2);border-radius:9px;background:#fff;}
+.gorow:hover{border-color:#b5476f;background:#fdf5f8;}
+.godd{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--t3);min-width:38px;}
+.godd.urgent{color:#b5476f;}
+.got{font-size:12.5px;color:var(--ink);line-height:1.4;}
+.gok{display:inline-block;font-size:10px;border-radius:5px;padding:0 5px;vertical-align:1px;background:#eee7d6;color:#8a7f68;}
+.gok.k-공모{background:#f3e0e8;color:#a03a63;}
+.gok.k-발주{background:#e6f2eb;color:#2c6b54;}
+.gok.k-지원사업{background:#e7eef6;color:#2f6db5;}
 .cta{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
 .cta .h{font-family:var(--serif);font-size:14px;color:var(--t3);margin-bottom:10px;}
 .cta a{display:block;text-decoration:none;padding:12px 16px;border-radius:11px;margin-bottom:9px;font-size:14px;}
@@ -54,10 +128,22 @@ footer{padding:11px 20px;border-top:1px solid var(--line);font-size:11px;color:v
 footer a{color:var(--t2);text-decoration:none;}
 .clabel{font-size:10px;fill:var(--ink);font-family:var(--sans);pointer-events:none;paint-order:stroke;stroke:var(--bg);stroke-width:2.5px;}
 circle.city{cursor:pointer;}
+.grid{display:none;flex-wrap:wrap;gap:14px;padding:16px 22px 50px;overflow:auto;align-content:flex-start;height:calc(100% - 110px);}
+.ghdr{width:100%;font-family:var(--serif);font-weight:800;font-size:16px;color:var(--ink);margin:10px 0 2px;border-bottom:1px solid var(--line);padding-bottom:5px;}
+.gcard{width:172px;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--panel);cursor:pointer;transition:.15s;}
+.gcard:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 6px 16px rgba(59,51,38,.1);}
+.gcard .gi{height:106px;background:var(--land);background-size:cover;background-position:center;}
+.gcard .gb{padding:9px 11px;}
+.gcard .gn{font-family:var(--serif);font-weight:800;font-size:15px;color:var(--ink);}
+.gcard .gc{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.45;max-height:32px;overflow:hidden;}
 @media(max-width:780px){
  .wrap{flex-direction:column;height:auto;}
  #map{height:58vh;}
- #side{max-width:none;border-left:0;border-top:1px solid var(--line);}
+ #resizer{display:none;}
+ #side{flex:auto;width:auto;max-width:none;border-left:0;border-top:1px solid var(--line);}
+ .grid{height:auto;gap:10px;padding:14px;}
+ .gcard{width:calc(50% - 5px);}
+ header{flex-wrap:wrap;}
 }
 </style>
 </head>
@@ -65,25 +151,38 @@ circle.city{cursor:pointer;}
 <header>
  <div class="title" id="ttl">전국 전통 스토리 지도<small id="tag"></small></div>
  <div class="spacer"></div>
- <a class="brand" id="brand" href="#" target="_blank" rel="noopener"><span class="mark">초</span><span>초인</span></a>
+ <a class="brand" id="brand" href="#" target="_blank" rel="noopener"><img src="logo.png" class="logoimg" alt="초인" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"><span>초인</span></a>
+ <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 <div class="legend" id="legend"></div>
 <div class="wrap">
  <div id="map"></div>
+ <div id="resizer" title="드래그해서 크기 조절"></div>
  <aside id="side"></aside>
 </div>
+<div id="grid" class="grid"></div>
+<!-- ▼ 광고 자리(나중에 사용): AdSense/애드핏 승인 후 아래 div 안에 광고 스니펫만 붙이면 됨.
+     지금은 비어 있어 아무것도 안 보임. 트래픽 붙은 뒤 활성화 권장.
+<div id="ad-slot" style="text-align:center;padding:8px"></div>
+-->
 <footer>
  <span id="made"></span>
  <a id="lf-choin" href="#" target="_blank" rel="noopener">초인 유튜브</a>
  <span class="spacer"></span>
  <span style="color:var(--t3)">데이터: 노션 〈전국 미디어아트 IP 지도〉</span>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-<script src="data.js"></script>
-<script src="images.js"></script>
-<script src="app.js"></script>
+<script src="d3.min.js"></script>
+<script src="topojson.min.js"></script>
+<script src="kor_topo.js"></script>
+<script src="data.js?v=12"></script>
+<script src="details.js?v=13"></script>
+<script src="discover.js?v=2"></script>
+<script src="videos.js?v=2"></script>
+<script src="gongmo.js?v=2"></script>
+<script src="images.js?v=12"></script>
+<script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
+<script src="app.js?v=27"></script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}</script>
 </body>
 </html>

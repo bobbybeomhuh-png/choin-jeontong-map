@@ -1,4 +1,4 @@
-const CACHE = 'story-map-v4';
+const CACHE = 'story-map-v9';
 const ASSETS = [
   './', './index.html', './data.js', './app.js', './manifest.webmanifest',
   'https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js',

@@ -1,3 +1,38 @@
 node_modules/
 .DS_Store
 _b64*.txt
+
+# ── 자산(비공개) — git·공개배포에 절대 안 올라감 ──
+_asset/
+dist/
+_deploy/
+build_public.py
+make_deploy.py
+gen_gongmo.py
+*_full.js
+수익화_작전.md
+야간_*.md
+
+# 내부/작업용 페이지(공개 배포 아님)
+내부지도.html
+무이지도_프리뷰.html
+무이지도_프리뷰_v2.html
+develop.html
+develop_data.js
+gongmo_data.js
+muui_layer.js
+공모현황.html
+list.html
+
+# 배포 저장소엔 스크립트·내부문서·데이터원본 안 올림(공개 웹 파일만)
+*.py
+*.csv
+*.log
+*.json
+_현황_정리.md
+README.md
+# ★자산/개인정보 명시 차단(다른 세션이 이 폴더에 만든 것) — kor.topo.json은 kor_topo.js로 대체됨
+emails_extra.json
+tour_ckpt.json
+tour_emails.json
+kor.topo.json
