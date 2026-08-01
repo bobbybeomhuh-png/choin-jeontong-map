@@ -1,44 +1,15 @@
-// v11: HTML·JS·CSS는 '네트워크 먼저'(항상 최신, 실패 시 캐시). 이미지 등 정적만 캐시 먼저.
-// ★v10까지의 '캐시 먼저'가 배포해도 옛 페이지를 붙잡던 문제 근본 수정.
-const CACHE = 'story-map-v11';
-
-self.addEventListener('install', e => {
-  self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c => c.add('./index.html').catch(() => {})));
+// 서비스워커 폐기 — 자기 자신 해제 + 모든 캐시 삭제 + 클라이언트 새로고침.
+// (캐시-우선 방식이 배포 후 옛 파일을 물려줘 지도를 깨뜨리던 문제 근본제거)
+self.addEventListener('install', function(){ self.skipWaiting(); });
+self.addEventListener('activate', function(e){
+  e.waitUntil((async function(){
+    try{
+      var keys = await caches.keys();
+      await Promise.all(keys.map(function(k){ return caches.delete(k); }));
+      await self.registration.unregister();
+      var cs = await self.clients.matchAll();
+      cs.forEach(function(c){ try{ c.navigate(c.url); }catch(_){} });
+    }catch(_){}
+  })());
 });
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  const url = new URL(e.request.url);
-  const fresh = e.request.mode === 'navigate'
-    || /\.(html|js|css|webmanifest)$/.test(url.pathname)
-    || url.pathname === '/';
-
-  if (fresh) {
-    // 네트워크 먼저 — 항상 최신본. 오프라인이면 캐시 폴백.
-    e.respondWith(
-      fetch(e.request).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
-        return res;
-      }).catch(() => caches.match(e.request))
-    );
-  } else {
-    // 이미지·썸네일·폰트 등 정적 — 캐시 먼저(빠름).
-    e.respondWith(
-      caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
-        return res;
-      }))
-    );
-  }
-});
+// fetch 가로채지 않음 — 항상 네트워크 그대로.
