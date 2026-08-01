@@ -1,5 +1,5 @@
 let LANG = 'ko';
-let CUR = CITIES[0];
+let CUR = (CITIES.find(function(c){return c[0]==='서울';})) || CITIES[0];  // 기본 진입 도시=서울
 const $ = id => document.getElementById(id);
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -342,7 +342,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   function zoomToPoint(p){ svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity.translate(W/2,H/2).scale(3.2).translate(-p[0],-p[1])); }
 
   svg.call(zoom).on('dblclick.zoom', null);
-  try { renderCity(CITIES[0]); }
+  try { renderCity(CUR); }
   catch(e){ console.error('renderCity 오류', e); }   // 패널 오류가 지도를 지우지 않게 격리
 }).catch(e=>{
   console.error('지도 초기화 오류', e);
