@@ -16,7 +16,7 @@ const T = {
        ai:'AI로 작업하는 과정이 궁금하다면?', aiS:'케이에브리데이 채널',
        soon:'상세 준비 중 — 노션 IP 지도에서',
        img:'대표 이미지 (자동 연동 예정)', made:'made by 초인 미디어아트 스튜디오' },
-  en:{ tag:'Reviving Korea's heritage as media art, nationwide · 90 cities', hint:'Tap a region to zoom · tap a city for its story',
+  en:{ tag:"Reviving Korea's heritage as media art, nationwide · 90 cities", hint:'Tap a region to zoom · tap a city for its story',
        region:'Region', place:'Landmarks', person:'Story & person', concept:'The link', media:'As a media-art piece', imagine:'A leap of imagination',
        ctah:'More',
        make:'Want to build it yourself?', makeS:'Houdini class on Class101',
