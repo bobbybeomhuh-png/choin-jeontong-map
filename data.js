@@ -8,7 +8,7 @@ const LINKS = {
 
 // ===== UI 문구 (한/영) =====
 const T = {
-  ko:{ tag:'한국 전통 × 미디어아트 × AI × 디지털 헤리티지', hint:'지역을 누르면 확대 · 도시를 누르면 이야기',
+  ko:{ tag:'대한민국 전역의 전통을 미디어아트로 다시 짓다 · 90개 도시', hint:'지역을 누르면 확대 · 도시를 누르면 이야기',
        region:'지역', place:'명소·유물', person:'인물·이야기', concept:'연결 컨셉', media:'미디어아트로 만든다면', imagine:'상상력 한 스푼',
        ctah:'더 보기',
        make:'후디니로 직접 만들고 싶다면?', makeS:'후디니 클래스101 강의',
@@ -16,7 +16,7 @@ const T = {
        ai:'AI로 작업하는 과정이 궁금하다면?', aiS:'케이에브리데이 채널',
        soon:'상세 준비 중 — 노션 IP 지도에서',
        img:'대표 이미지 (자동 연동 예정)', made:'made by 초인 미디어아트 스튜디오' },
-  en:{ tag:'Korean heritage × media art × AI × digital heritage', hint:'Tap a region to zoom · tap a city for its story',
+  en:{ tag:'Reviving Korea's heritage as media art, nationwide · 90 cities', hint:'Tap a region to zoom · tap a city for its story',
        region:'Region', place:'Landmarks', person:'Story & person', concept:'The link', media:'As a media-art piece', imagine:'A leap of imagination',
        ctah:'More',
        make:'Want to build it yourself?', makeS:'Houdini class on Class101',
