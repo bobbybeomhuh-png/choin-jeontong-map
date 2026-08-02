@@ -4,25 +4,31 @@ const SUPA_URL = 'https://moavztygngbafhxztghx.supabase.co';
 const SUPA_KEY = 'sb_publishable_9D-u0PH9oM0jSRoJmfGfZQ_q5t3DldZ';
 const _SH = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY };
 
-// ── 방문자 행동 로깅 (어느 지역·영상·디코·투표를 눌렀나) ──
+// ── 방문자 행동 로깅 (유입경로·기기·방문자ID·영상명까지) ──
+var _SID=(function(){try{var s=localStorage.getItem('csid');if(!s){s=Date.now().toString(36)+Math.random().toString(36).slice(2,7);localStorage.setItem('csid',s);}return s;}catch(e){return 'anon';}})();
+function _refHost(){ try{ if(!document.referrer) return 'direct'; var h=new URL(document.referrer).hostname.replace(/^www\./,''); if(h===location.hostname) return 'internal'; return h; }catch(e){ return ''; } }
+function _device(){ try{ return (window.innerWidth||1024)<768?'mobile':'desktop'; }catch(e){ return ''; } }
 function logEvent(type, detail){
   if(typeof SUPA_URL==='undefined') return;
   try{
+    var body={ type:type, sid:_SID };
+    if(type==='visit'){ body.detail=_device(); body.ref=_refHost(); }   // 방문 = 기기 + 유입경로 자동
+    else body.detail=(detail||'').toString().slice(0,80);
     fetch(SUPA_URL + '/rest/v1/events', {
       method:'POST',
       headers: Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'}, _SH),
-      body: JSON.stringify({ type: type, detail: (detail||'').toString().slice(0,80) })
+      body: JSON.stringify(body)
     }).catch(function(){});
   }catch(e){}
 }
-// 링크 클릭 자동 로깅: 디스코드 / 유튜브(영상·채널)
+// 링크 클릭 자동 로깅: 디스코드 / 유튜브(영상명·채널)
 if(typeof document!=='undefined'){
   document.addEventListener('click', function(e){
     var a = e.target.closest && e.target.closest('a[href]');
     if(!a) return;
     var h = a.href||'';
     if(h.indexOf('discord.gg')>-1) logEvent('discord','');
-    else if(h.indexOf('youtu')>-1) logEvent('video','');
+    else if(h.indexOf('youtu')>-1){ var nm=(a.classList&&a.classList.contains('vcard2'))?(a.getAttribute('title')||''):'채널'; logEvent('video', nm); }
   }, true);
 }
 
