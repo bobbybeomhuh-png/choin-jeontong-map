@@ -2,6 +2,15 @@ let LANG = 'ko';
 let CUR = (CITIES.find(function(c){return c[0]==='서울';})) || CITIES[0];  // 기본 진입 도시=서울
 const $ = id => document.getElementById(id);
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+// 영어 이름/설명 폴백: DETAILS.en 우선, 없으면 EN_CITY(90개 도시 번역)
+function cityEN(nm){
+  var d=(typeof DETAILS!=='undefined')?DETAILS[nm]:null;
+  if(d&&d.en&&(d.en.n||d.en.c)) return d.en;
+  if(typeof EN_CITY!=='undefined'&&EN_CITY[nm]) return EN_CITY[nm];
+  return null;
+}
+function nameOf(nm){ var e=(LANG==='en')?cityEN(nm):null; return (e&&e.n)?e.n:nm; }
+function conceptOf(nm,ko){ var e=(LANG==='en')?cityEN(nm):null; return (e&&e.c)?e.c:(ko||''); }
 
 // ── 제작 의뢰(리드 생성). 서버 없이 Gmail 웹 작성창을 '새 탭'으로 염(OS 메일앱 팝업 대신). ──
 var REQ_EMAIL = 'choin2626@gmail.com';
@@ -221,11 +230,14 @@ function regionContactsHtml(c){
 
 // 전체보기 그리드 (한번에 보기) — 권역별 도시 카드
 function setView(v){
-  const grid = v==='grid';
-  document.querySelector('.wrap').style.display = grid?'none':'flex';
-  $('grid').style.display = grid?'flex':'none';
-  $('vmap').classList.toggle('on',!grid); $('vgrid').classList.toggle('on',grid);
-  if(grid) renderGrid();
+  const isGrid=v==='grid', isBoard=v==='board', isMap=!isGrid&&!isBoard;
+  document.querySelector('.wrap').style.display = isMap?'flex':'none';
+  $('grid').style.display = isGrid?'flex':'none';
+  const bd=$('board'); if(bd) bd.style.display = isBoard?'block':'none';
+  $('vmap').classList.toggle('on',isMap); $('vgrid').classList.toggle('on',isGrid);
+  const vb=$('vboard'); if(vb) vb.classList.toggle('on',isBoard);
+  if(isGrid) renderGrid();
+  if(isBoard && window.loadBoard) loadBoard();
 }
 function renderGrid(){
   const order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
@@ -233,9 +245,9 @@ function renderGrid(){
   let h='';
   order.forEach(rg=>{ const arr=byReg[rg]; if(!arr) return;
     h+='<div class="ghdr">'+(RNAME[LANG][rg]||rg)+' <span style="color:var(--t3);font-weight:400;font-size:12px">'+arr.length+'</span></div>';
-    arr.forEach(c=>{ const nm=c[0]; const en=(typeof DETAILS!=='undefined'&&DETAILS[nm]&&DETAILS[nm].en)?DETAILS[nm].en:null;
-      const label=(LANG==='en'&&en&&en.n)?en.n:nm;
-      const concept=(LANG==='en'&&en&&en.c)?en.c:(c[4]||'');
+    arr.forEach(c=>{ const nm=c[0];
+      const label=nameOf(nm);
+      const concept=conceptOf(nm,c[4]);
       const img=(typeof IMAGES!=='undefined'&&IMAGES[nm])?IMAGES[nm]:'';
       h+='<div class="gcard" data-city="'+esc(nm)+'"><div class="gi"'+(img?(' style="background-image:url(\''+img+'\')"'):'')+'></div>'
         +'<div class="gb"><div class="gn">'+esc(label)+'</div><div class="gc">'+esc(concept)+'</div></div></div>';
@@ -246,8 +258,10 @@ function renderGrid(){
 }
 window.setView=setView;
 
-$('brand').href = LINKS.choin;
-$('lf-choin').href = LINKS.choin;
+$('brand').href = LINKS.muui;        // 헤더 로고 = 무이(초인) 공식 사이트
+$('lf-choin').href = LINKS.choin;    // 푸터 = 초인 유튜브
+if($('tab-muui')) $('tab-muui').href = LINKS.choin;   // 무이 유물단 채널
+if($('tab-suksu')) $('tab-suksu').href = LINKS.foodie; // 대령숙수 채널
 
 // 지도↔패널 경계 드래그로 자유 크기 조절 (localStorage 기억)
 (function(){
@@ -279,6 +293,7 @@ function setLang(l){
   LANG = l;
   $('bk').classList.toggle('on', l==='ko'); $('be').classList.toggle('on', l==='en');
   document.documentElement.lang = l;
+  var ttl=$('ttl'); if(ttl&&ttl.childNodes[0]) ttl.childNodes[0].nodeValue = (l==='en'?"CHOIN — Retelling Korea's Heritage":'초인, 대한민국의 전통을 이야기하다');
   $('tag').textContent = T[l].tag;
   $('made').textContent = T[l].made;
   renderLegend(); renderCity(CUR); if(window._relabel) window._relabel();
@@ -296,10 +311,10 @@ function renderCity(c){
   const name=c[0], reg=c[1];
   const d=DETAILS[name]||{}, en=d.en||{};
   const img=(typeof IMAGES!=='undefined'&&IMAGES[name])?IMAGES[name]:d.img;
-  const concept = (LANG==='en' ? (en.c||c[4]) : c[4]);
+  const concept = conceptOf(name, c[4]);
   const media   = (LANG==='en' ? en.m : d.m);
   const imagine = (LANG==='en' ? en.i : d.i);
-  const cname   = (LANG==='en' && en.n) ? en.n : name;
+  const cname   = nameOf(name);
   const col=RC[reg]||'#5b6b7a';
   const soon = '<div class="val soon">'+T[LANG].soon+'</div>';
   $('side').innerHTML =
@@ -376,7 +391,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
       .attr('font-weight',c=>c===CUR?'700':'400')
       .attr('font-size',c=>c===CUR?'13px':'10px')
       .attr('fill',c=>c===CUR?RC[c[1]]:'#3b3326')
-      .text(c=>(LANG==='en' && DETAILS[c[0]] && DETAILS[c[0]].en && DETAILS[c[0]].en.n)?DETAILS[c[0]].en.n:c[0]);
+      .text(c=>nameOf(c[0]));
   };
   window._relabel();
 

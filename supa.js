@@ -174,6 +174,35 @@ function subscribe(){
   }).catch(function(){ if(btn) btn.disabled=false; if(msg){msg.textContent=_en()?'Network error.':'네트워크 오류예요.'; msg.className='smsg err';} });
 }
 
+// 자랑 모아보기(전체) — 지역별 그룹
+function loadBoard(){
+  if(typeof SUPA_URL==='undefined') return;
+  var el=document.getElementById('board'); if(!el) return;
+  el.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(_en()?'All Village Notes':'우리 동네 자랑 모아보기')
+    +'</h2><p>'+(_en()?'Every note left across the country, grouped by region. Tap a region to open it.':'전국에서 남긴 한마디를 지역별로 모았어요. 지역 이름을 누르면 그 지역으로 이동합니다.')
+    +'</p></div><div id="bbody"><div class="wempty">'+(_en()?'Loading…':'불러오는 중…')+'</div></div></div>';
+  var url=SUPA_URL+'/rest/v1/postits?hidden=eq.false&select=region,name,message,created_at&order=created_at.desc&limit=500';
+  fetch(url,{headers:_SH}).then(function(r){return r.ok?r.json():[];}).then(function(rows){
+    var body=document.getElementById('bbody'); if(!body) return;
+    if(!rows.length){ body.innerHTML='<div class="wempty">'+(_en()?'No notes yet — leave the first on the map!':'아직 자랑이 없어요. 지도에서 첫 자랑을 남겨보세요!')+'</div>'; return; }
+    var byReg={}; rows.forEach(function(r){ (byReg[r.region]=byReg[r.region]||[]).push(r); });
+    var regs=Object.keys(byReg).sort(function(a,b){return byReg[b].length-byReg[a].length;});
+    body.innerHTML=regs.map(function(rg){
+      var notes=byReg[rg].map(function(r){
+        var h=_hash((r.message||'')+(r.created_at||'')); var p=_PAL[h%_PAL.length]; var rot=((h>>3)%7)-3;
+        var st='background:'+p[0]+';border-color:'+p[1]+';transform:rotate('+rot+'deg)';
+        var nm=r.name?esc(r.name):(_en()?'anon':'익명');
+        return '<div class="wnote" style="'+st+'"><span class="wpin" style="background-color:'+p[2]+'"></span>'
+          +'<div class="wmsg">'+esc(r.message)+'</div><div class="wmeta" style="color:'+p[2]+'">'+nm+' · '+_ago(r.created_at)+'</div></div>';
+      }).join('');
+      return '<div class="bregion"><h3 class="bregtitle" data-region="'+esc(rg)+'">'+esc(rg)+' <span>'+byReg[rg].length+'</span></h3><div class="wlist">'+notes+'</div></div>';
+    }).join('');
+    Array.prototype.forEach.call(body.querySelectorAll('.bregtitle'),function(t){
+      t.onclick=function(){ if(window._gotoRegion){ setView('map'); _gotoRegion(t.getAttribute('data-region')); } };
+    });
+  }).catch(function(){ var body=document.getElementById('bbody'); if(body) body.innerHTML='<div class="wempty">'+(_en()?'Could not load.':'불러오지 못했어요.')+'</div>'; });
+}
+
 function postNote(){
   var region = (typeof CUR!=='undefined' && CUR) ? CUR[0] : '';
   var msgEl = document.getElementById('wmsg'), nmEl = document.getElementById('wname');
