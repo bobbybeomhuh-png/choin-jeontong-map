@@ -4,6 +4,28 @@ const SUPA_URL = 'https://moavztygngbafhxztghx.supabase.co';
 const SUPA_KEY = 'sb_publishable_9D-u0PH9oM0jSRoJmfGfZQ_q5t3DldZ';
 const _SH = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY };
 
+// ── 방문자 행동 로깅 (어느 지역·영상·디코·투표를 눌렀나) ──
+function logEvent(type, detail){
+  if(typeof SUPA_URL==='undefined') return;
+  try{
+    fetch(SUPA_URL + '/rest/v1/events', {
+      method:'POST',
+      headers: Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'}, _SH),
+      body: JSON.stringify({ type: type, detail: (detail||'').toString().slice(0,80) })
+    }).catch(function(){});
+  }catch(e){}
+}
+// 링크 클릭 자동 로깅: 디스코드 / 유튜브(영상·채널)
+if(typeof document!=='undefined'){
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href]');
+    if(!a) return;
+    var h = a.href||'';
+    if(h.indexOf('discord.gg')>-1) logEvent('discord','');
+    else if(h.indexOf('youtu')>-1) logEvent('video','');
+  }, true);
+}
+
 function _en(){ return (typeof LANG!=='undefined' && LANG==='en'); }
 function _ago(iso){
   var s = (Date.now() - new Date(iso).getTime())/1000;
@@ -148,6 +170,7 @@ function voteRegion(){
   }).then(function(r){
     if(!r.ok){ if(btn){ btn.disabled=false; var cs=document.getElementById('vcount'); if(cs) cs.textContent=_en()?'· try later':'· 잠시 후 다시'; } return; }
     try{ localStorage.setItem('voted_'+region,'1'); }catch(e){}
+    if(window.logEvent) logEvent('vote', region);
     loadVotes(region);
   }).catch(function(){ if(btn){ btn.disabled=false; var cs=document.getElementById('vcount'); if(cs) cs.textContent=_en()?'· network error':'· 네트워크 오류'; } });
 }
@@ -179,6 +202,7 @@ function subscribe(){
     if(btn) btn.disabled=false;
     if(!r.ok){ if(msg){msg.textContent=_en()?'Failed — try again later.':'실패했어요. 잠시 후 다시 시도해주세요.'; msg.className='smsg err';} return; }
     el.value='';
+    if(window.logEvent) logEvent('subscribe','');
     if(msg){
       var disc=(typeof LINKS!=='undefined'&&LINKS.discord)?LINKS.discord:'';
       msg.innerHTML=(_en()?'Subscribed! 🙌 ':'구독 완료! 🙌 ')

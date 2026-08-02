@@ -258,8 +258,8 @@ function setView(v){
   const bd=$('board'); if(bd) bd.style.display = isBoard?'block':'none';
   $('vmap').classList.toggle('on',isMap); $('vgrid').classList.toggle('on',isGrid);
   const vb=$('vboard'); if(vb) vb.classList.toggle('on',isBoard);
-  if(isGrid) renderGrid();
-  if(isBoard && window.loadBoard) loadBoard();
+  if(isGrid){ renderGrid(); if(window.logEvent) logEvent('view','grid'); }
+  if(isBoard){ if(window.loadBoard) loadBoard(); if(window.logEvent) logEvent('view','board'); }
 }
 function renderGrid(){
   const order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
@@ -391,6 +391,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   const halo = gAll.append('circle').attr('r',13).attr('fill','none').attr('stroke-width',2.5).attr('opacity',0).style('pointer-events','none');
   const gc = gAll.append('g');
   function select(c){
+    if(window.logEvent) logEvent('region', c[0]);   // 어느 지역을 눌렀나
     renderCity(c);
     gc.selectAll('circle').attr('r',d=>d===c?9:5.5).attr('stroke',d=>d===c?'#fff':'#f3ece0').attr('stroke-width',d=>d===c?3:1.6);
     halo.interrupt().attr('cx',c._p[0]).attr('cy',c._p[1]).attr('stroke',RC[c[1]]).attr('r',9).attr('opacity',.95)
@@ -443,3 +444,4 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
 });
 
 setLang('ko');
+if(window.logEvent) logEvent('visit','');   // 페이지 방문 1건
