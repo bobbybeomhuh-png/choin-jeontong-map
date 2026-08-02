@@ -154,9 +154,13 @@ function voteRegion(){
 
 // ── 뉴스레터 구독 (이메일 명단) ──────────────────────
 function subscribeHtml(region){
+  var disc = (typeof LINKS!=='undefined' && LINKS.discord) ? LINKS.discord : '';
+  var dbtn = disc ? ('<a class="dbtn" href="'+disc+'" target="_blank" rel="noopener">💬 '+(_en()?'Join the community on Discord':'전통·AI 미디어아트 커뮤니티 참여 (디스코드)')+'</a>'
+    + '<div class="sor">'+(_en()?'or get news by email':'또는 이메일로 소식 받기')+'</div>') : '';
   return '<div class="subbox">'
-    + '<div class="sq">'+(_en()?'Get heritage · AI media-art news':'전통 · AI 미디어아트 소식 받기')+'</div>'
-    + '<div class="ss">'+(_en()?'New restoration videos and Korean heritage stories by email. No spam, unsubscribe anytime.':'새 복원 영상과 전통 이야기를 이메일로 보내드려요. 광고 아니고, 언제든 해지할 수 있어요.')+'</div>'
+    + '<div class="sq">'+(_en()?'Heritage · AI media-art community':'전통 · AI 미디어아트 커뮤니티')+'</div>'
+    + '<div class="ss">'+(_en()?'Share restoration news, open calls and AI stories — on Discord, or by email.':'새 복원 소식·공모·AI 이야기를 함께 나눠요. 디스코드에서 놀거나, 이메일로 받거나.')+'</div>'
+    + dbtn
     + '<div class="srow"><input id="subemail" type="email" inputmode="email" placeholder="'+(_en()?'your email':'이메일 주소')+'">'
     + '<button class="sbtn" onclick="subscribe()">'+(_en()?'Subscribe':'구독')+'</button></div>'
     + '<div id="submsg" class="smsg"></div></div>';
@@ -174,7 +178,13 @@ function subscribe(){
   }).then(function(r){
     if(btn) btn.disabled=false;
     if(!r.ok){ if(msg){msg.textContent=_en()?'Failed — try again later.':'실패했어요. 잠시 후 다시 시도해주세요.'; msg.className='smsg err';} return; }
-    el.value=''; if(msg){ msg.textContent=_en()?'Subscribed! Thank you 🙌':'구독 완료! 좋은 소식으로 찾아올게요 🙌'; msg.className='smsg ok'; }
+    el.value='';
+    if(msg){
+      var disc=(typeof LINKS!=='undefined'&&LINKS.discord)?LINKS.discord:'';
+      msg.innerHTML=(_en()?'Subscribed! 🙌 ':'구독 완료! 🙌 ')
+        + (disc?('<a href="'+disc+'" target="_blank" rel="noopener" style="color:#5865F2;font-weight:700">'+(_en()?'Join us on Discord →':'디스코드에서 만나요 →')+'</a>'):'');
+      msg.className='smsg ok';
+    }
   }).catch(function(){ if(btn) btn.disabled=false; if(msg){msg.textContent=_en()?'Network error.':'네트워크 오류예요.'; msg.className='smsg err';} });
 }
 

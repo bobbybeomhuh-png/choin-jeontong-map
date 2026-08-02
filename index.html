@@ -105,6 +105,10 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .sbtn:hover{background:#956f2f;}.sbtn:disabled{opacity:.6;cursor:default;}
 .smsg{font-size:12px;margin-top:8px;min-height:1px;}
 .smsg.ok{color:#2c6b54;}.smsg.err{color:#b5476f;}
+.dbtn{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-size:13.5px;font-weight:700;color:#fff;background:#5865F2;border-radius:10px;padding:11px;box-shadow:0 1px 3px rgba(60,60,120,.2);}
+.dbtn:hover{background:#4752c4;}
+.sor{text-align:center;font-size:11.5px;color:var(--t3);margin:10px 0 8px;}
+.mc-disc{margin-top:12px;font-size:12.5px;padding:9px;}
 #map svg{width:100%;height:100%;display:block;cursor:grab;}
 #resizer{flex:0 0 7px;cursor:col-resize;background:var(--line);position:relative;}
 #resizer::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:3px;height:34px;border-radius:3px;background:var(--line2);}
@@ -253,6 +257,7 @@ circle.city{cursor:pointer;}
      <div class="mc-stats" id="mcStats"></div>
      <div class="mc-lab">최근 우리 동네 자랑 ✎</div>
      <div id="mcRecent" class="mc-recent"><div class="mc-empty">불러오는 중…</div></div>
+     <a class="dbtn mc-disc" id="mcDiscord" href="#" target="_blank" rel="noopener">💬 커뮤니티 참여 (디스코드)</a>
    </div>
  </div>
  <div id="resizer" title="드래그해서 크기 조절"></div>
@@ -273,7 +278,7 @@ circle.city{cursor:pointer;}
 <script src="d3.min.js"></script>
 <script src="topojson.min.js"></script>
 <script src="kor_topo.js"></script>
-<script src="data.js?v=15"></script>
+<script src="data.js?v=16"></script>
 <script src="details.js?v=13"></script>
 <script src="discover.js?v=3"></script>
 <script src="videos.js?v=3"></script>
@@ -281,8 +286,8 @@ circle.city{cursor:pointer;}
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
-<script src="supa.js?v=8"></script>
-<script src="app.js?v=38"></script>
+<script src="supa.js?v=9"></script>
+<script src="app.js?v=39"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
    이미 SW가 박힌 브라우저도 이 스크립트가 자동으로 해제·정리·1회 새로고침해 스스로 복구. */

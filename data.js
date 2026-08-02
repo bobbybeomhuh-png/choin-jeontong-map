@@ -3,6 +3,7 @@ const LINKS = {
   class101: "https://class101.net/ko/products/69c9c9657d18a91e7874800f?viewMode=svod",  // 후디니 클래스101 강의
   choin:    "https://www.youtube.com/@choincreativelab",     // 유물복원단(무이) 유튜브
   choin_site: "https://choin.studio",                        // 초인 공식 웹페이지(헤더 로고 링크)
+  discord:  "https://discord.gg/9zSvXB26V",                   // 전통·AI 미디어아트 커뮤니티 디스코드
   foodie:   "https://www.youtube.com/@muuifoodie",           // 대령숙수 유튜브
   muui:     "https://heroic-sunburst-de7638.netlify.app/",   // 무이 공식 사이트(Netlify 배포)
   tally_report: "https://tally.so/r/RG1p7K",   // '내 동네 알리미'(제보) Tally 폼
