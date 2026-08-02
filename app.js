@@ -92,13 +92,14 @@ function communityHtml(region){
   var report = (typeof LINKS!=='undefined' && LINKS.tally_report)
     ? LINKS.tally_report+'?region='+encodeURIComponent(region)
     : reqCompose(region, region+' 내 동네 알리미(복원 제보)', '');
-  // ① 우리 동네 자랑 — 가벼운 감상 한 줄 (곧 벽에 다 같이 보임 · 이메일 없음)
-  var h = '<div class="lab" style="color:#a9803a">'+(t?'Say hi (a quick note)':'우리 동네 자랑 · 한마디')+'</div>';
-  h += '<div style="font-size:12px;color:var(--t3);line-height:1.5;margin:-2px 0 7px">'
-     + (t?'A quick line about this place — no email, just say hi. Everyone\'s notes will soon show up on the map together.'
-         :'이 동네 보고 느낀 걸 가볍게 한 줄. 이메일 없이 툭 남기면 돼요. 남긴 자랑은 곧 지도 위에 다 같이 보여요.')+'</div>';
-  h += '<a class="notebtn" href="'+brag+'" target="_blank" rel="noopener">✎ '
-     + (t?('Leave a quick note on '+region):(region+' 자랑 한마디'))+'</a>';
+  // ① 우리 동네 자랑 — 실시간 포스트잇 벽 (Supabase). 벽 코드 없으면 메일/Tally로 대체.
+  var h = '<div class="lab" style="color:#a9803a">'+(t?'Say hi · Village Wall':'우리 동네 자랑 · 포스트잇 벽')+'</div>';
+  h += '<div style="font-size:12px;color:var(--t3);line-height:1.5;margin:-2px 0 8px">'
+     + (t?'A quick line about this place — no email needed. Every note posted here shows up together, live.'
+         :'이 동네 보고 느낀 걸 가볍게 한 줄. 이메일 없이 툭 남기면, 남들이 남긴 자랑과 함께 여기 다 같이 붙어요.')+'</div>';
+  h += (typeof wallHtml!=='undefined')
+     ? wallHtml(region)
+     : '<a class="notebtn" href="'+brag+'" target="_blank" rel="noopener">✎ '+(t?('Leave a quick note on '+region):(region+' 자랑 한마디'))+'</a>';
   // ② 내 동네 알리미 — 지도에 없는 숨은 소재 제보 (우리가 되살림 · 굿즈 · 이메일)
   h += '<div class="pitch" style="margin-top:16px;border-color:#e6d3b0;background:#fbf5ea">'
      + '<div class="ph">'+(t?'Tip us a hidden heritage':'내 동네 알리미 · 숨은 소재 제보')+'</div>'
@@ -317,6 +318,7 @@ function renderCity(c){
     + exHtml(name)
     + communityHtml(name)
     + pitchHtml(name);
+  if(window.loadWall) loadWall(name);   // 포스트잇 벽 비동기 로드
 }
 
 const W=900, H=1180;
