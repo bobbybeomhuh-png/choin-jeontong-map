@@ -11,14 +11,13 @@ function _device(){ try{ return (window.innerWidth||1024)<768?'mobile':'desktop'
 function logEvent(type, detail){
   if(typeof SUPA_URL==='undefined') return;
   try{
-    var body={ type:type, sid:_SID };
-    if(type==='visit'){ body.detail=_device(); body.ref=_refHost(); }   // 방문 = 기기 + 유입경로 자동
-    else body.detail=(detail||'').toString().slice(0,80);
-    fetch(SUPA_URL + '/rest/v1/events', {
-      method:'POST',
-      headers: Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'}, _SH),
-      body: JSON.stringify(body)
-    }).catch(function(){});
+    var base={ type:type, detail:(type==='visit'?_device():(detail||'').toString().slice(0,80)) };
+    var full=Object.assign({}, base, { sid:_SID });
+    if(type==='visit') full.ref=_refHost();
+    var H=Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'}, _SH);
+    fetch(SUPA_URL + '/rest/v1/events', {method:'POST', headers:H, body:JSON.stringify(full)})
+      .then(function(r){ if(!r.ok){ fetch(SUPA_URL+'/rest/v1/events',{method:'POST',headers:H,body:JSON.stringify(base)}).catch(function(){}); } })  // sid/ref 컬럼 없으면 기본만 재시도
+      .catch(function(){});
   }catch(e){}
 }
 // 링크 클릭 자동 로깅: 디스코드 / 유튜브(영상명·채널)
