@@ -376,6 +376,13 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   function zoomToPoint(p){ svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity.translate(W/2,H/2).scale(3.2).translate(-p[0],-p[1])); }
 
   svg.call(zoom).on('dblclick.zoom', null);
+  // 처음부터 본토 중심으로 살짝 확대 — 넓은 화면에서 지도가 비어 보이지 않게
+  (function(){
+    var xs=CITIES.map(function(c){return c._p[0];}), ys=CITIES.map(function(c){return c._p[1];});
+    var cx=(Math.min.apply(null,xs)+Math.max.apply(null,xs))/2;
+    var cy=(Math.min.apply(null,ys)+Math.max.apply(null,ys))/2;
+    svg.call(zoom.transform, d3.zoomIdentity.translate(W/2,H/2).scale(1.3).translate(-cx,-cy));
+  })();
   try { renderCity(CUR); }
   catch(e){ console.error('renderCity 오류', e); }   // 패널 오류가 지도를 지우지 않게 격리
 }).catch(e=>{
