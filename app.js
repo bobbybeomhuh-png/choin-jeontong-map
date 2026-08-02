@@ -258,7 +258,8 @@ function renderGrid(){
 }
 window.setView=setView;
 
-$('brand').href = LINKS.muui;        // 헤더 로고 = 무이(초인) 공식 사이트
+// 헤더 로고 = 메인(홈)으로. 클릭 시 지도 기본화면으로 리셋(새로고침 없이)
+$('brand').addEventListener('click', function(e){ e.preventDefault(); setView('map'); if(window.homeView) homeView(500); window.scrollTo(0,0); });
 $('lf-choin').href = LINKS.choin;    // 푸터 = 초인 유튜브
 if($('tab-muui')) $('tab-muui').href = LINKS.choin;   // 무이 유물단 채널
 if($('tab-suksu')) $('tab-suksu').href = LINKS.foodie; // 대령숙수 채널

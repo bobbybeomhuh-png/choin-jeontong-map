@@ -44,6 +44,22 @@ var _PAL = [
   ['#ccf5ec','#9fe0d2','#00897b']  // 민트
 ];
 function _hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
+// 포스트잇 한 장 HTML (색·기울기·크기 다양). clickable=true면 눌러서 그 지역으로 이동.
+function _noteHTML(r, clickable){
+  var h=_hash((r.message||'')+(r.created_at||''));
+  var p=_PAL[h%_PAL.length];
+  var rot=((h>>3)%7)-3;         // -3~+3도
+  var mt=(h>>5)%10;             // 0~9px 어긋남
+  var tier=h%3;                 // 크기 3단
+  var mw=[148,188,232][tier], fs=[12,13.5,15.5][tier];
+  var nm=r.name?esc(r.name):(_en()?'anon':'익명');
+  var st='background:'+p[0]+';border-color:'+p[1]+';transform:rotate('+rot+'deg);margin-top:'+(7+mt)+'px;max-width:'+mw+'px';
+  var cls='wnote'+(clickable?' wclick':''), dr=clickable?(' data-region="'+esc(r.region||'')+'"'):'';
+  return '<div class="'+cls+'" style="'+st+'"'+dr+'>'
+    +'<span class="wpin" style="background-color:'+p[2]+'"></span>'
+    +'<div class="wmsg" style="font-size:'+fs+'px">'+esc(r.message)+'</div>'
+    +'<div class="wmeta" style="color:'+p[2]+'">'+nm+' · '+_ago(r.created_at)+'</div></div>';
+}
 
 function _renderNotes(rows){
   var el = document.getElementById('wlist'); if(!el) return;
@@ -53,19 +69,7 @@ function _renderNotes(rows){
       + '</div>';
     return;
   }
-  var anon = _en() ? 'anon' : '익명';
-  el.innerHTML = rows.map(function(r){
-    var nm = r.name ? esc(r.name) : anon;
-    var h = _hash((r.message||'') + (r.created_at||''));
-    var p = _PAL[h % _PAL.length];
-    var rot = ((h >> 3) % 7) - 3;          // -3~+3도 기울기
-    var mt  = (h >> 5) % 10;               // 0~9px 위아래 어긋남
-    var st  = 'background:'+p[0]+';border-color:'+p[1]+';transform:rotate('+rot+'deg);margin-top:'+(7+mt)+'px';
-    return '<div class="wnote" style="'+st+'">'
-      + '<span class="wpin" style="background-color:'+p[2]+'"></span>'
-      + '<div class="wmsg">'+esc(r.message)+'</div>'
-      + '<div class="wmeta" style="color:'+p[2]+'">'+nm+' · '+_ago(r.created_at)+'</div></div>';
-  }).join('');
+  el.innerHTML = rows.map(function(r){ return _noteHTML(r,false); }).join('');
 }
 
 function loadWall(region){
@@ -188,18 +192,13 @@ function loadBoard(){
     var byReg={}; rows.forEach(function(r){ (byReg[r.region]=byReg[r.region]||[]).push(r); });
     var regs=Object.keys(byReg).sort(function(a,b){return byReg[b].length-byReg[a].length;});
     body.innerHTML=regs.map(function(rg){
-      var notes=byReg[rg].map(function(r){
-        var h=_hash((r.message||'')+(r.created_at||'')); var p=_PAL[h%_PAL.length]; var rot=((h>>3)%7)-3;
-        var st='background:'+p[0]+';border-color:'+p[1]+';transform:rotate('+rot+'deg)';
-        var nm=r.name?esc(r.name):(_en()?'anon':'익명');
-        return '<div class="wnote" style="'+st+'"><span class="wpin" style="background-color:'+p[2]+'"></span>'
-          +'<div class="wmsg">'+esc(r.message)+'</div><div class="wmeta" style="color:'+p[2]+'">'+nm+' · '+_ago(r.created_at)+'</div></div>';
-      }).join('');
-      return '<div class="bregion"><h3 class="bregtitle" data-region="'+esc(rg)+'">'+esc(rg)+' <span>'+byReg[rg].length+'</span></h3><div class="wlist">'+notes+'</div></div>';
+      var notes=byReg[rg].map(function(r){ r.region=rg; return _noteHTML(r,true); }).join('');
+      return '<div class="bregion"><h3 class="bregtitle" data-region="'+esc(rg)+'">'+esc(rg)+' <span>'+byReg[rg].length+'</span> ›</h3><div class="wlist">'+notes+'</div></div>';
     }).join('');
-    Array.prototype.forEach.call(body.querySelectorAll('.bregtitle'),function(t){
-      t.onclick=function(){ if(window._gotoRegion){ setView('map'); _gotoRegion(t.getAttribute('data-region')); } };
-    });
+    // 지역 제목 또는 포스트잇 클릭 → 그 지역 페이지로 이동
+    function go(rg){ if(window._gotoRegion){ setView('map'); _gotoRegion(rg); } }
+    Array.prototype.forEach.call(body.querySelectorAll('.bregtitle'),function(t){ t.onclick=function(){ go(t.getAttribute('data-region')); }; });
+    Array.prototype.forEach.call(body.querySelectorAll('.wclick'),function(n){ n.style.cursor='pointer'; n.title='이 지역 보기'; n.onclick=function(){ go(n.getAttribute('data-region')); }; });
   }).catch(function(){ var body=document.getElementById('bbody'); if(body) body.innerHTML='<div class="wempty">'+(_en()?'Could not load.':'불러오지 못했어요.')+'</div>'; });
 }
 

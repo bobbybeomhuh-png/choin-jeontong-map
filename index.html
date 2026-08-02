@@ -51,6 +51,7 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .chtabs{display:flex;gap:8px;margin-left:18px;}
 .chtab{display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-size:14px;font-weight:700;color:#fff;background:#c0392b;border-radius:999px;padding:7px 15px;box-shadow:0 1px 3px rgba(90,70,20,.18);transition:.15s;}
 .chtab:hover{background:#a5301f;transform:translateY(-1px);}
+.chface{width:22px;height:22px;border-radius:50%;object-fit:cover;background:#f6efe2;margin-right:2px;box-shadow:0 0 0 1.5px rgba(255,255,255,.7);}
 .chtab#tab-suksu{background:#a9803a;}
 .chtab#tab-suksu:hover{background:#8f6a2c;}
 @media(max-width:820px){.chtabs{display:none;}}
@@ -225,11 +226,11 @@ circle.city{cursor:pointer;}
 <header>
  <div class="title" id="ttl">초인, 대한민국의 전통을 이야기하다<small id="tag"></small></div>
  <nav class="chtabs">
-   <a class="chtab" id="tab-muui" href="#" target="_blank" rel="noopener">▶ 무이 유물단</a>
-   <a class="chtab" id="tab-suksu" href="#" target="_blank" rel="noopener">▶ 대령숙수</a>
+   <a class="chtab" id="tab-muui" href="#" target="_blank" rel="noopener"><img src="muui_avatar.png" class="chface" alt="무이">▶ 무이 유물단</a>
+   <a class="chtab" id="tab-suksu" href="#" target="_blank" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
  </nav>
  <div class="spacer"></div>
- <a class="brand" id="brand" href="#" target="_blank" rel="noopener"><img src="logo_full.png" class="logoimg" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"><span>초인</span></a>
+ <a class="brand" id="brand" href="./" title="메인으로"><img src="logo_full.png" class="logoimg" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"><span>초인</span></a>
  <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button><button id="vboard" onclick="setView('board')">✎ 자랑 모음</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
@@ -270,8 +271,8 @@ circle.city{cursor:pointer;}
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
-<script src="supa.js?v=7"></script>
-<script src="app.js?v=36"></script>
+<script src="supa.js?v=8"></script>
+<script src="app.js?v=37"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
    이미 SW가 박힌 브라우저도 이 스크립트가 자동으로 해제·정리·1회 새로고침해 스스로 복구. */
