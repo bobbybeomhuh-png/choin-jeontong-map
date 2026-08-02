@@ -79,6 +79,41 @@ function loadWall(region){
     .catch(function(){ el.innerHTML = '<div class="wempty">'+(_en()?'Could not load.':'불러오지 못했어요.')+'</div>'; });
 }
 
+// 지도 왼쪽 카드: 통계 + 전국 최근 자랑 피드 (빈 공간 채움 + 활기)
+function _gotoRegion(region){
+  if(typeof CITIES==='undefined' || !window._select) return;
+  var c = CITIES.find(function(x){ return x[0]===region; });
+  if(c) window._select(c);
+}
+function loadRecent(){
+  if(typeof SUPA_URL==='undefined') return;
+  var st = document.getElementById('mcStats');
+  if(st){
+    var cities = (typeof CITIES!=='undefined') ? CITIES.length : 0;
+    var rest = (typeof REST_DONE!=='undefined') ? REST_DONE : 0;
+    st.innerHTML = '<div class="mc-stat"><b>'+cities+'</b><span>'+(_en()?'cities':'개 도시')+'</span></div>'
+      + '<div class="mc-stat"><b>'+rest+'</b><span>'+(_en()?'restored':'복원 완료')+'</span></div>'
+      + '<div class="mc-stat"><b id="mcCount">·</b><span>'+(_en()?'notes':'자랑')+'</span></div>';
+  }
+  var el = document.getElementById('mcRecent'); if(!el) return;
+  var url = SUPA_URL + '/rest/v1/postits?hidden=eq.false&select=region,name,message,created_at&order=created_at.desc&limit=6';
+  fetch(url, {headers:_SH}).then(function(r){ return r.ok ? r.json() : []; }).then(function(rows){
+    var cnt = document.getElementById('mcCount'); if(cnt) cnt.textContent = rows.length ? ('' + rows.length + (rows.length>=6?'+':'')) : '0';
+    if(!rows.length){
+      el.innerHTML = '<div class="mc-empty">'+(_en()?'No notes yet — leave the first one!':'아직 자랑이 없어요.\n첫 자랑을 남겨보세요!')+'</div>';
+      return;
+    }
+    el.innerHTML = rows.map(function(r){
+      return '<button class="mc-note" data-region="'+esc(r.region||'')+'">'
+        + '<div class="m">'+esc(r.message)+'</div>'
+        + '<div class="r">'+esc(r.region||'')+' · '+_ago(r.created_at)+'</div></button>';
+    }).join('');
+    Array.prototype.forEach.call(el.querySelectorAll('.mc-note'), function(b){
+      b.onclick = function(){ _gotoRegion(b.getAttribute('data-region')); };
+    });
+  }).catch(function(){ el.innerHTML = '<div class="mc-empty">'+(_en()?'Could not load.':'불러오지 못했어요.')+'</div>'; });
+}
+
 function postNote(){
   var region = (typeof CUR!=='undefined' && CUR) ? CUR[0] : '';
   var msgEl = document.getElementById('wmsg'), nmEl = document.getElementById('wname');
@@ -97,6 +132,7 @@ function postNote(){
     if(!r.ok){ alert(_en()?'Could not save. Please try again.':'앗, 저장에 실패했어요. 잠시 후 다시 시도해주세요.'); return; }
     msgEl.value=''; if(nmEl) nmEl.value='';
     loadWall(region);
+    if(window.loadRecent) loadRecent();
   }).catch(function(){
     reset();
     alert(_en()?'Network error.':'네트워크 오류로 저장하지 못했어요.');

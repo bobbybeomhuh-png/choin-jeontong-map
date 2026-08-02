@@ -329,7 +329,7 @@ d3.select('#map').append('button')
   .style('position','absolute').style('top','10px').style('right','10px')
   .style('font-size','12px').style('padding','6px 11px').style('border','1px solid #d6c9b0')
   .style('border-radius','8px').style('background','#fbf7ef').style('color','#6f6553').style('cursor','pointer')
-  .text('전체보기').on('click',()=>svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity));
+  .text('전체보기').on('click',()=>{ if(window.homeView) window.homeView(600); });
 
 Promise.resolve(window.KOR_TOPO).then(topo=>{
   const feats = topojson.feature(topo, topo.objects.kor);
@@ -383,13 +383,16 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   function zoomToPoint(p){ svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity.translate(W/2,H/2).scale(3.2).translate(-p[0],-p[1])); }
 
   svg.call(zoom).on('dblclick.zoom', null);
-  // 처음부터 본토 중심으로 살짝 확대 — 넓은 화면에서 지도가 비어 보이지 않게
-  (function(){
+  // 기본 화면(홈): 본토 중심 확대 — 넓은 화면에서 지도가 비어 보이지 않게. 전체보기 버튼도 여기로.
+  window.homeView = function(dur){
     var xs=CITIES.map(function(c){return c._p[0];}), ys=CITIES.map(function(c){return c._p[1];});
     var cx=(Math.min.apply(null,xs)+Math.max.apply(null,xs))/2;
     var cy=(Math.min.apply(null,ys)+Math.max.apply(null,ys))/2;
-    svg.call(zoom.transform, d3.zoomIdentity.translate(W/2,H/2).scale(1.3).translate(-cx,-cy));
-  })();
+    var t=d3.zoomIdentity.translate(W*0.56,H/2).scale(1.62).translate(-cx,-cy);
+    if(dur){ svg.transition().duration(dur).call(zoom.transform, t); } else { svg.call(zoom.transform, t); }
+  };
+  window.homeView();
+  if(window.loadRecent) loadRecent();   // 왼쪽 카드: 통계 + 최근 자랑
   try { renderCity(CUR); }
   catch(e){ console.error('renderCity 오류', e); }   // 패널 오류가 지도를 지우지 않게 격리
 }).catch(e=>{
