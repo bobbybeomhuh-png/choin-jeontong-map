@@ -75,22 +75,26 @@ function restoreStatus(region){
              : {t:(LANG==='en'?'Awaiting restoration':'복원 대기 · 제보 기다리는 중'), c:'wait'};
 }
 function videosHtml(region){
+  var t=(LANG==='en');
   var list = (typeof VIDEOS!=='undefined' && VIDEOS[region]) ? VIDEOS[region] : [];
-  if(!list.length) return '';
-  var t=(LANG==='en'), cap=6;
-  var head = t ? 'What Muui restored here' : '무이 복원단이 되살린 것';
-  var rows = list.slice(0,cap).map(function(v){
+  // 영상 없는 지역도 유튜브 채널은 자연스럽게 노출
+  if(!list.length){
+    return '<div class="lab" style="color:#c0392b">▶ '+(t?'CHOIN on YouTube':'초인 유튜브')+'</div>'
+      + '<a class="vchan" href="'+LINKS.choin+'" target="_blank" rel="noopener">▶ '+(t?'Watch our heritage media-art films':'우리가 만든 전통 미디어아트 영상 보기')+'</a>';
+  }
+  var cap=6;
+  var head = t ? 'Our films that revived this place' : '초인이 되살린 이 지역 영상';
+  var cards = list.slice(0,cap).map(function(v){
     var link = v.yt ? v.yt : (v.ch==='f' ? LINKS.foodie : LINKS.choin);
-    var after = '<span class="rafter" style="background-image:url(\''+v.th+'\')"><span class="vplay">▶</span></span>';
-    var pair = v.before
-      ? '<span class="rbefore" style="background-image:url(\''+v.before+'\')"></span><span class="rarrow">→</span>'+after
-      : after;
-    return '<a class="rcard'+(v.before?' pair':'')+'" href="'+link+'" target="_blank" rel="noopener" title="'+esc(v.n)+'">'
-      + pair + '<span class="vtitle">'+esc(v.n)+'</span></a>';
+    var bef = v.before ? '<span class="vbefore2" style="background-image:url(\''+v.before+'\')" title="복원 전"></span>' : '';
+    var chip = v.ch==='f' ? '대령숙수' : '무이';
+    return '<a class="vcard2" href="'+link+'" target="_blank" rel="noopener" title="'+esc(v.n)+'">'
+      + '<span class="vthumb2" style="background-image:url(\''+v.th+'\')"><span class="vplay2">▶</span>'+bef+'<span class="vchip">'+chip+'</span></span>'
+      + '<span class="vt2">'+esc(v.n)+'</span></a>';
   }).join('');
-  var more = list.length>cap ? '<div class="exmore">+ '+(list.length-cap)+(t?' more':'편 더')+'</div>' : '';
-  return '<div class="lab" style="color:var(--teal)">'+head+' · '+list.length+'</div>'
-    + '<div class="rlist">'+rows+more+'</div>';
+  var chan = '<a class="vchan" href="'+LINKS.choin+'" target="_blank" rel="noopener">▶ '+(t?'More on our YouTube channel':'채널에서 더 보기 · 구독')+'</a>';
+  return '<div class="lab" style="color:#c0392b">'+head+' · '+list.length+'</div>'
+    + '<div class="vidgrid">'+cards+'</div>' + chan;
 }
 // 참여형 커뮤니티: '우리 동네 자랑'(한마디) + '내 동네 알리미'(제보). Tally 링크 없으면 메일로 대체.
 function communityHtml(region){
