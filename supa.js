@@ -114,6 +114,66 @@ function loadRecent(){
   }).catch(function(){ el.innerHTML = '<div class="mc-empty">'+(_en()?'Could not load.':'불러오지 못했어요.')+'</div>'; });
 }
 
+// ── 다음 복원지 투표 ──────────────────────────────
+function voteHtml(region){
+  return '<div class="votebox">'
+    + '<div class="vq">'+(_en()?'Vote: restore this next?':'다음 복원지 투표')+'</div>'
+    + '<div class="vs">'+(_en()?('Want Muui to revive '+region+' next? Tap to vote.'):('무이가 다음에 '+region+'을(를) 복원했으면 좋겠다면 눌러주세요.'))+'</div>'
+    + '<button class="vbtn" id="vbtn" onclick="voteRegion()">🗳 '+(_en()?'Vote for this region':'이 지역에 투표')+' <span id="vcount"></span></button>'
+    + '</div>';
+}
+function _voted(region){ try{ return localStorage.getItem('voted_'+region)==='1'; }catch(e){ return false; } }
+function loadVotes(region){
+  if(typeof SUPA_URL==='undefined') return;
+  var btn=document.getElementById('vbtn'), cs=document.getElementById('vcount');
+  var url=SUPA_URL+'/rest/v1/votes?region=eq.'+encodeURIComponent(region)+'&select=id';
+  fetch(url,{headers:Object.assign({'Prefer':'count=exact','Range':'0-0'},_SH)}).then(function(r){
+    var cr=r.headers.get('content-range')||''; var n=parseInt((cr.split('/')[1]||'0'),10)||0;
+    if(cs) cs.textContent = n? ('· '+n+(_en()?' votes':'표')) : '';
+    if(_voted(region) && btn){ btn.classList.add('voted'); btn.disabled=true;
+      btn.firstChild.textContent='✓ '+(_en()?'Voted ':'투표 완료 '); }
+  }).catch(function(){});
+}
+function voteRegion(){
+  var region=(typeof CUR!=='undefined'&&CUR)?CUR[0]:''; if(!region) return;
+  if(_voted(region)) return;
+  var btn=document.getElementById('vbtn'); if(btn) btn.disabled=true;
+  fetch(SUPA_URL+'/rest/v1/votes',{method:'POST',
+    headers:Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'},_SH),
+    body:JSON.stringify({region:region})
+  }).then(function(r){
+    if(!r.ok){ if(btn) btn.disabled=false; return; }
+    try{ localStorage.setItem('voted_'+region,'1'); }catch(e){}
+    loadVotes(region);
+  }).catch(function(){ if(btn) btn.disabled=false; });
+}
+
+// ── 뉴스레터 구독 (이메일 명단) ──────────────────────
+function subscribeHtml(region){
+  return '<div class="subbox">'
+    + '<div class="sq">'+(_en()?'Get heritage · AI media-art news':'전통 · AI 미디어아트 소식 받기')+'</div>'
+    + '<div class="ss">'+(_en()?'New restoration videos and Korean heritage stories by email. No spam, unsubscribe anytime.':'새 복원 영상과 전통 이야기를 이메일로 보내드려요. 광고 아니고, 언제든 해지할 수 있어요.')+'</div>'
+    + '<div class="srow"><input id="subemail" type="email" inputmode="email" placeholder="'+(_en()?'your email':'이메일 주소')+'">'
+    + '<button class="sbtn" onclick="subscribe()">'+(_en()?'Subscribe':'구독')+'</button></div>'
+    + '<div id="submsg" class="smsg"></div></div>';
+}
+function subscribe(){
+  var el=document.getElementById('subemail'), msg=document.getElementById('submsg');
+  if(!el) return;
+  var email=(el.value||'').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ if(msg){msg.textContent=_en()?'Please enter a valid email.':'올바른 이메일을 입력해주세요.'; msg.className='smsg err';} el.focus(); return; }
+  var btn=document.querySelector('.sbtn'); if(btn) btn.disabled=true;
+  var region=(typeof CUR!=='undefined'&&CUR)?CUR[0]:null;
+  fetch(SUPA_URL+'/rest/v1/subscribers?on_conflict=email',{method:'POST',
+    headers:Object.assign({'Content-Type':'application/json','Prefer':'resolution=ignore-duplicates,return=minimal'},_SH),
+    body:JSON.stringify({email:email,region:region,source:'map'})
+  }).then(function(r){
+    if(btn) btn.disabled=false;
+    if(!r.ok){ if(msg){msg.textContent=_en()?'Failed — try again later.':'실패했어요. 잠시 후 다시 시도해주세요.'; msg.className='smsg err';} return; }
+    el.value=''; if(msg){ msg.textContent=_en()?'Subscribed! Thank you 🙌':'구독 완료! 좋은 소식으로 찾아올게요 🙌'; msg.className='smsg ok'; }
+  }).catch(function(){ if(btn) btn.disabled=false; if(msg){msg.textContent=_en()?'Network error.':'네트워크 오류예요.'; msg.className='smsg err';} });
+}
+
 function postNote(){
   var region = (typeof CUR!=='undefined' && CUR) ? CUR[0] : '';
   var msgEl = document.getElementById('wmsg'), nmEl = document.getElementById('wname');

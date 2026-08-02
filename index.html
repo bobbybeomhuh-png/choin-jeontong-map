@@ -71,6 +71,22 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .mc-note .r{font-size:10.5px;color:var(--gold);font-weight:600;margin-top:3px;}
 .mc-empty{font-size:11.5px;color:var(--t3);line-height:1.5;}
 @media(max-width:900px){#mapcard{display:none;}}
+.votebox{margin-top:18px;padding:15px 16px;border:1px solid #cfe0d6;border-radius:14px;background:#f3faf6;}
+.votebox .vq{font-family:var(--serif);font-size:15px;font-weight:800;color:var(--ink);}
+.votebox .vs{font-size:12.5px;color:var(--t2);line-height:1.55;margin:5px 0 12px;}
+.vbtn{width:100%;border:0;border-radius:11px;padding:12px;background:var(--teal);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+.vbtn:hover{background:#166b52;}
+.vbtn.voted{background:#dfeee7;color:#2c6b54;cursor:default;}
+.vbtn #vcount{font-weight:400;opacity:.9;font-size:13px;margin-left:4px;}
+.subbox{margin-top:18px;padding:16px;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,#fff8ec,#fbf3e3);}
+.subbox .sq{font-family:var(--serif);font-size:15.5px;font-weight:800;color:var(--ink);}
+.subbox .ss{font-size:12.5px;color:var(--t2);line-height:1.55;margin:5px 0 11px;}
+.srow{display:flex;gap:7px;}
+.srow input{flex:1;min-width:0;box-sizing:border-box;border:1px solid #e3d6bd;border-radius:9px;padding:10px 11px;font:inherit;font-size:13px;background:#fff;}
+.sbtn{white-space:nowrap;border:0;border-radius:9px;padding:10px 18px;background:var(--gold);color:#fff;font-weight:700;font-size:13px;cursor:pointer;}
+.sbtn:hover{background:#956f2f;}.sbtn:disabled{opacity:.6;cursor:default;}
+.smsg{font-size:12px;margin-top:8px;min-height:1px;}
+.smsg.ok{color:#2c6b54;}.smsg.err{color:#b5476f;}
 #map svg{width:100%;height:100%;display:block;cursor:grab;}
 #resizer{flex:0 0 7px;cursor:col-resize;background:var(--line);position:relative;}
 #resizer::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:3px;height:34px;border-radius:3px;background:var(--line2);}
@@ -231,8 +247,8 @@ circle.city{cursor:pointer;}
 <script src="gongmo.js?v=2"></script>
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
-<script src="supa.js?v=3"></script>
-<script src="app.js?v=33"></script>
+<script src="supa.js?v=4"></script>
+<script src="app.js?v=34"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
    이미 SW가 박힌 브라우저도 이 스크립트가 자동으로 해제·정리·1회 새로고침해 스스로 복구. */

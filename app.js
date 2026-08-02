@@ -317,8 +317,11 @@ function renderCity(c){
     +'<div class="lab">'+T[LANG].imagine+'</div>'+(imagine?'<div class="val">'+esc(imagine)+'</div>':soon)
     + exHtml(name)
     + communityHtml(name)
-    + pitchHtml(name);
-  if(window.loadWall) loadWall(name);   // 포스트잇 벽 비동기 로드
+    + ((typeof voteHtml!=='undefined')?voteHtml(name):'')
+    + pitchHtml(name)
+    + ((typeof subscribeHtml!=='undefined')?subscribeHtml(name):'');
+  if(window.loadWall) loadWall(name);     // 포스트잇 벽
+  if(window.loadVotes) loadVotes(name);   // 복원지 투표 수
 }
 
 const W=900, H=1180;
