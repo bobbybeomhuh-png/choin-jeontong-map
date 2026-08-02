@@ -33,6 +33,9 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .brand{display:flex;align-items:center;gap:6px;text-decoration:none;border:1px solid var(--line2);border-radius:999px;padding:5px 12px 5px 8px;color:var(--ink);font-size:13px;}
 .brand .mark{width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:800;}
 .brand .logoimg{width:32px;height:32px;border-radius:0;object-fit:contain;margin:-3px 0;}
+.homelogo{display:inline-flex;align-items:center;text-decoration:none;flex:0 0 auto;}
+.homelogo img{width:46px;height:46px;object-fit:contain;}
+.homelogo .mark{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:800;}
 .inst{margin-top:6px;}
 .inst .pill{display:inline-block;font-size:12px;background:var(--land);border:1px solid var(--line2);border-radius:999px;padding:4px 11px;margin:3px 4px 3px 0;color:var(--ink);}
 .inst .lock{display:block;margin-top:8px;text-decoration:none;font-size:13px;background:var(--ink);color:var(--bg);border-radius:10px;padding:11px 14px;text-align:center;}
@@ -170,6 +173,17 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .rafter .vplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;background:rgba(30,26,20,.22);border-radius:7px;}
 .rarrow{flex:0 0 auto;color:var(--t3);font-size:14px;}
 .rcard .vtitle{flex:1;margin-top:0;font-size:12.5px;color:var(--ink);}
+.ba{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:.5px solid var(--line2);margin-bottom:14px;box-shadow:0 2px 10px rgba(90,70,20,.14);user-select:none;touch-action:none;}
+.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.ba-after{z-index:1;}
+.ba-before{z-index:2;clip-path:inset(0 50% 0 0);}
+.ba-handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;z-index:3;box-shadow:0 0 5px rgba(0,0,0,.55);transform:translateX(-1px);pointer-events:none;}
+.ba-handle::after{content:'⇄';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#333;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 1px 5px rgba(0,0,0,.4);}
+.ba-range{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:4;}
+.ba-tag{position:absolute;top:8px;font-size:11px;font-weight:800;letter-spacing:.5px;color:#fff;background:rgba(20,16,12,.55);border-radius:6px;padding:3px 8px;z-index:3;pointer-events:none;}
+.ba-tl{left:8px;}
+.ba-tr{right:8px;background:#c0392b;text-decoration:none;pointer-events:auto;z-index:5;}
+.ba-cap{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);white-space:nowrap;font-size:11px;color:#fff;background:rgba(20,16,12,.5);border-radius:6px;padding:3px 10px;z-index:3;pointer-events:none;}
 .vidgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
 .vcard2{text-decoration:none;color:var(--ink);display:block;}
 .vthumb2{display:block;position:relative;aspect-ratio:16/9;border-radius:11px;background:var(--land) center/cover no-repeat;border:.5px solid var(--line2);overflow:hidden;box-shadow:0 1px 4px rgba(90,70,20,.10);}
@@ -227,24 +241,34 @@ circle.city{cursor:pointer;}
 .gcard .gc{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.45;max-height:32px;overflow:hidden;}
 @media(max-width:780px){
  .wrap{flex-direction:column;height:auto;}
- #map{height:58vh;}
+ #map{height:54vh;min-height:340px;}
  #resizer{display:none;}
- #side{flex:auto;width:auto;max-width:none;border-left:0;border-top:1px solid var(--line);}
- .grid{height:auto;gap:10px;padding:14px;}
+ #side{flex:auto;width:auto;max-width:none;border-left:0;border-top:1px solid var(--line);padding:18px 16px;}
+ .grid,.board{height:auto;gap:10px;padding:16px;}
  .gcard{width:calc(50% - 5px);}
- header{flex-wrap:wrap;}
+ header{flex-wrap:wrap;gap:7px 10px;padding:10px 13px;}
+ .title{font-size:16px;line-height:1.15;}
+ .title small{font-size:10px;}
+ .homelogo img{width:38px;height:38px;}
+ .cName{font-size:24px;}
+ .cRegion{margin-bottom:13px;}
+ .lang button{padding:6px 11px;}
+ .bhead h2{font-size:21px;}
+ .board{padding:18px 16px;}
 }
+/* 아주 좁은 폰: 영상 그리드 1열 */
+@media(max-width:400px){ .vidgrid{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
 <header>
+ <a class="homelogo" id="brand" href="./" title="메인으로"><img src="logo_full.png" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"></a>
  <div class="title" id="ttl">초인, 대한민국의 전통을 이야기하다<small id="tag"></small></div>
  <nav class="chtabs">
    <a class="chtab" id="tab-muui" href="#" target="_blank" rel="noopener"><img src="muui_avatar.png" class="chface" alt="무이">▶ 무이 유물단</a>
    <a class="chtab" id="tab-suksu" href="#" target="_blank" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
  </nav>
  <div class="spacer"></div>
- <a class="brand" id="brand" href="./" title="메인으로"><img src="logo_full.png" class="logoimg" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"><span>초인</span></a>
  <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button><button id="vboard" onclick="setView('board')">✎ 자랑 모음</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
@@ -287,7 +311,7 @@ circle.city{cursor:pointer;}
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
 <script src="supa.js?v=9"></script>
-<script src="app.js?v=39"></script>
+<script src="app.js?v=40"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
    이미 SW가 박힌 브라우저도 이 스크립트가 자동으로 해제·정리·1회 새로고침해 스스로 복구. */

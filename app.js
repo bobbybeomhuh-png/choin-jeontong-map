@@ -93,7 +93,25 @@ function videosHtml(region){
       + '<span class="vt2">'+esc(v.n)+'</span></a>';
   }).join('');
   var chan = '<a class="vchan" href="'+LINKS.choin+'" target="_blank" rel="noopener">▶ '+(t?'More on our YouTube channel':'채널에서 더 보기 · 구독')+'</a>';
-  return '<div class="lab" style="color:#c0392b">'+head+' · '+list.length+'</div>'
+  // 복원 전후 슬라이더 (before 있는 첫 영상) — 옛 실사 ↔ 우리 미디어아트 드래그 비교
+  var feat = list.filter(function(v){return v.before;})[0];
+  var slider = '';
+  if(feat){
+    var flink = feat.yt || (feat.ch==='f' ? LINKS.foodie : LINKS.choin);
+    slider = '<div class="lab" style="color:var(--gold)">'+(t?'Before / After':'복원 전 · 후 비교')+'</div>'
+      + '<div class="ba">'
+      +   '<img class="ba-after" src="'+feat.th+'" alt="'+(t?'after':'복원 후')+'">'
+      +   '<img class="ba-before" src="'+feat.before+'" alt="'+(t?'before':'복원 전')+'">'
+      +   '<div class="ba-handle"></div>'
+      +   '<input class="ba-range" type="range" min="0" max="100" value="50" aria-label="'+(t?'compare':'복원 전후 비교')+'"'
+      +   ' oninput="var b=this.closest(&quot;.ba&quot;);b.querySelector(&quot;.ba-before&quot;).style.clipPath=&quot;inset(0 &quot;+(100-this.value)+&quot;% 0 0)&quot;;b.querySelector(&quot;.ba-handle&quot;).style.left=this.value+&quot;%&quot;">'
+      +   '<span class="ba-tag ba-tl">'+(t?'BEFORE':'복원 전')+'</span>'
+      +   '<a class="ba-tag ba-tr" href="'+flink+'" target="_blank" rel="noopener">'+(t?'AFTER ▶':'복원 후 ▶')+'</a>'
+      +   '<span class="ba-cap">'+(t?'◀ drag ▶ real site ↔ our media art':'◀ 드래그 ▶ 옛 실사 ↔ 우리 미디어아트')+'</span>'
+      + '</div>';
+  }
+  return slider
+    + '<div class="lab" style="color:#c0392b">'+head+' · '+list.length+'</div>'
     + '<div class="vidgrid">'+cards+'</div>' + chan;
 }
 // 참여형 커뮤니티: '우리 동네 자랑'(한마디) + '내 동네 알리미'(제보). Tally 링크 없으면 메일로 대체.
