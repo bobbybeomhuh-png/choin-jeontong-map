@@ -142,10 +142,10 @@ function voteRegion(){
     headers:Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'},_SH),
     body:JSON.stringify({region:region})
   }).then(function(r){
-    if(!r.ok){ if(btn) btn.disabled=false; return; }
+    if(!r.ok){ if(btn){ btn.disabled=false; var cs=document.getElementById('vcount'); if(cs) cs.textContent=_en()?'· try later':'· 잠시 후 다시'; } return; }
     try{ localStorage.setItem('voted_'+region,'1'); }catch(e){}
     loadVotes(region);
-  }).catch(function(){ if(btn) btn.disabled=false; });
+  }).catch(function(){ if(btn){ btn.disabled=false; var cs=document.getElementById('vcount'); if(cs) cs.textContent=_en()?'· network error':'· 네트워크 오류'; } });
 }
 
 // ── 뉴스레터 구독 (이메일 명단) ──────────────────────

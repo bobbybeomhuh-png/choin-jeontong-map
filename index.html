@@ -32,7 +32,7 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .spacer{margin-left:auto;}
 .brand{display:flex;align-items:center;gap:6px;text-decoration:none;border:1px solid var(--line2);border-radius:999px;padding:5px 12px 5px 8px;color:var(--ink);font-size:13px;}
 .brand .mark{width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:800;}
-.brand .logoimg{width:26px;height:26px;border-radius:50%;object-fit:cover;}
+.brand .logoimg{width:32px;height:32px;border-radius:0;object-fit:contain;margin:-3px 0;}
 .inst{margin-top:6px;}
 .inst .pill{display:inline-block;font-size:12px;background:var(--land);border:1px solid var(--line2);border-radius:999px;padding:4px 11px;margin:3px 4px 3px 0;color:var(--ink);}
 .inst .lock{display:block;margin-top:8px;text-decoration:none;font-size:13px;background:var(--ink);color:var(--bg);border-radius:10px;padding:11px 14px;text-align:center;}
@@ -211,7 +211,7 @@ circle.city{cursor:pointer;}
 <header>
  <div class="title" id="ttl">초인, 대한민국의 전통을 이야기하다<small id="tag"></small></div>
  <div class="spacer"></div>
- <a class="brand" id="brand" href="#" target="_blank" rel="noopener"><img src="muui_avatar.png" class="logoimg" alt="무이" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"><span>초인</span></a>
+ <a class="brand" id="brand" href="#" target="_blank" rel="noopener"><img src="logo_full.png" class="logoimg" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"><span>초인</span></a>
  <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
@@ -250,7 +250,7 @@ circle.city{cursor:pointer;}
 <script src="gongmo.js?v=2"></script>
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
-<script src="supa.js?v=5"></script>
+<script src="supa.js?v=6"></script>
 <script src="app.js?v=34"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
