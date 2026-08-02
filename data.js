@@ -3,7 +3,9 @@ const LINKS = {
   class101: "https://class101.net/ko/products/69c9c9657d18a91e7874800f?viewMode=svod",  // 후디니 클래스101 강의
   choin:    "https://www.youtube.com/@choincreativelab",     // 유물복원단(무이) 유튜브
   foodie:   "https://www.youtube.com/@muuifoodie",           // 대령숙수 유튜브
-  muui:     "https://heroic-sunburst-de7638.netlify.app/"   // 무이 공식 사이트(Netlify 배포)
+  muui:     "https://heroic-sunburst-de7638.netlify.app/",   // 무이 공식 사이트(Netlify 배포)
+  tally_report: "",   // ★'내 동네 알리미'(제보) Tally 폼 링크 — 넣으면 자동 연결(비면 메일로 대체)
+  tally_brag:   ""    // ★'우리 동네 자랑'(한마디) Tally 폼 링크 — 넣으면 자동 연결(비면 메일로 대체)
 };
 
 // ===== UI 문구 (한/영) =====

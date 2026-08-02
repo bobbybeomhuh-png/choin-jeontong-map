@@ -58,20 +58,51 @@ function gongmoHtml(region){
   }
   return h;
 }
-// 지역별 초인 제작 영상(실적 증명 = 발주 설득). 제목만 공개, 재생은 초인 유튜브.
+// 무이 복원단이 되살린 것 — 복원 전(실사 공공누리) → 후(미디어아트 영상). 클릭=유튜브.
+var REST_DONE = (typeof VIDEOS!=='undefined') ? Object.keys(VIDEOS).length : 0;
+function restoreStatus(region){
+  var n = (typeof VIDEOS!=='undefined' && VIDEOS[region]) ? VIDEOS[region].length : 0;
+  return n>0 ? {t:(LANG==='en'?'Restored '+n:'복원완료 '+n+'편'), c:'ok'}
+             : {t:(LANG==='en'?'Awaiting restoration':'복원 대기 · 제보 기다리는 중'), c:'wait'};
+}
 function videosHtml(region){
   var list = (typeof VIDEOS!=='undefined' && VIDEOS[region]) ? VIDEOS[region] : [];
   if(!list.length) return '';
-  var t=(LANG==='en');
-  var head = t ? 'CHOIN made these for this region' : '초인이 이 지역으로 만든 작품';
-  var cards = list.map(function(v){
+  var t=(LANG==='en'), cap=6;
+  var head = t ? 'What Muui restored here' : '무이 복원단이 되살린 것';
+  var rows = list.slice(0,cap).map(function(v){
     var link = v.yt ? v.yt : (v.ch==='f' ? LINKS.foodie : LINKS.choin);
-    return '<a class="vcard" href="'+link+'" target="_blank" rel="noopener" title="'+esc(v.n)+'">'
-      + '<span class="vthumb" style="background-image:url(\''+v.th+'\')"><span class="vplay">▶</span></span>'
-      + '<span class="vtitle">'+esc(v.n)+'</span></a>';
+    var after = '<span class="rafter" style="background-image:url(\''+v.th+'\')"><span class="vplay">▶</span></span>';
+    var pair = v.before
+      ? '<span class="rbefore" style="background-image:url(\''+v.before+'\')"></span><span class="rarrow">→</span>'+after
+      : after;
+    return '<a class="rcard'+(v.before?' pair':'')+'" href="'+link+'" target="_blank" rel="noopener" title="'+esc(v.n)+'">'
+      + pair + '<span class="vtitle">'+esc(v.n)+'</span></a>';
   }).join('');
+  var more = list.length>cap ? '<div class="exmore">+ '+(list.length-cap)+(t?' more':'편 더')+'</div>' : '';
   return '<div class="lab" style="color:var(--teal)">'+head+' · '+list.length+'</div>'
-    + '<div class="vgrid">'+cards+'</div>';
+    + '<div class="rlist">'+rows+more+'</div>';
+}
+// 참여형 커뮤니티: '우리 동네 자랑'(한마디) + '내 동네 알리미'(제보). Tally 링크 없으면 메일로 대체.
+function communityHtml(region){
+  var t=(LANG==='en');
+  var brag = (typeof LINKS!=='undefined' && LINKS.tally_brag)
+    ? LINKS.tally_brag+'?region='+encodeURIComponent(region)
+    : reqCompose(region, region+' 우리 동네 자랑', '');
+  var report = (typeof LINKS!=='undefined' && LINKS.tally_report)
+    ? LINKS.tally_report+'?region='+encodeURIComponent(region)
+    : reqCompose(region, region+' 내 동네 알리미(복원 제보)', '');
+  var h = '<div class="lab" style="color:#a9803a">'+(t?'Leave a note':'우리 동네 자랑')+'</div>';
+  h += '<a class="notebtn" href="'+brag+'" target="_blank" rel="noopener">✎ '
+     + (t?('Say something about '+region):(region+'에 한마디 남기기'))+'</a>';
+  h += '<div class="pitch" style="margin-top:14px;border-color:#e6d3b0;background:#fbf5ea">'
+     + '<div class="ph">'+(t?'Tell us your local heritage':'내 동네 알리미')+'</div>'
+     + '<div class="ps">'+(t?'Suggest a tradition worth restoring. Monthly picks receive official K-pop artist goods.'
+            :'되살리면 좋을 우리 동네 전통·이야기를 알려주세요. 매달 좋은 제보를 뽑아 인기 K-pop 아티스트 공식 굿즈를 선물로 보내드립니다.')+'</div>'
+     + '<a class="pbtn main" href="'+report+'" target="_blank" rel="noopener">✉ '+(t?'Submit':'내 동네 알리기')+'</a>'
+     + '<div style="font-size:11px;color:var(--t3);margin-top:8px;line-height:1.5">'
+     + (t?'':'채택되어 경품 발송이 필요한 경우에 한해 주소·연락처를 요청할 수 있으며, 그 외 용도로는 절대 사용하지 않습니다.')+'</div></div>';
+  return h;
 }
 // 공개 접점: "우리 IP로 이 지역 전통을 미디어아트로 만들고 싶으면 연락." 기관 리스트는 웹에 없음(자산=노션).
 function pitchHtml(region){
@@ -267,7 +298,9 @@ function renderCity(c){
   const soon = '<div class="val soon">'+T[LANG].soon+'</div>';
   $('side').innerHTML =
     '<h2 class="cName">'+esc(cname)+'</h2>'
-    +'<div class="cRegion"><i class="dot" style="background:'+col+';margin-right:6px;vertical-align:1px"></i>'+RNAME[LANG][reg]+'</div>'
+    +'<div class="cRegion"><i class="dot" style="background:'+col+';margin-right:6px;vertical-align:1px"></i>'+RNAME[LANG][reg]
+      +' · <span class="rstat '+restoreStatus(name).c+'">'+restoreStatus(name).t+'</span>'
+      +' <span style="color:var(--t3)">· 전국 복원 '+REST_DONE+'/87</span></div>'
     +'<div class="imgbox"'+(img?(' style="background-image:url(\''+img+'\')"'):'')+'>'+(img?'':T[LANG].img)+'</div>'
     + gongmoHtml(name)
     +(d.so?('<div class="lab">'+T[LANG].place+'</div><div class="val">'+esc(d.so)+'</div>'):'')
@@ -277,6 +310,7 @@ function renderCity(c){
     +'<div class="lab">'+T[LANG].media+'</div>'+(media?'<div class="val">'+esc(media)+'</div>':soon)
     +'<div class="lab">'+T[LANG].imagine+'</div>'+(imagine?'<div class="val">'+esc(imagine)+'</div>':soon)
     + exHtml(name)
+    + communityHtml(name)
     + pitchHtml(name);
 }
 
