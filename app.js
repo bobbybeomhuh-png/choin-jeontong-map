@@ -92,16 +92,21 @@ function communityHtml(region){
   var report = (typeof LINKS!=='undefined' && LINKS.tally_report)
     ? LINKS.tally_report+'?region='+encodeURIComponent(region)
     : reqCompose(region, region+' 내 동네 알리미(복원 제보)', '');
-  var h = '<div class="lab" style="color:#a9803a">'+(t?'Leave a note':'우리 동네 자랑')+'</div>';
+  // ① 우리 동네 자랑 — 가벼운 감상 한 줄 (곧 벽에 다 같이 보임 · 이메일 없음)
+  var h = '<div class="lab" style="color:#a9803a">'+(t?'Say hi (a quick note)':'우리 동네 자랑 · 한마디')+'</div>';
+  h += '<div style="font-size:12px;color:var(--t3);line-height:1.5;margin:-2px 0 7px">'
+     + (t?'A quick line about this place — no email, just say hi. Everyone\'s notes will soon show up on the map together.'
+         :'이 동네 보고 느낀 걸 가볍게 한 줄. 이메일 없이 툭 남기면 돼요. 남긴 자랑은 곧 지도 위에 다 같이 보여요.')+'</div>';
   h += '<a class="notebtn" href="'+brag+'" target="_blank" rel="noopener">✎ '
-     + (t?('Say something about '+region):(region+'에 한마디 남기기'))+'</a>';
-  h += '<div class="pitch" style="margin-top:14px;border-color:#e6d3b0;background:#fbf5ea">'
-     + '<div class="ph">'+(t?'Tell us your local heritage':'내 동네 알리미')+'</div>'
-     + '<div class="ps">'+(t?'Suggest a tradition worth restoring. Monthly picks receive official K-pop artist goods.'
-            :'되살리면 좋을 우리 동네 전통·이야기를 알려주세요. 매달 좋은 제보를 뽑아 인기 K-pop 아티스트 공식 굿즈를 선물로 보내드립니다.')+'</div>'
-     + '<a class="pbtn main" href="'+report+'" target="_blank" rel="noopener">✉ '+(t?'Submit':'내 동네 알리기')+'</a>'
+     + (t?('Leave a quick note on '+region):(region+' 자랑 한마디'))+'</a>';
+  // ② 내 동네 알리미 — 지도에 없는 숨은 소재 제보 (우리가 되살림 · 굿즈 · 이메일)
+  h += '<div class="pitch" style="margin-top:16px;border-color:#e6d3b0;background:#fbf5ea">'
+     + '<div class="ph">'+(t?'Tip us a hidden heritage':'내 동네 알리미 · 숨은 소재 제보')+'</div>'
+     + '<div class="ps">'+(t?'Know a local tradition or artifact not yet on this map? Tell us — we\'ll go find it and revive it as media art. Monthly picks receive official K-pop artist goods.'
+            :'지도에 아직 없는 우리 동네 숨은 유물·전통·이야기가 있나요? 알려주시면 우리가 직접 찾아가 미디어아트로 되살립니다. 매달 좋은 제보를 뽑아 인기 K-pop 아티스트 공식 굿즈를 선물로 보내드립니다.')+'</div>'
+     + '<a class="pbtn main" href="'+report+'" target="_blank" rel="noopener">📮 '+(t?'Send a tip':(region+' 제보하기'))+'</a>'
      + '<div style="font-size:11px;color:var(--t3);margin-top:8px;line-height:1.5">'
-     + (t?'':'채택되어 경품 발송이 필요한 경우에 한해 주소·연락처를 요청할 수 있으며, 그 외 용도로는 절대 사용하지 않습니다.')+'</div></div>';
+     + (t?'Contact info is requested only if a tip is selected and a gift needs shipping — never used for anything else.':'채택되어 경품 발송이 필요한 경우에 한해 주소·연락처를 요청할 수 있으며, 그 외 용도로는 절대 사용하지 않습니다.')+'</div></div>';
   return h;
 }
 // 공개 접점: "우리 IP로 이 지역 전통을 미디어아트로 만들고 싶으면 연락." 기관 리스트는 웹에 없음(자산=노션).
