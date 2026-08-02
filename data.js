@@ -4,8 +4,8 @@ const LINKS = {
   choin:    "https://www.youtube.com/@choincreativelab",     // 유물복원단(무이) 유튜브
   foodie:   "https://www.youtube.com/@muuifoodie",           // 대령숙수 유튜브
   muui:     "https://heroic-sunburst-de7638.netlify.app/",   // 무이 공식 사이트(Netlify 배포)
-  tally_report: "",   // ★'내 동네 알리미'(제보) Tally 폼 링크 — 넣으면 자동 연결(비면 메일로 대체)
-  tally_brag:   ""    // ★'우리 동네 자랑'(한마디) Tally 폼 링크 — 넣으면 자동 연결(비면 메일로 대체)
+  tally_report: "https://tally.so/r/RG1p7K",   // '내 동네 알리미'(제보) Tally 폼
+  tally_brag:   ""    // ★'우리 동네 자랑'(한마디) Tally 폼 링크 — 만들면 여기 넣기(비면 메일로 대체)
 };
 
 // ===== UI 문구 (한/영) =====
