@@ -117,7 +117,7 @@ function loadRecent(){
 // ── 다음 복원지 투표 ──────────────────────────────
 function voteHtml(region){
   return '<div class="votebox">'
-    + '<div class="vq">'+(_en()?'Vote: restore this next?':'다음 복원지 투표')+'</div>'
+    + '<div class="vq"><img src="muui_avatar.png" class="v-ava" alt="무이">'+(_en()?'Vote: restore this next?':'다음 복원지 투표')+'</div>'
     + '<div class="vs">'+(_en()?('Want Muui to revive '+region+' next? Tap to vote.'):('무이가 다음에 '+region+'을(를) 복원했으면 좋겠다면 눌러주세요.'))+'</div>'
     + '<button class="vbtn" id="vbtn" onclick="voteRegion()">🗳 '+(_en()?'Vote for this region':'이 지역에 투표')+' <span id="vcount"></span></button>'
     + '</div>';
