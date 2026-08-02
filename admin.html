@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>초인 지도 · 관리자 통계</title>
+<style>
+:root{--bg:#f3ece0;--panel:#fbf7ef;--ink:#3b3326;--t2:#6f6553;--t3:#a39880;--line:#e2d8c4;--gold:#a9803a;--teal:#1d8a6a;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Pretendard',-apple-system,system-ui,sans-serif;line-height:1.6;}
+.wrap{max-width:900px;margin:0 auto;padding:26px 18px 60px;}
+h1{font-size:22px;margin:0 0 2px;}
+.sub{color:var(--t3);font-size:13px;margin-bottom:22px;}
+#gate{max-width:340px;margin:80px auto;text-align:center;}
+#gate input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:15px;margin:10px 0;}
+#gate button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--ink);color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:26px;}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+.card b{display:block;font-size:28px;font-weight:800;line-height:1.1;}
+.card span{font-size:12px;color:var(--t2);}
+.sec{margin-bottom:30px;}
+.sec h2{font-size:15px;margin:0 0 12px;color:var(--gold);letter-spacing:.5px;}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px;}
+.bar .lab{flex:0 0 130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar .track{flex:1;background:#eae0cc;border-radius:6px;height:20px;position:relative;overflow:hidden;}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal);border-radius:6px;}
+.bar .num{flex:0 0 44px;text-align:right;font-weight:700;color:var(--t2);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);}
+th{color:var(--t3);font-weight:600;}
+.muted{color:var(--t3);font-size:13px;}
+.reload{float:right;font-size:12px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--t2);}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>초인 지도 · 관리자</h1>
+  <p class="muted">비밀번호를 입력하세요</p>
+  <input id="pw" type="password" placeholder="비밀번호" autofocus onkeydown="if(event.key==='Enter')tryUnlock()">
+  <button onclick="tryUnlock()">들어가기</button>
+  <p id="gerr" class="muted" style="color:#b5476f;min-height:16px"></p>
+</div>
+
+<div class="wrap" id="dash" hidden>
+  <button class="reload" onclick="load()">↻ 새로고침</button>
+  <h1>방문자 통계</h1>
+  <div class="sub" id="updated">불러오는 중…</div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="sec">
+    <h2>인기 지역 TOP 12</h2>
+    <div id="regions"><p class="muted">…</p></div>
+  </div>
+
+  <div class="sec">
+    <h2>최근 14일 방문 흐름</h2>
+    <div id="daily"><p class="muted">…</p></div>
+  </div>
+
+  <div class="sec">
+    <h2>최근 활동 30건</h2>
+    <table><thead><tr><th>시각</th><th>행동</th><th>내용</th></tr></thead><tbody id="recent"></tbody></table>
+  </div>
+</div>
+
+<script>
+// publishable 키(공개 안전) · events는 개인정보 없음
+var SUPA_URL='https://moavztygngbafhxztghx.supabase.co';
+var SUPA_KEY='sb_publishable_9D-u0PH9oM0jSRoJmfGfZQ_q5t3DldZ';
+var _H={apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY};
+// ★비밀번호 (여기 문자열만 바꾸면 변경됨)
+var ADMIN_PW='choin2626';
+
+function tryUnlock(){
+  var v=document.getElementById('pw').value;
+  if(v===ADMIN_PW){
+    try{ sessionStorage.setItem('choin_admin','1'); }catch(e){}
+    document.getElementById('gate').hidden=true;
+    document.getElementById('dash').hidden=false;
+    load();
+  } else {
+    document.getElementById('gerr').textContent='비밀번호가 틀렸어요.';
+  }
+}
+try{ if(sessionStorage.getItem('choin_admin')==='1'){ document.getElementById('gate').hidden=true; document.getElementById('dash').hidden=false; } }catch(e){}
+
+var LABELS={visit:'방문',region:'지역 클릭',video:'영상 클릭',discord:'디코 클릭',vote:'투표',subscribe:'구독',view:'전체·자랑 보기'};
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ago(iso){var s=(Date.now()-new Date(iso).getTime())/1000;if(s<60)return'방금';if(s<3600)return Math.floor(s/60)+'분 전';if(s<86400)return Math.floor(s/3600)+'시간 전';return Math.floor(s/86400)+'일 전';}
+
+async function load(){
+  var el=function(id){return document.getElementById(id);};
+  el('updated').textContent='불러오는 중…';
+  var rows;
+  try{
+    rows=await fetch(SUPA_URL+'/rest/v1/events?select=type,detail,created_at&order=created_at.desc&limit=20000',{headers:_H}).then(function(r){return r.ok?r.json():Promise.reject(r.status);});
+  }catch(e){
+    el('updated').textContent='데이터를 불러오지 못했어요. (events 테이블/읽기 정책 확인)';
+    return;
+  }
+  if(!rows.length){ el('updated').textContent='아직 데이터가 없어요. 사이트에 방문·클릭이 쌓이면 여기 나옵니다.'; el('cards').innerHTML=''; el('regions').innerHTML=''; el('daily').innerHTML=''; el('recent').innerHTML=''; return; }
+
+  el('updated').textContent='업데이트: 방금 · 총 '+rows.length.toLocaleString()+'건 기록';
+
+  // 카드: 행동별 합계
+  var by={}; rows.forEach(function(r){ by[r.type]=(by[r.type]||0)+1; });
+  var order=['visit','region','video','discord','vote','subscribe','view'];
+  el('cards').innerHTML=order.map(function(t){ return '<div class="card"><b>'+(by[t]||0).toLocaleString()+'</b><span>'+(LABELS[t]||t)+'</span></div>'; }).join('');
+
+  // 인기 지역
+  var reg={}; rows.forEach(function(r){ if(r.type==='region'&&r.detail){ reg[r.detail]=(reg[r.detail]||0)+1; } });
+  var regArr=Object.keys(reg).map(function(k){return[k,reg[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,12);
+  var max=regArr.length?regArr[0][1]:1;
+  el('regions').innerHTML=regArr.length?regArr.map(function(x){return '<div class="bar"><div class="lab">'+esc(x[0])+'</div><div class="track"><div class="fill" style="width:'+Math.round(x[1]/max*100)+'%"></div></div><div class="num">'+x[1]+'</div></div>';}).join(''):'<p class="muted">아직 지역 클릭이 없어요.</p>';
+
+  // 최근 14일 방문
+  var days={}; for(var i=13;i>=0;i--){ var d=new Date(Date.now()-i*86400000).toISOString().slice(0,10); days[d]=0; }
+  rows.forEach(function(r){ if(r.type==='visit'){ var d=(r.created_at||'').slice(0,10); if(d in days) days[d]++; } });
+  var dk=Object.keys(days); var dmax=Math.max(1,Math.max.apply(null,dk.map(function(d){return days[d];})));
+  el('daily').innerHTML=dk.map(function(d){return '<div class="bar"><div class="lab">'+d.slice(5)+'</div><div class="track"><div class="fill" style="width:'+Math.round(days[d]/dmax*100)+'%;background:var(--gold)"></div></div><div class="num">'+days[d]+'</div></div>';}).join('');
+
+  // 최근 활동
+  el('recent').innerHTML=rows.slice(0,30).map(function(r){return '<tr><td>'+ago(r.created_at)+'</td><td>'+(LABELS[r.type]||esc(r.type))+'</td><td>'+esc(r.detail||'')+'</td></tr>';}).join('');
+}
+if(!document.getElementById('dash').hidden) load();
+</script>
+</body>
+</html>
