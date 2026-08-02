@@ -33,6 +33,18 @@ function wallHtml(region){
     + '</div>';
 }
 
+// 포스트잇 색 팔레트 [배경, 테두리, 압정색]
+var _PAL = [
+  ['#fff7c0','#f0e28f','#c0392b'], // 노랑
+  ['#ffdbe6','#f4b8cb','#d81b60'], // 분홍
+  ['#d3e9ff','#a9cdf0','#1565c0'], // 파랑
+  ['#d8f5cf','#aede9f','#2e7d32'], // 초록
+  ['#ffe4bf','#f3c58a','#e65100'], // 주황
+  ['#e9dcff','#ccb3f0','#6a1b9a'], // 보라
+  ['#ccf5ec','#9fe0d2','#00897b']  // 민트
+];
+function _hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
+
 function _renderNotes(rows){
   var el = document.getElementById('wlist'); if(!el) return;
   if(!rows || !rows.length){
@@ -44,8 +56,15 @@ function _renderNotes(rows){
   var anon = _en() ? 'anon' : '익명';
   el.innerHTML = rows.map(function(r){
     var nm = r.name ? esc(r.name) : anon;
-    return '<div class="wnote"><div class="wmsg">'+esc(r.message)+'</div>'
-      + '<div class="wmeta">'+nm+' · '+_ago(r.created_at)+'</div></div>';
+    var h = _hash((r.message||'') + (r.created_at||''));
+    var p = _PAL[h % _PAL.length];
+    var rot = ((h >> 3) % 7) - 3;          // -3~+3도 기울기
+    var mt  = (h >> 5) % 10;               // 0~9px 위아래 어긋남
+    var st  = 'background:'+p[0]+';border-color:'+p[1]+';transform:rotate('+rot+'deg);margin-top:'+(7+mt)+'px';
+    return '<div class="wnote" style="'+st+'">'
+      + '<span class="wpin" style="background-color:'+p[2]+'"></span>'
+      + '<div class="wmsg">'+esc(r.message)+'</div>'
+      + '<div class="wmeta" style="color:'+p[2]+'">'+nm+' · '+_ago(r.created_at)+'</div></div>';
   }).join('');
 }
 

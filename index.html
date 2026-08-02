@@ -126,10 +126,12 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .wrow input{flex:1;min-width:0;box-sizing:border-box;border:1px solid #e3d6bd;border-radius:7px;padding:7px 9px;font:inherit;font-size:13px;background:#fff;}
 .wsend{white-space:nowrap;border:0;border-radius:7px;padding:7px 16px;background:#a9803a;color:#fff;font-weight:600;font-size:13px;cursor:pointer;}
 .wsend:hover{background:#956f2f;}.wsend:disabled{opacity:.6;cursor:default;}
-.wlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-.wnote{background:#fff7dc;border:1px solid #f0e2a8;border-radius:8px;padding:9px 11px;max-width:100%;box-shadow:0 1px 3px rgba(120,100,40,.10);}
-.wnote .wmsg{font-size:13px;line-height:1.45;color:#4a3f22;word-break:break-word;white-space:pre-wrap;}
-.wnote .wmeta{font-size:11px;color:#a98f52;margin-top:5px;}
+.wlist{display:flex;flex-wrap:wrap;align-items:flex-start;gap:11px 10px;margin-top:14px;padding-top:4px;}
+.wnote{position:relative;border:1px solid;border-radius:8px;padding:13px 13px 9px;max-width:190px;min-width:96px;box-shadow:2px 3px 7px rgba(90,70,20,.16);transition:transform .13s,box-shadow .13s;}
+.wnote:hover{transform:rotate(0deg) scale(1.05)!important;box-shadow:3px 5px 12px rgba(90,70,20,.24);z-index:3;}
+.wpin{position:absolute;top:-5px;left:50%;margin-left:-5px;width:10px;height:10px;border-radius:50%;box-shadow:0 1px 2px rgba(0,0,0,.35);background-image:radial-gradient(circle at 34% 30%,rgba(255,255,255,.7),rgba(255,255,255,0) 55%);}
+.wnote .wmsg{font-size:13px;line-height:1.45;color:#40381f;word-break:break-word;white-space:pre-wrap;}
+.wnote .wmeta{font-size:11px;margin-top:6px;font-weight:600;opacity:.9;}
 .wempty{font-size:12.5px;color:var(--t3);padding:6px 2px;}
 .golist{display:flex;flex-direction:column;gap:5px;margin-bottom:6px;}
 .gorow{display:flex;gap:8px;align-items:baseline;text-decoration:none;padding:7px 9px;border:1px solid var(--line2);border-radius:9px;background:#fff;}
@@ -206,7 +208,7 @@ circle.city{cursor:pointer;}
 <script src="gongmo.js?v=2"></script>
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
-<script src="supa.js?v=1"></script>
+<script src="supa.js?v=2"></script>
 <script src="app.js?v=32"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
