@@ -154,6 +154,27 @@ function voteHtml(region){
     + '</div>';
 }
 function _voted(region){ try{ return localStorage.getItem('voted_'+region)==='1'; }catch(e){ return false; } }
+// 전체 투표 집계 → 지도 카드 TOP + 도시 라벨 뱃지(window._VOTES)
+function loadVoteRanks(){
+  if(typeof SUPA_URL==='undefined') return;
+  fetch(SUPA_URL+'/rest/v1/votes?select=region', {headers:_SH})
+    .then(function(r){ return r.ok?r.json():[]; })
+    .then(function(rows){
+      var m={}; rows.forEach(function(x){ if(x.region) m[x.region]=(m[x.region]||0)+1; });
+      window._VOTES=m;
+      if(window._relabel) window._relabel();               // 지도 라벨에 🗳 뱃지
+      var el=document.getElementById('mcVotes'); if(!el) return;
+      var arr=Object.keys(m).map(function(k){return[k,m[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+      var lab=document.getElementById('mcVoteLab');
+      if(!arr.length){ if(lab) lab.style.display='none'; el.innerHTML=''; return; }
+      if(lab) lab.style.display='';
+      el.innerHTML=arr.map(function(x,i){
+        return '<button class="mc-note" data-region="'+esc(x[0])+'"><div class="m"><b>'+(i+1)+'.</b> '+esc(x[0])+'</div><div class="r">🗳 '+x[1]+'표</div></button>';
+      }).join('');
+      Array.prototype.forEach.call(el.querySelectorAll('.mc-note'),function(b){ b.onclick=function(){ if(window._gotoRegion) _gotoRegion(b.getAttribute('data-region')); }; });
+    }).catch(function(){});
+}
+
 function loadVotes(region){
   if(typeof SUPA_URL==='undefined') return;
   var btn=document.getElementById('vbtn'), cs=document.getElementById('vcount');

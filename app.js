@@ -284,6 +284,7 @@ window.setView=setView;
 $('brand').addEventListener('click', function(e){ e.preventDefault(); setView('map'); if(window.homeView) homeView(500); window.scrollTo(0,0); });
 $('lf-choin').href = LINKS.choin;    // 푸터 = 초인 유튜브
 if($('mcDiscord') && LINKS.discord) $('mcDiscord').href = LINKS.discord;  // 지도 카드 디스코드
+if($('lf-class') && LINKS.class101) $('lf-class').href = LINKS.class101;  // 푸터 강의(클래스101)
 if($('tab-muui')) $('tab-muui').href = LINKS.choin;   // 무이 유물단 채널
 if($('tab-suksu')) $('tab-suksu').href = LINKS.foodie; // 대령숙수 채널
 
@@ -416,7 +417,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
       .attr('font-weight',c=>c===CUR?'700':'400')
       .attr('font-size',c=>c===CUR?'13px':'10px')
       .attr('fill',c=>c===CUR?RC[c[1]]:'#3b3326')
-      .text(c=>nameOf(c[0]));
+      .text(function(c){ var v=(window._VOTES||{})[c[0]]; return nameOf(c[0]) + (v?(' 🗳'+v):''); });
   };
   window._relabel();
 
@@ -436,6 +437,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   };
   window.homeView();
   if(window.loadRecent) loadRecent();   // 왼쪽 카드: 통계 + 최근 자랑
+  if(window.loadVoteRanks) loadVoteRanks();   // 투표 TOP + 지도 라벨 뱃지
   try { renderCity(CUR); }
   catch(e){ console.error('renderCity 오류', e); }   // 패널 오류가 지도를 지우지 않게 격리
 }).catch(e=>{
