@@ -222,6 +222,10 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .gok.k-공모{background:#f3e0e8;color:#a03a63;}
 .gok.k-발주{background:#e6f2eb;color:#2c6b54;}
 .gok.k-지원사업{background:#e7eef6;color:#2f6db5;}
+.gochips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.gochip{border:1px solid var(--line2);background:#fff;color:var(--t2);border-radius:999px;padding:6px 15px;font:inherit;font-size:12.5px;cursor:pointer;transition:.15s;}
+.gochip.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+.gochip:hover{border-color:var(--ink);}
 .cta{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
 .cta .h{font-family:var(--serif);font-size:14px;color:var(--t3);margin-bottom:10px;}
 .cta a{display:block;text-decoration:none;padding:12px 16px;border-radius:11px;margin-bottom:9px;font-size:14px;}
@@ -271,7 +275,7 @@ circle.city{cursor:pointer;}
    <a class="chtab" id="tab-suksu" href="#" target="_blank" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
  </nav>
  <div class="spacer"></div>
- <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button><button id="vboard" onclick="setView('board')">✎ 자랑 모음</button></div>
+ <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vcalls" onclick="setView('calls')">📋 공모·공고</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button><button id="vboard" onclick="setView('board')">✎ 자랑 모음</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 <div class="legend" id="legend"></div>
@@ -292,6 +296,7 @@ circle.city{cursor:pointer;}
  <aside id="side"></aside>
 </div>
 <div id="grid" class="grid"></div>
+<div id="calls" class="board" style="display:none"></div>
 <div id="board" class="board" style="display:none"></div>
 <!-- ▼ 광고 자리(나중에 사용): AdSense/애드핏 승인 후 아래 div 안에 광고 스니펫만 붙이면 됨.
      지금은 비어 있어 아무것도 안 보임. 트래픽 붙은 뒤 활성화 권장.
@@ -317,7 +322,7 @@ circle.city{cursor:pointer;}
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
 <script src="supa.js?v=13"></script>
-<script src="app.js?v=42"></script>
+<script src="app.js?v=43"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
    이미 SW가 박힌 브라우저도 이 스크립트가 자동으로 해제·정리·1회 새로고침해 스스로 복구. */

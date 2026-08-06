@@ -252,15 +252,50 @@ function regionContactsHtml(c){
 
 // 전체보기 그리드 (한번에 보기) — 권역별 도시 카드
 function setView(v){
-  const isGrid=v==='grid', isBoard=v==='board', isMap=!isGrid&&!isBoard;
+  const isGrid=v==='grid', isBoard=v==='board', isCalls=v==='calls', isMap=!isGrid&&!isBoard&&!isCalls;
   document.querySelector('.wrap').style.display = isMap?'flex':'none';
   $('grid').style.display = isGrid?'flex':'none';
   const bd=$('board'); if(bd) bd.style.display = isBoard?'block':'none';
+  const cl=$('calls'); if(cl) cl.style.display = isCalls?'block':'none';
   $('vmap').classList.toggle('on',isMap); $('vgrid').classList.toggle('on',isGrid);
   const vb=$('vboard'); if(vb) vb.classList.toggle('on',isBoard);
+  const vc=$('vcalls'); if(vc) vc.classList.toggle('on',isCalls);
   if(isGrid){ renderGrid(); if(window.logEvent) logEvent('view','grid'); }
   if(isBoard){ if(window.loadBoard) loadBoard(); if(window.logEvent) logEvent('view','board'); }
+  if(isCalls){ renderCalls(); if(window.logEvent) logEvent('view','calls'); }
 }
+// ── 공모 종합 게시판(독립 뷰) ── 지역 클릭(gongmoHtml)과 같은 GONGMO 데이터·같은 gongmoRows를
+//    쓴다 → 밤샘 수집이 갱신되면 지역 개별 뷰와 종합 게시판이 동시에 갱신(유기연결).
+var CALLS_FILTER='';   // ''=전체, '공모'/'발주'/'지원사업'
+function renderCalls(){
+  var box=$('calls'); if(!box) return;
+  var t=(LANG==='en');
+  if(typeof GONGMO==='undefined'){ box.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(t?'Open Calls':'공모·공고')+'</h2><p>'+(t?'Coming soon.':'준비 중입니다.')+'</p></div></div>'; return; }
+  var order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
+  function pass(g){ return !CALLS_FILTER || g.k===CALLS_FILTER; }
+  var nat=[], byGwon={}, seen={};
+  (GONGMO['전국']||[]).forEach(function(g){ if(!seen[g.t]&&pass(g)){seen[g.t]=1; nat.push(g);} });
+  function add(arr, gwon){ (arr||[]).forEach(function(g){ if(seen[g.t]||!pass(g)) return; seen[g.t]=1; (byGwon[gwon]=byGwon[gwon]||[]).push(g); }); }
+  Object.keys(GONGMO).forEach(function(key){ if(key!=='전국'&&CITY_GWON[key]) add(GONGMO[key], CITY_GWON[key]); }); // 지역명(구체) 우선
+  Object.keys(GONGMO).forEach(function(key){ if(key!=='전국'&&!CITY_GWON[key]&&order.indexOf(key)>=0) add(GONGMO[key], key); }); // 권역명
+  function sortD(a,b){return (a.d===''?1:0)-(b.d===''?1:0) || (a.d<b.d?-1:a.d>b.d?1:0);}
+  nat.sort(sortD);
+  var total=nat.length; order.forEach(function(g){ if(byGwon[g]) total+=byGwon[g].length; });
+  var chips=[['',t?'All':'전체'],['공모',t?'Calls':'공모'],['지원사업',t?'Grants':'지원사업'],['발주',t?'Tenders':'발주']]
+    .map(function(c){return '<button class="gochip'+(CALLS_FILTER===c[0]?' on':'')+'" onclick="CALLS_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
+  var h='<div class="bwrap"><div class="bhead"><h2>'+(t?'Traditional-Culture Open Calls':'전통문화 공모·공고')+'</h2>'
+    +'<p>'+(t?'Nationwide calls, grants and tenders — updated daily. Click a region on the map for that region only.':'전국 전통문화 공모·지원·발주를 매일 자동 수집합니다. 지도에서 지역을 누르면 그 지역만 볼 수 있습니다.')+' · '+total+(t?' open':'건')+'</p>'
+    +'<div class="gochips">'+chips+'</div></div>';
+  if(nat.length){
+    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">🌐 '+(t?'National · anyone':'전국 · 누구나')+'<span>'+nat.length+'</span></div><div class="golist">'+gongmoRows(nat, nat.length)+'</div></div>';
+  }
+  order.forEach(function(g){ var list=byGwon[g]; if(!list||!list.length) return; list.sort(sortD);
+    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">'+((typeof RNAME!=='undefined'&&RNAME[LANG]&&RNAME[LANG][g])||g)+' '+(t?'region':'지역')+'<span>'+list.length+'</span></div><div class="golist">'+gongmoRows(list, list.length)+'</div></div>';
+  });
+  if(total===0) h+='<p style="color:var(--t3)">'+(t?'No open calls in this filter.':'해당 조건의 공모가 없습니다.')+'</p>';
+  box.innerHTML=h+'</div>';
+}
+window.renderCalls=renderCalls;
 function renderGrid(){
   const order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
   const byReg={}; CITIES.forEach(c=>{(byReg[c[1]]=byReg[c[1]]||[]).push(c);});
