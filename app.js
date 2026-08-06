@@ -281,7 +281,7 @@ function renderCalls(){
   function sortD(a,b){return (a.d===''?1:0)-(b.d===''?1:0) || (a.d<b.d?-1:a.d>b.d?1:0);}
   nat.sort(sortD);
   var total=nat.length; order.forEach(function(g){ if(byGwon[g]) total+=byGwon[g].length; });
-  var chips=[['',t?'All':'전체'],['공모',t?'Calls':'공모'],['지원사업',t?'Grants':'지원사업'],['발주',t?'Tenders':'발주']]
+  var chips=[['',t?'All':'전체'],['공모전',t?'Calls':'공모전'],['지원사업',t?'Grants':'지원사업'],['발주',t?'Tenders':'발주'],['레지던시',t?'Residency':'레지던시'],['교육·체험',t?'Programs':'교육·체험']]
     .map(function(c){return '<button class="gochip'+(CALLS_FILTER===c[0]?' on':'')+'" onclick="CALLS_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var h='<div class="bwrap"><div class="bhead"><h2>'+(t?'Traditional-Culture Open Calls':'전통문화 공모·공고')+'</h2>'
     +'<p>'+(t?'Nationwide calls, grants and tenders — updated daily. Click a region on the map for that region only.':'전국 전통문화 공모·지원·발주를 매일 자동 수집합니다. 지도에서 지역을 누르면 그 지역만 볼 수 있습니다.')+' · '+total+(t?' open':'건')+'</p>'
