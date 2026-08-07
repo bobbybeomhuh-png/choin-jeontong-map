@@ -269,12 +269,13 @@ function setView(v){
 //    쓴다 → 밤샘 수집이 갱신되면 지역 개별 뷰와 종합 게시판이 동시에 갱신(유기연결).
 var CALLS_FILTER='';   // 유형 필터(공모전/지원사업/발주/레지던시/교육·체험)
 var FIELD_FILTER='';   // 분야 필터(공예/국악/서예/회화·미술/미디어아트/문학/무용/축제/전통·문화일반)
+var GROUP_FILTER='';   // 성격 대분류 필터(🎬미디어·기술/🎨전통예술·공예/🎪문화·행사·교육)
 function renderCalls(){
   var box=$('calls'); if(!box) return;
   var t=(LANG==='en');
   if(typeof GONGMO==='undefined'){ box.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(t?'Open Calls':'공모·공고')+'</h2><p>'+(t?'Coming soon.':'준비 중입니다.')+'</p></div></div>'; return; }
   var order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
-  function pass(g){ return (!CALLS_FILTER||g.k===CALLS_FILTER) && (!FIELD_FILTER||g.f===FIELD_FILTER); }
+  function pass(g){ return (!GROUP_FILTER||g.g===GROUP_FILTER) && (!CALLS_FILTER||g.k===CALLS_FILTER) && (!FIELD_FILTER||g.f===FIELD_FILTER); }
   function gwonRank(g){var i=order.indexOf(g);return i<0?98:i;}
   var nat=[], groups={}, seen={};   // groups: 키=시군명 또는 광역명, 값={gwon,list}
   (GONGMO['전국']||[]).forEach(function(g){ if(!seen[g.t]&&pass(g)){seen[g.t]=1; nat.push(g);} });
@@ -290,6 +291,8 @@ function renderCalls(){
     var aw=(a===groups[a].gwon), bw=(b===groups[b].gwon); if(aw!==bw) return aw?-1:1;
     return groups[b].list.length-groups[a].list.length; });
   var total=nat.length; names.forEach(function(k){ total+=groups[k].list.length; });
+  var GROUPS=[['',t?'All':'전체 성격'],['🎬 미디어·기술','🎬 미디어·기술'],['🎨 전통예술·공예','🎨 전통예술·공예'],['🎪 문화·행사·교육','🎪 문화·행사·교육']];
+  var gchips=GROUPS.map(function(c){return '<button class="gochip'+(GROUP_FILTER===c[0]?' on':'')+'" onclick="GROUP_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var chips=[['',t?'All':'전체'],['공모전',t?'Calls':'공모전'],['지원사업',t?'Grants':'지원사업'],['발주',t?'Tenders':'발주'],['레지던시',t?'Residency':'레지던시'],['교육·체험',t?'Programs':'교육·체험']]
     .map(function(c){return '<button class="gochip'+(CALLS_FILTER===c[0]?' on':'')+'" onclick="CALLS_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var FIELDS=['공예','국악·음악','서예·문인화','회화·미술','미디어아트·영상','문학·스토리','무용·연희','축제·행사','전통·문화일반'];
@@ -297,6 +300,7 @@ function renderCalls(){
     .map(function(c){return '<button class="gochip fchip'+(FIELD_FILTER===c[0]?' on':'')+'" onclick="FIELD_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var h='<div class="bwrap"><div class="bhead"><h2>'+(t?'Traditional-Culture Open Calls':'전통문화 공모·공고')+'</h2>'
     +'<p>'+(t?'Nationwide calls, grants and tenders — updated daily. Click a region on the map for that region only.':'전국 전통문화 공모·지원·발주를 매일 자동 수집합니다. 지도에서 지역을 누르면 그 지역만 볼 수 있습니다.')+' · '+total+(t?' open':'건')+'</p>'
+    +'<div class="gochips" style="font-weight:700">'+gchips+'</div>'
     +'<div class="gochips">'+chips+'</div>'
     +'<div class="gochips ffilter">'+fchips+'</div></div>';
   if(nat.length){
