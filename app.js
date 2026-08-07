@@ -275,14 +275,21 @@ function renderCalls(){
   if(typeof GONGMO==='undefined'){ box.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(t?'Open Calls':'공모·공고')+'</h2><p>'+(t?'Coming soon.':'준비 중입니다.')+'</p></div></div>'; return; }
   var order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
   function pass(g){ return (!CALLS_FILTER||g.k===CALLS_FILTER) && (!FIELD_FILTER||g.f===FIELD_FILTER); }
-  var nat=[], byGwon={}, seen={};
+  function gwonRank(g){var i=order.indexOf(g);return i<0?98:i;}
+  var nat=[], groups={}, seen={};   // groups: 키=시군명 또는 광역명, 값={gwon,list}
   (GONGMO['전국']||[]).forEach(function(g){ if(!seen[g.t]&&pass(g)){seen[g.t]=1; nat.push(g);} });
-  function add(arr, gwon){ (arr||[]).forEach(function(g){ if(seen[g.t]||!pass(g)) return; seen[g.t]=1; (byGwon[gwon]=byGwon[gwon]||[]).push(g); }); }
-  Object.keys(GONGMO).forEach(function(key){ if(key!=='전국'&&CITY_GWON[key]) add(GONGMO[key], CITY_GWON[key]); }); // 지역명(구체) 우선
-  Object.keys(GONGMO).forEach(function(key){ if(key!=='전국'&&!CITY_GWON[key]&&order.indexOf(key)>=0) add(GONGMO[key], key); }); // 권역명
+  Object.keys(GONGMO).forEach(function(key){ if(key==='전국') return;
+    var gwon=CITY_GWON[key]||key; if(gwonRank(gwon)>=98) return;   // 알 수 없는 키 스킵
+    (GONGMO[key]||[]).forEach(function(g){ if(seen[g.t]||!pass(g)) return; seen[g.t]=1;
+      (groups[key]=groups[key]||{gwon:gwon,list:[]}).list.push(g); }); });
   function sortD(a,b){return (a.d===''?1:0)-(b.d===''?1:0) || (a.d<b.d?-1:a.d>b.d?1:0);}
   nat.sort(sortD);
-  var total=nat.length; order.forEach(function(g){ if(byGwon[g]) total+=byGwon[g].length; });
+  // 권역순 → 같은 권역 안에서 광역(전역) 먼저 → 건수 많은 시군 순
+  var names=Object.keys(groups).sort(function(a,b){
+    var ra=gwonRank(groups[a].gwon), rb=gwonRank(groups[b].gwon); if(ra!==rb) return ra-rb;
+    var aw=(a===groups[a].gwon), bw=(b===groups[b].gwon); if(aw!==bw) return aw?-1:1;
+    return groups[b].list.length-groups[a].list.length; });
+  var total=nat.length; names.forEach(function(k){ total+=groups[k].list.length; });
   var chips=[['',t?'All':'전체'],['공모전',t?'Calls':'공모전'],['지원사업',t?'Grants':'지원사업'],['발주',t?'Tenders':'발주'],['레지던시',t?'Residency':'레지던시'],['교육·체험',t?'Programs':'교육·체험']]
     .map(function(c){return '<button class="gochip'+(CALLS_FILTER===c[0]?' on':'')+'" onclick="CALLS_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var FIELDS=['공예','국악·음악','서예·문인화','회화·미술','미디어아트·영상','문학·스토리','무용·연희','축제·행사','전통·문화일반'];
@@ -295,8 +302,10 @@ function renderCalls(){
   if(nat.length){
     h+='<div class="bregion"><div class="bregtitle" style="cursor:default">🌐 '+(t?'National · anyone':'전국 · 누구나')+'<span>'+nat.length+'</span></div><div class="golist">'+gongmoRows(nat, nat.length)+'</div></div>';
   }
-  order.forEach(function(g){ var list=byGwon[g]; if(!list||!list.length) return; list.sort(sortD);
-    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">'+((typeof RNAME!=='undefined'&&RNAME[LANG]&&RNAME[LANG][g])||g)+' '+(t?'region':'지역')+'<span>'+list.length+'</span></div><div class="golist">'+gongmoRows(list, list.length)+'</div></div>';
+  names.forEach(function(k){ var list=groups[k].list; if(!list.length) return; list.sort(sortD);
+    var isWide=(k===groups[k].gwon);
+    var nm=((typeof RNAME!=='undefined'&&RNAME[LANG]&&RNAME[LANG][k])||k)+(isWide?(t?' · region-wide':' 전역'):'');
+    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">'+nm+'<span>'+list.length+'</span></div><div class="golist">'+gongmoRows(list, list.length)+'</div></div>';
   });
   if(total===0) h+='<p style="color:var(--t3)">'+(t?'No open calls in this filter.':'해당 조건의 공모가 없습니다.')+'</p>';
   box.innerHTML=h+'</div>';
