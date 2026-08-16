@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전통스토리지도 — 리디자인</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#f4ecda; --bg2:#efe6d2; --land:#e7dcc0; --land2:#ddceac; --stroke:#cabb95;
+ --ink:#3a3226; --t2:#6f6452; --t3:#a3977c; --gold:#a9803a; --goldd:#8c6829;
+ --red:#b23a2b; --line:rgba(58,50,38,.14);
+ --serif:'Nanum Myeongjo',serif; --sans:-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden;}
+.serif{font-family:var(--serif);}
+button{font-family:inherit;cursor:pointer;}
+
+/* TOPBAR */
+#top{position:fixed;top:0;left:0;right:0;height:60px;display:flex;align-items:center;gap:18px;padding:0 22px;z-index:30;
+ background:linear-gradient(to bottom,rgba(244,236,218,.97),rgba(244,236,218,.6) 70%,transparent);}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand img{width:36px;height:36px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));}
+.brand .nm{font-family:var(--serif);font-size:19px;font-weight:800;letter-spacing:.5px;}
+.brand .nm small{display:block;font-family:var(--sans);font-size:9.5px;font-weight:400;color:var(--gold);letter-spacing:2px;margin-top:1px;}
+.layers{display:flex;gap:6px;margin-left:8px;}
+.lyr{font-size:13px;font-weight:600;color:var(--t2);background:rgba(58,50,38,.04);border:1px solid var(--line);
+ padding:7px 15px;border-radius:999px;transition:.15s;}
+.lyr:hover{color:var(--ink);border-color:rgba(58,50,38,.3);}
+.lyr.on{background:var(--gold);color:#1a1408;border-color:var(--gold);font-weight:700;}
+.topstats{margin-left:auto;display:flex;gap:22px;align-items:center;}
+.tstat{text-align:right;}
+.tstat b{font-family:var(--serif);font-size:19px;font-weight:800;color:var(--gold);line-height:1;}
+.tstat span{font-size:10px;color:var(--t3);display:block;margin-top:2px;}
+.tcta{font-size:12.5px;font-weight:700;color:#1a1408;background:var(--ink);border:0;padding:9px 16px;border-radius:999px;}
+@media(max-width:880px){.layers{display:none;}.topstats .tstat:nth-child(2){display:none;}}
+
+/* MAP */
+#map{position:absolute;inset:0;}
+#map svg{width:100%;height:100%;display:block;cursor:grab;}
+#map svg:active{cursor:grabbing;}
+.land{fill:var(--land);stroke:var(--stroke);stroke-width:.6px;}
+.city{cursor:pointer;transition:opacity .2s;}
+.city .dot{stroke:rgba(0,0,0,.35);stroke-width:1px;}
+.city .halo{fill:none;opacity:.55;}
+.city .lbl{font-family:var(--serif);font-size:11px;fill:#4a4030;pointer-events:none;text-anchor:middle;paint-order:stroke;stroke:rgba(255,252,244,.92);stroke-width:2.7px;}
+.city:hover .lbl{fill:#1c1710;}
+.city:hover .dot{stroke:#fff;stroke-width:1.6px;}
+@keyframes pulse{0%{transform:scale(1);opacity:.6}70%{transform:scale(2.4);opacity:0}100%{opacity:0}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite;}
+
+/* HINT (bottom-left, minimal) */
+#hint{position:fixed;left:22px;bottom:20px;z-index:20;font-size:12.5px;color:var(--t2);
+ background:rgba(251,247,239,.82);border:1px solid var(--line);padding:9px 14px;border-radius:10px;backdrop-filter:blur(4px);}
+#hint b{color:var(--gold);}
+.legend{position:fixed;left:22px;bottom:64px;z-index:20;display:flex;flex-wrap:wrap;gap:6px 12px;max-width:300px;font-size:11px;color:var(--t2);}
+.legend i{display:inline-flex;align-items:center;gap:5px;font-style:normal;}
+.legend .sw{width:9px;height:9px;border-radius:50%;}
+/* 인사이트 카드 — 마감 임박 공모 */
+#insight{position:fixed;left:30px;top:92px;z-index:20;width:252px;background:rgba(255,255,255,.82);border:1px solid var(--line);
+ border-radius:16px;padding:15px 16px 11px;backdrop-filter:blur(7px);box-shadow:0 10px 30px rgba(90,70,20,.10);}
+#insight .it{font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:var(--gold);margin-bottom:9px;}
+#insight .irow{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);text-decoration:none;}
+#insight .irow:hover .it2{color:var(--gold);}
+#insight .idday{flex:0 0 auto;font-size:10.5px;font-weight:800;color:#1a1408;background:var(--gold);padding:2px 7px;border-radius:6px;}
+#insight .idday.hot{background:var(--red);color:#fff;}
+#insight .it2{font-size:12px;color:var(--ink);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+#insight .iall{display:block;margin-top:10px;font-size:12px;font-weight:700;color:var(--gold);text-decoration:none;}
+@media(max-width:1040px){#insight{display:none;}}
+
+/* PANEL */
+#panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:40;
+ background:linear-gradient(155deg,#fdf9f1,#f6efe0);border-left:1px solid var(--line);
+ box-shadow:-20px 0 60px rgba(90,70,20,.18);transform:translateX(100%);transition:transform .38s cubic-bezier(.4,0,.1,1);
+ overflow-y:auto;overscroll-behavior:contain;}
+#panel.open{transform:translateX(0);}
+.presize{position:absolute;left:0;top:0;width:9px;height:100%;cursor:ew-resize;z-index:5;}
+.presize::before{content:'';position:absolute;left:3px;top:50%;transform:translateY(-50%);width:3px;height:42px;border-radius:3px;background:var(--line);}
+.presize:hover::before{background:var(--gold);}
+.px{padding:22px 24px;}
+.pclose{position:absolute;top:16px;right:18px;width:34px;height:34px;border-radius:50%;background:rgba(255,252,245,.85);
+ border:1px solid var(--line);color:var(--ink);font-size:16px;z-index:2;}
+.phero{position:relative;height:200px;background:#e7dcc0 center/cover no-repeat;}
+.phero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,#fdf9f1,rgba(253,249,241,.03) 58%);}
+.phero .rtag{position:absolute;top:16px;left:20px;z-index:2;font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;color:#1a1408;}
+.pname{position:absolute;left:20px;bottom:14px;z-index:2;}
+.pname h2{font-family:var(--serif);font-size:30px;font-weight:800;color:var(--ink);line-height:1;}
+.pname .en{font-size:12px;color:var(--t2);letter-spacing:1px;margin-top:4px;}
+.concept{font-family:var(--serif);font-size:16px;line-height:1.65;color:var(--ink);border-left:3px solid var(--gold);padding-left:14px;margin:4px 0 6px;}
+.sec{margin-top:22px;}
+.sec .sl{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.sec .sl .n{background:rgba(208,162,78,.16);color:var(--gold);font-size:11px;padding:1px 8px;border-radius:999px;letter-spacing:0;}
+.det{font-size:13px;color:var(--t2);line-height:1.6;}
+.det b{color:var(--ink);font-weight:700;}
+/* works */
+.works{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.work{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:#e7dcc0;cursor:pointer;}
+.work img{width:100%;height:100%;object-fit:cover;transition:.4s;opacity:.92;}
+.work:hover img{transform:scale(1.06);opacity:1;}
+.work .wn{position:absolute;left:0;right:0;bottom:0;padding:16px 10px 8px;font-family:var(--serif);font-size:12.5px;font-weight:700;color:#fff;
+ background:linear-gradient(to top,rgba(10,8,4,.9),transparent);}
+.work .play{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(208,162,78,.9);color:#1a1408;
+ display:flex;align-items:center;justify-content:center;font-size:10px;}
+/* gongmo */
+.gitem{display:block;padding:12px 0;border-bottom:1px solid var(--line);}
+.gitem:last-child{border-bottom:0;}
+.gitem .gt{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.dday{font-size:11px;font-weight:800;padding:3px 9px;border-radius:7px;color:#1a1408;background:var(--gold);}
+.dday.soon{background:var(--red);color:#fff;}
+.dday.open{background:#5a7d4e;color:#fff;}
+.gkind{font-size:10.5px;color:var(--t2);border:1px solid var(--line);padding:1px 7px;border-radius:5px;}
+.gitem h4{font-family:var(--serif);font-size:14px;font-weight:700;color:var(--ink);line-height:1.4;}
+.gitem .gm{font-size:11px;color:var(--t3);margin-top:3px;}
+.pcta{display:flex;gap:8px;margin-top:8px;}
+.pcta a{flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:11px;border-radius:10px;text-decoration:none;}
+.pcta .prim{background:var(--gold);color:#1a1408;}
+.pcta .sec2{background:rgba(58,50,38,.05);color:var(--ink);border:1px solid var(--line);}
+.empty{font-size:12.5px;color:var(--t3);padding:8px 0;}
+
+/* VIEWS (게시판/갤러리/매칭) */
+.view{position:fixed;top:60px;left:0;right:0;bottom:0;z-index:15;overflow-y:auto;background:var(--bg);display:none;padding:24px 34px 70px;}
+.view.on{display:block;}
+.vwrap{max-width:1220px;margin:0 auto;}
+.vhead{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:16px;}
+.vhead h2{font-family:var(--serif);font-size:30px;font-weight:800;line-height:1.1;}
+.vhead h2 b{color:var(--gold);}
+.vhead .vsub{font-size:13px;color:var(--t2);margin-top:5px;}
+.search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;min-width:250px;}
+.search input{border:0;outline:0;font-size:14px;flex:1;background:transparent;color:var(--ink);font-family:inherit;}
+.search svg{width:15px;height:15px;fill:var(--t3);}
+.fbar{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.frow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+.frow .fl{font-size:10.5px;font-weight:700;color:var(--t3);letter-spacing:1px;width:52px;flex:0 0 52px;}
+.chip{font-size:12.5px;font-weight:600;color:var(--t2);background:#fff;border:1px solid var(--line);padding:6px 13px;border-radius:999px;cursor:pointer;transition:.12s;}
+.chip:hover{border-color:var(--gold);color:var(--ink);}
+.chip.on{background:var(--ink);color:#f4ecda;border-color:var(--ink);}
+.chip .c{opacity:.6;font-size:11px;margin-left:3px;}
+/* board */
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:1000px){.board{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.board{grid-template-columns:1fr;}}
+.bcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 17px;display:flex;flex-direction:column;gap:9px;
+ text-decoration:none;color:inherit;transition:.15s;min-height:150px;}
+.bcard:hover{border-color:var(--gold);box-shadow:0 10px 26px rgba(90,70,20,.10);transform:translateY(-2px);}
+.bcard .r1{display:flex;align-items:center;gap:7px;}
+.bcard h4{font-family:var(--serif);font-size:15px;font-weight:700;line-height:1.45;}
+.bcard .r2{display:flex;align-items:center;justify-content:space-between;margin-top:auto;font-size:11.5px;color:var(--t3);padding-top:4px;}
+.regtag{font-size:10.5px;font-weight:700;color:#fff;padding:2px 9px;border-radius:6px;}
+.verify{font-size:10.5px;color:#5a7d4e;font-weight:700;}
+.vcount{font-size:13.5px;color:var(--t2);white-space:nowrap;}
+.vcount b{color:var(--gold);font-family:var(--serif);font-size:17px;}
+.emptybig{text-align:center;color:var(--t3);padding:60px 0;font-size:14px;}
+/* intro overlay */
+#intro{position:fixed;inset:0;z-index:50;background:rgba(244,236,218,.32);display:flex;align-items:flex-end;justify-content:center;
+ pointer-events:none;padding-bottom:12vh;transition:opacity .8s;}
+#intro .box{text-align:center;pointer-events:none;}
+#intro h1{font-family:var(--serif);font-size:clamp(30px,5vw,52px);font-weight:800;color:var(--ink);text-shadow:0 2px 22px rgba(255,250,240,.9);line-height:1.15;}
+#intro p{font-size:14px;color:var(--t2);margin-top:14px;letter-spacing:.5px;}
+</style>
+</head>
+<body>
+
+<div id="top">
+ <a class="brand" href="#"><img src="../logo_full.png" alt="초인"><div class="nm">전통스토리지도<small>CHOIN · HERITAGE MAP</small></div></a>
+ <div class="layers">
+   <button class="lyr on" data-view="map">지도</button>
+   <button class="lyr" data-view="gongmo">공모·공고</button>
+   <button class="lyr" data-view="match">기관·인재</button>
+ </div>
+ <div class="topstats">
+   <div class="tstat"><b>90</b><span>도시</span></div>
+   <div class="tstat"><b id="stGong">—</b><span>열린 공모</span></div>
+   <button class="tcta">기관 협업 →</button>
+ </div>
+</div>
+
+<div id="map"></div>
+<div class="view" id="view-gongmo"></div>
+<div class="view" id="view-match"></div>
+
+<div id="insight"></div>
+<div class="legend" id="legend"></div>
+<div id="hint"><b>지역을 누르면</b> 그곳의 전통·작품·열린 공모가 열립니다 · 스크롤로 확대</div>
+
+<div id="intro"><div class="box">
+ <h1>대한민국의 전통,<br>한 지도 위에서.</h1>
+ <p>도시를 누르세요</p>
+</div></div>
+
+<aside id="panel"><div class="presize" id="presize" title="드래그해서 크기 조절"></div><button class="pclose" onclick="closePanel()">✕</button><div id="pbody"></div></aside>
+
+<script src="../d3.min.js"></script>
+<script src="../topojson.min.js"></script>
+<script src="../kor_topo.js"></script>
+<script src="../data.js?v=18"></script>
+<script src="../details.js?v=13"></script>
+<script src="../videos.js?v=3"></script>
+<script src="../images.js?v=12"></script>
+<script src="../gongmo.js?v=9"></script>
+<script>
+var A = '../'; // 에셋 상대경로 보정
+// data.js 전역(const RC/RNAME/CITIES/IMAGES, var VIDEOS/DETAILS/GONGMO)을 직접 사용 — 재선언 금지
+var RN = (typeof RNAME!=='undefined' && RNAME.ko) ? RNAME.ko : {};
+var TODAY=new Date('2026-08-05');
+function dday(d){ if(!d)return null; return Math.round((new Date(d)-TODAY)/86400000); }
+
+// 도시별 집계
+function worksOf(name){ return (VIDEOS[name]||[]); }
+function _sortG(a,b){ var x=dday(a.d),y=dday(b.d); if(x===null)return 1; if(y===null)return -1; return x-y; }
+// 지역 전용 공모 (city + 권역) — 전국은 제외
+function gongmoLocal(name, gwon){
+  var seen={}, out=[];
+  [GONGMO[name], GONGMO[gwon]].forEach(function(arr){
+    (arr||[]).forEach(function(it){ var dd=dday(it.d); if(dd!==null&&dd<0)return; var k=(it.u||it.t); if(seen[k])return; seen[k]=1; out.push(it); });
+  });
+  out.sort(_sortG); return out;
+}
+// 전국 어디서나 지원 가능한 공모
+function gongmoNat(){
+  var out=(GONGMO['전국']||[]).filter(function(it){ var dd=dday(it.d); return dd===null||dd>=0; });
+  out.sort(_sortG); return out;
+}
+// 전역 스탯
+var totWork=0; Object.keys(VIDEOS).forEach(function(k){ totWork+=VIDEOS[k].length; });
+var totGong=0, gseen={}; Object.keys(GONGMO).forEach(function(k){ (GONGMO[k]||[]).forEach(function(it){ var dd=dday(it.d); if(dd!==null&&dd<0)return; var kk=it.u||it.t; if(gseen[kk])return; gseen[kk]=1; totGong++; }); });
+document.getElementById('stGong').textContent=totGong;
+
+// 범례
+var gseenR={}; var lg=document.getElementById('legend');
+Object.keys(RC).forEach(function(r){ if(gseenR[RN[r]])return; gseenR[RN[r]]=1;
+  var i=document.createElement('i'); i.innerHTML='<span class="sw" style="background:'+RC[r]+'"></span>'+RN[r]; lg.appendChild(i); });
+
+// 인사이트 카드 채우기
+(function initInsight(){
+  var ins=document.getElementById('insight'); if(!ins)return;
+  var list=allG().filter(function(x){return x.dd!==null;}).sort(function(a,b){return a.dd-b.dd;});
+  var h='<div class="it">마감 임박 공모</div>';
+  if(!list.length) h+='<div style="font-size:12px;color:var(--t3)">상시 공모 위주입니다.</div>';
+  list.slice(0,4).forEach(function(x){
+    h+='<a class="irow" href="'+(x.u||'#')+'" target="_blank" rel="noopener">'+
+       '<span class="idday'+(x.dd<=7?' hot':'')+'">D-'+x.dd+'</span>'+
+       '<span class="it2">'+esc(x.t)+'</span></a>';
+  });
+  h+='<a class="iall" href="#" onclick="showView(\'gongmo\');return false;">전체 공모 '+totGong+'건 →</a>';
+  ins.innerHTML=h;
+})();
+
+// 지도
+var mapEl=document.getElementById('map');
+var W=mapEl.clientWidth, H=mapEl.clientHeight;
+var svg=d3.select('#map').append('svg').attr('viewBox','0 0 '+W+' '+H);
+var g=svg.append('g');
+var curLayer='all', proj, path;
+
+Promise.resolve(window.KOR_TOPO).then(function(topo){
+  var feats=topojson.feature(topo, topo.objects.kor);
+  proj=d3.geoMercator().fitExtent([[40,70],[W-40,H-30]], feats);
+  path=d3.geoPath(proj);
+  g.selectAll('path.land').data(feats.features).join('path').attr('class','land').attr('d',path);
+
+  var cg=g.append('g');
+  CITIES.forEach(function(c){
+    var name=c[0], gwon=c[1], p=proj([c[2],c[3]]);
+    if(!p)return;
+    var works=worksOf(name).length;
+    var gons=gongmoLocal(name,gwon);
+    var openG=gons.length;
+    var soon=gons.some(function(it){ var dd=dday(it.d); return dd!==null&&dd<=14; });
+    var r=6+Math.min(works,6)*1.3;
+    var col=RC[gwon]||'#c69a4c';
+    var el=cg.append('g').attr('class','city').attr('transform','translate('+p[0]+','+p[1]+')')
+      .on('click',function(){ openCity(name,gwon); });
+    if(soon) el.append('circle').attr('class','halo pulse').attr('r',r).attr('fill',col);
+    el.append('circle').attr('class','dot').attr('r',r).attr('fill',col)
+      .attr('filter','drop-shadow(0 0 6px '+col+'aa)');
+    // 공모 있음 = 금색 링
+    if(openG) el.append('circle').attr('r',r+3.5).attr('fill','none').attr('stroke','#d0a24e').attr('stroke-width',1.4).attr('opacity',.9);
+    el.append('text').attr('class','lbl').attr('y',-r-6).text(name);
+    el.datum({name:name,gwon:gwon,works:works,gons:openG});
+  });
+
+  var zoom=d3.zoom().scaleExtent([1,6]).on('zoom',function(e){ g.attr('transform',e.transform); });
+  svg.call(zoom);
+  window.addEventListener('resize',function(){ /* 프로토타입: 리로드 권장 */ });
+});
+
+// ── 뷰 전환 ──
+function showView(v){
+  var intro=document.getElementById('intro'); if(intro) intro.remove();
+  document.querySelectorAll('.lyr').forEach(function(b){ b.classList.toggle('on',b.dataset.view===v); });
+  ['gongmo','match'].forEach(function(k){ var e=document.getElementById('view-'+k); if(e) e.classList.toggle('on', v===k); });
+  var isMap=(v==='map');
+  document.getElementById('map').style.display=isMap?'block':'none';
+  document.getElementById('hint').style.display=isMap?'block':'none';
+  var lg=document.querySelector('.legend'); if(lg) lg.style.display=isMap?'flex':'none';
+  var ins=document.getElementById('insight'); if(ins) ins.style.display=isMap?'block':'none';
+  if(v==='gongmo') renderBoard();
+  if(v==='match') renderMatch();
+}
+document.querySelectorAll('.lyr').forEach(function(b){ b.onclick=function(){ showView(b.dataset.view); }; });
+window.showView=showView;
+
+function regColor(reg){ if(RC[reg])return RC[reg];
+  if(reg==='서울'||reg==='인천')return RC['수도권']; if(reg==='대구')return RC['경북'];
+  if(reg==='부산'||reg==='울산')return RC['경남']; if(reg==='대전'||reg==='세종')return RC['충남'];
+  if(reg==='광주')return RC['전남']; return '#a9803a'; }
+function regLabel(r){ return r==='전국'?'전국 · 누구나':r+' 지역'; }
+
+// ── 공모 게시판 ──
+var _allG=null;
+function allG(){ if(_allG)return _allG; var seen={},o=[];
+  Object.keys(GONGMO).forEach(function(reg){ (GONGMO[reg]||[]).forEach(function(it){
+    var dd=dday(it.d); if(dd!==null&&dd<0)return; var k=it.u||it.t; if(seen[k])return; seen[k]=1;
+    o.push({reg:reg,t:it.t,d:it.d,u:it.u,k:it.k||'공모',dd:dd}); }); }); _allG=o; return o; }
+var bF={gwon:'전체',kind:'전체',q:''};
+function bchip(group,val,label){ var on=bF[group]===val;
+  return '<button class="chip'+(on?' on':'')+'" onclick="setBF(\''+group+'\',\''+esc(val)+'\')">'+esc(label)+'</button>'; }
+function setBF(g,v){ bF[g]=v; renderBoard(); }
+window.setBF=setBF;
+function renderBoard(){
+  var el=document.getElementById('view-gongmo'), list=allG();
+  var gwons=Array.from(new Set(list.map(function(x){return x.reg;})));
+  var kinds=Array.from(new Set(list.map(function(x){return x.k;})));
+  var f=list.filter(function(x){
+    if(bF.gwon!=='전체'&&x.reg!==bF.gwon)return false;
+    if(bF.kind!=='전체'&&x.k!==bF.kind)return false;
+    if(bF.q&&x.t.toLowerCase().indexOf(bF.q.toLowerCase())<0)return false; return true; });
+  f.sort(function(a,b){ if(a.dd===null)return 1; if(b.dd===null)return -1; return a.dd-b.dd; });
+  var h='<div class="vwrap"><div class="vhead"><div><h2>전국 전통 <b>공모·공고</b></h2>'+
+    '<div class="vsub">매일 자동 수집 · AI가 양질만 선별 · 마감임박순</div></div>'+
+    '<div class="search"><svg viewBox="0 0 20 20"><path d="M8 2a6 6 0 104.9 9.5l4.3 4.3 1.4-1.4-4.3-4.3A6 6 0 008 2zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg>'+
+    '<input id="bq" placeholder="공모 검색…" value="'+esc(bF.q)+'"></div></div>';
+  h+='<div class="fbar"><div class="frow"><span class="fl">권역</span>'+bchip('gwon','전체','전체')+
+    gwons.map(function(g){return bchip('gwon',g,regLabel(g));}).join('')+'</div>'+
+    '<div class="frow"><span class="fl">유형</span>'+bchip('kind','전체','전체')+
+    kinds.map(function(k){return bchip('kind',k,k);}).join('')+'</div>'+'<div style="font-size:11px;color:var(--t3);padding-left:56px;margin-top:3px">공모 = 상금 공모전 · 지원사업 = 제작·활동비 지원 · 발주 = 용역·제작 계약</div></div>';
+  h+='<div class="vcount" style="margin:2px 0 14px"><b>'+f.length+'</b>건</div><div class="board">';
+  if(!f.length) h+='<div class="emptybig" style="grid-column:1/-1">조건에 맞는 공모가 없습니다.</div>';
+  f.forEach(function(x){
+    var cls=x.dd===null?'open':(x.dd<=14?'soon':(x.dd<=30?'':'open')), txt=x.dd===null?'상시':'D-'+x.dd;
+    h+='<a class="bcard" href="'+esc(x.u||'#')+'" target="_blank" rel="noopener">'+
+      '<div class="r1"><span class="dday '+cls+'">'+txt+'</span><span class="gkind">'+esc(x.k)+'</span>'+
+      '<span class="regtag" style="background:'+regColor(x.reg)+';margin-left:auto">'+esc(regLabel(x.reg))+'</span></div>'+
+      '<h4>'+esc(x.t)+'</h4><div class="r2"><span class="verify">✓ 검증·양질</span><span>'+esc(x.d||'상시')+' 마감</span></div></a>';
+  });
+  h+='</div></div>'; el.innerHTML=h;
+  var bq=document.getElementById('bq');
+  bq.oninput=function(){ bF.q=this.value; var p=this.selectionStart; renderBoard();
+    var n=document.getElementById('bq'); n.focus(); try{n.setSelectionRange(p,p);}catch(e){} };
+}
+
+// ── 작품 갤러리 ──
+function renderWork(){
+  var el=document.getElementById('view-work'), all=[];
+  Object.keys(VIDEOS).forEach(function(city){ (VIDEOS[city]||[]).forEach(function(w){
+    all.push({city:city,n:w.n,th:w.th,before:w.before,yt:w.yt,ch:w.ch}); }); });
+  var h='<div class="vwrap"><div class="vhead"><div><h2>초인이 만든 <b>전통 작품</b></h2>'+
+    '<div class="vsub">전통 유물·명소를 미디어아트로 되살린 실제 작업 '+all.length+'점</div></div></div>';
+  h+='<div class="board" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">';
+  all.forEach(function(w){
+    var th=w.th?(A+w.th):(w.before?(A+w.before):'');
+    var chn=w.ch==='f'?'대령숙수':'무이 유물단';
+    h+='<div class="work" style="aspect-ratio:4/3;border-radius:12px" onclick="openWork(\''+esc(w.yt||'')+'\')">'+
+      '<span class="play">▶</span><img src="'+esc(th)+'" onerror="this.style.opacity=.2" alt="">'+
+      '<div class="wn">'+esc(w.n)+'<span style="display:block;font-family:var(--sans);font-weight:400;font-size:10px;color:#e7dfc9;margin-top:2px">'+esc(w.city)+' · '+chn+'</span></div></div>';
+  });
+  h+='</div></div>'; el.innerHTML=h;
+}
+
+// ── 기관·인재 매칭 ──
+var CREATORS=[
+ {n:'초인 스튜디오',f:'미디어아트·전통복원',loc:'서울·대구',tags:['미디어아트','Houdini','전통 IP','파사드','실감콘텐츠'],img:A+'logo_full.png',desc:'전통 유물·설화를 미디어아트로. VH어워드·무이 IP 보유.',fields:['미디어아트','영상','실감']},
+ {n:'무이 유물단',f:'전통 유물 콘텐츠',loc:'전국',tags:['유물 복원','캐릭터 IP','영상','글로벌'],img:A+'muui_avatar.png',desc:'전통 유물을 캐릭터로 되살리는 글로벌 콘텐츠.',fields:['영상','미디어아트']},
+ {n:'대령숙수',f:'전통음식 콘텐츠',loc:'전국',tags:['한식','스톱모션','영상'],img:A+'suksu_avatar.png',desc:'궁중·전통 한식을 영상으로 재현.',fields:['영상','음식']},
+ {n:'금속공예 고증가 (예시)',f:'금속공예·고증',loc:'대구',tags:['금속','고증','공예'],img:'',desc:'전통 금속 유물 고증·재현. · 예시 프로필',fields:['공예','고증']},
+ {n:'국악 사운드 (예시)',f:'국악·사운드',loc:'전북',tags:['국악','사운드','작곡'],img:'',desc:'전통 국악 기반 사운드 디자인. · 예시 프로필',fields:['음악','국악']},
+ {n:'AI 영상 창작 (예시)',f:'AI·영상',loc:'서울',tags:['AI','영상','생성형'],img:'',desc:'AI 워크플로 기반 전통 콘텐츠 영상. · 예시 프로필',fields:['영상','미디어아트','AI']},
+];
+var mF={field:'미디어아트'};
+function mchip(v){ var on=mF.field===v; return '<button class="chip'+(on?' on':'')+'" onclick="setMF(\''+esc(v)+'\')">'+esc(v)+'</button>'; }
+function setMF(v){ mF.field=v; renderMatch(); }
+window.setMF=setMF;
+function fit(c){ var s=40; if(c.fields.indexOf(mF.field)>=0)s+=45; s+=Math.min(c.tags.length,4)*3;
+  if(c.n.indexOf('예시')<0)s+=6; return Math.min(97,s+ (c.n.length%5)); }
+function renderMatch(){
+  var el=document.getElementById('view-match');
+  var fields=['미디어아트','영상','AI','공예','음악','음식','고증'];
+  var ranked=CREATORS.slice().sort(function(a,b){ return fit(b)-fit(a); });
+  var h='<div class="vwrap"><div class="vhead"><div><h2>기관과 창작자를 <b>잇다</b></h2>'+
+    '<div class="vsub">지방 기관이 늘 겪는 인재 부족 — 필요한 분야를 고르면 맞는 창작자가 뜹니다</div></div>'+
+    '</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 16px">'+
+     '<div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px"><b class="serif" style="font-size:15px">창작자세요?</b><div style="font-size:12.5px;color:var(--t2);margin-top:4px">역량·포트폴리오를 등록해 두면, 맞는 공모·의뢰가 올 때 알려드립니다.</div></div>'+
+     '<div style="background:var(--bg2);border:1px solid var(--gold);border-radius:12px;padding:14px 16px"><b class="serif" style="font-size:15px">기관이세요?</b><div style="font-size:12.5px;color:var(--t2);margin-top:4px">필요한 분야를 고르면 적합한 창작자가 적합도순으로 뜹니다. ↓</div></div></div>';
+  h+='<div class="fbar"><div class="frow"><span class="fl">필요 분야</span>'+fields.map(mchip).join('')+'</div></div>';
+  h+='<div class="vcount" style="margin:2px 0 12px">등록된 창작자 <b>'+ranked.length+'</b>명 · 적합도순</div>';
+  h+='<div class="board" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">';
+  ranked.forEach(function(c){
+    var f=fit(c), av=c.img?('<img src="'+esc(c.img)+'" style="width:54px;height:54px;border-radius:50%;object-fit:'+(c.img.indexOf('logo')>=0?'contain':'cover')+';background:#fff" onerror="this.style.display=\'none\'">'):('<div style="width:54px;height:54px;border-radius:50%;background:'+regColor(c.loc.split('·')[0])+';display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--serif);font-weight:800;font-size:20px">'+esc(c.n[0])+'</div>');
+    h+='<div class="bcard" style="min-height:auto"><div style="display:flex;gap:13px;align-items:center">'+av+
+      '<div style="flex:1"><div style="display:flex;align-items:center;gap:8px"><b class="serif" style="font-size:16px">'+esc(c.n)+'</b>'+
+      '<span style="margin-left:auto;text-align:center"><b class="serif" style="font-size:20px;color:#5a7d4e;display:block;line-height:1">'+f+'%</b><span style="font-size:9px;color:var(--t3)">적합도</span></span></div>'+
+      '<div style="font-size:12px;color:var(--t2);margin-top:2px">'+esc(c.f)+' · '+esc(c.loc)+'</div></div></div>'+
+      '<div style="font-size:12.5px;color:var(--t2);line-height:1.5;margin-top:4px">'+esc(c.desc)+'</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:2px">'+c.tags.map(function(t){return '<span style="font-size:10.5px;background:var(--bg2);border:1px solid var(--line);padding:2px 8px;border-radius:6px;color:var(--t2)">'+esc(t)+'</span>';}).join('')+'</div>'+
+      '<div class="pcta" style="margin-top:10px"><a class="prim" href="#">제안 보내기</a><a class="sec2" href="#">프로필</a></div></div>';
+  });
+  h+='</div></div>'; el.innerHTML=h;
+}
+
+// 패널
+function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function openCity(name,gwon){
+  var intro=document.getElementById('intro'); if(intro){ intro.style.opacity=0; setTimeout(function(){intro.remove();},800); }
+  var c=CITIES.find(function(x){return x[0]===name;});
+  var det=DETAILS[name]||{}, works=worksOf(name), loc=gongmoLocal(name,gwon), nat=gongmoNat();
+  var img=IMAGES[name]|| (works[0]&&(A+works[0].th)) || '';
+  var col=RC[gwon]||'#c69a4c';
+  var h='';
+  h+='<div class="phero" style="background-image:url(\''+esc(img)+'\')">';
+  h+='<span class="rtag" style="background:'+col+'">'+esc(RN[gwon]||gwon)+'</span>';
+  h+='<div class="pname"><h2>'+esc(name)+'</h2></div></div>';
+  h+='<div class="px">';
+  if(c&&c[4]) h+='<div class="concept">'+esc(c[4])+'</div>';
+  if(det.so||det.pe){ h+='<div class="det" style="margin-top:12px">';
+    if(det.so) h+='<div>📍 <b>명소</b> '+esc(det.so)+'</div>';
+    if(det.pe) h+='<div style="margin-top:5px">👤 <b>인물·이야기</b> '+esc(det.pe)+'</div>';
+    h+='</div>'; }
+
+  // 작품
+  h+='<div class="sec"><div class="sl">이 지역 이야기 · 영상 <span class="n">'+works.length+'</span></div>';
+  if(works.length){ h+='<div class="works">';
+    works.slice(0,6).forEach(function(w){
+      var th=w.th?(A+w.th):(w.before?(A+w.before):img);
+      h+='<div class="work" onclick="openWork(\''+esc(w.yt||'')+'\')"><span class="play">▶</span>'+
+         '<img src="'+esc(th)+'" onerror="this.style.opacity=.25" alt=""><div class="wn">'+esc(w.n)+'</div></div>';
+    });
+    h+='</div>'; }
+  else h+='<div class="empty">이 지역 영상은 준비 중입니다.</div>';
+  h+='</div>';
+
+  // 공모 아이템 렌더 헬퍼
+  function gitem(it){ var dd=dday(it.d), cls=dd===null?'open':(dd<=14?'soon':(dd<=30?'':'open')), txt=dd===null?'상시':'D-'+dd;
+    return '<a class="gitem" href="'+esc(it.u||'#')+'" target="_blank" rel="noopener"><div class="gt">'+
+      '<span class="dday '+cls+'">'+txt+'</span><span class="gkind">'+esc(it.k||'공모')+'</span></div>'+
+      '<h4>'+esc(it.t)+'</h4><div class="gm">'+esc(it.d||'상시')+' 마감</div></a>'; }
+  // 이 지역 전용 공모
+  h+='<div class="sec"><div class="sl">이 지역 공모 <span class="n">'+loc.length+'</span></div>';
+  if(loc.length) loc.slice(0,8).forEach(function(it){ h+=gitem(it); });
+  else h+='<div class="empty">아직 '+esc(name)+' 전용 공모는 없습니다. 기관이라면 직접 올려보세요.</div>';
+  h+='</div>';
+  // 전국 어디서나
+  if(nat.length){ h+='<div class="sec"><div class="sl">전국 공모 <span class="n">'+nat.length+'</span></div>'+
+    '<div class="empty" style="margin:-4px 0 8px">전국 어디서나 지원 가능 — 모든 지역에 공통으로 표시됩니다.</div>';
+    nat.slice(0,5).forEach(function(it){ h+=gitem(it); }); h+='</div>'; }
+
+  // CTA — 인재/기관
+  h+='<div class="sec"><div class="sl">이 지역에서 협업하기</div>'+
+     '<div class="pcta"><a class="prim" href="#">이 지역 창작자 찾기</a><a class="sec2" href="#">우리 공모 올리기</a></div>'+
+     '<div class="empty" style="margin-top:8px">기관은 필요한 인재를, 창작자는 맞는 공모를 — 곧 AI가 잇습니다.</div></div>';
+
+  h+='</div>';
+  document.getElementById('pbody').innerHTML=h;
+  document.getElementById('panel').classList.add('open');
+}
+function closePanel(){ document.getElementById('panel').classList.remove('open'); }
+// 패널 폭 드래그 조절 (텍스트 크게 보기)
+(function(){ var p=document.getElementById('panel'), rz=document.getElementById('presize'), drag=false;
+  if(!rz)return;
+  rz.addEventListener('mousedown',function(e){ drag=true; e.preventDefault(); document.body.style.userSelect='none'; });
+  window.addEventListener('mousemove',function(e){ if(!drag)return; var w=window.innerWidth-e.clientX; w=Math.max(340,Math.min(w,Math.round(window.innerWidth*0.92))); p.style.width=w+'px'; });
+  window.addEventListener('mouseup',function(){ drag=false; document.body.style.userSelect=''; });
+})();
+function openWork(yt){ if(yt) window.open(yt,'_blank'); }
+window.openWork=openWork; window.closePanel=closePanel;
+document.addEventListener('keydown',function(e){ if(e.key==='Escape')closePanel(); });
+</script>
+</body>
+</html>
