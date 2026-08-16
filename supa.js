@@ -6,6 +6,7 @@ const _SH = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY };
 
 // ── 방문자 행동 로깅 (유입경로·기기·방문자ID·영상명까지) ──
 var _SID=(function(){try{var s=localStorage.getItem('csid');if(!s){s=Date.now().toString(36)+Math.random().toString(36).slice(2,7);localStorage.setItem('csid',s);}return s;}catch(e){return 'anon';}})();
+function _fromParam(){ try{ var p=new URLSearchParams(location.search).get('from'); return p?p.toString().slice(0,40):''; }catch(e){ return ''; } }
 function _refHost(){ try{ if(!document.referrer) return 'direct'; var h=new URL(document.referrer).hostname.replace(/^www\./,''); if(h===location.hostname) return 'internal'; return h; }catch(e){ return ''; } }
 function _device(){ try{ return (window.innerWidth||1024)<768?'mobile':'desktop'; }catch(e){ return ''; } }
 function logEvent(type, detail){
@@ -13,7 +14,7 @@ function logEvent(type, detail){
   try{
     var base={ type:type, detail:(type==='visit'?_device():(detail||'').toString().slice(0,80)) };
     var full=Object.assign({}, base, { sid:_SID });
-    if(type==='visit') full.ref=_refHost();
+    if(type==='visit') full.ref=(_fromParam()||_refHost());   // ?from=email/discord/threads 우선, 없으면 referrer 호스트
     var H=Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'}, _SH);
     fetch(SUPA_URL + '/rest/v1/events', {method:'POST', headers:H, body:JSON.stringify(full)})
       .then(function(r){ if(!r.ok){ fetch(SUPA_URL+'/rest/v1/events',{method:'POST',headers:H,body:JSON.stringify(base)}).catch(function(){}); } })  // sid/ref 컬럼 없으면 기본만 재시도
