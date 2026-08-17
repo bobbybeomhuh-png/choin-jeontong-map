@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>제작 배움터 · 초인 스튜디오 — AI 전통 콘텐츠 제작 노트</title>
+<meta name="description" content="처음부터 끝까지 AI로 전통 콘텐츠를 만드는 실전 제작 노트를 무료로 공개합니다. 함정·해결·교훈을 그대로 가져가세요." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Gaegu:wght@700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC; --hanji:#F2E7D4; --ink:#241F1B; --muted:#6B6258;
+    --red:#B8392A; --green:#1E6B58; --gold:#C09238; --line:#E4D7C0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:"Noto Sans KR",sans-serif;line-height:1.75}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  .btn{display:inline-block;padding:13px 24px;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px;border:2px solid transparent;cursor:pointer}
+  .btn-red{background:var(--red);color:#fff}
+  .btn-gold{background:var(--gold);color:#3a2a06}
+
+  .nav{position:sticky;top:0;z-index:30;background:rgba(251,246,236,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-family:"Gaegu",cursive;font-size:26px;color:var(--red);line-height:1;text-decoration:none}
+  .logo small{font-family:"Noto Sans KR";font-size:11px;color:var(--muted);letter-spacing:.1em;margin-left:6px}
+  .nav nav a{margin-left:20px;font-size:14px;text-decoration:none;color:var(--muted)}
+  .nav nav a:hover{color:var(--ink)}
+
+  .hero{background:radial-gradient(120% 100% at 50% 0,var(--hanji),var(--cream) 72%);border-bottom:1px solid var(--line);padding:56px 0 48px;text-align:center}
+  .kicker{letter-spacing:.2em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700;margin-bottom:16px}
+  .hero h1{font-family:"Gowun Batang",serif;font-size:34px;line-height:1.3;margin-bottom:14px}
+  .hero p{font-size:17px;color:#3a342d;max-width:640px;margin:0 auto}
+  .hero p b{color:var(--red)}
+
+  section{padding:52px 0}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:8px}
+  .card{display:block;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--ink);transition:.15s}
+  .card:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 10px 30px rgba(90,70,20,.1)}
+  .card .top{height:150px;background:linear-gradient(150deg,#3c2a18,#7a3b12);display:flex;align-items:center;justify-content:center;position:relative;color:#f0dfc2;text-align:center;padding:16px}
+  .card .top .no{position:absolute;top:12px;left:14px;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:14px;color:var(--gold)}
+  .card .top .ttl{font-family:"Gowun Batang",serif;font-size:19px;line-height:1.4}
+  .card .b{padding:16px 18px}
+  .card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .card .tags span{font-size:11px;font-weight:700;color:var(--green);background:var(--hanji);border-radius:999px;padding:3px 10px}
+  .card .b h3{font-size:16px;font-family:"Gowun Batang",serif;margin-bottom:5px}
+  .card .b p{font-size:13.5px;color:var(--muted);line-height:1.55}
+  .card .b .go{margin-top:10px;font-size:13px;color:var(--red);font-weight:700}
+  .card.soon{opacity:.6;pointer-events:none}
+  .card.soon .top{background:#d8ccb6;color:#7a6f5b}
+  @media(max-width:720px){.cards{grid-template-columns:1fr}}
+
+  .why{background:var(--hanji);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .why .g{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;text-align:center}
+  .why .g .i{font-size:15px;color:var(--ink)}
+  .why .g .i b{display:block;font-family:"Gowun Batang",serif;font-size:18px;color:var(--green);margin-bottom:4px}
+  @media(max-width:720px){.why .g{grid-template-columns:1fr}}
+
+  .sign{text-align:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:34px 24px}
+  .sign h2{font-family:"Gowun Batang",serif;font-size:24px;margin-bottom:6px}
+  .sign p{color:var(--muted);max-width:480px;margin:0 auto}
+  .sign form{display:flex;gap:10px;max-width:460px;margin:18px auto 6px;flex-wrap:wrap;justify-content:center}
+  .sign input{flex:1;min-width:220px;padding:14px 18px;border-radius:999px;border:1px solid var(--line);font-size:15px;font-family:inherit}
+  .sign small{color:var(--muted);font-size:12px}
+
+  footer{background:var(--ink);color:#E8DEC9;text-align:center;padding:44px 0}
+  footer .logo{color:#fff}
+  footer .social a{display:inline-block;margin:14px 10px 6px;font-size:14px;color:#E8DEC9;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px}
+  footer small{display:block;margin-top:12px;color:#9c9384;font-size:12px;line-height:1.7}
+  .eyebrow{letter-spacing:.18em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700;margin-bottom:8px}
+  h2.sec{font-family:"Gowun Batang",serif;font-size:25px;margin-bottom:6px}
+  .sub{color:var(--muted);margin-bottom:26px;max-width:640px}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="wrap">
+    <a href="../index.html" class="logo">전통스토리지도<small>초인</small></a>
+    <nav>
+      <a href="index.html">제작 배움터</a>
+      <a href="../index.html">지도</a>
+      <a href="../muui/">우리 IP</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">초인 제작 배움터 · Studio Notes</div>
+    <h1>AI로 전통 콘텐츠를 만드는<br>실전 제작 노트를, 무료로.</h1>
+    <p>도구 자랑이 아니라 <b>"어디서 막혔고 어떻게 뚫었나"</b>를 그대로 공개합니다.
+    공모전·클라이언트 규격까지 통과한 진짜 완성본의 과정을, 여러분 프로젝트에 바로 가져가세요.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Case Studies</div>
+    <h2 class="sec">제작 케이스스터디</h2>
+    <p class="sub">한 편씩, 전 과정을 단계별로 뜯어봅니다. 각 편 끝에서 정리본 PDF를 무료로 받을 수 있어요.</p>
+    <div class="cards">
+
+      <a class="card" href="sanghwa.html">
+        <div class="top"><span class="no">Case 01</span><span class="ttl">전 과정 AI로 만든<br>전통 감정 단편</span></div>
+        <div class="b">
+          <div class="tags"><span>생성형 AI</span><span>i2v</span><span>공모전</span><span>무료 스택</span></div>
+          <h3>공모전 규격을 통과하기까지 — 12일의 기록</h3>
+          <p>워터마크 함정, 캐릭터 일관성, 고증 오류, AI 오디오 분리 문제까지 —
+          실제로 부딪힌 9가지 함정과 해결. 정리본 PDF 무료.</p>
+          <div class="go">읽어보기 →</div>
+        </div>
+      </a>
+
+      <div class="card soon">
+        <div class="top"><span class="no">Case 02</span><span class="ttl">준비 중</span></div>
+        <div class="b">
+          <div class="tags"><span>Coming soon</span></div>
+          <h3>다음 제작 노트가 곧 올라옵니다</h3>
+          <p>이미지→영상 워크플로, 캐릭터 시트 만들기, 무료 렌더 파이프라인 등
+          다음 케이스를 준비하고 있어요.</p>
+          <div class="go">준비 중</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <div class="wrap">
+    <div class="g">
+      <div class="i"><b>정직한 실패 로그</b>잘된 것만이 아니라, 무엇이 터졌고 어떻게 우회했는지 그대로.</div>
+      <div class="i"><b>사실상 무료</b>유료 Pro 툴 없이 심사 통과 규격까지 가는 파이프라인.</div>
+      <div class="i"><b>바로 재현</b>각 편에 재현 체크리스트 포함 — 읽고 그대로 따라 하기.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sign" id="sign">
+      <div class="eyebrow" style="text-align:center">Studio Notes</div>
+      <h2>새 제작 노트가 나오면, 가장 먼저</h2>
+      <p>새 케이스스터디와 무료 자료를 이메일로 보내드립니다. 광고 없이, 제작 이야기만.</p>
+      <form id="sform" onsubmit="return subscribe(event)">
+        <input id="sm" type="email" placeholder="이메일 주소 (your@email.com)" required />
+        <button type="submit" class="btn btn-red">소식 받기</button>
+      </form>
+      <small id="smsg">언제든 구독 해지 가능 · We respect your inbox.</small>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">전통스토리지도<small style="color:#9c9384"> · 초인 스튜디오</small></div>
+    <div class="social">
+      <a href="https://www.youtube.com/@choincreativelab" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.instagram.com/choin_creative_lab/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:choin2626@gmail.com">Email</a>
+    </div>
+    <small>© 2026 초인 스튜디오 (CHOIN) · 한국 전통을 미디어아트, 그 너머로</small>
+  </div>
+</footer>
+
+<script>
+  const SUPA_URL='https://moavztygngbafhxztghx.supabase.co';
+  const SUPA_KEY='sb_publishable_9D-u0PH9oM0jSRoJmfGfZQ_q5t3DldZ';
+  const _H={apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+  try{ fetch(SUPA_URL+'/rest/v1/events',{method:'POST',headers:_H,body:JSON.stringify({type:'lab_visit',detail:'index'})}).catch(function(){}); }catch(e){}
+  function subscribe(e){
+    e.preventDefault();
+    var email=(document.getElementById('sm').value||'').trim();
+    try{ fetch(SUPA_URL+'/rest/v1/leads',{method:'POST',headers:_H,body:JSON.stringify({email:email, source:'lab_newsletter'})}).catch(function(){}); }catch(err){}
+    document.getElementById('sform').style.display='none';
+    document.getElementById('smsg').innerHTML='<span style="color:#1E6B58;font-weight:700">고맙습니다! 새 제작 노트가 나오면 가장 먼저 알려드릴게요.</span>';
+    return false;
+  }
+</script>
+</body>
+</html>

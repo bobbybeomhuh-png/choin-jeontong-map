@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>전 과정 AI로 전통 감정 단편 만들기 · 초인 제작 배움터</title>
+<meta name="description" content="처음부터 끝까지 생성형 AI로 만든 전통 소재 감정 단편이 공모전 규격을 통과하기까지 — 12일간의 함정·해결·교훈을 단계별로 공개한 초인 스튜디오 제작 노트." />
+<meta property="og:title" content="전 과정 AI로 전통 감정 단편 만들기 — 12일의 기록" />
+<meta property="og:description" content="AI로 '그럴듯한 영상'과 '심사를 통과하는 완성본'은 다르다. 실제로 부딪힌 함정과 해결을 전부 공개합니다." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Gaegu:wght@700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC; --hanji:#F2E7D4; --ink:#241F1B; --muted:#6B6258;
+    --red:#B8392A; --green:#1E6B58; --gold:#C09238; --line:#E4D7C0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:"Noto Sans KR",sans-serif;line-height:1.8}
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  .btn{display:inline-block;padding:13px 24px;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px;border:2px solid transparent;cursor:pointer}
+  .btn-red{background:var(--red);color:#fff}
+  .btn-gold{background:var(--gold);color:#3a2a06}
+  .btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:30;background:rgba(251,246,236,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{max-width:1000px;display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-family:"Gaegu",cursive;font-size:26px;color:var(--red);line-height:1;text-decoration:none}
+  .logo small{font-family:"Noto Sans KR";font-size:11px;color:var(--muted);letter-spacing:.1em;margin-left:6px}
+  .nav nav a{margin-left:20px;font-size:14px;text-decoration:none;color:var(--muted)}
+  .nav nav a:hover{color:var(--ink)}
+  @media(max-width:640px){.nav nav a{margin-left:12px;font-size:13px}}
+
+  /* hero */
+  .hero{background:radial-gradient(120% 100% at 50% 0,var(--hanji),var(--cream) 72%);border-bottom:1px solid var(--line);padding:52px 0 46px}
+  .kicker{letter-spacing:.2em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700;margin-bottom:16px}
+  .hero h1{font-family:"Gowun Batang",serif;font-size:34px;line-height:1.32;margin-bottom:16px}
+  .hero .lead{font-size:17px;color:#3a342d;max-width:680px}
+  .hero .lead b{color:var(--red)}
+  .meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;font-size:13px;color:var(--muted)}
+  .meta span b{color:var(--green)}
+  .specbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .specbar .c{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 15px;font-size:13px;font-weight:700}
+  .specbar .c b{color:var(--red)}
+
+  article{padding:44px 0 10px}
+  article h2{font-family:"Gowun Batang",serif;font-size:24px;margin:44px 0 6px;padding-top:8px}
+  article h2 .en{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;color:var(--green);font-weight:500}
+  article h3{font-size:17px;color:var(--green);margin:26px 0 4px}
+  article p{margin:10px 0;font-size:16px}
+  article strong{color:var(--red)}
+  .note{background:var(--hanji);border-left:3px solid var(--gold);padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0;font-size:15px}
+  .note b{color:var(--green)}
+
+  /* timeline */
+  .ev{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0}
+  .ev.crisis{border-color:#e0b98a;background:#fffaf2}
+  .ev .d{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:var(--green);border-radius:999px;padding:4px 12px;letter-spacing:.02em}
+  .ev.crisis .d{background:var(--red)}
+  .ev h4{font-size:17px;margin:12px 0 8px;font-family:"Gowun Batang",serif}
+  .ev .pt{font-size:15px;margin:6px 0;padding-left:20px;position:relative}
+  .ev .pt:before{position:absolute;left:0;font-weight:800;font-size:12px;top:4px}
+  .ev .pt.p:before{content:"⚠";color:var(--red)}
+  .ev .pt.s:before{content:"✓";color:var(--green)}
+  .ev .pt.r:before{content:"→";color:var(--gold)}
+  .ev .lz{margin-top:10px;background:#2a2118;color:#f0e6d6;border-radius:8px;padding:9px 14px;font-size:14px}
+  .ev .lz b{color:var(--gold)}
+
+  /* selling points teaser */
+  .sp9{background:var(--ink);color:#F2E7D4;border-radius:16px;padding:30px 26px;margin:30px 0}
+  .sp9 .eb{letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px}
+  .sp9 h2{font-family:"Gowun Batang",serif;color:#fff;font-size:23px;margin:0 0 4px}
+  .sp9 p.s{color:#c9bba2;font-size:15px;margin-bottom:18px}
+  .sp9 ol{list-style:none;counter-reset:sp;margin:0}
+  .sp9 li{counter-increment:sp;padding:11px 0 11px 44px;position:relative;border-bottom:1px dashed rgba(255,255,255,.16);font-size:15.5px;line-height:1.5}
+  .sp9 li:last-child{border-bottom:0}
+  .sp9 li:before{content:counter(sp);position:absolute;left:0;top:9px;width:28px;height:28px;background:var(--gold);color:#3a2a06;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  .sp9 li b{color:#ffe9c2}
+  .sp9 li .star{color:var(--gold);font-weight:800;margin-right:4px}
+
+  /* gate / signup */
+  .gate{background:#fff;border:2px solid var(--gold);border-radius:18px;padding:32px 26px;margin:34px 0;text-align:center}
+  .gate .eb{letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700}
+  .gate h2{font-family:"Gowun Batang",serif;font-size:24px;margin:8px 0 6px}
+  .gate p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto}
+  .gate ul{list-style:none;max-width:480px;margin:16px auto;text-align:left}
+  .gate ul li{padding:6px 0 6px 26px;position:relative;font-size:15px}
+  .gate ul li:before{content:"📄";position:absolute;left:0}
+  .gate form{display:flex;gap:10px;max-width:460px;margin:18px auto 8px;flex-wrap:wrap;justify-content:center}
+  .gate input{flex:1;min-width:220px;padding:14px 18px;border-radius:999px;border:1px solid var(--line);font-size:15px;font-family:inherit}
+  .gate small{color:var(--muted);font-size:12px;display:block;margin-top:6px}
+  .gate .done{display:none}
+  .gate .done a{font-size:16px}
+
+  footer{background:var(--ink);color:#E8DEC9;text-align:center;padding:44px 0;margin-top:40px}
+  footer .logo{color:#fff}
+  footer .social a{display:inline-block;margin:14px 10px 6px;font-size:14px;color:#E8DEC9;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px}
+  footer small{display:block;margin-top:12px;color:#9c9384;font-size:12px;line-height:1.7}
+
+  @media(max-width:640px){ .hero h1{font-size:27px} article h2{font-size:21px} }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="wrap">
+    <a href="../index.html" class="logo">전통스토리지도<small>초인</small></a>
+    <nav>
+      <a href="index.html">제작 배움터</a>
+      <a href="../index.html">지도</a>
+      <a href="../muui/">우리 IP</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">초인 제작 배움터 · Case Study 01</div>
+    <h1>전 과정을 AI로 만든 전통 감정 단편,<br>공모전 규격을 통과하기까지</h1>
+    <p class="lead">"AI로 그럴듯한 영상"과 <b>"심사를 통과하는 완성본"</b>은 다릅니다.
+    조선시대 발효 찐빵 '상화병'을 소재로 한 <b>무대사 감정 단편</b>을 처음부터 끝까지 생성형 AI로 만들어
+    지역 AI 영상 공모전에 제출하기까지 — 실제로 부딪힌 함정과 해결을 단계별로 공개합니다.</p>
+    <div class="specbar">
+      <span class="c">길이 <b>2:38</b></span>
+      <span class="c">해상도 <b>1080p</b></span>
+      <span class="c">워터마크 <b>0</b></span>
+      <span class="c">제작 <b>약 12일</b></span>
+      <span class="c">비용 <b>사실상 무료</b></span>
+    </div>
+    <div class="meta">
+      <span>제작 · <b>초인 스튜디오</b></span>
+      <span>분류 · <b>AI 전통 콘텐츠 제작 노트</b></span>
+      <span>공개 · <b>2026-08-17</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<article>
+
+  <p>초인 스튜디오는 한국 전통을 미디어아트로 되살리는 콘텐츠를 만듭니다. 이번 글은 그중 하나 —
+  <strong>처음부터 끝까지 생성형 AI로 제작한 전통 소재 단편</strong>이 실제 공모전 규격을 통과하기까지의
+  전 과정을, 잘 안 되던 지점 위주로 정직하게 풀어낸 기록입니다. 도구 자랑이 아니라
+  <strong>"어디서 막혔고 어떻게 뚫었나"</strong>가 핵심입니다.</p>
+
+  <div class="note">
+    ℹ️ 이 단편의 주인공은 초인이 <b>정식 공개를 준비 중인 오리지널 캐릭터 IP</b>라, 이 글에서는 캐릭터 이름·디자인은
+    밝히지 않고 <b>'주인공'</b>으로만 부릅니다. 대신 <b>제작 방법은 전부 공개</b>합니다 — 여러분이 그대로 재현할 수 있도록.
+  </div>
+
+  <h2><span class="en">The Story</span>어떤 영상인가</h2>
+  <p>굶주려 강 위를 표류하던 <strong>주인공</strong>이, 낯선 이가 건넨 상화병 한 입의 온기에 되살아나 →
+  스스로 상화 빚는 법을 익히고(시행착오) → 저잣거리에서 굶주린 이들에게 그 온기를 나눠 준다.
+  <strong>받은 온기를 스스로 만들어 되갚는 성장·나눔 우화</strong>입니다. 배경은 조선 후기의 한 강나루,
+  소재는 《음식디미방》(1670)에 기록된 발효 찐빵 <strong>상화병</strong>. 대사는 한 마디도 없이, 음악과 표정으로만 감정을 끕니다.</p>
+
+  <h2><span class="en">The Stack</span>무엇으로 만들었나 — 전부 저비용/무료</h2>
+  <p>이미지 생성 AI로 컷별 그림을 만들고 → 이미지→영상(i2v) 생성 AI로 움직임을 입히고 →
+  무료 컷편집기로 편집 → 음악 생성 AI로 배경음악 1곡 → FFmpeg로 후반·재조립. 유료 Pro 툴 없이
+  <strong>1080p·무워터마크·통일된 사운드</strong>의 완성본까지 갔습니다. 돈이 아니라 <strong>파이프라인 설계</strong>가 품질을 만들었습니다.</p>
+
+  <h2><span class="en">12 Days, Step by Step</span>12일, 함정 → 해결 → 결과</h2>
+
+  <div class="ev">
+    <span class="d">DAY 1 · 요강 분석</span>
+    <h4>"무엇을 만들까"가 아니라 "무엇을 못 하는지"부터</h4>
+    <div class="pt p">요강에 탈락 조항이 흩어져 있음 — 재활용 금지, 식별표식(워터마크·로고) 금지, AI 90%+, 16:9만, 30초~5분.</div>
+    <div class="pt s">모든 제약을 한 장으로 정리하고 "신작·16:9·워터마크 0·AI툴 명기"를 처음부터 설계 조건으로 못박음.</div>
+    <div class="lz"><b>교훈 ①</b> 요강의 '금지 조항'부터 읽고 설계에 박아야, 막판에 안 엎는다.</div>
+  </div>
+
+  <div class="ev">
+    <span class="d">DAY 2 · 컨셉</span>
+    <h4>지역색은 넣되, 상표는 피하기</h4>
+    <div class="pt p">그 지역 하면 떠오르는 유명 빵집(실명·상표)을 직접 쓰면 식별표식·홍보처럼 보여 감점.</div>
+    <div class="pt s">브랜드의 '나눔 정신'이라는 정서만 은유로 차용하고, 소재는 실명 걱정 없는 역사 고증 음식 '상화병'으로.</div>
+    <div class="lz"><b>교훈 ②</b> 지역 상징은 '이름'이 아니라 '정서'로 넣는다.</div>
+  </div>
+
+  <div class="ev">
+    <span class="d">DAY 4 · 파이프라인</span>
+    <h4>캐릭터가 컷마다 달라지는 문제</h4>
+    <div class="pt p">컷마다 주인공의 얼굴·복장이 달라지는 AI의 고질병. 프롬프트만 반복하면 절대 통일되지 않음.</div>
+    <div class="pt s"><strong>앵커 체이닝</strong> — 기준컷 1장을 먼저 확정하고, 이후 모든 컷은 그 이미지를 레퍼런스로 물려서 생성.</div>
+    <div class="lz"><b>교훈 ③</b> AI 캐릭터 일관성의 핵심은 '앵커 1장 먼저 → 레퍼런스 체이닝'.</div>
+  </div>
+
+  <div class="ev crisis">
+    <span class="d">DAY 6 · ★ 첫 위기</span>
+    <h4>스토리 전면 재설계 — 배경이 비고, 고증이 틀어진다</h4>
+    <div class="pt p">배경이 비어 보이고, 시대착오 오브제(유리창·큰 목선)가 자꾸 생성되고, 서사가 느슨해 '이상한 것'이 튀어나옴.</div>
+    <div class="pt s">스토리를 촘촘한 기승전결로 재설계 + <strong>세계관 바이블·고증 락</strong>(어기면 재생성)을 문서로 못박음 — 배=나룻배, 창=한지창, 복식=상민복, 조리=시루·가마솥.</div>
+    <div class="lz"><b>교훈 ④</b> AI는 '세계관을 세세히 못박을수록' 이상한 걸 덜 만든다. 고증은 체크리스트로.</div>
+  </div>
+
+  <div class="ev crisis">
+    <span class="d">DAY 12 · ★★ 최종화에서 함정 폭발</span>
+    <h4>"다 만든 줄 알았는데" — 규격·품질이 연속으로 막힘</h4>
+    <div class="pt p">완성 롱버전이 7분·720p(요강은 5분·1080p) / 전 프레임에 무료 편집기 <strong>워터마크</strong>(→ 자동 심사 제외) / AI 클립마다 효과음·BGM이 한 트랙에 섞여 구워짐.</div>
+    <div class="pt s">2분대로 재편집·1080p / delogo(번짐)를 버리고 <strong>편집 리스트(EDL)로 원본 클립 재조립</strong> / 음악 강한 컷만 음소거 후 통합 BGM.</div>
+    <div class="lz"><b>교훈 ⑤~⑨</b> 이 마지막 단계에서 나온 다섯 가지가 이 케이스의 진짜 알맹이입니다. 아래에서 정리합니다.</div>
+  </div>
+
+  <div class="sp9">
+    <div class="eb">Takeaways</div>
+    <h2>그대로 쓰는 9가지 실전 포인트</h2>
+    <p class="s">교훈을 "당신의 다음 프로젝트에 바로 적용할 문장"으로 다듬었습니다. ★ = 이 케이스의 결정적 레버.</p>
+    <ol>
+      <li><span class="star">★</span><b>무료 편집기 워터마크는 delogo로 못 지운다.</b> '원본 클립 + 편집 EDL'로 프레임 동일 재조립하라(원본 보관 필수).</li>
+      <li><span class="star">★</span><b>AI 캐릭터 일관성 = 앵커 1장 먼저 → 레퍼런스 체이닝.</b> 프롬프트가 아니라 '이미지 혈통'으로 붙잡는다.</li>
+      <li><span class="star">★</span><b>세계관·고증을 문서로 '락' 걸수록</b> AI가 이상한 걸 덜 만든다.</li>
+      <li><span class="star">★</span><b>AI 클립의 baked 오디오는 stem 분리 불가.</b> '거슬리는 컷만 음소거 + 통합 BGM'이 현실적.</li>
+      <li><span class="star">★</span><b>사실상 무료 조합만으로</b> 심사 통과 규격(1080p·무워터마크·통일 사운드)까지 도달한다.</li>
+      <li>요강의 <b>금지 조항</b>부터 읽고 설계에 박기.</li>
+      <li>지역·브랜드 상징은 <b>이름 아닌 정서</b>로.</li>
+      <li><b>롱버전 ≠ 제출본</b> — 규격은 초·픽셀 단위로.</li>
+      <li>재조립엔 자르기뿐 아니라 <b>확대·위치(transform)까지</b> EDL에서.</li>
+    </ol>
+  </div>
+
+  <div class="gate" id="gate">
+    <div class="eb">Free Download</div>
+    <h2>풀버전 PDF, 무료로 받아가세요</h2>
+    <p>위 9가지의 <b>"왜 중요한가 + 구체적으로 이렇게 하라"</b> 상세판과 <b>16단계 재현 체크리스트</b>를
+    인쇄용 10페이지 PDF로 정리했습니다. 이메일만 남기면 바로 다운로드됩니다.</p>
+    <ul>
+      <li>9가지 포인트 × (왜 + 실행법) 상세</li>
+      <li>다음 프로젝트에 쓰는 16단계 재현 체크리스트</li>
+      <li>전 과정 타임라인 인쇄용 편집본</li>
+    </ul>
+    <form id="grabform" onsubmit="return grab(event)">
+      <input id="gm" type="email" placeholder="이메일 주소 (your@email.com)" required />
+      <button type="submit" class="btn btn-gold">무료 PDF 받기</button>
+    </form>
+    <small>광고·스팸 없이, 새 제작 노트가 나올 때만 알려드립니다 · 언제든 해지.</small>
+    <div class="done" id="done">
+      <p style="font-family:'Gowun Batang',serif;font-size:18px;color:var(--green);margin-bottom:10px">고맙습니다! 아래에서 바로 받으세요.</p>
+      <a href="files/casestudy-ai-short-01.pdf" class="btn btn-red" download>📄 케이스스터디 PDF 다운로드</a>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:var(--muted);font-size:14px">이런 제작 노트를 더 보고 싶다면 —
+  <a href="index.html" style="color:var(--red);font-weight:700">제작 배움터 전체 보기 →</a></p>
+
+</article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">전통스토리지도<small style="color:#9c9384"> · 초인 스튜디오</small></div>
+    <div class="social">
+      <a href="https://www.youtube.com/@choincreativelab" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.instagram.com/choin_creative_lab/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:choin2626@gmail.com">Email</a>
+    </div>
+    <small>© 2026 초인 스튜디오 (CHOIN) · 한국 전통을 미디어아트, 그 너머로<br>
+    본 제작 노트의 방법론은 자유롭게 재현·응용하셔도 좋습니다.</small>
+  </div>
+</footer>
+
+<script>
+  // 방문 로깅 + 이메일 리드 캡처 (Supabase, publishable 키 = 브라우저 공개용)
+  const SUPA_URL='https://moavztygngbafhxztghx.supabase.co';
+  const SUPA_KEY='sb_publishable_9D-u0PH9oM0jSRoJmfGfZQ_q5t3DldZ';
+  const _H={apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+  // 방문 기록(events 테이블 재사용)
+  try{ fetch(SUPA_URL+'/rest/v1/events',{method:'POST',headers:_H,body:JSON.stringify({type:'lab_visit',detail:'sanghwa'})}).catch(function(){}); }catch(e){}
+
+  function grab(e){
+    e.preventDefault();
+    var email=(document.getElementById('gm').value||'').trim();
+    // leads 테이블에 저장(insert-only RLS). 테이블 준비 전이면 조용히 실패해도 다운로드는 열림.
+    try{
+      fetch(SUPA_URL+'/rest/v1/leads',{method:'POST',headers:_H,
+        body:JSON.stringify({email:email, source:'sanghwa'})}).catch(function(){});
+    }catch(err){}
+    document.getElementById('grabform').style.display='none';
+    document.querySelector('#gate small').style.display='none';
+    document.getElementById('done').style.display='block';
+    // 자동으로 다운로드도 트리거
+    try{ var a=document.createElement('a'); a.href='files/casestudy-ai-short-01.pdf'; a.download=''; document.body.appendChild(a); a.click(); a.remove(); }catch(e2){}
+    return false;
+  }
+</script>
+</body>
+</html>
