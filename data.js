@@ -1,7 +1,7 @@
 // ===== 링크 (실제 주소로 교체) =====
 const LINKS = {
   class101: "https://class101.net/ko/products/69c9c9657d18a91e7874800f?viewMode=svod",  // 후디니 클래스101 강의
-  choin:    "https://www.youtube.com/@choincreativelab",     // 유물복원단(무이) 유튜브
+  choin:    "https://www.youtube.com/@muuimaster",     // 유물복원단(무이) 유튜브
   choin_site: "https://choin.studio",                        // 초인 공식 웹페이지(헤더 로고 링크)
   discord:  "https://discord.gg/6QjEVyt9W",                   // 공개 커뮤니티 디스코드
   foodie:   "https://www.youtube.com/@muuifoodie",           // 대령숙수 유튜브
