@@ -463,7 +463,10 @@ function provPoints(){var fixed={'서울':[126.98,37.57],'인천':[126.70,37.46]
   var n=arr.filter(function(o){var dd=Math.ceil((new Date(o.d)-today)/864e5);return !isNaN(dd)&&dd>=0;}).length;if(!n)return;
   var co=fixed[rg]||cent[rg];if(!co)return;out.push({rg:rg,lng:co[0],lat:co[1],n:n});});
  return out;}
-function regionGongmo(rg){FREG=rg;F='gongmo';var gf=document.getElementById('mgfilt');if(gf)gf.querySelectorAll('.f').forEach(function(x){x.classList.toggle('on',x.dataset.f==='gongmo');});renderGrid();var g=document.getElementById('mgal');if(g)g.scrollTop=0;}
+function regionGongmo(rg){FREG=rg;F='gongmo';var gf=document.getElementById('mgfilt');if(gf)gf.querySelectorAll('.f').forEach(function(x){x.classList.toggle('on',x.dataset.f==='gongmo');});renderGrid();
+ var natN=(GG['전국']||[]).filter(function(o){var dd=Math.ceil((new Date(o.d)-new Date())/864e5);return !isNaN(dd)&&dd>=0;}).length;
+ var p=document.getElementById('mghp');if(p)p.innerHTML='<b>'+rg+'</b> 지역 공모·자금만 모았습니다. (전국 대상 공모 '+natN+'건은 상단 <b>공모·자금</b> 또는 <b>전체</b>에서)';
+ var g=document.getElementById('mgal');if(g)g.scrollTop=0;}
 // 지도
 function meetMap(){var W=640,H=800;
  var f=topojson.feature(window.KOR_TOPO,window.KOR_TOPO.objects.kor);
@@ -493,9 +496,9 @@ function mapCard(){var ns=MC.filter(function(c){return c.type==='space';}).lengt
  document.getElementById('mmapcard').innerHTML='<div class="mc-title">✦ 만남의 장</div><div class="mc-sub">전국의 공모·자금(실시간)과 초인의 공간 구상을 한 지도에. 함께할 곳을 찾습니다.</div><div class="mc-lab">레이어</div>'+rows+'<a class="mc-disc" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] 공간·협업 제안')+'">✦ 우리 공간 제안하기</a>';
  document.getElementById('mmapcard').addEventListener('click',function(e){var lc=e.target.closest('.mc-lc');if(!lc)return;var t=lc.dataset.t;LZ[t]=!LZ[t];lc.classList.toggle('off',!LZ[t]);drawPins();renderGrid();});}
 // 갤러리
-function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){if(FREG&&r!==FREG&&r!=='전국')return;(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
+function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){if(FREG&&r!==FREG)return;(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
  var today=new Date();gs.forEach(function(x){x.dd=Math.ceil((new Date(x.o.d)-today)/864e5);});
- return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,FREG?40:16);}
+ return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,FREG?60:16);}
 function imgEl(c,i){var el=document.createElement('div');el.className='mgc '+(c.sz||'mid');el.style.backgroundImage='url('+cimg(c)+')';
  var play=c.type==='video'?'<div class="play">▶</div>':'';var prop=(c.status&&c.status!=='실재 공간')?'<span class="prop">'+c.status+'</span>':'';
  el.innerHTML='<div class="pv"></div>'+play+(c.live?'<span class="live">'+c.live+'</span>':'')+'<div class="in"><span class="badge '+BD[c.type]+'">'+LAB[c.type]+'</span>'+prop+'<div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
@@ -519,8 +522,8 @@ function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;
   turn++;}
  while(vi<vids.length)out.push(vids[vi++]);
  out.forEach(function(o){if(o.t==='img')grid.appendChild(imgEl(o.c,o.i));else if(o.t==='vid')grid.appendChild(videoEl(o.v));else grid.appendChild(gongEl(o.g));});}
-function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p>전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.</p><div class="disc">※ 여기 공간·프로젝트는 <b>초인이 제안하는 비전·구상</b>입니다. 팔복·문화제조창 등은 실재하는 공간이나 <b>아직 협업 전</b>이며, 함께할 기관·파트너를 찾습니다. (영상·공모는 실제 데이터)</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
- document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});renderGrid();});
+function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p id="mghp">전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.</p><div class="disc">※ 여기 공간·프로젝트는 <b>초인이 제안하는 비전·구상</b>입니다. 팔복·문화제조창 등은 실재하는 공간이나 <b>아직 협업 전</b>이며, 함께할 기관·파트너를 찾습니다. (영상·공모는 실제 데이터)</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
+ document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});var p=document.getElementById('mghp');if(p)p.textContent='전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.';renderGrid();});
  renderGrid();}
 // 모달
 function openM(i){var c=MC[i],isS=c.type==='space';
