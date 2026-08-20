@@ -267,6 +267,75 @@ circle.city{cursor:pointer;}
 }
 /* 아주 좁은 폰: 영상 그리드 1열 */
 @media(max-width:400px){ .vidgrid{grid-template-columns:1fr;} }
+/* ===== 메인 2-탭 (크기 완전 고정) ===== */
+.segtabs{display:flex;gap:5px;background:#e2d6bd;border-radius:14px;padding:5px;margin-left:16px;flex:0 0 auto;}
+.seg{flex:0 0 174px;display:flex;align-items:center;gap:10px;height:52px;border:0;background:transparent;cursor:pointer;border-radius:10px;padding:0 16px;color:var(--t2);font-family:var(--sans);transition:background .15s,color .15s,box-shadow .15s;}
+.seg .ico{font-size:18px;flex:0 0 auto;line-height:1;}
+.seg .tl{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;text-align:left;}
+.seg .tl b{font-size:15px;font-weight:800;letter-spacing:-.2px;}
+.seg .tl i{font-size:11px;font-style:normal;font-weight:600;color:var(--t3);margin-top:2px;white-space:nowrap;}
+.seg.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 9px rgba(59,51,38,.25);}
+.seg.on .tl i{color:rgba(243,236,224,.82);}
+.seg:not(.on):hover{background:rgba(255,255,255,.5);color:var(--ink);}
+@media(max-width:1240px){.chtabs{display:none;}}
+@media(max-width:1000px){.seg{flex-basis:auto;}.seg .tl i{display:none;}}
+/* ===== 만남의 장 뷰 ===== */
+#meet{display:none;height:calc(100% - 110px);}
+#meet.on{display:flex;}
+#mmap{flex:0 0 50%;position:relative;background:#efe7d6;min-width:0;}
+#mmap svg{width:100%;height:100%;display:block;}
+#mmapcard{position:absolute;left:16px;top:16px;width:236px;background:rgba(251,247,239,.94);backdrop-filter:blur(4px);border:1px solid var(--line2);border-radius:15px;padding:14px 15px;box-shadow:0 5px 20px rgba(90,70,20,.13);z-index:2;}
+#mmapcard .mc-title{font-family:var(--serif);font-size:16px;font-weight:800;}
+#mmapcard .mc-sub{font-size:11.5px;color:var(--t3);line-height:1.5;margin:5px 0 11px;}
+#mmapcard .mc-lab{font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;}
+.mc-lc{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line2);border-radius:9px;padding:8px 10px;cursor:pointer;font-size:12.5px;font-weight:600;margin-bottom:6px;}
+.mc-lc .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}.mc-lc.off{opacity:.42;}.mc-lc .cnt{margin-left:auto;color:var(--t3);font-size:11px;}
+#mmapcard .mc-disc{margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-size:12.5px;font-weight:700;color:#fff;background:var(--teal);border-radius:10px;padding:10px;}
+#mresizer{flex:0 0 7px;cursor:col-resize;background:var(--line);position:relative;}
+#mresizer::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:3px;height:34px;border-radius:3px;background:var(--line2);}
+#mresizer:hover{background:var(--gold);}
+#mgal{flex:1 1 auto;background:var(--panel);overflow:auto;min-width:0;}
+.mclabel{font-size:10px;fill:var(--ink);font-family:var(--sans);pointer-events:none;paint-order:stroke;stroke:var(--bg);stroke-width:2.5px;font-weight:700;}
+.ghd{padding:20px 22px 4px;}.ghd h3{font-family:var(--serif);font-size:22px;font-weight:800;margin:0;}.ghd p{font-size:13px;color:var(--t2);margin:5px 0 0;}
+.ghd .disc{font-size:11.5px;color:var(--t3);margin-top:6px;}
+.gfilt{display:flex;gap:7px;padding:12px 22px 6px;flex-wrap:wrap;}
+.gfilt .f{border:1px solid var(--line2);background:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-weight:600;color:var(--t2);}
+.gfilt .f.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+.mgrid{columns:2 180px;column-gap:12px;padding:8px 22px 44px;}
+.gc{break-inside:avoid;margin-bottom:12px;border-radius:14px;overflow:hidden;cursor:pointer;position:relative;background:#2c2519 center/cover;display:flex;align-items:flex-end;transition:.16s;}
+.gc:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(90,70,20,.22);}
+.gc.big{min-height:250px;}.gc.mid{min-height:188px;}.gc.sm{min-height:140px;}
+.gc .pv{position:absolute;inset:0;background:linear-gradient(160deg,rgba(176,71,47,.08),rgba(20,17,12,.4) 46%,rgba(20,17,12,.92));}
+.gc .in{position:relative;padding:12px;color:#fff;}
+.gc .badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;color:#fff;margin-bottom:5px;}
+.gc .prop{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.85);color:#7a5a1e;margin-left:4px;vertical-align:1px;}
+.b-space{background:#a9803a;}.b-proj{background:#1d8a6a;}.b-event{background:#b0472f;}.b-gong{background:#2f6db5;}.b-video{background:#b0472f;}
+.gc .n{font-family:var(--serif);font-size:15.5px;font-weight:800;line-height:1.28;text-shadow:0 2px 10px rgba(0,0,0,.55);}.gc.big .n{font-size:18.5px;}
+.gc .s{font-size:11px;color:#e8dcc4;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gc .live{position:absolute;top:9px;right:9px;background:#b0472f;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;}
+.gc .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(20,16,12,.5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;border:2px solid rgba(255,255,255,.8);}
+.gc:hover .play{background:rgba(176,71,47,.85);}
+.gc.txt{background:linear-gradient(158deg,#fff8ec,#f2e4ca);color:var(--ink);border:1px solid var(--line2);}
+.gc.txt .pv,.gc.txt .play{display:none;}
+.gc.txt .in{color:var(--ink);width:100%;}
+.gc.txt .dd{font-family:var(--serif);font-size:30px;font-weight:800;color:var(--brick,#b0472f);line-height:1;margin:2px 0 4px;}
+.gc.txt.soon{background:linear-gradient(158deg,#fdeef0,#f6dbdf);}
+.gc.txt .n{color:var(--ink);text-shadow:none;font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
+.gc.txt .s{color:var(--t3);}
+.mmodal{position:fixed;inset:0;z-index:60;background:rgba(20,17,12,.64);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px;}.mmodal.on{display:flex;}
+.mmbox{background:var(--bg);border-radius:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto;}
+.mmh{height:200px;background:#2c2519 center/cover;position:relative;display:flex;align-items:flex-end;}.mmh .pv{position:absolute;inset:0;background:linear-gradient(transparent,rgba(20,17,12,.82));}
+.mmh .cap{position:relative;padding:16px;color:#fff;}.mmh .k{font-size:11px;letter-spacing:2px;color:#f4d9a0;}.mmh .n{font-family:var(--serif);font-size:24px;font-weight:800;}
+.mmbody{padding:20px;position:relative;}.mmclose{position:absolute;top:-40px;right:6px;width:32px;height:32px;border:0;border-radius:50%;background:rgba(255,255,255,.9);font-size:19px;cursor:pointer;}
+.mmsoul{font-family:var(--serif);font-size:16px;font-weight:800;color:var(--brick,#b0472f);margin-bottom:13px;line-height:1.5;}
+.mmfill{background:#fff;border:1px solid #e7dcc2;border-radius:12px;padding:6px 14px;margin-bottom:12px;}.mmfill .r{font-size:12.5px;padding:8px 0;border-top:1px solid #f0e7d3;}.mmfill .r:first-child{border-top:0;}.mmfill .r b{color:var(--gold);margin-right:6px;}
+.mrel-lab{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin:4px 0 8px;}
+.mrel{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;}
+.mrel .ri{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line2);border-radius:10px;padding:7px;cursor:pointer;}.mrel .ri:hover{border-color:var(--ink);}
+.mrel .ri .th{width:56px;height:40px;border-radius:7px;background:#2c2519 center/cover;flex:0 0 auto;}
+.mrel .ri .tt{font-size:12.5px;font-weight:700;line-height:1.3;}.mrel .ri .ts{font-size:11px;color:var(--t3);}
+.mmcta{display:block;background:var(--teal);color:#fff;text-align:center;padding:13px;border-radius:11px;font-weight:600;font-size:14px;text-decoration:none;}
+@media(max-width:780px){#meet.on{flex-direction:column;height:auto;}#mmap{flex:0 0 46vh;}#mresizer{display:none;}#mgal{flex:auto;}}
 </style>
 </head>
 <body>
@@ -279,8 +348,12 @@ circle.city{cursor:pointer;}
    <a class="chtab" id="tab-suksu" href="#" target="_blank" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
    <a class="chtab" id="tab-lab" href="lab/" rel="noopener" style="background:#1E6B58">✎ 제작 배움터</a>
  </nav>
+ <div class="segtabs" role="tablist">
+   <button class="seg on" id="m-story" onclick="mainMode('story')"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>초인이 되살린 전통 · 발견</i></span></button>
+   <button class="seg" id="m-meet" onclick="mainMode('meet')"><span class="ico">✦</span><span class="tl"><b>만남의 장</b><i>공간·협업·공모 · 참여</i></span></button>
+ </div>
  <div class="spacer"></div>
- <div class="lang" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')">🗺 지도</button><button id="vcalls" onclick="setView('calls')">📋 공모·공고</button><button id="vgrid" onclick="setView('grid')">▦ 전체보기</button><button id="vboard" onclick="setView('board')">✎ 자랑 모음</button></div>
+ <div class="lang" id="viewsw" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')" style="display:none">🗺 지도</button><button id="vcalls" onclick="setView('calls')" style="display:none">📋 공모·공고</button><button id="vgrid" onclick="boardView('grid')">▦ 전체보기</button><button id="vboard" onclick="boardView('board')">✎ 자랑 모음</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 <div class="legend" id="legend"></div>
@@ -303,6 +376,12 @@ circle.city{cursor:pointer;}
 <div id="grid" class="grid"></div>
 <div id="calls" class="board" style="display:none"></div>
 <div id="board" class="board" style="display:none"></div>
+<div id="meet">
+ <div id="mmap"><div id="mmapcard"></div></div>
+ <div id="mresizer"></div>
+ <div id="mgal"></div>
+</div>
+<div class="mmodal" id="mmodal"><div class="mmbox"><div class="mmh" id="mmh"><div class="pv"></div><div class="cap"><div class="k" id="mmk"></div><div class="n" id="mmn"></div></div></div><div class="mmbody"><button class="mmclose" onclick="mmCl()">&times;</button><div class="mmsoul" id="mmsoul"></div><div class="mmfill" id="mmfill"></div><div class="mrel-lab" id="mmrelLab">이 지역에서 함께 열립니다</div><div class="mrel" id="mmrel"></div><a class="mmcta" id="mmcta">이 공간, 함께하기 ›</a></div></div></div>
 <!-- ▼ 광고 자리(나중에 사용): AdSense/애드핏 승인 후 아래 div 안에 광고 스니펫만 붙이면 됨.
      지금은 비어 있어 아무것도 안 보임. 트래픽 붙은 뒤 활성화 권장.
 <div id="ad-slot" style="text-align:center;padding:8px"></div>
@@ -346,5 +425,122 @@ if('serviceWorker' in navigator){
 }
 </script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "7726dea2a4d348fda0671a0cfe00c444"}'></script><!-- End Cloudflare Web Analytics -->
+<script>
+/* ===== 만남의 장 (신규 뷰) — 전통 이야기는 기존 코드 그대로 두고, 이 뷰만 추가 ===== */
+(function(){
+var IMG=(typeof IMAGES!=='undefined')?IMAGES:{};var GG=(typeof GONGMO!=='undefined')?GONGMO:{};
+var CH=(typeof LINKS!=='undefined'&&LINKS.choin)?LINKS.choin:'https://www.youtube.com/@muuimaster';
+function gong(prov){return (GG[prov]||[]).length;}
+var COL={space:'#a9803a',proj:'#1d8a6a',event:'#b0472f',video:'#b0472f'},LAB={space:'유휴공간·무대',proj:'진행 프로젝트',event:'예정 이벤트',video:'복원 영상'},BD={space:'b-space',proj:'b-proj',event:'b-event',video:'b-video'};
+var MC=[
+ {type:'space',reg:'전주',prov:'전북',lat:35.865,lng:127.13,n:'팔복예술공장',photo:'전주',status:'실재 공간',soul:'한지와 판소리가 빛으로 흐르는, 옛 카세트 공장',was:'1979년 쏘렉스 카세트테이프 공장 → 폐업·방치 → 2018년 예술공장으로 재생',concept:'전주 한지의 결과 판소리를 대형 벽면에 투사하는 몰입 미디어아트 무대 (초인 제안)',sz:'big'},
+ {type:'space',reg:'청주',prov:'충북',lat:36.642,lng:127.471,n:'문화제조창',photo:'청주',status:'실재 공간',soul:'국가유산이 거대한 실감으로 되살아나는 옛 담배공장',was:'옛 청주 연초제조창(~2004) → 대규모 유휴 → 문화제조창으로 재생',concept:'청주 인쇄문화·국가유산을 초대형 미디어월로 펼치는 실감 전시 (초인 제안)',sz:'big'},
+ {type:'space',reg:'군산',prov:'전북',lat:35.985,lng:126.71,n:'군산 근대 원도심 창고',photo:'군산',status:'후보 발굴',soul:'근대와 전통이 항구에서 겹치는 시간의 창고',was:'근대 항구 물류창고군 → 원도심 공동화로 유휴화',concept:'군산 근대항구 서사와 전통을 겹쳐 투사하는 미디어 전시 후보지 (초인 발굴)',sz:'mid'},
+ {type:'space',reg:'충주',prov:'충북',lat:37.02,lng:127.86,n:'중앙탑 인근 폐교',photo:'충주',status:'후보 발굴',soul:'아이와 어른이 설화로 노는 마을 미디어촌',was:'인구 감소로 유휴화된 지방 폐교',concept:'충주 중앙탑·설화를 어린이 실감체험으로 되살리는 마을 단위 후보지 (초인 발굴)',sz:'sm'},
+ {type:'proj',reg:'강진',prov:'전남',lat:34.64,lng:126.77,n:'민화뮤지엄 × 초인',photo:'강진',live:'협의 가능',status:'협업 논의',soul:'까치호랑이 호작도가 벽을 걸어 나오는 몰입 전시',was:'',concept:'민화 컬렉션을 실감 미디어아트로 재해석하는 협업 기획 (논의 단계)',sz:'mid'},
+ {type:'proj',reg:'안동',prov:'경북',lat:36.57,lng:128.73,n:'하회탈 미디어아트',photo:'안동',live:'기획 아이디어',status:'기획 아이디어',soul:'잠든 탈이 달빛 아래 깨어나는 별신굿',was:'',concept:'하회별신굿탈놀이를 관객 반응형 인터랙티브로 재해석하는 기획안',sz:'sm'}
+];
+function cimg(c){return IMG[c.photo]||'';}
+// 실제 영상 DB(VIDEOS) 연결 — 썸네일·채널 실물
+var CHm=(typeof LINKS!=='undefined'&&LINKS.choin)?LINKS.choin:'https://www.youtube.com/@muuimaster';
+var CHf=(typeof LINKS!=='undefined'&&LINKS.foodie)?LINKS.foodie:'https://www.youtube.com/@muuifoodie';
+function videoList(){var VS=(typeof VIDEOS!=='undefined')?VIDEOS:{};var all=[],seen={},pick=[];
+ Object.keys(VS).forEach(function(r){(VS[r]||[]).forEach(function(v){if(!v.th)return;all.push({reg:r,n:v.n,th:v.th,url:v.yt||(v.ch==='f'?CHf:CHm),ch:v.ch});});});
+ all.forEach(function(o){if(pick.length>=8||seen[o.reg])return;seen[o.reg]=1;pick.push(o);});
+ all.forEach(function(o){if(pick.length>=10||pick.indexOf(o)>=0)return;pick.push(o);});
+ var sizes=['mid','sm','big','sm','mid','sm','mid','sm','sm','mid'];
+ pick.forEach(function(o,i){o.sz=sizes[i%sizes.length];});return pick;}
+function videoEl(v){var el=document.createElement('div');el.className='gc '+(v.sz||'mid');el.style.backgroundImage='url('+v.th+')';
+ el.innerHTML='<div class="pv"></div><div class="play">▶</div><div class="in"><span class="badge b-video">복원 영상</span><div class="n">'+v.n+'</div><div class="s">'+v.reg+' · '+(v.ch==='f'?'대령숙수':'무이 유물복원단')+'</div></div>';
+ el.onclick=function(){window.open(v.url,'_blank');};return el;}
+var LZ={space:true,proj:true,video:true},F='all',proj,gLayer,inited=false;
+// 지도
+function meetMap(){var W=640,H=800;
+ var f=topojson.feature(window.KOR_TOPO,window.KOR_TOPO.objects.kor);
+ var fit={type:'FeatureCollection',features:f.features.concat([{type:'Feature',geometry:{type:'Point',coordinates:[130.87,37.5]}},{type:'Feature',geometry:{type:'Point',coordinates:[131.95,37.24]}}])};
+ proj=d3.geoMercator().fitExtent([[18,18],[W-18,H-18]],fit);var path=d3.geoPath(proj);
+ var svg=d3.select('#mmap').append('svg').attr('viewBox','0 0 '+W+' '+H);var gz=svg.append('g');
+ gz.append('g').selectAll('path').data(f.features).join('path').attr('fill','#e6dac2').attr('stroke','#cdbd9c').attr('stroke-width',.7).attr('d',path);
+ gLayer=gz.append('g');
+ svg.call(d3.zoom().scaleExtent([1,5]).translateExtent([[0,0],[W,H]]).on('zoom',function(e){gz.attr('transform',e.transform);}));
+ drawPins();}
+function drawPins(){gLayer.selectAll('*').remove();MC.forEach(function(c,i){if(LZ[c.type]===false)return;var p=proj([c.lng,c.lat]);if(!p)return;
+ if(c.live||c.status==='실재 공간')gLayer.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',9).attr('fill',COL[c.type]).attr('opacity',.3);
+ gLayer.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',7).attr('fill',COL[c.type]).attr('stroke','#fff').attr('stroke-width',2).style('cursor','pointer').on('click',function(){if(c.type==='video')window.open(c.vid,'_blank');else openM(i);});
+ gLayer.append('text').attr('class','mclabel').attr('x',p[0]).attr('y',p[1]-11).attr('text-anchor','middle').attr('font-size',10.5).text(c.n);});}
+// 플로팅 카드
+function mapCard(){var ns=MC.filter(function(c){return c.type==='space';}).length,np=MC.filter(function(c){return c.type==='proj';}).length,nv=videoList().length;
+ var rows=[['space',ns],['proj',np],['video',nv]].map(function(a){return '<div class="mc-lc'+(LZ[a[0]]?'':' off')+'" data-t="'+a[0]+'"><span class="dot" style="background:'+COL[a[0]]+'"></span>'+LAB[a[0]]+'<span class="cnt">'+a[1]+'</span></div>';}).join('');
+ document.getElementById('mmapcard').innerHTML='<div class="mc-title">✦ 만남의 장</div><div class="mc-sub">전통 미디어아트가 사람을 모으는 실제 공간·기획·영상. 레이어로 골라보세요.</div><div class="mc-lab">레이어</div>'+rows+'<a class="mc-disc" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] 공간·협업 제안')+'">✦ 우리 공간 제안하기</a>';
+ document.getElementById('mmapcard').addEventListener('click',function(e){var lc=e.target.closest('.mc-lc');if(!lc)return;var t=lc.dataset.t;LZ[t]=!LZ[t];lc.classList.toggle('off',!LZ[t]);drawPins();renderGrid();});}
+// 갤러리
+function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
+ var today=new Date();gs.forEach(function(x){x.dd=Math.ceil((new Date(x.o.d)-today)/864e5);});
+ return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,16);}
+function imgEl(c,i){var el=document.createElement('div');el.className='gc '+(c.sz||'mid');el.style.backgroundImage='url('+cimg(c)+')';
+ var play=c.type==='video'?'<div class="play">▶</div>':'';var prop=(c.status&&c.status!=='실재 공간')?'<span class="prop">'+c.status+'</span>':'';
+ el.innerHTML='<div class="pv"></div>'+play+(c.live?'<span class="live">'+c.live+'</span>':'')+'<div class="in"><span class="badge '+BD[c.type]+'">'+LAB[c.type]+'</span>'+prop+'<div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
+ el.onclick=c.type==='video'?function(){window.open(c.vid,'_blank');}:function(){openM(i);};return el;}
+function gongEl(g){var soon=g.dd<=7,sz=g.dd<=3?'mid':'sm';var el=document.createElement('div');el.className='gc txt '+sz+(soon?' soon':'');
+ el.innerHTML='<div class="in"><span class="badge b-gong">공모·자금</span><div class="dd">D-'+g.dd+'</div><div class="n">'+g.o.t+'</div><div class="s">'+g.r+' · '+(g.o.k||'공모')+'</div></div>';
+ el.onclick=function(){window.open(g.o.u,'_blank');};return el;}
+function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;grid.innerHTML='';
+ if(F==='gongmo'){var gc=gongCards();if(!gc.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px">표시할 공모가 없습니다.</div>';return;}gc.forEach(function(g){grid.appendChild(gongEl(g));});return;}
+ if(F==='video'){var vs=videoList();if(!vs.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px">영상이 없습니다.</div>';return;}vs.forEach(function(v){grid.appendChild(videoEl(v));});return;}
+ if(F==='space'||F==='proj'){MC.forEach(function(c,i){if(c.type!==F)return;grid.appendChild(imgEl(c,i));});return;}
+ // 전체 = 공간·프로젝트(이미지) + 영상(실물) + 공모(텍스트) 한 벽에 섞어서
+ var imgs=[];MC.forEach(function(c,i){if(LZ[c.type]!==false)imgs.push({t:'img',c:c,i:i});});
+ var vids=(LZ.video!==false)?videoList().map(function(v){return {t:'vid',v:v};}):[];
+ var gs=gongCards().map(function(g){return {t:'gong',g:g};});
+ var out=[],ii=0,vi=0,gi=0,turn=0;
+ while(ii<imgs.length||vi<vids.length||gi<gs.length){
+  if(ii<imgs.length)out.push(imgs[ii++]);
+  if(vi<vids.length&&turn%2===0)out.push(vids[vi++]);
+  if(gi<gs.length)out.push(gs[gi++]);
+  turn++;}
+ while(vi<vids.length)out.push(vids[vi++]);
+ out.forEach(function(o){if(o.t==='img')grid.appendChild(imgEl(o.c,o.i));else if(o.t==='vid')grid.appendChild(videoEl(o.v));else grid.appendChild(gongEl(o.g));});}
+function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p>공간·프로젝트·영상·공모가 한 벽에. 크고 작게, 누르면 열립니다.</p><div class="disc">※ 실재 공간(팔복·문화제조창)과 초인이 발굴·제안하는 후보·기획이 함께 있습니다.</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
+ document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});renderGrid();});
+ renderGrid();}
+// 모달
+function openM(i){var c=MC[i],isS=c.type==='space';
+ document.getElementById('mmh').style.backgroundImage='url('+cimg(c)+')';document.getElementById('mmk').textContent=c.reg+' · '+LAB[c.type];document.getElementById('mmn').textContent=c.n;document.getElementById('mmsoul').textContent='"'+c.soul+'"';
+ var rows='<div class="r"><b>미디어아트</b>'+c.concept+'</div>';
+ if(c.was)rows+='<div class="r"><b>지금 이 공간</b>'+c.was+'</div>';
+ if(c.status)rows+='<div class="r"><b>상태</b>'+c.status+(c.live?' · '+c.live:'')+'</div>';
+ rows+='<div class="r"><b>이 지역 공모·지원</b>'+gong(c.prov)+'건 (실시간)</div>';
+ document.getElementById('mmfill').innerHTML=rows;
+ var rel=MC.map(function(x,j){return {x:x,j:j};}).filter(function(o){return o.j!==i&&o.x.prov===c.prov;});
+ var rl=document.getElementById('mmrel');
+ if(rel.length){rl.innerHTML=rel.map(function(o){return '<div class="ri" onclick="__mmRel('+o.j+')"><div class="th" style="background-image:url('+cimg(o.x)+')"></div><div><div class="tt">'+o.x.n+'</div><div class="ts">'+LAB[o.x.type]+(o.x.status?' · '+o.x.status:'')+'</div></div></div>';}).join('');}
+ else rl.innerHTML='<div style="font-size:12.5px;color:var(--t3)">이 지역 첫 만남입니다. 함께 채워요.</div>';
+ document.getElementById('mmcta').href='mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] '+c.n);
+ document.getElementById('mmodal').classList.add('on');}
+window.__mmRel=function(j){openM(j);};
+window.mmCl=function(){document.getElementById('mmodal').classList.remove('on');};
+document.getElementById('mmodal').addEventListener('click',function(e){if(e.target===this)mmCl();});
+// 리사이저
+(function(){var rz=document.getElementById('mresizer'),dg=false;
+ rz.addEventListener('mousedown',function(){dg=true;document.body.style.userSelect='none';});
+ window.addEventListener('mouseup',function(){dg=false;document.body.style.userSelect='';});
+ window.addEventListener('mousemove',function(e){if(!dg)return;var mp=document.getElementById('mmap'),w=document.getElementById('meet').getBoundingClientRect();var pw=(e.clientX-w.left)/w.width*100;pw=Math.max(28,Math.min(72,pw));mp.style.flexBasis=pw+'%';});})();
+function meetInit(){meetMap();mapCard();gallery();}
+window.mainMode=function(m){var meet=m==='meet';
+ document.getElementById('m-story').classList.toggle('on',!meet);
+ document.getElementById('m-meet').classList.toggle('on',meet);
+ var wrap=document.querySelector('.wrap'),legend=document.getElementById('legend'),grid=document.getElementById('grid'),calls=document.getElementById('calls'),board=document.getElementById('board');
+ if(meet){[wrap,legend,grid,calls,board].forEach(function(e){if(e)e.style.display='none';});document.getElementById('meet').classList.add('on');if(!inited){inited=true;meetInit();}}
+ else{document.getElementById('meet').classList.remove('on');if(window.setView){try{setView('map');}catch(e){}}if(wrap)wrap.style.display='';if(legend)legend.style.display='';}
+};
+// 전체보기·자랑모음 — 만남의 장에서도 동일하게 (누르면 만남 빠져나가 게시판으로)
+window.boardView=function(v){var meet=document.getElementById('meet');if(meet)meet.classList.remove('on');
+ document.getElementById('m-meet').classList.remove('on');document.getElementById('m-story').classList.add('on');
+ ['.wrap'].forEach(function(s){var e=document.querySelector(s);if(e)e.style.display='';});
+ var lg=document.getElementById('legend');if(lg)lg.style.display='';
+ ['grid','calls','board'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='';});
+ if(window.setView){try{setView(v);}catch(e){}}};
+})();
+</script>
 </body>
 </html>
