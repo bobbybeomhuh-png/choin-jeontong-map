@@ -453,7 +453,17 @@ function videoList(){var VS=(typeof VIDEOS!=='undefined')?VIDEOS:{};var all=[],s
 function videoEl(v){var el=document.createElement('div');el.className='mgc '+(v.sz||'mid');el.style.backgroundImage='url('+v.th+')';
  el.innerHTML='<div class="pv"></div><div class="play">▶</div><div class="in"><span class="badge b-video">복원 영상</span><div class="n">'+v.n+'</div><div class="s">'+v.reg+' · '+(v.ch==='f'?'대령숙수':'무이 유물복원단')+'</div></div>';
  el.onclick=function(){window.open(v.url,'_blank');};return el;}
-var LZ={space:true,proj:true,video:true},F='all',proj,gLayer,inited=false;
+var LZ={space:true,proj:true,video:true,gongmo:true},F='all',FREG=null,proj,gLayer,inited=false;
+COL.gongmo='#2f6db5';LAB.gongmo='공모·자금';
+// 전 지역 공모 허브 좌표(CITIES 권역 중심 + 서울/인천 고정)
+function provPoints(){var fixed={'서울':[126.98,37.57],'인천':[126.70,37.46]};
+ var acc={};(typeof CITIES!=='undefined'?CITIES:[]).forEach(function(c){var pv=c[1];if(!acc[pv])acc[pv]=[0,0,0];acc[pv][0]+=c[2];acc[pv][1]+=c[3];acc[pv][2]++;});
+ var cent={};Object.keys(acc).forEach(function(pv){cent[pv]=[acc[pv][0]/acc[pv][2],acc[pv][1]/acc[pv][2]];});
+ var out=[];Object.keys(GG).forEach(function(rg){if(rg==='전국')return;var arr=GG[rg]||[];var today=new Date();
+  var n=arr.filter(function(o){var dd=Math.ceil((new Date(o.d)-today)/864e5);return !isNaN(dd)&&dd>=0;}).length;if(!n)return;
+  var co=fixed[rg]||cent[rg];if(!co)return;out.push({rg:rg,lng:co[0],lat:co[1],n:n});});
+ return out;}
+function regionGongmo(rg){FREG=rg;F='gongmo';var gf=document.getElementById('mgfilt');if(gf)gf.querySelectorAll('.f').forEach(function(x){x.classList.toggle('on',x.dataset.f==='gongmo');});renderGrid();var g=document.getElementById('mgal');if(g)g.scrollTop=0;}
 // 지도
 function meetMap(){var W=640,H=800;
  var f=topojson.feature(window.KOR_TOPO,window.KOR_TOPO.objects.kor);
@@ -464,19 +474,28 @@ function meetMap(){var W=640,H=800;
  gLayer=gz.append('g');
  svg.call(d3.zoom().scaleExtent([1,5]).translateExtent([[0,0],[W,H]]).on('zoom',function(e){gz.attr('transform',e.transform);}));
  drawPins();}
-function drawPins(){gLayer.selectAll('*').remove();MC.forEach(function(c,i){if(LZ[c.type]===false)return;var p=proj([c.lng,c.lat]);if(!p)return;
- if(c.live||c.status==='실재 공간')gLayer.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',9).attr('fill',COL[c.type]).attr('opacity',.3);
+function drawPins(){gLayer.selectAll('*').remove();
+ // 전 지역 공모·자금 허브 (실데이터) — 전국에 뿌림
+ if(LZ.gongmo!==false){provPoints().forEach(function(p){var pt=proj([p.lng,p.lat]);if(!pt)return;
+  gLayer.append('circle').attr('cx',pt[0]).attr('cy',pt[1]).attr('r',Math.min(17,8+p.n*0.5)).attr('fill','#2f6db5').attr('opacity',.16);
+  gLayer.append('circle').attr('cx',pt[0]).attr('cy',pt[1]).attr('r',11).attr('fill','#2f6db5').attr('stroke','#fff').attr('stroke-width',2).style('cursor','pointer').on('click',function(){regionGongmo(p.rg);});
+  gLayer.append('text').attr('x',pt[0]).attr('y',pt[1]+3.6).attr('text-anchor','middle').attr('font-size',10.5).attr('font-weight',800).attr('fill','#fff').style('pointer-events','none').text(p.n);
+  gLayer.append('text').attr('class','mclabel').attr('x',pt[0]).attr('y',pt[1]-15).attr('text-anchor','middle').attr('font-size',9.5).attr('font-weight',700).text(p.rg);});}
+ // 구상 공간·프로젝트·영상
+ MC.forEach(function(c,i){if(LZ[c.type]===false)return;var p=proj([c.lng,c.lat]);if(!p)return;
+ if(c.live||(c.status&&c.status.indexOf('실재')===0))gLayer.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',9).attr('fill',COL[c.type]).attr('opacity',.3);
  gLayer.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',7).attr('fill',COL[c.type]).attr('stroke','#fff').attr('stroke-width',2).style('cursor','pointer').on('click',function(){if(c.type==='video')window.open(c.vid,'_blank');else openM(i);});
  gLayer.append('text').attr('class','mclabel').attr('x',p[0]).attr('y',p[1]-11).attr('text-anchor','middle').attr('font-size',10.5).text(c.n);});}
 // 플로팅 카드
 function mapCard(){var ns=MC.filter(function(c){return c.type==='space';}).length,np=MC.filter(function(c){return c.type==='proj';}).length,nv=videoList().length;
- var rows=[['space',ns],['proj',np],['video',nv]].map(function(a){return '<div class="mc-lc'+(LZ[a[0]]?'':' off')+'" data-t="'+a[0]+'"><span class="dot" style="background:'+COL[a[0]]+'"></span>'+LAB[a[0]]+'<span class="cnt">'+a[1]+'</span></div>';}).join('');
- document.getElementById('mmapcard').innerHTML='<div class="mc-title">✦ 만남의 장</div><div class="mc-sub">전통 미디어아트가 사람을 모으는 실제 공간·기획·영상. 레이어로 골라보세요.</div><div class="mc-lab">레이어</div>'+rows+'<a class="mc-disc" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] 공간·협업 제안')+'">✦ 우리 공간 제안하기</a>';
+ var ngo=provPoints().reduce(function(a,p){return a+p.n;},0);
+ var rows=[['gongmo',ngo],['space',ns],['proj',np],['video',nv]].map(function(a){return '<div class="mc-lc'+(LZ[a[0]]?'':' off')+'" data-t="'+a[0]+'"><span class="dot" style="background:'+COL[a[0]]+'"></span>'+LAB[a[0]]+'<span class="cnt">'+a[1]+'</span></div>';}).join('');
+ document.getElementById('mmapcard').innerHTML='<div class="mc-title">✦ 만남의 장</div><div class="mc-sub">전국의 공모·자금(실시간)과 초인의 공간 구상을 한 지도에. 함께할 곳을 찾습니다.</div><div class="mc-lab">레이어</div>'+rows+'<a class="mc-disc" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] 공간·협업 제안')+'">✦ 우리 공간 제안하기</a>';
  document.getElementById('mmapcard').addEventListener('click',function(e){var lc=e.target.closest('.mc-lc');if(!lc)return;var t=lc.dataset.t;LZ[t]=!LZ[t];lc.classList.toggle('off',!LZ[t]);drawPins();renderGrid();});}
 // 갤러리
-function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
+function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){if(FREG&&r!==FREG&&r!=='전국')return;(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
  var today=new Date();gs.forEach(function(x){x.dd=Math.ceil((new Date(x.o.d)-today)/864e5);});
- return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,16);}
+ return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,FREG?40:16);}
 function imgEl(c,i){var el=document.createElement('div');el.className='mgc '+(c.sz||'mid');el.style.backgroundImage='url('+cimg(c)+')';
  var play=c.type==='video'?'<div class="play">▶</div>':'';var prop=(c.status&&c.status!=='실재 공간')?'<span class="prop">'+c.status+'</span>':'';
  el.innerHTML='<div class="pv"></div>'+play+(c.live?'<span class="live">'+c.live+'</span>':'')+'<div class="in"><span class="badge '+BD[c.type]+'">'+LAB[c.type]+'</span>'+prop+'<div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
@@ -500,8 +519,8 @@ function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;
   turn++;}
  while(vi<vids.length)out.push(vids[vi++]);
  out.forEach(function(o){if(o.t==='img')grid.appendChild(imgEl(o.c,o.i));else if(o.t==='vid')grid.appendChild(videoEl(o.v));else grid.appendChild(gongEl(o.g));});}
-function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p>공간·프로젝트·영상·공모가 한 벽에. 크고 작게, 누르면 열립니다.</p><div class="disc">※ 여기 공간·프로젝트는 <b>초인이 제안하는 비전·구상</b>입니다. 팔복·문화제조창 등은 실재하는 공간이나 <b>아직 협업 전</b>이며, 함께할 기관·파트너를 찾습니다. (영상·공모는 실제 데이터)</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
- document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});renderGrid();});
+function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p>전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.</p><div class="disc">※ 여기 공간·프로젝트는 <b>초인이 제안하는 비전·구상</b>입니다. 팔복·문화제조창 등은 실재하는 공간이나 <b>아직 협업 전</b>이며, 함께할 기관·파트너를 찾습니다. (영상·공모는 실제 데이터)</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
+ document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});renderGrid();});
  renderGrid();}
 // 모달
 function openM(i){var c=MC[i],isS=c.type==='space';
