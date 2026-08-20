@@ -433,12 +433,12 @@ var CH=(typeof LINKS!=='undefined'&&LINKS.choin)?LINKS.choin:'https://www.youtub
 function gong(prov){return (GG[prov]||[]).length;}
 var COL={space:'#a9803a',proj:'#1d8a6a',event:'#b0472f',video:'#b0472f'},LAB={space:'유휴공간·무대',proj:'진행 프로젝트',event:'예정 이벤트',video:'복원 영상'},BD={space:'b-space',proj:'b-proj',event:'b-event',video:'b-video'};
 var MC=[
- {type:'space',reg:'전주',prov:'전북',lat:35.865,lng:127.13,n:'팔복예술공장',photo:'전주',status:'실재 공간',soul:'한지와 판소리가 빛으로 흐르는, 옛 카세트 공장',was:'1979년 쏘렉스 카세트테이프 공장 → 폐업·방치 → 2018년 예술공장으로 재생',concept:'전주 한지의 결과 판소리를 대형 벽면에 투사하는 몰입 미디어아트 무대 (초인 제안)',sz:'big'},
- {type:'space',reg:'청주',prov:'충북',lat:36.642,lng:127.471,n:'문화제조창',photo:'청주',status:'실재 공간',soul:'국가유산이 거대한 실감으로 되살아나는 옛 담배공장',was:'옛 청주 연초제조창(~2004) → 대규모 유휴 → 문화제조창으로 재생',concept:'청주 인쇄문화·국가유산을 초대형 미디어월로 펼치는 실감 전시 (초인 제안)',sz:'big'},
+ {type:'space',reg:'전주',prov:'전북',lat:35.865,lng:127.13,n:'팔복예술공장',photo:'전주',status:'실재 공간 · 초인 제안(미협업)',soul:'한지와 판소리가 빛으로 흐르는, 옛 카세트 공장',was:'1979년 쏘렉스 카세트테이프 공장 → 폐업·방치 → 2018년 예술공장으로 재생',concept:'전주 한지의 결과 판소리를 대형 벽면에 투사하는 몰입 미디어아트 무대 (초인 제안)',sz:'big'},
+ {type:'space',reg:'청주',prov:'충북',lat:36.642,lng:127.471,n:'문화제조창',photo:'청주',status:'실재 공간 · 초인 제안(미협업)',soul:'국가유산이 거대한 실감으로 되살아나는 옛 담배공장',was:'옛 청주 연초제조창(~2004) → 대규모 유휴 → 문화제조창으로 재생',concept:'청주 인쇄문화·국가유산을 초대형 미디어월로 펼치는 실감 전시 (초인 제안)',sz:'big'},
  {type:'space',reg:'군산',prov:'전북',lat:35.985,lng:126.71,n:'군산 근대 원도심 창고',photo:'군산',status:'후보 발굴',soul:'근대와 전통이 항구에서 겹치는 시간의 창고',was:'근대 항구 물류창고군 → 원도심 공동화로 유휴화',concept:'군산 근대항구 서사와 전통을 겹쳐 투사하는 미디어 전시 후보지 (초인 발굴)',sz:'mid'},
  {type:'space',reg:'충주',prov:'충북',lat:37.02,lng:127.86,n:'중앙탑 인근 폐교',photo:'충주',status:'후보 발굴',soul:'아이와 어른이 설화로 노는 마을 미디어촌',was:'인구 감소로 유휴화된 지방 폐교',concept:'충주 중앙탑·설화를 어린이 실감체험으로 되살리는 마을 단위 후보지 (초인 발굴)',sz:'sm'},
- {type:'proj',reg:'강진',prov:'전남',lat:34.64,lng:126.77,n:'민화뮤지엄 × 초인',photo:'강진',live:'협의 가능',status:'협업 논의',soul:'까치호랑이 호작도가 벽을 걸어 나오는 몰입 전시',was:'',concept:'민화 컬렉션을 실감 미디어아트로 재해석하는 협업 기획 (논의 단계)',sz:'mid'},
- {type:'proj',reg:'안동',prov:'경북',lat:36.57,lng:128.73,n:'하회탈 미디어아트',photo:'안동',live:'기획 아이디어',status:'기획 아이디어',soul:'잠든 탈이 달빛 아래 깨어나는 별신굿',was:'',concept:'하회별신굿탈놀이를 관객 반응형 인터랙티브로 재해석하는 기획안',sz:'sm'}
+ {type:'proj',reg:'강진',prov:'전남',lat:34.64,lng:126.77,n:'민화 실감 미디어아트',photo:'강진',live:'파트너 모집',status:'초인 구상 · 미접촉',soul:'까치호랑이 호작도가 벽을 걸어 나오는 몰입 전시 (구상)',was:'',concept:'민화를 실감 미디어아트로 재해석하고 싶은 초인의 구상 — 함께할 소장처·기관을 찾습니다 (아직 접촉 전)',sz:'mid'},
+ {type:'proj',reg:'안동',prov:'경북',lat:36.57,lng:128.73,n:'하회탈 미디어아트',photo:'안동',live:'구상',status:'초인 구상 · 미접촉',soul:'잠든 탈이 달빛 아래 깨어나는 별신굿 (구상)',was:'',concept:'하회별신굿탈놀이를 인터랙티브 미디어아트로 재해석하고 싶은 초인의 구상 (아직 접촉 전)',sz:'sm'}
 ];
 function cimg(c){return IMG[c.photo]||'';}
 // 실제 영상 DB(VIDEOS) 연결 — 썸네일·채널 실물
@@ -500,7 +500,7 @@ function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;
   turn++;}
  while(vi<vids.length)out.push(vids[vi++]);
  out.forEach(function(o){if(o.t==='img')grid.appendChild(imgEl(o.c,o.i));else if(o.t==='vid')grid.appendChild(videoEl(o.v));else grid.appendChild(gongEl(o.g));});}
-function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p>공간·프로젝트·영상·공모가 한 벽에. 크고 작게, 누르면 열립니다.</p><div class="disc">※ 실재 공간(팔복·문화제조창)과 초인이 발굴·제안하는 후보·기획이 함께 있습니다.</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
+function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p>공간·프로젝트·영상·공모가 한 벽에. 크고 작게, 누르면 열립니다.</p><div class="disc">※ 여기 공간·프로젝트는 <b>초인이 제안하는 비전·구상</b>입니다. 팔복·문화제조창 등은 실재하는 공간이나 <b>아직 협업 전</b>이며, 함께할 기관·파트너를 찾습니다. (영상·공모는 실제 데이터)</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
  document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});renderGrid();});
  renderGrid();}
 // 모달
