@@ -282,7 +282,7 @@ circle.city{cursor:pointer;}
 /* ===== 만남의 장 뷰 ===== */
 #meet{display:none;height:calc(100% - 110px);}
 #meet.on{display:flex;}
-#mmap{flex:0 0 50%;position:relative;background:#efe7d6;min-width:0;}
+#mmap{flex:0 0 34%;position:relative;background:#efe7d6;min-width:0;}
 #mmap svg{width:100%;height:100%;display:block;}
 #mmapcard{position:absolute;left:16px;top:16px;width:236px;background:rgba(251,247,239,.94);backdrop-filter:blur(4px);border:1px solid var(--line2);border-radius:15px;padding:14px 15px;box-shadow:0 5px 20px rgba(90,70,20,.13);z-index:2;}
 #mmapcard .mc-title{font-family:var(--serif);font-size:16px;font-weight:800;}
@@ -336,6 +336,46 @@ circle.city{cursor:pointer;}
 .mrel .ri .tt{font-size:12.5px;font-weight:700;line-height:1.3;}.mrel .ri .ts{font-size:11px;color:var(--t3);}
 .mmcta{display:block;background:var(--teal);color:#fff;text-align:center;padding:13px;border-radius:11px;font-weight:600;font-size:14px;text-decoration:none;}
 @media(max-width:780px){#meet.on{flex-direction:column;height:auto;}#mmap{flex:0 0 46vh;}#mresizer{display:none;}#mgal{flex:auto;}}
+/* ===== v2 가치제안 밴드 (뭐 하는 곳 / 누구에게 뭐) ===== */
+.vband{background:linear-gradient(90deg,#f7f0e0,#efe4cd);border-bottom:1px solid var(--line);padding:12px 24px 13px;}
+.vband .vtop{font-family:var(--serif);font-size:16.5px;color:var(--ink);font-weight:700;}
+.vband .vtop b{color:var(--gold);}
+.vband .vtop .vstat{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--t2);margin-left:10px;white-space:nowrap;}
+.vband .vwho{display:flex;gap:10px;margin-top:11px;flex-wrap:wrap;}
+.vband .w{flex:1 1 0;min-width:210px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.6);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;cursor:pointer;transition:.15s;}
+.vband .w:hover{background:#fff;border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(90,70,20,.12);}
+.vband .w .ic{font-size:20px;flex:0 0 auto;}
+.vband .w b{font-size:13.5px;color:var(--ink);margin-right:2px;display:block;}
+.vband .w .d{font-size:12.5px;color:var(--t2);line-height:1.35;flex:1;}
+.vband .w .arr{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--gold);white-space:nowrap;}
+.vband .w:hover .arr{color:var(--brick);}
+@media(max-width:760px){.vband .vtop .vstat{display:block;margin:4px 0 0;}.vband .w{min-width:0;}}
+/* ===== v2 챌린지(절제) ===== */
+.chal{margin:16px 22px 6px;border-radius:16px;overflow:hidden;background:linear-gradient(120deg,#2c2519,#5a4526);color:#f3ece0;box-shadow:0 5px 18px rgba(90,70,20,.16);}
+.chal .in{padding:16px 20px;display:flex;gap:15px;align-items:center;}
+.chal .av{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:0 0 auto;background:#f6efe2;border:2px solid rgba(244,217,160,.5);}
+.chal .tx{flex:1;min-width:0;}.chal .k{font-size:11px;letter-spacing:1.5px;color:#f4d9a0;font-weight:700;text-transform:uppercase;}
+.chal .t{font-family:var(--serif);font-size:18px;font-weight:800;margin:3px 0 4px;line-height:1.3;}
+.chal .s{font-size:12.5px;color:#e8dcc4;line-height:1.5;}
+.chal .go{flex:0 0 auto;background:#b0472f;color:#fff;border:0;border-radius:11px;padding:11px 20px;font-family:var(--sans);font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap;}
+.chal .go:hover{background:#c8543a;}
+@media(max-width:640px){.chal .in{flex-direction:column;text-align:center;}}
+/* 섹션 헤더(공모 전면·명확) */
+.gsec{padding:16px 22px 2px;font-family:var(--serif);font-weight:800;font-size:16px;color:var(--ink);}
+.gsec small{font-family:var(--sans);font-weight:500;font-size:12px;color:var(--t2);margin-left:7px;}
+/* 공간·프로젝트 텍스트 카드에 지역 표기 */
+.mgc.txt .s{color:var(--t3);}
+/* 챌린지 모달 */
+.chmodal{position:fixed;inset:0;z-index:70;background:rgba(20,17,12,.66);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:20px;}.chmodal.on{display:flex;}
+.chbox{background:var(--bg);border-radius:18px;max-width:470px;width:100%;padding:24px;position:relative;}
+.chbox h3{font-family:var(--serif);font-size:21px;font-weight:800;margin:0 0 4px;}
+.chbox p.sub{font-size:13px;color:var(--t2);margin:0 0 14px;}
+.chbox label{display:block;font-size:12px;font-weight:700;color:var(--t2);margin:11px 0 5px;}
+.chbox input,.chbox textarea{width:100%;box-sizing:border-box;border:1px solid var(--line2);border-radius:10px;padding:11px;font:inherit;font-size:14px;background:#fff;}
+.chbox textarea{min-height:70px;resize:vertical;}
+.chbox .send{width:100%;margin-top:15px;background:var(--ink);color:var(--bg);border:0;border-radius:12px;padding:13px;font-weight:700;font-size:14px;cursor:pointer;}
+.chbox .x{position:absolute;top:14px;right:16px;border:0;background:none;font-size:22px;cursor:pointer;color:var(--t3);}
+.chbox .note{font-size:11.5px;color:var(--t3);margin-top:10px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -349,13 +389,21 @@ circle.city{cursor:pointer;}
    <a class="chtab" id="tab-lab" href="lab/index.html" rel="noopener" style="background:#1E6B58">✎ 제작 배움터</a>
  </nav>
  <div class="segtabs" role="tablist">
-   <button class="seg on" id="m-story" onclick="mainMode('story')"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>초인이 되살린 전통 · 발견</i></span></button>
-   <button class="seg" id="m-meet" onclick="mainMode('meet')"><span class="ico">✦</span><span class="tl"><b>만남의 장</b><i>공간·협업·공모 · 참여</i></span></button>
+   <button class="seg on" id="m-story" onclick="mainMode('story')"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>되살린 전통을 본다</i></span></button>
+   <button class="seg" id="m-meet" onclick="mainMode('meet')"><span class="ico">✦</span><span class="tl"><b>만남의 장</b><i>기회를 잡고 함께한다</i></span></button>
  </div>
  <div class="spacer"></div>
  <div class="lang" id="viewsw" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')" style="display:none">🗺 지도</button><button id="vcalls" onclick="setView('calls')" style="display:none">📋 공모·공고</button><button id="vgrid" onclick="boardView('grid')">▦ 전체보기</button><button id="vboard" onclick="boardView('board')">✎ 자랑 모음</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
+<div class="vband">
+  <div class="vtop">전국 <b>전통 미디어아트 기회</b>가 모이는 지도<span class="vstat" id="vstat">이야기 90 · 열린 공모 495 · 이번 달 방문 8,000+</span></div>
+  <div class="vwho">
+    <div class="w" onclick="goMeet('gongmo')"><span class="ic">🎨</span><span class="d"><b>창작자</b>매일 열리는 전통·미디어아트 공모</span><span class="arr">공모 보기 →</span></div>
+    <div class="w" onclick="goMeet('space')"><span class="ic">🏛</span><span class="d"><b>기관·브랜드</b>함께할 창작자·공간 찾기</span><span class="arr">만남의 장 →</span></div>
+    <div class="w" onclick="chOpen()"><span class="ic">🙋</span><span class="d"><b>누구나</b>우리 동네 전통 남기고 배지 받기</span><span class="arr">지금 남기기 →</span></div>
+  </div>
+</div>
 <div class="legend" id="legend"></div>
 <div class="wrap">
  <div id="map">
@@ -490,44 +538,47 @@ function drawPins(){gLayer.selectAll('*').remove();
  gLayer.append('circle').attr('cx',p[0]).attr('cy',p[1]).attr('r',7).attr('fill',COL[c.type]).attr('stroke','#fff').attr('stroke-width',2).style('cursor','pointer').on('click',function(){if(c.type==='video')window.open(c.vid,'_blank');else openM(i);});
  gLayer.append('text').attr('class','mclabel').attr('x',p[0]).attr('y',p[1]-11).attr('text-anchor','middle').attr('font-size',10.5).text(c.n);});}
 // 플로팅 카드
-function mapCard(){var ns=MC.filter(function(c){return c.type==='space';}).length,np=MC.filter(function(c){return c.type==='proj';}).length,nv=videoList().length;
+function mapCard(){var ns=MC.filter(function(c){return c.type==='space';}).length,np=MC.filter(function(c){return c.type==='proj';}).length;
  var ngo=provPoints().reduce(function(a,p){return a+p.n;},0);
- var rows=[['gongmo',ngo],['space',ns],['proj',np],['video',nv]].map(function(a){return '<div class="mc-lc'+(LZ[a[0]]?'':' off')+'" data-t="'+a[0]+'"><span class="dot" style="background:'+COL[a[0]]+'"></span>'+LAB[a[0]]+'<span class="cnt">'+a[1]+'</span></div>';}).join('');
- document.getElementById('mmapcard').innerHTML='<div class="mc-title">✦ 만남의 장</div><div class="mc-sub">전국의 공모·자금(실시간)과 초인의 공간 구상을 한 지도에. 함께할 곳을 찾습니다.</div><div class="mc-lab">레이어</div>'+rows+'<a class="mc-disc" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] 공간·협업 제안')+'">✦ 우리 공간 제안하기</a>';
+ var rows=[['gongmo',ngo],['space',ns],['proj',np]].map(function(a){return '<div class="mc-lc'+(LZ[a[0]]?'':' off')+'" data-t="'+a[0]+'"><span class="dot" style="background:'+COL[a[0]]+'"></span>'+LAB[a[0]]+'<span class="cnt">'+a[1]+'</span></div>';}).join('');
+ document.getElementById('mmapcard').innerHTML='<div class="mc-title">✦ 지역 필터</div><div class="mc-sub">파란 점을 누르면 그 지역의 공모·기회만 모입니다.</div><div class="mc-lab">레이어</div>'+rows+'<a class="mc-disc" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[만남의 장] 공간·협업 제안')+'">✦ 우리 공간 제안하기</a>';
  document.getElementById('mmapcard').addEventListener('click',function(e){var lc=e.target.closest('.mc-lc');if(!lc)return;var t=lc.dataset.t;LZ[t]=!LZ[t];lc.classList.toggle('off',!LZ[t]);drawPins();renderGrid();});}
 // 갤러리
 function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){if(FREG&&r!==FREG)return;(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
  var today=new Date();gs.forEach(function(x){x.dd=Math.ceil((new Date(x.o.d)-today)/864e5);});
  return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,FREG?60:16);}
-function imgEl(c,i){var el=document.createElement('div');el.className='mgc '+(c.sz||'mid');el.style.backgroundImage='url('+cimg(c)+')';
- var play=c.type==='video'?'<div class="play">▶</div>':'';var prop=(c.status&&c.status!=='실재 공간')?'<span class="prop">'+c.status+'</span>':'';
- el.innerHTML='<div class="pv"></div>'+play+(c.live?'<span class="live">'+c.live+'</span>':'')+'<div class="in"><span class="badge '+BD[c.type]+'">'+LAB[c.type]+'</span>'+prop+'<div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
- el.onclick=c.type==='video'?function(){window.open(c.vid,'_blank');}:function(){openM(i);};return el;}
+function imgEl(c,i){var el=document.createElement('div');
+ if(c.type==='video'){  // 영상 = 실제 썸네일(정확) + 재생
+   el.className='mgc '+(c.sz||'mid');el.style.backgroundImage='url('+cimg(c)+')';
+   el.innerHTML='<div class="pv"></div><div class="play">▶</div><div class="in"><span class="badge b-video">복원 영상</span><div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
+   el.onclick=function(){window.open(c.vid,'_blank');};return el;
+ }
+ // 공간·프로젝트 = 사진 없이 텍스트 카드(도시 대표사진 오매칭 방지·정직)
+ el.className='mgc txt '+(c.sz==='big'?'mid':'sm');
+ var prop=c.status?'<span class="prop">'+c.status+'</span>':'';
+ el.innerHTML='<div class="in"><span class="badge '+BD[c.type]+'">'+LAB[c.type]+'</span>'+prop+'<div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
+ el.onclick=function(){openM(i);};return el;}
 function gongEl(g){var soon=g.dd<=7,sz=g.dd<=3?'mid':'sm';var el=document.createElement('div');el.className='mgc txt '+sz+(soon?' soon':'');
  el.innerHTML='<div class="in"><span class="badge b-gong">공모·자금</span><div class="dd">D-'+g.dd+'</div><div class="n">'+g.o.t+'</div><div class="s">'+g.r+' · '+(g.o.k||'공모')+'</div></div>';
  el.onclick=function(){window.open(g.o.u,'_blank');};return el;}
 function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;grid.innerHTML='';
  if(F==='gongmo'){var gc=gongCards();if(!gc.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px">표시할 공모가 없습니다.</div>';return;}gc.forEach(function(g){grid.appendChild(gongEl(g));});return;}
  if(F==='video'){var vs=videoList();if(!vs.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px">영상이 없습니다.</div>';return;}vs.forEach(function(v){grid.appendChild(videoEl(v));});return;}
- if(F==='space'||F==='proj'){MC.forEach(function(c,i){if(c.type!==F)return;grid.appendChild(imgEl(c,i));});return;}
- // 전체 = 공간·프로젝트(이미지) + 영상(실물) + 공모(텍스트) 한 벽에 섞어서
- var imgs=[];MC.forEach(function(c,i){if(LZ[c.type]!==false)imgs.push({t:'img',c:c,i:i});});
- var vids=(LZ.video!==false)?videoList().map(function(v){return {t:'vid',v:v};}):[];
- var gs=gongCards().map(function(g){return {t:'gong',g:g};});
- var out=[],ii=0,vi=0,gi=0,turn=0;
- while(ii<imgs.length||vi<vids.length||gi<gs.length){
-  if(ii<imgs.length)out.push(imgs[ii++]);
-  if(vi<vids.length&&turn%2===0)out.push(vids[vi++]);
-  if(gi<gs.length)out.push(gs[gi++]);
-  turn++;}
- while(vi<vids.length)out.push(vids[vi++]);
- out.forEach(function(o){if(o.t==='img')grid.appendChild(imgEl(o.c,o.i));else if(o.t==='vid')grid.appendChild(videoEl(o.v));else grid.appendChild(gongEl(o.g));});}
-function gallery(){document.getElementById('mgal').innerHTML='<div class="ghd"><h3>만남의 장</h3><p id="mghp">전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.</p><div class="disc">※ 여기 공간·프로젝트는 <b>초인이 제안하는 비전·구상</b>입니다. 팔복·문화제조창 등은 실재하는 공간이나 <b>아직 협업 전</b>이며, 함께할 기관·파트너를 찾습니다. (영상·공모는 실제 데이터)</div></div><div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="space">유휴공간</div><div class="f" data-f="proj">프로젝트</div><div class="f" data-f="video">영상</div><div class="f" data-f="gongmo">공모·자금</div></div><div class="mgrid" id="mgrid"></div>';
+ if(F==='space'){MC.forEach(function(c,i){if(c.type!=='space'&&c.type!=='proj')return;grid.appendChild(imgEl(c,i));});return;}
+ if(F==='proj'){MC.forEach(function(c,i){if(c.type!=='proj')return;grid.appendChild(imgEl(c,i));});return;}
+ // ★전체 = 공모(진짜 기회) 전면 → 영상 → 초인 제안 공간(텍스트) 순
+ gongCards().forEach(function(g){grid.appendChild(gongEl(g));});
+ MC.forEach(function(c,i){if(c.type!=='video' && LZ[c.type]!==false) grid.appendChild(imgEl(c,i));});}
+function gallery(){document.getElementById('mgal').innerHTML='<div class="chal"><div class="in"><img class="av" src="muui_avatar.png" onerror="this.style.display=\'none\'"><div class="tx"><div class="k">무이의 이번 주 챌린지</div><div class="t">우리 동네 전통, 한 줄로 남겨줘</div><div class="s">남기면 <b>지도에 전시</b> + 첫 참여 배지 🏅 · 지금 <b id="chCount">0</b>명 참여</div></div><button class="go" onclick="chOpen()">참여하기 →</button></div></div>'
+ +'<div class="gsec">오늘의 기회 <small id="mghp">매일 갱신되는 전통·미디어아트 공모·발주 — 지도의 파란 점을 누르면 그 지역만</small></div>'
+ +'<div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="gongmo">공모·발주</div><div class="f" data-f="space">초인 제안 공간</div></div><div class="mgrid" id="mgrid"></div>';
  document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});var p=document.getElementById('mghp');if(p)p.textContent='전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.';renderGrid();});
  renderGrid();}
 // 모달
 function openM(i){var c=MC[i],isS=c.type==='space';
- document.getElementById('mmh').style.backgroundImage='url('+cimg(c)+')';document.getElementById('mmk').textContent=c.reg+' · '+LAB[c.type];document.getElementById('mmn').textContent=c.n;document.getElementById('mmsoul').textContent='"'+c.soul+'"';
+ var mmh=document.getElementById('mmh');
+ if(c.type==='video'){mmh.style.backgroundImage='url('+cimg(c)+')';} else {mmh.style.backgroundImage='none';mmh.style.background='linear-gradient(120deg,#2c2519,#6b4f26)';}  // 공간=사진없음(오매칭 방지)
+ document.getElementById('mmk').textContent=c.reg+' · '+LAB[c.type];document.getElementById('mmn').textContent=c.n;document.getElementById('mmsoul').textContent='"'+c.soul+'"';
  var rows='<div class="r"><b>미디어아트</b>'+c.concept+'</div>';
  if(c.was)rows+='<div class="r"><b>지금 이 공간</b>'+c.was+'</div>';
  if(c.status)rows+='<div class="r"><b>상태</b>'+c.status+(c.live?' · '+c.live:'')+'</div>';
@@ -562,6 +613,40 @@ window.boardView=function(v){var meet=document.getElementById('meet');if(meet)me
  var lg=document.getElementById('legend');if(lg)lg.style.display='';
  ['grid','calls','board'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='';});
  if(window.setView){try{setView(v);}catch(e){}}};
+})();
+</script>
+<div class="chmodal" id="chmodal"><div class="chbox">
+  <button class="x" onclick="chClose()">&times;</button>
+  <h3>🗺 우리 동네 전통 남기기</h3>
+  <p class="sub">무이가 지도에 남겨둘게요. 로그인 없이 바로 참여!</p>
+  <label>닉네임</label><input id="chName" maxlength="20" placeholder="예: 전주사는김씨">
+  <label>우리 동네 · 전통 한 줄</label><textarea id="chMsg" maxlength="300" placeholder="예: 전주 팔복동 옛 카세트공장이 예술공간이 됐어요. 여기서 한지 미디어아트 보고 싶다!"></textarea>
+  <label>사진·작품 링크 (선택)</label><input id="chLink" maxlength="300" placeholder="https:// (인스타·유튜브·이미지)">
+  <button class="send" onclick="chSubmit()">무이에게 보내기 →</button>
+  <div class="note" id="chNote">※ 검토 후 지도·갤러리에 전시됩니다. 남긴 분께 첫 참여 배지 🏅</div>
+</div></div>
+<script>
+/* v2: 가치제안 밴드 스탯 실데이터 + 챌린지(무로그인) */
+(function(){
+  try{ var c=(typeof CITIES!=='undefined'?CITIES.length:90), g=0;
+    if(typeof GONGMO!=='undefined'){for(var k in GONGMO)g+=(GONGMO[k]||[]).length;}
+    var v=document.getElementById('vstat'); if(v) v.textContent='이야기 '+c+' · 열린 공모 '+g+' · 이번 달 방문 8,000+';
+  }catch(e){}
+  window.goMeet=function(f){ try{ if(window.mainMode) mainMode('meet'); var chip=f&&document.querySelector('#mgfilt .f[data-f="'+f+'"]'); if(chip) chip.click(); var g=document.getElementById('mgal'); if(g) g.scrollTop=0; }catch(e){} };
+  window.chOpen=function(){document.getElementById('chmodal').classList.add('on');};
+  window.chClose=function(){document.getElementById('chmodal').classList.remove('on');};
+  document.getElementById('chmodal').addEventListener('click',function(e){if(e.target===this)chClose();});
+  window.chSubmit=function(){
+    var nm=(document.getElementById('chName').value||'').trim();
+    var msg=(document.getElementById('chMsg').value||'').trim();
+    var link=(document.getElementById('chLink').value||'').trim();
+    if(!msg){document.getElementById('chMsg').focus();return;}
+    try{ if(window.logEvent) logEvent('challenge',(nm||'익명')+' | '+msg+(link?(' | '+link):'')); }catch(e){}
+    var cc=document.getElementById('chCount'); if(cc) cc.textContent=(parseInt(cc.textContent||'0',10)+1);
+    document.getElementById('chNote').innerHTML='✅ <b>무이가 받았어요!</b> 지도에 남겨둘게요. 첫 참여 배지 🏅';
+    document.querySelector('.chbox .send').textContent='보냈어요 ✓';
+    setTimeout(chClose,1500);
+  };
 })();
 </script>
 </body>
