@@ -37,3 +37,8 @@ tour_ckpt.json
 tour_emails.json
 kor.topo.json
 _stats_pw.txt
+
+# lab 내부·유료 자료(웹 공개 금지)
+lab/_판매용/
+lab/_case02_SNS시리즈.md
+lab/*_SNS시리즈.md
