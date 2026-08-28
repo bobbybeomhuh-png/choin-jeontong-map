@@ -7,11 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@latest/dist/web/static/pretendard.min.css">
 <style>
 /* 홈피(전통스토리지도)와 동일 팔레트·명조 */
 :root{
   --bg:#f3ece0; --panel:#fbf7ef; --ink:#3b3326; --t2:#6f6553; --t3:#a39880;
-  --line:#e2d8c4; --hair:#e9dfca; --gold:#a9803a; --goldsoft:#c49a4e; --brick:#b0472f; --teal:#1d8a6a;
+  --line:#e2d8c4; --line2:#d6c9b0; --land:#e6dac2; --hair:#e9dfca; --gold:#a9803a; --goldsoft:#c49a4e; --brick:#b0472f; --teal:#1d8a6a;
   --band:#1c1710; --bandtx:#efe6d2; --bandgold:#e6be6a;
   --serif:'Nanum Myeongjo',serif; --sans:'Pretendard',-apple-system,system-ui,sans-serif;
 }
@@ -27,32 +28,33 @@ a{color:inherit;text-decoration:none;}
 .kick{font-size:11px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);}
 
 header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20;}
+.title{font-family:var(--serif);font-size:20px;font-weight:800;letter-spacing:-.2px;}
+.title small{display:block;font-family:var(--sans);font-size:11px;font-weight:400;color:var(--t3);letter-spacing:.2px;margin-top:1px;}
+.spacer{margin-left:auto;}
 .homelogo{display:inline-flex;align-items:center;text-decoration:none;flex:0 0 auto;}
 .homelogo img{width:46px;height:46px;object-fit:contain;}
-.mark{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:800;}
-.title{font-family:var(--serif);font-size:20px;font-weight:800;letter-spacing:-.2px;color:var(--ink);}
-.title small{display:block;font-family:var(--sans);font-size:11px;font-weight:400;color:var(--t3);letter-spacing:.2px;margin-top:1px;}
+.homelogo .mark,.mark{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:800;}
 .chtabs{display:flex;gap:8px;margin-left:18px;}
 .chtab{display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-size:14px;font-weight:700;color:#fff;background:#c0392b;border-radius:999px;padding:7px 15px;box-shadow:0 1px 3px rgba(90,70,20,.18);transition:.15s;}
-.chtab:hover{filter:brightness(1.06);}
+.chtab:hover{background:#a5301f;transform:translateY(-1px);}
 .chface{width:22px;height:22px;border-radius:50%;object-fit:cover;background:#f6efe2;margin-right:2px;box-shadow:0 0 0 1.5px rgba(255,255,255,.7);}
 .chtab#tab-suksu{background:#a9803a;}
-.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-size:12px;}
+.chtab#tab-suksu:hover{background:#8f6a2c;}
+.lang{display:flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;font-size:12px;}
 .lang button{border:0;background:transparent;color:var(--t2);padding:6px 12px;cursor:pointer;font-family:var(--sans);}
 .lang button.on{background:var(--ink);color:var(--bg);}
-@media(max-width:1240px){.chtabs{display:none;}}
 .segtabs{display:flex;gap:5px;background:#e2d6bd;border-radius:14px;padding:5px;margin-left:16px;flex:0 0 auto;}
-:root[data-theme="dark"] .segtabs{background:#2a2318;}
-.segtabs .seg{flex:0 0 174px;display:flex;align-items:center;gap:10px;height:52px;border:0;background:transparent;cursor:pointer;border-radius:10px;padding:0 16px;color:var(--t2);font-family:var(--sans);text-decoration:none;transition:background .15s,color .15s,box-shadow .15s;}
-.segtabs .seg .ico{font-size:18px;flex:0 0 auto;line-height:1;}
-.segtabs .seg .tl{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;text-align:left;}
-.segtabs .seg .tl b{font-size:15px;font-weight:800;letter-spacing:-.2px;color:var(--ink);}
-.segtabs .seg .tl i{font-size:11px;font-style:normal;font-weight:600;color:var(--t3);margin-top:2px;white-space:nowrap;}
-.segtabs .seg:hover{background:rgba(255,255,255,.5);color:var(--ink);}
-:root[data-theme="dark"] .segtabs .seg:hover{background:rgba(255,255,255,.08);}
-.spacer{flex:1;}
-.rt{margin-left:0;}
-@media(max-width:1000px){.segtabs .seg{flex-basis:auto;}.segtabs .seg .tl i{display:none;}}
+.seg{flex:0 0 174px;display:flex;align-items:center;gap:10px;height:52px;border:0;background:transparent;cursor:pointer;border-radius:10px;padding:0 16px;color:var(--t2);font-family:var(--sans);text-decoration:none;transition:background .15s,color .15s,box-shadow .15s;}
+.seg .ico{font-size:18px;flex:0 0 auto;line-height:1;}
+.seg .tl{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;text-align:left;}
+.seg .tl b{font-size:15px;font-weight:800;letter-spacing:-.2px;}
+.seg .tl i{font-size:11px;font-style:normal;font-weight:600;color:var(--t3);margin-top:2px;white-space:nowrap;}
+.seg.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 9px rgba(59,51,38,.25);}
+.seg.on .tl i{color:rgba(243,236,224,.82);}
+.seg:not(.on):hover{background:rgba(255,255,255,.5);color:var(--ink);}
+@media(max-width:1240px){.chtabs{display:none;}}
+@media(max-width:1000px){.seg{flex-basis:auto;}.seg .tl i{display:none;}}
+@media(max-width:760px){header{flex-wrap:wrap;gap:7px 10px;padding:10px 13px;}.title{font-size:16px;line-height:1.15;}.title small{font-size:10px;}.homelogo img{width:38px;height:38px;}.lang button{padding:6px 11px;}}
 
 .hero{max-width:1200px;margin:0 auto;padding:60px 30px 34px;}
 .hero .kick{margin-bottom:16px;}
@@ -173,7 +175,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
     <a class="chtab" id="tab-portfolio" href="초인_포트폴리오.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a">✦ 초인 포트폴리오</a>
   </nav>
   <div class="segtabs" role="tablist">
-    <a class="seg" href="index.html"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>되살린 전통을 본다</i></span></a>
+    <a class="seg on" href="index.html"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>되살린 전통을 본다</i></span></a>
     <a class="seg" href="index.html#meet"><span class="ico">✦</span><span class="tl"><b>만남의 장</b><i>기회를 잡고 함께한다</i></span></a>
   </div>
   <div class="spacer"></div>
