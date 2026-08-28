@@ -58,6 +58,12 @@ th{color:var(--t3);font-weight:600;}
 
   <div class="cards" id="cards"></div>
 
+  <div class="sec" id="boardSec">
+    <h2>게시판 글 검토 (자랑·의뢰·제보) <button class="reload" onclick="loadBoard()" style="float:none;margin-left:6px;padding:3px 9px">↻</button></h2>
+    <div class="muted" id="boardMsg" style="margin-bottom:8px">불러오는 중…</div>
+    <div id="boardList"></div>
+  </div>
+
   <div class="sec">
     <h2>전환 퍼널 (사람 기준 · 얼마나 남는지)</h2>
     <div class="funnel" id="funnel"></div>
@@ -172,6 +178,51 @@ async function load(){
 
   // 최근 활동
   el('recent').innerHTML=rows.slice(0,30).map(function(r){return '<tr><td>'+ago(r.created_at)+'</td><td>'+(LABELS[r.type]||esc(r.type))+'</td><td>'+esc(r.detail||'')+'</td><td class="muted">'+esc(r.ref||'')+'</td></tr>';}).join('');
+
+  loadBoard();   // 게시판 글 검토도 함께 로드
+}
+
+// ── 게시판(board_posts) 검토 — 모델 A: 즉시 공개 + 사후 숨김/삭제 ──
+var BTYPE={work:'창작자 작품',org:'기관 의뢰',report:'우리동네 제보'};
+async function loadBoard(){
+  var msg=el('boardMsg'), list=el('boardList'); if(!msg||!list) return;
+  msg.textContent='불러오는 중…';
+  var rows;
+  try{ rows=await fetch(SUPA_URL+'/rest/v1/board_posts?select=*&order=created_at.desc&limit=500',{headers:_H}).then(function(r){return r.ok?r.json():Promise.reject(r.status);}); }
+  catch(e){ msg.innerHTML='게시판 테이블이 아직 없어요. Supabase에 <b>board_posts</b> 생성 SQL을 실행하면 여기에 글이 뜹니다. (오류 '+esc(''+e)+')'; list.innerHTML=''; return; }
+  if(!rows.length){ msg.textContent='아직 올라온 글이 없어요. (게시판에서 글을 올리면 여기에 바로 뜹니다)'; list.innerHTML=''; return; }
+  var hidden=rows.filter(function(r){return r.status==='hidden';}).length;
+  msg.textContent='총 '+rows.length+'건 · 공개 '+(rows.length-hidden)+' · 숨김 '+hidden;
+  list.innerHTML='<table><thead><tr><th>시각</th><th>유형</th><th>제목 / 내용</th><th>작성</th><th>상태</th><th>관리</th></tr></thead><tbody>'
+   + rows.map(function(r){
+      var hid=r.status==='hidden';
+      var linkHtml=r.link?(' · <a href="'+esc(r.link)+'" target="_blank" rel="noopener">링크</a>'):'';
+      return '<tr style="'+(hid?'opacity:.5':'')+'"><td>'+ago(r.created_at)+'</td>'
+        +'<td>'+esc(BTYPE[r.type]||r.type)+'</td>'
+        +'<td><b>'+esc(r.title||'')+'</b><div class="muted">'+esc(r.description||'')+linkHtml+'</div></td>'
+        +'<td>'+esc(r.name||'익명')+'</td>'
+        +'<td>'+(hid?'<span style="color:var(--red)">숨김</span>':'<span style="color:var(--teal)">공개</span>')+'</td>'
+        +'<td style="white-space:nowrap">'
+          + (hid? '<button class="reload" style="float:none;padding:4px 9px" onclick="setBoard(\''+r.id+'\',\'ok\')">복구</button>'
+                : '<button class="reload" style="float:none;padding:4px 9px" onclick="setBoard(\''+r.id+'\',\'hidden\')">숨기기</button>')
+          + ' <button class="reload" style="float:none;padding:4px 9px;color:var(--red)" onclick="delBoard(\''+r.id+'\')">삭제</button>'
+        +'</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+async function setBoard(id,status){
+  try{
+    var r=await fetch(SUPA_URL+'/rest/v1/board_posts?id=eq.'+id,{method:'PATCH',headers:Object.assign({'Content-Type':'application/json'},_H),body:JSON.stringify({status:status})});
+    if(!r.ok){ alert('변경 실패 — Supabase에 update 정책이 필요해요. (오류 '+r.status+')'); return; }
+    loadBoard();
+  }catch(e){ alert('네트워크 오류'); }
+}
+async function delBoard(id){
+  if(!confirm('이 글을 완전히 삭제할까요? (되돌릴 수 없어요)')) return;
+  try{
+    var r=await fetch(SUPA_URL+'/rest/v1/board_posts?id=eq.'+id,{method:'DELETE',headers:_H});
+    if(!r.ok){ alert('삭제 실패 — Supabase에 delete 정책이 필요해요. (오류 '+r.status+')'); return; }
+    loadBoard();
+  }catch(e){ alert('네트워크 오류'); }
 }
 if(!document.getElementById('dash').hidden) load();
 </script>

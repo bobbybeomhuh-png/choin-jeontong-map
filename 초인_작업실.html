@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>초인 작업실 · CHOIN Studio — Selected Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* 홈피(전통스토리지도)와 동일 팔레트·명조 */
+:root{
+  --bg:#f3ece0; --panel:#fbf7ef; --ink:#3b3326; --t2:#6f6553; --t3:#a39880;
+  --line:#e2d8c4; --hair:#e9dfca; --gold:#a9803a; --goldsoft:#c49a4e; --brick:#b0472f; --teal:#1d8a6a;
+  --band:#1c1710; --bandtx:#efe6d2; --bandgold:#e6be6a;
+  --serif:'Nanum Myeongjo',serif; --sans:'Pretendard',-apple-system,system-ui,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#14100a; --panel:#1c1710; --ink:#efe6d2; --t2:#b7a888; --t3:#8a7c62;
+  --line:#2a2318; --hair:#241d13; --gold:#e6be6a; --goldsoft:#caa250; --brick:#d0613f; --teal:#4ec49a;
+  --band:#0d0a06;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s;}
+a{color:inherit;text-decoration:none;}
+.kick{font-size:11px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);}
+
+header{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:14px;padding:12px 30px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);flex-wrap:wrap;}
+.logo{width:32px;height:32px;border-radius:8px;object-fit:cover;}
+.brand{font-family:var(--serif);font-weight:800;font-size:17px;letter-spacing:.5px;}
+.brand small{display:block;font-family:var(--sans);font-weight:500;font-size:10.5px;color:var(--t3);}
+nav.tabs{display:flex;gap:6px;margin-left:6px;flex-wrap:wrap;}
+.tab{font-size:12px;font-weight:700;color:#fff;padding:7px 13px;border-radius:999px;transition:.15s;background:#8a7a5c;}
+.tab.br{background:var(--brick);}.tab.gd{background:var(--gold);color:#3b2a10;}.tab.tl{background:#1E6B58;}
+.tab.on{background:var(--ink);color:#fff;box-shadow:inset 0 0 0 2px var(--gold);}
+.tab:hover{filter:brightness(1.07);}
+.seg{display:flex;gap:8px;margin-left:auto;}
+.seg .s{display:flex;flex-direction:column;line-height:1.15;background:var(--panel);border:1px solid var(--line);padding:8px 17px;border-radius:13px;color:var(--t2);cursor:pointer;transition:.14s;}
+.seg .s:hover{border-color:var(--gold);}
+.seg .s b{font-size:15px;font-weight:800;color:var(--ink);}
+.seg .s i{font-size:11px;font-style:normal;color:var(--t3);margin-top:1px;}
+.rt{margin-left:10px;}
+.tgl{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-size:16px;color:var(--ink);}
+
+.hero{max-width:1200px;margin:0 auto;padding:60px 30px 34px;}
+.hero .kick{margin-bottom:16px;}
+.hero h1{font-family:var(--serif);font-weight:800;font-size:clamp(38px,6.4vw,74px);line-height:1.04;letter-spacing:-.5px;}
+.hero h1 em{font-style:normal;color:var(--gold);}
+.hero .lead{max-width:620px;margin-top:20px;font-size:15.5px;color:var(--t2);}
+
+.prod{background:linear-gradient(135deg,#463a28,#2c2519);color:var(--bandtx);border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);}
+.prod .inner{max-width:1200px;margin:0 auto;padding:32px 30px;}
+.prod .hd{display:flex;align-items:baseline;gap:14px;margin-bottom:22px;flex-wrap:wrap;}
+.prod .hd .lbl{font-size:12px;font-weight:800;letter-spacing:4px;color:var(--bandgold);display:flex;align-items:center;gap:9px;}
+.dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.55);}70%{box-shadow:0 0 0 9px rgba(74,222,128,0);}100%{box-shadow:0 0 0 0 rgba(74,222,128,0);}}
+.prod .hd .sub{font-size:12px;color:#9c8f74;}
+.prodgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+@media(max-width:860px){.prodgrid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.prodgrid{grid-template-columns:1fr;}}
+.pitem{padding-left:22px;border-left:1px solid #2e271b;}
+.pitem:first-child{border-left:0;padding-left:0;}
+@media(max-width:860px){.pitem{border-left:0;padding-left:0;padding-bottom:20px;}}
+.pitem .no{font-size:12px;letter-spacing:1px;color:var(--bandgold);font-weight:700;}
+.pitem .loc{font-family:var(--serif);font-size:18px;font-weight:800;margin:7px 0 4px;}
+.pitem .scale{font-size:12.5px;color:#b8ab90;line-height:1.5;min-height:38px;}
+.pitem .st{margin-top:9px;font-size:10.5px;letter-spacing:1px;font-weight:700;display:inline-flex;align-items:center;gap:6px;}
+.pitem .st.go{color:#7fdca0;}
+.pitem .st.talk{color:#e0b667;}
+.pitem .st i{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;}
+
+.past{max-width:1200px;margin:0 auto;padding:44px 30px 6px;}
+.past h2{font-family:var(--serif);font-weight:800;font-size:24px;}
+.past .psub{color:var(--t3);font-size:12.5px;margin:4px 0 18px;}
+.pcols{columns:2;column-gap:44px;}
+@media(max-width:700px){.pcols{columns:1;}}
+.prow{break-inside:avoid;display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 3px;border-bottom:1px solid var(--hair);cursor:pointer;transition:.12s;}
+.prow:hover{padding-left:8px;}
+.prow .pt{font-family:var(--serif);font-weight:700;font-size:15.5px;color:var(--ink);}
+.prow:hover .pt{color:var(--gold);}
+.prow .ptag{font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--t3);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:8px;text-transform:uppercase;}
+.prow .pm{font-size:11.5px;color:var(--t3);text-align:right;flex:1;}
+.works{max-width:1200px;margin:0 auto;padding:44px 30px 10px;}
+.works .top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.works h2{font-family:var(--serif);font-weight:800;font-size:29px;}
+.filt{display:flex;gap:6px;flex-wrap:wrap;}
+.f{font-size:12.5px;font-weight:600;color:var(--t2);padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;transition:.14s;}
+.f:hover{border-color:var(--gold);color:var(--ink);}
+.f.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;}
+@media(max-width:900px){.grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr);gap:11px;}}
+.tile{position:relative;grid-column:span 2;aspect-ratio:4/3;border-radius:5px;overflow:hidden;cursor:pointer;background:#2a2318;}
+.tile.feat{grid-column:span 3;aspect-ratio:16/10;}
+.tile.pano{grid-column:span 6;aspect-ratio:32/9;}
+@media(max-width:560px){.tile,.tile.feat,.tile.pano{grid-column:span 2;aspect-ratio:4/3;}}
+.tile img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .7s cubic-bezier(.2,.7,.2,1);display:block;}
+.tile.noimg img{display:none;}
+.tile .ph{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:16px;}
+.tile.noimg .ph{display:flex;}
+.tile .ph b{font-family:var(--serif);font-size:20px;color:rgba(255,255,255,.62);}
+.tile .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,12,8,0) 40%,rgba(15,12,8,.84));opacity:.92;transition:opacity .4s;}
+.tile:hover img{transform:scale(1.06);}
+.tile:hover .ov{opacity:1;}
+.tile .cap{position:absolute;left:0;right:0;bottom:0;padding:15px 17px;color:#fff;transform:translateY(6px);transition:transform .4s;}
+.tile:hover .cap{transform:translateY(0);}
+.tile .cap .ttl{font-family:var(--serif);font-size:17.5px;font-weight:800;line-height:1.25;}
+.tile .cap .sub{font-size:11.5px;color:#e3d8bf;margin-top:3px;}
+.tile .tag{position:absolute;top:12px;left:12px;font-size:9.5px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.9);color:#5a4420;text-transform:uppercase;z-index:2;}
+.tile .pl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:rgba(20,16,10,.4);border:1.5px solid rgba(255,255,255,.9);display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;z-index:2;transition:.3s;}
+.tile.vid .pl{display:flex;}
+.tile:hover .pl{background:var(--brick);border-color:var(--brick);}
+
+.coming{max-width:1200px;margin:8px auto 0;padding:0 30px;}
+.coming .c{border:1px dashed var(--line);border-radius:6px;padding:15px 20px;color:var(--t3);font-size:12.5px;}
+.coming .c b{color:var(--t2);}
+
+footer{margin-top:56px;border-top:1px solid var(--hair);}
+.foot{max-width:1200px;margin:0 auto;padding:44px 30px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;}
+.foot .slo{font-family:var(--serif);font-size:20px;font-weight:700;max-width:520px;line-height:1.4;}
+.foot .slo em{font-style:normal;color:var(--gold);}
+.foot a.mail{font-size:14px;font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:2px;}
+
+.lb{position:fixed;inset:0;z-index:60;background:rgba(10,8,5,.94);display:none;flex-direction:column;padding:22px;}
+.lb.on{display:flex;}
+.lb .x{position:absolute;top:16px;right:22px;color:#fff;font-size:30px;cursor:pointer;opacity:.8;}
+.lb .x:hover{opacity:1;}
+.lb .nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:34px;cursor:pointer;opacity:.5;padding:16px;user-select:none;}
+.lb .nav:hover{opacity:1;}.lb .prev{left:6px;}.lb .next{right:6px;}
+.lb .stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;}
+.lb .media{width:min(1080px,92vw);max-height:70vh;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6);}
+.lb .media iframe,.lb .media img{width:100%;height:100%;border:0;object-fit:contain;display:block;}
+.lb .info{text-align:center;color:#fff;padding:16px 20px 4px;}
+.lb .info .kick{color:var(--bandgold);}
+.lb .info h3{font-family:var(--serif);font-size:23px;font-weight:800;margin:6px 0 4px;}
+.lb .info .venue{font-size:12.5px;color:var(--bandgold);margin-bottom:6px;}
+.lb .info p{color:#c9bda3;font-size:13.5px;max-width:660px;margin:0 auto;}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo_full.png" class="logo" alt="초인" onerror="this.style.display='none'">
+  <div class="brand">초인 CHOIN<small>한국 전통을 미디어아트, 그 너머로</small></div>
+  <nav class="tabs">
+    <a class="tab br">무이란?</a><a class="tab br">▶ 무이 유물단</a><a class="tab gd">▶ 대령숙수</a>
+    <a class="tab tl">✎ 제작 배움터</a><a class="tab on">✦ 초인 포트폴리오</a>
+  </nav>
+  <div class="seg">
+    <a class="s"><b>전통 이야기</b><i>되살린 전통을 본다</i></a>
+    <a class="s"><b>만남의 장</b><i>기회를 잡고 함께한다</i></a>
+  </div>
+  <div class="rt"><button class="tgl" id="tgl" title="라이트/다크">◐</button></div>
+</header>
+
+<section class="hero">
+  <div class="kick">CHOIN Studio — Selected Works</div>
+  <h1>전통을 빛으로,<br><em>공간을</em> 이야기로.</h1>
+  <p class="lead">초인은 대한민국의 전통을 미디어아트로 되살리는 스튜디오입니다. 미디어파사드, 실감 전시, 유물 복원, 캐릭터 IP까지 — 우리가 만든 장면들을 모았습니다.</p>
+</section>
+
+<section class="prod">
+  <div class="inner">
+    <div class="hd"><div class="lbl"><span class="dot"></span>NOW IN PRODUCTION</div><div class="sub">2026 진행 중인 대형 프로젝트</div></div>
+    <div class="prodgrid" id="prodgrid"></div>
+  </div>
+</section>
+
+<section class="past">
+  <h2>지난 작업</h2>
+  <div class="psub">All Works — 작품을 누르면 영상·이미지와 상세를 볼 수 있습니다.</div>
+  <div class="pcols" id="pastlist"></div>
+</section>
+
+<section class="works">
+  <div class="top">
+    <h2>Selected Works</h2>
+    <div class="filt" id="filt">
+      <button class="f on" data-f="all">전체</button>
+      <button class="f" data-f="facade">미디어파사드</button>
+      <button class="f" data-f="immersive">실감 전시</button>
+      <button class="f" data-f="art">아트필름</button>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section class="works" id="eduSec" style="padding-top:8px">
+  <div class="top" style="display:block">
+    <h2>교육 · 다큐멘터리</h2>
+    <div style="color:var(--t3);font-size:13px;margin-top:7px;max-width:720px">초인은 미디어아트 제작을 넘어 <b style="color:var(--t2)">강의(3D·AI)·다큐멘터리</b> 등 다양한 영역에서 전통과 기술을 잇습니다. 만드는 것에 그치지 않고, 가르치고 기록합니다.</div>
+  </div>
+  <div class="grid" id="grid2"></div>
+</section>
+
+<footer><div class="foot">
+  <div class="slo">한국 전통을 <em>미디어아트</em>, 그 너머로.</div>
+  <a class="mail" href="mailto:choin2626@gmail.com">choin2626@gmail.com</a>
+</div></footer>
+
+<div class="lb" id="lb">
+  <span class="x" onclick="closeLB()">×</span>
+  <span class="nav prev" onclick="stepLB(-1)">‹</span>
+  <span class="nav next" onclick="stepLB(1)">›</span>
+  <div class="stage"><div class="media" id="lbmedia"></div></div>
+  <div class="info"><div class="kick" id="lbkick"></div><h3 id="lbtitle"></h3><div class="venue" id="lbvenue"></div><p id="lbdesc"></p></div>
+</div>
+
+<script>
+// NOW IN PRODUCTION — 상영처(지역·규모만, 작품명·구체 장소 비공개). 확정 3건 먼저, 협의중(신세계) 마지막.
+var PROD=[
+ {loc:'서울 을지로', scale:'랜드마크급 초대형 LED 미디어파사드', status:'제작 확정 · 진행 중', ok:true},
+ {loc:'전주', scale:'4면 디큐브 실감 전시', status:'제작 확정 · 진행 중', ok:true},
+ {loc:'서울 강남', scale:'랜드마크급 초대형 미디어 전광판', status:'제작 확정 · 진행 중', ok:true},
+ {loc:'서울 명동', scale:'랜드마크급 초대형 LED 미디어파사드', status:'협의 중 (1차 완료 · 2차 진행)', ok:false}
+];
+// 작품 — video:구글드라이브 fileId(재생), src:포스터 URL, 없으면 gradient. venue:전시·송출처
+var GT='https://drive.google.com/thumbnail?id=';
+var WORKS=[
+ {cat:'immersive',size:'feat',title:'헤이와 둥둥',sub:'실감 전시 · 가로 · 1분 15초',video:'1fDlYN8P7-hkLTpiBcYls8Rb-EmNMNdkA',
+  venue:'명동 자유상가 · 분당 페퍼저축은행 대형 LED 파사드 송출 · 헤이뮤지엄 아카이빙 상영',
+  desc:'전통 서사의 시각적 치환. 한국 설화 속 생명의 근원 「서천꽃밭」을 전통 누빔기법을 텍스쳐화한 3D 공간으로 구축해 탄생과 순환의 서사를 시각화했습니다. 수호의 의미를 담은 「헤이」와 「둥둥」 풍물놀이단이 관객을 가이드하며 가상 세계와 정서적으로 교감하는 몰입형 내러티브.'},
+ {cat:'facade',size:'feat',title:'빛의 계보 외 4테마',sub:'미디어파사드 · 2025',video:'1yM1czaz5WV-L9QsVMKQw-diDGzoFiC7R',
+  venue:'', desc:'네 개 테마의 빛으로 풀어낸 미디어파사드.'},
+ {cat:'facade',size:'pano',title:'신명, 길을 열다',sub:'초광폭 미디어파사드 · 2025',video:'1iWpDdZZSpb8VmtguQh1Vdeqsiih5awtV',src:'poster/sinmyeong.jpg',
+  venue:'', desc:'초광폭 화면에 펼친 신명의 서사. 밤 서울의 스카이라인을 배경으로 눈사람 풍물놀이단이 길을 연다.'},
+ {cat:'immersive',size:'std',title:'홍천',sub:'실감 콘텐츠 · 2025',video:'1YYYC8pH18DGT46cviGqoEwu10EuREaz3',
+  venue:'', desc:'홍천의 자연과 이야기를 담은 실감 콘텐츠.'},
+ {cat:'immersive',size:'std',textOnly:true,title:'낙제의 궤적',sub:'실감 전시 · 2025',hue:'#3a3324',
+  venue:'명동 자유상가 · 분당 페퍼저축은행 대형 LED 파사드 송출 · 헤이뮤지엄 아카이빙 상영',
+  desc:'실감 전시 작품. 명동 자유상가와 분당 페퍼저축은행 대형 LED 파사드에 송출되었고, 헤이뮤지엄에서 아카이빙 상영되었습니다. (영상 파일 추가 예정)'},
+ {cat:'art',size:'std',title:'HARMONY',sub:'아트필름 · 세로 · 25초 · 4K',src:'https://images.gettyimageskorea.com/frm_jbos/2026/mediaart/2026-04/mediaart_1776390870.jpg',venue:'',desc:'화이트 배경 위에서 자연물과 유기적 형태, 유체의 흐름이 클래식 음악과 함께 전개되며 각 요소가 독립적 아름다움을 지닌 채 등장한다. 이후 서로 얽히고 결합해 하나의 조화로운 구조로 수렴, 마지막엔 하나의 물체로 완성된다. 보이지 않는 향(香)의 구조를 시각 경험으로 치환해 감각 간의 전이를 탐구한다.'},
+ {cat:'art',size:'std',title:'MIDNIGHT WAVE',sub:'아트필름 · 가로 · 1분',src:'https://images.gettyimageskorea.com/frm_jbos/2026/mediaart/2026-04/mediaart_1776329395.jpg',venue:'',desc:'가장 깊은 밤, 우리는 비로소 빛의 본질을 마주한다. 보이지 않는 시간의 흐름을 파티클의 움직임으로 시각화하고, 변하지 않는 존재인 「달」을 통해 내면의 평온과 치유의 메시지를 전한다.'},
+ {cat:'art',size:'std',title:'Spring bubble',sub:'아트필름 · 가로 · 40초',src:'https://images.gettyimageskorea.com/frm_jbos/2026/mediaart/2026-04/mediaart_1775699980.jpg',venue:'',desc:'봄의 감각을 빛과 공기, 미세한 입자의 흐름으로 재구성한 미디어아트. 투명한 구체와 부유하는 입자가 빛의 흔적을 형상화하고, 꽃은 빛을 머금고 반응하는 매개체로 작동한다. 살아 있는 공간처럼 느껴지도록 설계했다.'},
+ {cat:'art',size:'std',title:'Blue blocks',sub:'아트필름 · 가로 · 1분 30초',src:'https://images.gettyimageskorea.com/frm_jbos/2026/mediaart/2026-04/mediaart_1775699760.jpg',venue:'',desc:'블루 계열 레고 블록의 반복 단위로 고래·가오리·해파리 등 유기적 생명체를 구현하고, 해체·재조합되는 과정을 통해 고정된 형태가 아닌 「지속적으로 생성되는 존재」를 시각화한다. 자연의 흐름과 디지털 생성 원리의 유사성을 탐구한다.'},
+ {cat:'art',size:'std',title:'White',sub:'아트필름 · 세로 · 1분 20초',src:'https://images.gettyimageskorea.com/frm_jbos/2026/mediaart/2026-04/mediaart_1776390581.jpg',venue:'',desc:'개성을 특별함·화려함 같은 외형적 기준으로만 이해하려는 통념에 질문을 던진다. 개성은 외부의 잣대가 아니라 존재 자체에서 자연스럽게 흘러나오는 고유한 속성임을, 관객이 다시 바라보게 하는 작품.'},
+ {cat:'docu',size:'feat',title:'계성고등학교 신태식 다큐멘터리',sub:'다큐멘터리 · 2025',yt:'EVhbFVrLalA',src:'https://img.youtube.com/vi/EVhbFVrLalA/maxresdefault.jpg',venue:'',desc:'계성고등학교 신태식 다큐멘터리.'},
+ {cat:'edu',size:'std',title:'후디니 입문 · 시뮬레이션과 VEX',sub:'교육 · CLASS101 · 3D',src:'https://cdn.class101.net/images/a41d9154-b07f-4edb-8aa4-80e7035daae8/1200x630',link:'https://class101.net/ko/products/69c9c9657d18a91e7874800f',venue:'',desc:'초인이 만든 후디니(Houdini) 입문 온라인 클래스 — 시뮬레이션과 VEX 첫걸음. 3D 콘텐츠 제작 노하우를 강의로.'},
+ {cat:'edu',size:'std',textOnly:true,title:'대구 평생교육원 AI 수업',sub:'교육 · AI 콘텐츠',hue:'#2f3b3a',venue:'대구 · 평생교육원',
+  desc:'대구 평생교육원 성인 대상 AI 콘텐츠 제작 강의. GPT·제미나이로 대본을 쓰고 Vrew로 쇼츠를 제작해 각자 유튜브에 올리는 실습 중심 과정. 초인이 제작을 넘어 교육으로 노하우를 나눕니다. (현장 사진 추가 예정)'}
+];
+var CATL={facade:'MEDIA FACADE',immersive:'IMMERSIVE',art:'ART FILM',docu:'DOCUMENTARY',edu:'EDUCATION'};
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function poster(w){ return w.src ? w.src : (w.video ? (GT+w.video+'&sz=w1400') : ''); }
+
+document.getElementById('prodgrid').innerHTML=PROD.map(function(p,i){
+  var st=p.ok?'<div class="st go"><i></i>'+esc(p.status)+'</div>':'<div class="st talk"><i></i>'+esc(p.status)+'</div>';
+  return '<div class="pitem"><div class="no">0'+(i+1)+'</div><div class="loc">'+esc(p.loc)+'</div><div class="scale">'+esc(p.scale)+'</div>'+st+'</div>';
+}).join('');
+
+var CUR='all';
+function tileEl(w,idx){
+  var el=document.createElement('div');
+  var isVid=!!(w.video||w.yt), pu=poster(w);
+  el.className='tile'+(w.size==='feat'?' feat':(w.size==='pano'?' pano':''))+(isVid?' vid':'')+(pu?'':' noimg');
+  var oe="if(this.src.indexOf('maxresdefault')>-1){this.src=this.src.replace('maxresdefault','hqdefault');}else{this.closest('.tile').classList.add('noimg');}";
+  var img = pu ? '<img src="'+pu+'" alt="'+esc(w.title)+'" onerror="'+oe+'">' : '';
+  el.innerHTML = img +
+    '<div class="ph" style="background:linear-gradient(150deg,'+(w.hue||'#3a3324')+',#14100a)"><b>'+esc(w.title)+'</b></div>'+
+    '<div class="ov"></div><span class="tag">'+(CATL[w.cat]||'')+'</span><div class="pl">▶</div>'+
+    '<div class="cap"><div class="ttl">'+esc(w.title)+'</div><div class="sub">'+esc(w.sub)+'</div></div>';
+  el.onclick=function(){ if(w.link && !w.yt && !w.video){ window.open(w.link,'_blank','noopener'); } else { openLB(idx); } };
+  return el;
+}
+var MEDIACATS={facade:1,immersive:1,art:1};
+function render(){
+  var g=document.getElementById('grid');g.innerHTML='';
+  WORKS.forEach(function(w,i){if(!w.textOnly&&MEDIACATS[w.cat]&&(CUR==='all'||w.cat===CUR))g.appendChild(tileEl(w,i));});
+  var g2=document.getElementById('grid2');if(g2){g2.innerHTML='';WORKS.forEach(function(w,i){if(!w.textOnly&&!MEDIACATS[w.cat])g2.appendChild(tileEl(w,i));});}
+  renderPast();
+}
+function renderPast(){
+  var el=document.getElementById('pastlist');if(!el)return;
+  el.innerHTML=WORKS.map(function(w,i){
+    return '<div class="prow" data-i="'+i+'"><span class="pt">'+esc(w.title)+'<span class="ptag">'+(CATL[w.cat]||'')+'</span></span><span class="pm">'+esc(w.venue||w.sub||'')+'</span></div>';
+  }).join('');
+  [].forEach.call(el.querySelectorAll('.prow'),function(r){r.onclick=function(){openLB(+r.getAttribute('data-i'));};});
+}
+document.getElementById('filt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;CUR=f.dataset.f;document.querySelectorAll('#filt .f').forEach(function(x){x.classList.toggle('on',x===f);});render();});
+
+var LBI=0,LBLIST=[];
+function openLB(idx){
+  LBLIST=WORKS.map(function(w,i){return i;});
+  LBI=LBLIST.indexOf(idx);if(LBI<0)LBI=0;showLB();document.getElementById('lb').classList.add('on');document.body.style.overflow='hidden';}
+function showLB(){
+  var w=WORKS[LBLIST[LBI]],m=document.getElementById('lbmedia');
+  if(w.yt){m.innerHTML='<iframe src="https://www.youtube.com/embed/'+w.yt+'?autoplay=1&rel=0" allow="autoplay; fullscreen" allowfullscreen></iframe>';}
+  else if(w.video){m.innerHTML='<iframe src="https://drive.google.com/file/d/'+w.video+'/preview" allow="autoplay" allowfullscreen></iframe>';}
+  else if(w.src){m.innerHTML='<img src="'+w.src+'" alt="'+esc(w.title)+'">';}
+  else{m.innerHTML='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,'+(w.hue||'#3a3324')+',#14100a);font-family:var(--serif);font-size:30px;color:rgba(255,255,255,.6)">'+esc(w.title)+'</div>';}
+  document.getElementById('lbkick').textContent=CATL[w.cat]||'';
+  document.getElementById('lbtitle').textContent=w.title;
+  var v=document.getElementById('lbvenue');v.textContent=w.venue||'';v.style.display=w.venue?'block':'none';
+  document.getElementById('lbdesc').textContent=w.desc||'';
+}
+function stepLB(d){LBI=(LBI+d+LBLIST.length)%LBLIST.length;showLB();}
+function closeLB(){document.getElementById('lb').classList.remove('on');document.getElementById('lbmedia').innerHTML='';document.body.style.overflow='';}
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLB();});
+document.addEventListener('keydown',function(e){if(!document.getElementById('lb').classList.contains('on'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')stepLB(-1);if(e.key==='ArrowRight')stepLB(1);});
+
+var tgl=document.getElementById('tgl');
+tgl.onclick=function(){var r=document.documentElement,d=r.getAttribute('data-theme')==='dark';r.setAttribute('data-theme',d?'light':'dark');try{localStorage.setItem('choin_theme',d?'light':'dark');}catch(e){}};
+try{var sv=localStorage.getItem('choin_theme');if(sv)document.documentElement.setAttribute('data-theme',sv);}catch(e){}
+render();
+</script>
+</body>
+</html>

@@ -387,6 +387,7 @@ circle.city{cursor:pointer;}
    <a class="chtab" id="tab-muui" href="#" target="_blank" rel="noopener"><img src="muui_avatar.png" class="chface" alt="무이">▶ 무이 유물단</a>
    <a class="chtab" id="tab-suksu" href="#" target="_blank" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
    <a class="chtab" id="tab-lab" href="lab/index.html" rel="noopener" style="background:#1E6B58">✎ 제작 배움터</a>
+   <a class="chtab" id="tab-portfolio" href="초인_작업실.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a">✦ 초인 포트폴리오</a>
  </nav>
  <div class="segtabs" role="tablist">
    <button class="seg on" id="m-story" onclick="mainMode('story')"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>되살린 전통을 본다</i></span></button>
@@ -397,7 +398,7 @@ circle.city{cursor:pointer;}
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 <div class="vband">
-  <div class="vtop">전통 미디어아트 <b>창작자와 일감이 만나는</b> 지도<span class="vstat" id="vstat">이야기 90 · 열린 공모 495 · 이번 달 방문 8,000+</span></div>
+  <div class="vtop">전통 미디어아트 <b>창작자와 일감이 만나는</b> 지도<span class="vstat" id="vstat">이야기 90 · 열린 공모 495</span></div>
   <div class="vwho">
     <div class="w" onclick="goMeet('gongmo')"><span class="ic">🎨</span><span class="d"><b>창작자</b>매일 열리는 전통·미디어아트 공모</span><span class="arr">공모 보기 →</span></div>
     <div class="w" onclick="goMeet('space')"><span class="ic">🏛</span><span class="d"><b>기관·브랜드</b>함께할 창작자·공간 찾기</span><span class="arr">만남의 장 →</span></div>
@@ -630,7 +631,7 @@ window.boardView=function(v){var meet=document.getElementById('meet');if(meet)me
 (function(){
   try{ var c=(typeof CITIES!=='undefined'?CITIES.length:90), g=0;
     if(typeof GONGMO!=='undefined'){for(var k in GONGMO)g+=(GONGMO[k]||[]).length;}
-    var v=document.getElementById('vstat'); if(v) v.textContent='이야기 '+c+' · 열린 공모 '+g+' · 이번 달 방문 8,000+';
+    var v=document.getElementById('vstat'); if(v) v.textContent='이야기 '+c+' · 열린 공모 '+g;
   }catch(e){}
   window.goMeet=function(f){ try{ if(window.mainMode) mainMode('meet'); var chip=f&&document.querySelector('#mgfilt .f[data-f="'+f+'"]'); if(chip) chip.click(); var g=document.getElementById('mgal'); if(g) g.scrollTop=0; }catch(e){} };
   window.chOpen=function(){document.getElementById('chmodal').classList.add('on');};
