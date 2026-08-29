@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 티가 나는 진짜 이유 — i2v 영상 자연스럽게 만들기 · 초인 제작 배움터</title>
+<meta name="description" content="AI 영상이 어색한 건 도구 탓이 아니라 몇 가지 반복되는 원인 때문이다 — 다 같이 움직이는 군무, 반듯한 대칭, 붕 뜬 무게감, 뭉개지는 얼굴, 영상 안에 박은 글자까지. i2v(이미지→영상)에서 'AI가 만든 티'를 지우는 7가지 함정과 해결을 공개한 초인 스튜디오 제작 노트." />
+<meta property="og:title" content="AI 티가 나는 진짜 이유 — i2v 영상 자연스럽게 만들기" />
+<meta property="og:description" content="'AI가 만든 티'는 왜 날까. 군무·대칭·붕 뜸·형태 왜곡·영상 속 글자까지 — i2v 영상을 자연스럽게 만드는 7가지 규칙을 전부 공개합니다." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Gaegu:wght@700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC; --hanji:#F2E7D4; --ink:#241F1B; --muted:#6B6258;
+    --red:#B8392A; --green:#1E6B58; --gold:#C09238; --line:#E4D7C0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:"Noto Sans KR",sans-serif;line-height:1.8}
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px}
+  a{color:inherit}
+  .btn{display:inline-block;padding:13px 24px;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px;border:2px solid transparent;cursor:pointer}
+  .btn-red{background:var(--red);color:#fff}
+  .btn-gold{background:var(--gold);color:#3a2a06}
+  .btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+
+  .nav{position:sticky;top:0;z-index:30;background:rgba(251,246,236,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{max-width:1000px;display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-family:"Gaegu",cursive;font-size:26px;color:var(--red);line-height:1;text-decoration:none}
+  .logo small{font-family:"Noto Sans KR";font-size:11px;color:var(--muted);letter-spacing:.1em;margin-left:6px}
+  .nav nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 16px}
+  .nav nav a{font-size:14.5px;text-decoration:none;color:var(--muted);transition:.15s}
+  .nav nav a:hover{color:var(--ink)}
+  .nav nav a.back{font-size:15px;font-weight:700;color:var(--red);border:1.5px solid var(--red);border-radius:999px;padding:7px 16px}
+  .nav nav a.back:hover{background:var(--red);color:#fff}
+  .nav nav a.cur{color:var(--ink);font-weight:700;position:relative}
+  .nav nav a.cur::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--red);border-radius:2px}
+  .nav nav .sep{width:1px;height:18px;background:var(--line)}
+  @media(max-width:640px){.nav .wrap{height:auto;flex-direction:column;align-items:flex-start;gap:8px;padding-top:10px;padding-bottom:10px}.nav nav{justify-content:flex-start}.nav nav .sep{display:none}}
+
+  .hero{background:radial-gradient(120% 100% at 50% 0,var(--hanji),var(--cream) 72%);border-bottom:1px solid var(--line);padding:52px 0 46px}
+  .kicker{letter-spacing:.2em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700;margin-bottom:16px}
+  .hero h1{font-family:"Gowun Batang",serif;font-size:34px;line-height:1.32;margin-bottom:16px}
+  .hero .lead{font-size:17px;color:#3a342d;max-width:680px}
+  .hero .lead b{color:var(--red)}
+  .meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;font-size:13px;color:var(--muted)}
+  .meta span b{color:var(--green)}
+  .specbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .specbar .c{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 15px;font-size:13px;font-weight:700}
+  .specbar .c b{color:var(--red)}
+
+  article{padding:44px 0 10px}
+  article h2{font-family:"Gowun Batang",serif;font-size:24px;margin:44px 0 6px;padding-top:8px}
+  article h2 .en{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;color:var(--green);font-weight:500}
+  article h3{font-size:17px;color:var(--green);margin:26px 0 4px}
+  article p{margin:10px 0;font-size:16px}
+  article strong{color:var(--red)}
+  .note{background:var(--hanji);border-left:3px solid var(--gold);padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0;font-size:15px}
+  .note b{color:var(--green)}
+
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 4px}
+  .flow .s{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px;font-weight:700;text-align:center;line-height:1.4}
+  .flow .s b{color:var(--red);display:block;font-size:12px}
+  .flow .ar{color:var(--gold);font-weight:800}
+
+  .ev{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0}
+  .ev.crisis{border-color:#e0b98a;background:#fffaf2}
+  .ev .d{display:inline-block;font-size:12px;font-weight:800;color:#fff;background:var(--green);border-radius:999px;padding:4px 12px;letter-spacing:.02em}
+  .ev.crisis .d{background:var(--red)}
+  .ev .q{font-size:15px;color:var(--muted);font-style:italic;margin:12px 0 2px}
+  .ev h4{font-size:17px;margin:4px 0 8px;font-family:"Gowun Batang",serif}
+  .ev .pt{font-size:15px;margin:6px 0;padding-left:20px;position:relative}
+  .ev .pt:before{position:absolute;left:0;font-weight:800;font-size:12px;top:4px}
+  .ev .pt.p:before{content:"⚠";color:var(--red)}
+  .ev .pt.s:before{content:"✓";color:var(--green)}
+  .ev .lz{margin-top:10px;background:#2a2118;color:#f0e6d6;border-radius:8px;padding:9px 14px;font-size:14px}
+  .ev .lz b{color:var(--gold)}
+
+  .sp9{background:var(--ink);color:#F2E7D4;border-radius:16px;padding:30px 26px;margin:30px 0}
+  .sp9 .eb{letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:700;margin-bottom:6px}
+  .sp9 h2{font-family:"Gowun Batang",serif;color:#fff;font-size:23px;margin:0 0 4px}
+  .sp9 p.s{color:#c9bba2;font-size:15px;margin-bottom:18px}
+  .sp9 ol{list-style:none;counter-reset:sp;margin:0}
+  .sp9 li{counter-increment:sp;padding:11px 0 11px 44px;position:relative;border-bottom:1px dashed rgba(255,255,255,.16);font-size:15.5px;line-height:1.5}
+  .sp9 li:last-child{border-bottom:0}
+  .sp9 li:before{content:counter(sp);position:absolute;left:0;top:9px;width:28px;height:28px;background:var(--gold);color:#3a2a06;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+  .sp9 li b{color:#ffe9c2}
+  .sp9 li .star{color:var(--gold);font-weight:800;margin-right:4px}
+
+  .gate{background:#fff;border:2px solid var(--gold);border-radius:18px;padding:32px 26px;margin:34px 0;text-align:center}
+  .gate .eb{letter-spacing:.12em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700}
+  .gate h2{font-family:"Gowun Batang",serif;font-size:24px;margin:8px 0 6px}
+  .gate p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto}
+  .gate ul{list-style:none;max-width:480px;margin:16px auto;text-align:left}
+  .gate ul li{padding:6px 0 6px 26px;position:relative;font-size:15px}
+  .gate ul li:before{content:"📄";position:absolute;left:0}
+  .gate form{display:flex;gap:10px;max-width:460px;margin:18px auto 8px;flex-wrap:wrap;justify-content:center}
+  .gate input{flex:1;min-width:220px;padding:14px 18px;border-radius:999px;border:1px solid var(--line);font-size:15px;font-family:inherit}
+  .gate small{color:var(--muted);font-size:12px;display:block;margin-top:6px}
+  .gate .done{display:none}
+  .gate .done a{font-size:16px}
+
+  footer{background:var(--ink);color:#E8DEC9;text-align:center;padding:44px 0;margin-top:40px}
+  footer .logo{color:#fff}
+  footer .social a{display:inline-block;margin:14px 10px 6px;font-size:14px;color:#E8DEC9;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px}
+  footer small{display:block;margin-top:12px;color:#9c9384;font-size:12px;line-height:1.7}
+
+  @media(max-width:640px){ .hero h1{font-size:27px} article h2{font-size:21px} }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="wrap">
+    <a href="../index.html" class="logo">전통스토리지도<small>초인</small></a>
+    <nav>
+      <a href="../index.html" class="back">← 돌아가기</a>
+      <span class="sep"></span>
+      <a href="index.html" class="cur">제작 배움터</a>
+      <a href="../초인_포트폴리오.html">초인 포트폴리오</a>
+      <a href="../index.html#meet">만남의 장</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">초인 제작 배움터 · Case Study 03</div>
+    <h1>AI 티가 나는 진짜 이유 —<br>i2v 영상 자연스럽게 만들기</h1>
+    <p class="lead">AI로 뽑은 영상이 <b>"어쩐지 어색한"</b> 건 대개 도구 탓이 아닙니다.
+    등장인물이 <b>다 똑같이 움직이고</b>, 화면이 <b>반듯하게 대칭</b>이고, 움직임이 <b>붕 떠 있고</b>,
+    얼굴이 <b>뭉개지고</b>, 영상 안에 박은 <b>글자가 일그러지는</b> — 반복되는 원인이 있어요.
+    우리가 실제로 하나씩 짚어 고친 <b>7가지 함정과 규칙</b>을 그대로 공개합니다.</p>
+    <div class="specbar">
+      <span class="c">분야 <b>i2v 모션</b></span>
+      <span class="c">형태잠금 <b>필수</b></span>
+      <span class="c">동작 <b>목적 하나</b></span>
+      <span class="c">무게감 <b>반동·발 고정</b></span>
+      <span class="c">글자 <b>편집에서</b></span>
+      <span class="c">보험 <b>2~3회 베스트픽</b></span>
+    </div>
+    <div class="meta">
+      <span>제작 · <b>초인 스튜디오</b></span>
+      <span>분류 · <b>i2v 모션 크래프트 (AI 티 제거)</b></span>
+      <span>공개 · <b>2026-08-29</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<article>
+
+  <p>Case 01이 <strong>"한 편을 심사 통과 규격까지"</strong>, Case 02가 <strong>"같은 품질로 대량 양산"</strong>이었다면,
+  이번 편은 그 사이에서 가장 자주 발목을 잡는 문제입니다 — <strong>"왜 AI가 만든 티가 날까"</strong>.
+  이미지를 영상으로 만드는 i2v(image-to-video)에서, 관람객이 첫 3초에 'AI다'라고 느끼는 순간들을
+  하나씩 뜯어 <strong>프롬프트로 막는 법</strong>을 정직하게 풉니다.</p>
+
+  <div class="note">
+    ℹ️ 등장하는 주인공들은 초인이 <b>정식 전개 중인 오리지널 캐릭터 IP</b>라 이름·디자인은 생략하고 <b>'캐릭터'</b>로만 부릅니다.
+    대신 <b>방법은 전부 공개</b> — 어떤 소재든 그대로 재현할 수 있도록.
+  </div>
+
+  <h2><span class="en">The Flow</span>한 컷이 자연스러워지는 흐름</h2>
+  <p>비법은 복잡한 도구가 아니라 <strong>순서</strong>였습니다. 특히 마지막 '글자는 편집에서'가 핵심이에요.</p>
+  <div class="flow">
+    <div class="s"><b>1. 키프레임</b>글자 없는<br>깨끗한 장면</div>
+    <div class="ar">→</div>
+    <div class="s"><b>2. 모션 프롬프트</b>형태잠금+<br>목적 동작+무게</div>
+    <div class="ar">→</div>
+    <div class="s"><b>3. 2~3회 생성</b>seed 변주</div>
+    <div class="ar">→</div>
+    <div class="s"><b>4. 베스트픽</b>제일 자연스러운<br>컷 선택</div>
+    <div class="ar">→</div>
+    <div class="s"><b>5. 편집</b>글자·로고<br>오버레이</div>
+  </div>
+
+  <h2><span class="en">7 Traps that Scream "AI-made"</span>AI 티를 만드는 7가지 함정</h2>
+  <p>아래는 전부 <strong>실제로 어색한 결과를 뽑아 놓고 원인을 짚은 뒤</strong> 규칙으로 굳은 것들입니다. 제목은 그때 화면을 보며 던진 질문 그대로예요.</p>
+
+  <div class="ev crisis">
+    <span class="d">함정 01 · ★가장 흔한 것</span>
+    <p class="q">"왜 다들 똑같이 움직이지? 사람 같지가 않아."</p>
+    <h4>다 같이 움직이면 군무처럼 보인다 — 역할과 리듬을 나눠라</h4>
+    <div class="pt p">등장인물 여럿이 <strong>완전히 같은 동작을 같은 타이밍</strong>에 하면, 실사감이 죽고 '연출된 AI' 티가 확 난다.</div>
+    <div class="pt s">한 명은 내리치고, 한 명은 쉬고, 한 명은 지켜보게 — <strong>각자 다른 역할과 리듬</strong>을 프롬프트에 명시. "다 같이 움직이지 말 것"을 문장으로 박는다.</div>
+    <div class="lz"><b>규칙 ①</b> 한 화면 = 여러 리듬. 인물마다 다른 동작·타이밍을 지정하라.</div>
+  </div>
+
+  <div class="ev">
+    <span class="d">함정 02</span>
+    <p class="q">"화면이 왜 이렇게 반듯해 보이지?"</p>
+    <h4>좌우 대칭 구도는 그래픽처럼 보인다</h4>
+    <div class="pt p">인물·소품이 <strong>좌우로 반듯하게 대칭</strong>이면 사진이 아니라 CG·포스터처럼 읽힌다.</div>
+    <div class="pt s">배치와 카메라를 <strong>살짝 비대칭</strong>으로. 무게 중심을 한쪽으로 흘리고, 소품 높이를 어긋나게.</div>
+    <div class="lz"><b>규칙 ②</b> 완벽한 대칭을 피하라. 약간의 비대칭이 '진짜' 느낌을 만든다.</div>
+  </div>
+
+  <div class="ev">
+    <span class="d">함정 03</span>
+    <p class="q">"움직이긴 하는데 왜 붕 떠 보여?"</p>
+    <h4>무게감이 없으면 인형처럼 보인다</h4>
+    <div class="pt p">동작에 <strong>반동·관성이 없어</strong> 붕 뜬 느낌. 발이 미끄러지거나 살짝 공중부양하면 즉시 AI 티.</div>
+    <div class="pt s">타격마다 <strong>먼지와 반동</strong>을 넣고, <strong>발을 바닥에 고정</strong>, 움직임은 <strong>느린 자연 이징</strong>(홱홱·떨림 금지).</div>
+    <div class="lz"><b>규칙 ③</b> 모든 움직임에 무게를 줘라 — 반동·먼지·발 고정·슬로우 이징.</div>
+  </div>
+
+  <div class="ev crisis">
+    <span class="d">함정 04 · ★AI 티 1순위</span>
+    <p class="q">"얼굴이 뭉개지고 없던 손가락이 생겼어."</p>
+    <h4>형태 왜곡 — 관람객이 'AI다'라고 느끼는 가장 큰 원인</h4>
+    <div class="pt p">i2v가 프레임 사이에서 <strong>얼굴을 뭉개고, 손가락을 만들어내고, 몸을 morph</strong>. 이 하나가 자연스러움을 통째로 깬다.</div>
+    <div class="pt s"><strong>CHARACTER LOCK</strong>을 프롬프트에 — 얼굴·형태·손 모양 유지, <strong>morph·왜곡·팔다리 추가·melting 금지</strong>를 금지어로 박는다.</div>
+    <div class="lz"><b>규칙 ④</b> 형태잠금을 명시하라. '무엇을 하지 말 것'(왜곡·손가락·melting)을 프롬프트에 못 박는다.</div>
+  </div>
+
+  <div class="ev">
+    <span class="d">함정 05</span>
+    <p class="q">"가만히 있어도 어색하고, 움직여도 어색해."</p>
+    <h4>얼어붙거나 헛흔들리거나 — 목적 없는 움직임</h4>
+    <div class="pt p">캐릭터가 <strong>얼어붙어(frozen)</strong> 있거나, 목적 없이 <strong>잘게 떨린다(drifting)</strong>. 둘 다 강한 AI 티.</div>
+    <div class="pt s"><strong>목적 있는 단일 동작을 반복 사이클</strong>로(예: 물주기→꽃핌 같은 인과). <code>never frozen-idle, never twitching or drifting aimlessly</code>를 넣는다.</div>
+    <div class="lz"><b>규칙 ⑤</b> 목적 있는 하나의 동작을 반복시켜라. '얼음'과 '헛떨림'을 동시에 금지한다.</div>
+  </div>
+
+  <div class="ev">
+    <span class="d">함정 06</span>
+    <p class="q">"한 컷에 이것저것 시켰더니 다 뭉개졌어."</p>
+    <h4>한 컷에 동작 여러 개 = 다 애매해진다</h4>
+    <div class="pt p">한 캐릭터에게 여러 동작을 <strong>나열</strong>하면 어느 것도 또렷하지 않게 뭉개진다.</div>
+    <div class="pt s"><strong>한 캐릭터 = 하나의 일.</strong> 동작이 여러 개 필요하면 컷을 나눠서 각각 뽑는다.</div>
+    <div class="lz"><b>규칙 ⑥</b> 한 컷, 한 캐릭터, 하나의 동작. 나열하지 마라.</div>
+  </div>
+
+  <div class="ev crisis">
+    <span class="d">함정 07 · ★한글 주의</span>
+    <p class="q">"'계속'이 '계소'로 나왔어. 로고까지 뭉개졌어."</p>
+    <h4>글자를 영상 안에 박지 마라</h4>
+    <div class="pt p">문구·로고를 <strong>이미지에 넣은 채로</strong> 움직임을 만들면, AI가 글자를 그림의 일부로 보고 함께 뭉갠다. <strong>한글이 특히 심각</strong>('계속'→'계소').</div>
+    <div class="pt s"><strong>글자 없는 깨끗한 장면</strong>으로 움직임을 먼저 만들고, 완성 영상 위에 문구·로고는 <strong>편집 단계에서 따로 얹는다</strong>. 움직임은 살고 글자는 선명하게 남는다.</div>
+    <div class="lz"><b>규칙 ⑦</b> 글자·로고는 절대 생성 단계에 넣지 마라. 모션 먼저, 타이포는 편집에서.</div>
+  </div>
+
+  <div class="sp9">
+    <div class="eb">Takeaways</div>
+    <h2>그대로 쓰는 자연스러움 규칙</h2>
+    <p class="s">AI 티는 '좋은 프롬프트'가 아니라 '왜곡과 헛동작을 막는 법'에서 갈립니다. ★ = 체감상 가장 크게 티를 지워준 레버.</p>
+    <ol>
+      <li><span class="star">★</span><b>다 같이 움직이지 마라.</b> 인물마다 다른 역할·리듬을 지정.</li>
+      <li><b>완벽한 대칭 금지.</b> 배치·카메라를 살짝 비대칭으로.</li>
+      <li><b>무게감 필수.</b> 반동·먼지·발 고정·슬로우 이징.</li>
+      <li><span class="star">★</span><b>형태잠금(CHARACTER LOCK).</b> 얼굴·손 morph·왜곡·melting을 금지어로.</li>
+      <li><b>목적 있는 단일 동작 반복.</b> never frozen, never twitching.</li>
+      <li><b>한 컷 = 한 동작.</b> 여러 동작 나열하지 말고 컷을 나눠라.</li>
+      <li><span class="star">★</span><b>글자는 편집에서.</b> 생성엔 깨끗한 장면만, 타이포·로고는 오버레이.</li>
+      <li><span class="star">★</span><b>무료 i2v는 컷당 2~3번 뽑아 베스트픽.</b> seed 변주가 AI 티를 실제로 거르는 가장 확실한 보험.</li>
+    </ol>
+  </div>
+
+  <div class="note">
+    🖼 <b>대형 화면·파사드처럼 관망형</b>이라면 규칙 하나 더 — 컷을 잘게 쪼개지 말고 <b>20초 이상 롱테이크 정적 리빙페인팅</b>이 정석입니다.
+    지루함은 컷 전환이 아니라 <b>모션 밀도</b>(화면 곳곳의 작은 목적 동작)로 푸세요.
+  </div>
+
+  <div class="gate" id="gate">
+    <div class="eb">Free Download</div>
+    <h2>AI 티 제거 체크리스트, 무료로 받아가세요</h2>
+    <p>7가지 함정 → 규칙 · <b>바로 복붙하는 프롬프트 블록</b>(형태잠금·목적 동작·무게감·금지어) · 재현 체크리스트를 담은 <b>실전 노트</b>입니다. 이메일만 남기면 새 노트가 나올 때 정리본을 보내드려요.</p>
+    <ul>
+      <li>7가지 함정 → 규칙 요약표</li>
+      <li>그대로 붙여 쓰는 모션 프롬프트 블록(형태잠금·목적 동작·금지어)</li>
+      <li>렌더 전 30초 AI 티 자가 점검 체크리스트</li>
+    </ul>
+    <form id="grabform" onsubmit="return grab(event)">
+      <input id="gm" type="email" placeholder="이메일 주소 (your@email.com)" required />
+      <button type="submit" class="btn btn-gold">무료 실전 노트 신청</button>
+    </form>
+    <small>광고·스팸 없이, 새 제작 노트가 나올 때만 알려드립니다 · 언제든 해지.</small>
+    <div class="done" id="done">
+      <p style="font-family:'Gowun Batang',serif;font-size:18px;color:var(--green);margin-bottom:6px">고맙습니다! 정리본이 준비되면 이 메일로 가장 먼저 보내드릴게요.</p>
+      <p style="color:var(--muted);font-size:14px;margin:0">그동안 다른 제작 노트도 둘러보세요 —
+      <a href="index.html" style="color:var(--red);font-weight:700">제작 배움터 전체 보기 →</a></p>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:var(--muted);font-size:14px">이런 제작 노트를 더 보고 싶다면 —
+  <a href="index.html" style="color:var(--red);font-weight:700">제작 배움터 전체 보기 →</a></p>
+
+</article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">전통스토리지도<small style="color:#9c9384"> · 초인 스튜디오</small></div>
+    <div class="social">
+      <a href="https://www.youtube.com/@muuimaster" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.instagram.com/choin_creative_lab/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:choin2626@gmail.com">Email</a>
+    </div>
+    <small>© 2026 초인 스튜디오 (CHOIN) · 한국 전통을 미디어아트, 그 너머로<br>
+    본 제작 노트의 방법론은 자유롭게 재현·응용하셔도 좋습니다.</small>
+  </div>
+</footer>
+
+<script>
+  const SUPA_URL='https://moavztygngbafhxztghx.supabase.co';
+  const SUPA_KEY='sb_publishable_9D-u0PH9oM0jSRoJmfGfZQ_q5t3DldZ';
+  const _H={apikey:SUPA_KEY, Authorization:'Bearer '+SUPA_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+  try{ fetch(SUPA_URL+'/rest/v1/events',{method:'POST',headers:_H,body:JSON.stringify({type:'lab_visit',detail:'natural'})}).catch(function(){}); }catch(e){}
+  function grab(e){
+    e.preventDefault();
+    var email=(document.getElementById('gm').value||'').trim();
+    try{ fetch(SUPA_URL+'/rest/v1/leads',{method:'POST',headers:_H,body:JSON.stringify({email:email, source:'natural'})}).catch(function(){}); }catch(err){}
+    document.getElementById('grabform').style.display='none';
+    document.querySelector('#gate small').style.display='none';
+    document.getElementById('done').style.display='block';
+    return false;
+  }
+</script>
+</body>
+</html>
