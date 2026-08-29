@@ -380,28 +380,23 @@ circle.city{cursor:pointer;}
 </head>
 <body>
 <style>
-#choinSplash{position:fixed;inset:0;z-index:9999;background:#e00c1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;cursor:pointer;transition:opacity .5s ease;overflow:hidden}
+#choinSplash{position:fixed;inset:0;z-index:9999;background:#e00c1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;transition:opacity .5s ease;overflow:hidden;padding:18px}
 #choinSplash.hide{opacity:0;pointer-events:none}
-#choinSplash .cs-art{position:relative;width:min(88vw,760px)}
-#choinSplash .cs-logo{width:100%;display:block;filter:drop-shadow(0 8px 26px rgba(0,0,0,.25))}
-#choinSplash .cs-head{position:absolute;top:49%;left:50%;transform:translate(-50%,-50%);margin:0;text-align:center;color:#f3ece0;font-family:var(--sans);font-weight:900;line-height:.9;letter-spacing:-1.5px;font-size:clamp(40px,8.6vw,108px);text-shadow:0 4px 20px rgba(110,0,0,.5)}
-#choinSplash .cs-slogan{color:#ffdccf;font-size:clamp(12px,2.6vw,16px);font-weight:600;letter-spacing:.3px;text-align:center;padding:0 22px;margin-top:-4px}
-#choinSplash .cs-enter{background:#f3ece0;color:#c0121a;border:0;border-radius:999px;padding:15px 36px;font-size:clamp(15px,2.4vw,18px);font-weight:800;font-family:var(--sans);cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.22);transition:transform .12s,background .15s}
-#choinSplash .cs-enter:hover{transform:translateY(-2px);background:#fff}
-#choinSplash .cs-links{display:flex;gap:12px;align-items:center;font-size:13px}
-#choinSplash .cs-links a{color:rgba(243,236,224,.9);text-decoration:none;border-bottom:1px solid rgba(243,236,224,.4);padding-bottom:1px}
-#choinSplash .cs-links a:hover{color:#fff}
-#choinSplash .cs-tap{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:rgba(243,236,224,.6);font-size:12px;letter-spacing:.5px}
+#choinSplash .cs-art{position:relative;display:inline-block;max-width:92vw;transition:transform .2s ease}
+#choinSplash:hover .cs-art{transform:scale(1.02)}
+#choinSplash .cs-logo{height:min(52vh,500px);width:auto;max-width:92vw;display:block;filter:drop-shadow(0 8px 26px rgba(0,0,0,.25))}
+#choinSplash .cs-head{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0;text-align:center;color:#f3ece0;font-family:var(--sans);font-weight:900;line-height:.88;letter-spacing:-1.5px;font-size:clamp(30px,6.4vw,86px);text-shadow:0 4px 20px rgba(110,0,0,.55);pointer-events:none}
+#choinSplash .cs-slogan{color:#ffdccf;font-size:clamp(12px,2.4vw,15px);font-weight:600;letter-spacing:.3px;text-align:center;padding:0 22px}
+#choinSplash .cs-enter{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:var(--sans);font-size:clamp(15px,2.4vw,18px);font-weight:800;letter-spacing:.2px;border-bottom:2px solid rgba(255,255,255,.9);padding-bottom:5px;animation:csbob 1.7s ease-in-out infinite}
+@keyframes csbob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 </style>
-<div id="choinSplash" onclick="choinEnter()">
+<div id="choinSplash" onclick="choinEnter()" title="전통 지도로 들어가기">
   <div class="cs-art">
     <img class="cs-logo" src="brand/logo_cover.png" alt="초인 CHOIN" onerror="this.style.display='none'">
-    <h1 class="cs-head">WHAT WE DO<br>IS KOREA</h1>
+    <h1 class="cs-head"><span>WHAT WE DO</span><span>IS KOREA</span></h1>
   </div>
   <div class="cs-slogan">우리가 하는 모든 일의 본질은 결국 한국이다 &nbsp;·&nbsp; What We Do Is Korea.</div>
-  <button class="cs-enter" onclick="event.stopPropagation();choinEnter()">전통 지도로 들어가기 →</button>
-  <div class="cs-links"><a href="초인_포트폴리오.html" onclick="event.stopPropagation()">초인 포트폴리오</a><span style="color:rgba(243,236,224,.5)">·</span><a href="lab/index.html" onclick="event.stopPropagation()">제작 배움터</a></div>
-  <div class="cs-tap">화면을 누르면 들어갑니다</div>
+  <div class="cs-enter">전통 지도로 들어가기 →</div>
 </div>
 <script>
 (function(){
