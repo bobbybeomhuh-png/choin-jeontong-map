@@ -30,9 +30,15 @@
   .nav .wrap{max-width:1000px;display:flex;align-items:center;justify-content:space-between;height:60px}
   .logo{font-family:"Gaegu",cursive;font-size:26px;color:var(--red);line-height:1;text-decoration:none}
   .logo small{font-family:"Noto Sans KR";font-size:11px;color:var(--muted);letter-spacing:.1em;margin-left:6px}
-  .nav nav a{margin-left:20px;font-size:14px;text-decoration:none;color:var(--muted)}
+  .nav nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 16px}
+  .nav nav a{font-size:14.5px;text-decoration:none;color:var(--muted);transition:.15s}
   .nav nav a:hover{color:var(--ink)}
-  @media(max-width:640px){.nav nav a{margin-left:12px;font-size:13px}}
+  .nav nav a.back{font-size:15px;font-weight:700;color:var(--red);border:1.5px solid var(--red);border-radius:999px;padding:7px 16px}
+  .nav nav a.back:hover{background:var(--red);color:#fff}
+  .nav nav a.cur{color:var(--ink);font-weight:700;position:relative}
+  .nav nav a.cur::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;background:var(--red);border-radius:2px}
+  .nav nav .sep{width:1px;height:18px;background:var(--line)}
+  @media(max-width:640px){.nav .wrap{height:auto;flex-direction:column;align-items:flex-start;gap:8px;padding-top:10px;padding-bottom:10px}.nav nav{justify-content:flex-start}.nav nav .sep{display:none}}
 
   /* hero */
   .hero{background:radial-gradient(120% 100% at 50% 0,var(--hanji),var(--cream) 72%);border-bottom:1px solid var(--line);padding:52px 0 46px}
@@ -109,9 +115,9 @@
   <div class="wrap">
     <a href="../index.html" class="logo">전통스토리지도<small>초인</small></a>
     <nav>
-      <a href="../index.html" style="color:var(--red);font-weight:700">← 지도로</a>
-      <a href="index.html">제작 배움터</a>
-      <a href="../muui/">우리 IP</a>
+      <a href="../index.html" class="back">← 돌아가기</a>
+      <span class="sep"></span>
+      <a href="index.html" class="cur">제작 배움터</a>
       <a href="../초인_포트폴리오.html">초인 포트폴리오</a>
       <a href="../index.html#meet">만남의 장</a>
     </nav>
