@@ -702,14 +702,14 @@ function loadPartnersFromSupa(){
 // 자기등록 폼 모달
 window.openReg=function(){var m=document.getElementById('rmodal');
  if(!m){m=document.createElement('div');m.id='rmodal';m.className='pmodal';m.innerHTML='<div class="pmbox rbox"><button class="pmx" onclick="closeReg()">&times;</button><div class="rform"><h3>전통 창작자 무료 등록</h3><p class="rsub">보내주시면 초인이 확인 후 카드로 게시하고, SNS로도 함께 알립니다. 무료.</p>'
-  +'<label>이름 · 활동명 *<input id="r_name" maxlength="40" placeholder="예: 소연 가야금"></label>'
-  +'<label>핸들(인스타/쓰레드)<input id="r_handle" maxlength="40" placeholder="@id"></label>'
-  +'<label>분야 (쉼표로 구분) *<input id="r_cats" maxlength="60" placeholder="국악, 가야금, 체험"></label>'
-  +'<label>한 줄 소개 *<input id="r_desc" maxlength="120" placeholder="무엇을 하는 분인지 한 줄로"></label>'
-  +'<label>하는 일 (줄바꿈으로 여러 개)<textarea id="r_work" rows="3" maxlength="400" placeholder="영문 국악 렉처콘서트\n가야금 원데이 클래스"></textarea></label>'
+  +'<label>이름 · 활동명 *<input id="r_name" maxlength="40" placeholder="예: 초인 스튜디오"></label>'
+  +'<label>핸들(인스타/쓰레드)<input id="r_handle" maxlength="40" placeholder="예: @choin_creative_lab"></label>'
+  +'<label>분야 (쉼표로 구분) *<input id="r_cats" maxlength="60" placeholder="예: 미디어아트, 전통, 파사드"></label>'
+  +'<label>한 줄 소개 *<input id="r_desc" maxlength="120" placeholder="예: 전통을 미디어아트로 되살리는 스튜디오"></label>'
+  +'<label>하는 일 (줄바꿈으로 여러 개)<textarea id="r_work" rows="3" maxlength="400" placeholder="예: 대형 LED 미디어파사드\n실감 전시\n유물 복원 미디어아트"></textarea></label>'
   +'<label>대표 이미지 URL (선택)<input id="r_img" maxlength="300" placeholder="https://... .jpg"></label>'
   +'<label>유튜브 링크/ID (선택)<input id="r_video" maxlength="120" placeholder="youtube.com/watch?v=..."></label>'
-  +'<label>링크 (인스타/사이트, 쉼표로 구분)<input id="r_links" maxlength="300" placeholder="https://instagram.com/id, https://..."></label>'
+  +'<label>링크 (인스타/사이트, 쉼표로 구분)<input id="r_links" maxlength="300" placeholder="예: https://instagram.com/choin_creative_lab, https://..."></label>'
   +'<button class="rsend" onclick="submitReg()">등록 신청하기</button><div class="rmsg" id="r_msg"></div>'
   +'<p class="rnote">이미지 파일 업로드는 준비 중 — 지금은 이미지 URL 또는 유튜브 링크로. 없으면 텍스트 카드로 올라갑니다.</p></div></div>';
   document.body.appendChild(m);m.addEventListener('click',function(e){if(e.target===m)closeReg();});}
