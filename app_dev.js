@@ -39,13 +39,23 @@ function dday(d){
   var n=Math.round((t-now)/86400000);
   return n<=0 ? 'D-day' : ('D-'+n);
 }
-function gongmoRows(list, n){
-  return list.slice(0,n).map(function(g){
-    var kind = g.k ? '<span class="gok k-'+esc(g.k)+'">'+esc(g.k)+'</span> ' : '';
-    var field = (g.f && g.f!=='전통·문화일반') ? '<span class="gof">'+esc(g.f)+'</span> ' : '';
-    return '<a class="gorow" href="'+g.u+'" target="_blank" rel="noopener">'
-      + '<span class="godd'+(g.d&&dday(g.d).match(/D-([0-9])$/)?' urgent':'')+'">'+dday(g.d)+'</span>'
-      + '<span class="got">'+kind+field+esc(g.t)+'</span></a>';
+function gongmoRows(list, n, region){
+  var GW_CITY={'수도권':'서울','서울':'서울','경기':'수원','인천':'인천','강원':'강릉','충북':'청주','충남':'공주','대전':'대전','세종':'세종','전북':'전주','전남':'담양','광주':'담양','경북':'안동','대구':'안동','경남':'통영','부산':'통영','울산':'통영','제주':'제주','전국':'서울'};
+  function imgFor(g,i){
+    var keys=[region, GW_CITY[region]];
+    for(var j=0;j<keys.length;j++){ if(keys[j] && typeof IMAGES!=='undefined' && IMAGES[keys[j]]) return IMAGES[keys[j]]; }
+    return 'before/b'+('00'+((i%29)+1)).slice(-3)+'.jpg';
+  }
+  return list.slice(0,n).map(function(g,i){
+    var dd = g.d?dday(g.d):'';
+    var urgent = dd && dd.match(/D-([0-9])$/);
+    var field = (g.f && g.f!=='전통·문화일반') ? ' · '+esc(g.f) : '';
+    return '<a class="gopost" href="'+g.u+'" target="_blank" rel="noopener" style="background-image:url('+esc(imgFor(g,i))+')">'
+      + '<span class="gopv"></span>'
+      + (dd?'<span class="godday'+(urgent?' urgent':'')+'">'+dd+'</span>':'')
+      + '<span class="gopin"><span class="gobadge">'+esc(g.k||'공모')+field+'</span>'
+      + '<span class="gopt">'+esc(g.t)+'</span>'
+      + '<span class="gopd">'+(g.d?'~'+g.d+' 마감':'상시 모집')+'</span></span></a>';
   }).join('');
 }
 function gongmoHtml(region){
@@ -304,12 +314,12 @@ function renderCalls(){
     +'<div class="gochips">'+chips+'</div>'
     +'<div class="gochips ffilter">'+fchips+'</div></div>';
   if(nat.length){
-    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">🌐 '+(t?'National · anyone':'전국 · 누구나')+'<span>'+nat.length+'</span></div><div class="golist">'+gongmoRows(nat, nat.length)+'</div></div>';
+    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">🌐 '+(t?'National · anyone':'전국 · 누구나')+'<span>'+nat.length+'</span></div><div class="golist">'+gongmoRows(nat, nat.length, '전국')+'</div></div>';
   }
   names.forEach(function(k){ var list=groups[k].list; if(!list.length) return; list.sort(sortD);
     var isWide=(k===groups[k].gwon);
     var nm=((typeof RNAME!=='undefined'&&RNAME[LANG]&&RNAME[LANG][k])||k)+(isWide?(t?' · region-wide':' 전역'):'');
-    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">'+nm+'<span>'+list.length+'</span></div><div class="golist">'+gongmoRows(list, list.length)+'</div></div>';
+    h+='<div class="bregion"><div class="bregtitle" style="cursor:default">'+nm+'<span>'+list.length+'</span></div><div class="golist">'+gongmoRows(list, list.length, k)+'</div></div>';
   });
   if(total===0) h+='<p style="color:var(--t3)">'+(t?'No open calls in this filter.':'해당 조건의 공모가 없습니다.')+'</p>';
   box.innerHTML=h+'</div>';
@@ -385,6 +395,73 @@ function renderLegend(){
     + '<span class="spacer" style="margin-left:auto;color:var(--t3)">'+CITIES.length+(LANG==='ko'?'개 도시 · ':' cities · ')+T[LANG].hint+'</span>';
 }
 
+// ★[시안] 유휴공간 = 고유의 헬로82. 버려진 공간을 그 지역만의 전통 미디어아트 만남의 장으로.
+// 각 공간은 고유 정체성(soul)·프로그램·미디어아트 컨셉을 가진다(획일 X).
+var IDLE_SPACES = {
+ "전주": [
+  {n:"팔복예술공장", was:"1979년 카세트테이프 공장 · 25년 방치된 폐산업시설",
+   soul:"한지와 판소리가 빛으로 흐르는 예술발전소",
+   concept:"전주 한지의 결이 벽을 타고 흐르고 판소리 가락이 공간을 울리는 몰입 전시",
+   acts:["한지 미디어아트 상설전","판소리 실감공연","창작 레지던시","전통공예 팝업","굿즈숍"], creators:12},
+  {n:"전주 구도심 폐정미소", was:"방치된 옛 정미소 · 원도심 유휴",
+   soul:"설화가 밤마다 골목을 밝히는 이야기 창고",
+   concept:"전주 설화를 골목 미디어파사드로 — 밤이 되면 담벼락이 이야기가 됨",
+   acts:["골목 미디어파사드","전통시장 연계 팝업","야간 오픈스튜디오"], creators:5}
+ ],
+ "청주": [
+  {n:"문화제조창", was:"옛 연초제조창(담배공장) · 대규모 유휴 산업시설",
+   soul:"국가유산이 거대한 실감으로 되살아나는 문화공장",
+   concept:"청주 인쇄문화·국가유산이 대형 미디어월과 프로젝션으로 펼쳐지는 실감관",
+   acts:["국가유산 미디어아트","대형 실감전시","공예비엔날레","입주 스튜디오","카페·마켓"], creators:23}
+ ],
+ "충주": [
+  {n:"중앙탑 인근 폐교", was:"폐교된 초등학교 · 마을 유휴시설",
+   soul:"아이와 어른이 설화로 노는 마을 미디어촌",
+   concept:"충주 중앙탑·탄금대 설화를 어린이 실감체험과 마을 팝업으로",
+   acts:["설화 실감체험","어린이 미디어아트 교육","마을 팝업","로컬 굿즈"], creators:6}
+ ],
+ "제천": [
+  {n:"의림지 유휴부지", was:"의림지 주변 방치 부지 · 관광 사각",
+   soul:"삼한의 물빛이 밤마다 되살아나는 수변 라이트파크",
+   concept:"의림지 삼한시대 설화를 수변 프로젝션·야간경관 미디어아트로",
+   acts:["수변 라이트아트","야간경관 전시","팝업 공연"], creators:4}
+ ],
+ "군산": [
+  {n:"근대 폐창고", was:"근대 항구 폐창고 · 원도심 방치",
+   soul:"근대와 전통이 항구에서 겹치는 시간 창고",
+   concept:"군산 근대항구·전통을 융합한 미디어 전시와 예술가 레지던시",
+   acts:["근대·전통 융합 전시","팝업","공연","로컬 판매"], creators:7}
+ ]
+};
+function idleSpaceHtml(region){
+ var list = IDLE_SPACES[region]; if(!list) return "";
+ var gong = (typeof GONGMO!=='undefined' && GONGMO[region]) ? GONGMO[region].length : 0;
+ return list.map(function(s){
+  var acts = s.acts.map(function(a){return '<span class="ispill">'+esc(a)+'</span>';}).join('');
+  return '<div class="ispace">'
+   +'<div class="islab">유휴공간 → 이 지역만의 만남의 장</div>'
+   +'<div class="isname">'+esc(s.n)+'</div>'
+   +'<div class="issoul">“'+esc(s.soul)+'”</div>'
+   +'<div class="isba"><div class="b">Before · 버려진 공간</div><div class="a">After · 미디어아트 만남의 장</div></div>'
+   +'<div class="iswas"><b>지금:</b> '+esc(s.was)+'</div>'
+   +'<div class="isacts">'+acts+'</div>'
+   +'<div class="isfill"><div class="ft">초인이 기본으로 채웁니다</div>'
+     +'<div class="fr"><b>미디어아트 컨셉</b> '+esc(s.concept)+'</div>'
+     +'<div class="fr"><b>매칭 공모·자금</b> 이 지역 '+gong+'건 (예산 통로를 우리가 안다)</div>'
+     +'<div class="fr"><b>대기 창작자</b> 검증 '+s.creators+'명 준비</div>'
+     +'<div class="fr"><b>기획·운영</b> 초인이 헬로82처럼 운영</div>'
+   +'</div>'
+   +'<a class="iscta" href="mailto:choin2626@gmail.com?subject='+encodeURIComponent('[유휴공간] '+region+' '+s.n+' 재생 협업')+'">이 공간, 함께 살리기 ›</a>'
+   +'</div>';
+ }).join('');
+}
+// ★[시안] 프로젝트 중심 4주체 진입 블록 — 벤치마킹 조합(Arts&Culture 기관·Behance 창작자·텀블벅 후원·teamLab 경험)
+function projectHtml(name, concept){
+  return '<button class="makebtn" onclick="openMakeModal()">'
+    +'<span class="mk-tt">이 전통을 미디어아트로 만들기</span>'
+    +'<span class="mk-ss">기관·창작자·후원이 함께 — 프로젝트 시작</span>'
+    +'<span class="mk-arr">›</span></button>';
+}
 function renderCity(c){
   CUR=c;
   const name=c[0], reg=c[1];
@@ -401,19 +478,23 @@ function renderCity(c){
     +'<div class="cRegion"><i class="dot" style="background:'+col+';margin-right:6px;vertical-align:1px"></i>'+RNAME[LANG][reg]
       +' · <span class="rstat '+restoreStatus(name).c+'">'+restoreStatus(name).t+'</span>'
       +' <span style="color:var(--t3)">· 전국 복원 '+REST_DONE+'/87</span></div>'
+    + flagshipHtml(name, concept)
+    + videosHtml(name)
+    + idleSpaceHtml(name)
+    + projectHtml(name, concept)
+    +'<details class="moreinfo"><summary>이 지역 이야기 · 공모 · 커뮤니티 더보기</summary>'
     +'<div class="imgbox"'+(img?(' style="background-image:url(\''+img+'\')"'):'')+'>'+(img?'':T[LANG].img)+'</div>'
     + gongmoHtml(name)
     +(d.so?('<div class="lab">'+T[LANG].place+'</div><div class="val">'+esc(d.so)+'</div>'):'')
     +(d.pe?('<div class="lab">'+T[LANG].person+'</div><div class="val">'+esc(d.pe)+'</div>'):'')
-    + flagshipHtml(name, concept)
-    + videosHtml(name)
     +'<div class="lab">'+T[LANG].media+'</div>'+(media?'<div class="val">'+esc(media)+'</div>':soon)
     +'<div class="lab">'+T[LANG].imagine+'</div>'+(imagine?'<div class="val">'+esc(imagine)+'</div>':soon)
     + exHtml(name)
     + communityHtml(name)
     + ((typeof voteHtml!=='undefined')?voteHtml(name):'')
     + pitchHtml(name)
-    + ((typeof subscribeHtml!=='undefined')?subscribeHtml(name):'');
+    + ((typeof subscribeHtml!=='undefined')?subscribeHtml(name):'')
+    +'</details>';
   if(window.loadWall) loadWall(name);     // 포스트잇 벽
   if(window.loadVotes) loadVotes(name);   // 복원지 투표 수
 }
