@@ -693,7 +693,7 @@ function partnerCard(p,i){
  else media='<div class="pm txt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
  var links=(p.links||[]).map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+l.t+' ↗</a>';}).join('');
- var badge=p.tier==='vip'?'<span class="pbadge vip">VIP</span>':(p.tier==='premium'?'<span class="pbadge prem">FOUNDING</span>':'');
+ var badge=p.tier==='vip'?'<span class="pbadge vip">SIGNATURE</span>':(p.tier==='premium'?'<span class="pbadge prem">FOUNDING</span>':'');
  return '<div class="pc '+(p.tier||'basic')+'" onclick="openPartner('+i+')">'+badge+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div><div class="plk">'+links+'</div></div></div>';
 }
 function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;var rank={vip:1,premium:2,basic:3};var arr=PARTNERS.map(function(p,idx){return{p:p,idx:idx};});arr.sort(function(a,b){return (rank[a.p.tier]||9)-(rank[b.p.tier]||9);});g.innerHTML=arr.map(function(o){return partnerCard(o.p,o.idx);}).join('');}
