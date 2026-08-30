@@ -303,24 +303,47 @@ circle.city{cursor:pointer;}
 .gfilt .f.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
 .mgrid{columns:2 180px;column-gap:12px;padding:8px 22px 44px;}
 /* 함께하는 창작자(파트너) 카드 그리드 — 만남의 장 */
-.pgrid{padding:4px 22px 6px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
-.pc{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:.15s;}
-.pc:hover{transform:translateY(-2px);border-color:var(--ink);box-shadow:0 6px 16px rgba(59,51,38,.09);}
-.pc .pm{height:118px;background:#2a2318 center/cover;background-size:cover;position:relative;display:flex;align-items:center;justify-content:center;}
-.pc .pm .pl{position:absolute;width:38px;height:38px;border-radius:50%;background:rgba(20,16,10,.45);border:1.5px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;}
-.pc .pm.txt{background:linear-gradient(120deg,#3b3326,#6b4f26);color:#f3ece0;font-family:var(--serif);font-size:26px;font-weight:800;letter-spacing:1px;}
-.pc .pb{padding:12px 13px;display:flex;flex-direction:column;flex:1;}
-.pc .pn{font-family:var(--serif);font-weight:800;font-size:15.5px;line-height:1.2;}
-.pc .ph{font-size:11px;color:var(--t3);margin-top:1px;}
-.pc .pt{display:flex;gap:4px;flex-wrap:wrap;margin:7px 0 6px;}
-.pc .pt span{font-size:10px;font-weight:700;color:var(--brick);background:rgba(176,71,47,.09);border-radius:999px;padding:2px 7px;}
-.pc .pd{font-size:12px;color:var(--t2);line-height:1.5;flex:1;}
-.pc .plk{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px;}
-.pc .plk a{font-size:10.5px;font-weight:600;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:4px 9px;text-decoration:none;transition:.13s;}
+.pgrid{padding:6px 22px 8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.pc{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:.15s;cursor:pointer;}
+.pc:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 8px 20px rgba(59,51,38,.1);}
+.pc .pm{height:158px;background:#2a2318 center/cover;background-size:cover;position:relative;display:flex;align-items:center;justify-content:center;}
+.pc:hover .pm .pl{background:var(--brick);border-color:var(--brick);}
+.pc .pm .pl{position:absolute;width:44px;height:44px;border-radius:50%;background:rgba(20,16,10,.45);border:1.5px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.2s;}
+.pc .pm.txt{background:linear-gradient(120deg,#3b3326,#6b4f26);color:#f3ece0;font-family:var(--serif);font-size:32px;font-weight:800;letter-spacing:1px;}
+.pc .pb{padding:14px 15px 15px;display:flex;flex-direction:column;flex:1;}
+.pc .pn{font-family:var(--serif);font-weight:800;font-size:17.5px;line-height:1.2;}
+.pc .ph{font-size:11.5px;color:var(--t3);margin-top:2px;}
+.pc .pt{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0 7px;}
+.pc .pt span{font-size:10.5px;font-weight:700;color:var(--brick);background:rgba(176,71,47,.09);border-radius:999px;padding:3px 8px;}
+.pc .pd{font-size:13px;color:var(--t2);line-height:1.55;flex:1;}
+.pc .plk{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.pc .plk a{font-size:11px;font-weight:600;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 11px;text-decoration:none;transition:.13s;}
 .pc .plk a:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
-.pjoin{padding:8px 22px 40px;font-size:12.5px;color:var(--t3);}
+.pjoin{padding:10px 22px 42px;font-size:13px;color:var(--t3);}
 .pjoin a{color:var(--brick);font-weight:700;text-decoration:none;}
 .pjoin a:hover{text-decoration:underline;}
+/* 파트너 상세 모달 */
+.pmodal{position:fixed;inset:0;z-index:80;background:rgba(15,12,8,.72);display:none;align-items:center;justify-content:center;padding:22px;}
+.pmodal.on{display:flex;}
+.pmbox{background:var(--bg,#f3ece0);width:min(720px,94vw);max-height:88vh;overflow:auto;border-radius:16px;position:relative;box-shadow:0 30px 90px rgba(0,0,0,.5);}
+.pmx{position:absolute;top:12px;right:14px;z-index:2;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.4);color:#fff;font-size:22px;line-height:1;cursor:pointer;}
+.pmmedia{width:100%;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pmmedia iframe,.pmmedia img{width:100%;height:100%;border:0;object-fit:cover;display:block;}
+.pmmedia .pmtxt{font-family:var(--serif);font-size:64px;font-weight:800;color:#f3ece0;background:linear-gradient(120deg,#3b3326,#6b4f26);width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.pmbody{padding:22px 26px 28px;}
+.pmbody .pmn{font-family:var(--serif);font-weight:800;font-size:24px;}
+.pmbody .pmh{font-size:13px;color:var(--t3);margin-top:2px;}
+.pmbody .pt{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0;}
+.pmbody .pt span{font-size:11.5px;font-weight:700;color:var(--brick);background:rgba(176,71,47,.09);border-radius:999px;padding:3px 10px;}
+.pmbody .pmd{font-size:14.5px;color:var(--t2);line-height:1.7;}
+.pmw{margin-top:16px;background:rgba(0,0,0,.03);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+.pmw .pmwl{font-size:11px;letter-spacing:.1em;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:6px;}
+.pmw ul{list-style:none;}
+.pmw li{font-size:13.5px;color:#3d362e;padding:2px 0 2px 14px;position:relative;}
+.pmw li::before{content:"·";position:absolute;left:3px;color:var(--brick);font-weight:700;}
+.pmlks{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;}
+.pmlk{font-size:13px;font-weight:700;color:#fff;background:var(--brick);border-radius:999px;padding:9px 16px;text-decoration:none;}
+.pmlk:hover{opacity:.9;}
 .mgc{break-inside:avoid;margin-bottom:13px;border-radius:14px;overflow:hidden;cursor:pointer;position:relative;background:#2c2519 center/cover;display:flex;align-items:flex-end;transition:.16s;}
 .mgc:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(90,70,20,.22);}
 .mgc.big{min-height:270px;}.mgc.mid{min-height:205px;}.mgc.sm{min-height:158px;}
@@ -625,27 +648,54 @@ function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;
  MC.forEach(function(c,i){if(c.type!=='video' && LZ[c.type]!==false) grid.appendChild(imgEl(c,i));});}
 // 함께하는 창작자(파트너) — 카드 하나 = 데이터 한 덩어리(이미지 img / 영상 video(유튜브id) / 텍스트). 추가는 이 배열에 한 줄.
 var PARTNERS=[
- {name:'초인 스튜디오',handle:'@choin_creative_lab',cats:['미디어아트','전통'],img:'poster/hero_deoksugung.png',desc:'대한민국 전통을 미디어아트로 되살리는 스튜디오. 미디어파사드·실감전시·유물복원·캐릭터 IP.',links:[{t:'포트폴리오',u:'초인_포트폴리오.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'}]},
- {name:'무이 유물복원단',handle:'@muuimaster',cats:['미디어아트','유물복원'],video:'40Q4jTn0PtM',desc:'망가진 국보를 닦고 메우고 색을 입혀 다시 깨어나게 하는 작은 복원사, 무이.',links:[{t:'무이 페이지',u:'muui/index.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'}]},
- {name:'소연 · 가야금',handle:'@soyeon_ga_ya_geum',cats:['국악','가야금','체험'],desc:'외국인 대상 영문 국악 렉처콘서트, 가야금 원데이클래스(한복+수업+차+스낵), 웰니스 네트워킹 파티 기획.',links:[{t:'Instagram',u:'https://www.instagram.com/soyeon_ga_ya_geum'},{t:'Threads',u:'https://www.threads.net/@soyeon_ga_ya_geum'}]},
- {name:'홍실 제주',handle:'@hongsileeinjeju',cats:['전통섬유','공예','제주'],desc:'전통과 제주의 가치를 담은 생활섬유 용품을 짓는 제조 브랜드.',links:[{t:'Instagram',u:'https://www.instagram.com/hongsileeinjeju'},{t:'Threads',u:'https://www.threads.net/@hongsileeinjeju'}]}
+ {name:'초인 스튜디오',handle:'@choin_creative_lab',cats:['미디어아트','전통'],img:'poster/hero_deoksugung.png',
+  desc:'대한민국 전통을 미디어아트로 되살리는 스튜디오. 전통의 이야기를 빛과 공간으로 다시 짓습니다.',
+  work:['랜드마크 미디어파사드','실감·인터랙티브 전시','유물 복원 미디어아트','캐릭터 IP(무이·대령숙수)','교육·다큐멘터리'],
+  links:[{t:'포트폴리오',u:'초인_포트폴리오.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'}]},
+ {name:'무이 유물복원단',handle:'@muuimaster',cats:['미디어아트','유물복원'],video:'40Q4jTn0PtM',
+  desc:'망가진 국보를 닦고 메우고 색을 입혀 다시 깨어나게 하는 작은 복원사, 무이.',
+  work:['국보·보물 복원 영상','전통 캐릭터 IP','지역 유산 미디어아트 확장'],
+  links:[{t:'무이 페이지',u:'muui/index.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'}]},
+ {name:'소연 · 가야금',handle:'@soyeon_ga_ya_geum',cats:['국악','가야금','체험'],
+  desc:'외국인 관객에게 한국 전통음악을 경험으로 전하는 국악 아티스트·기획자. 듣는 공연을 넘어 입고·연주하고·나누는 자리를 만듭니다.',
+  work:['영문 국악 렉처콘서트(외국인 대상)','가야금 원데이 클래스(한복+수업+차+스낵)','웰니스 네트워킹 파티 기획'],
+  links:[{t:'Instagram',u:'https://www.instagram.com/soyeon_ga_ya_geum'},{t:'Threads',u:'https://www.threads.net/@soyeon_ga_ya_geum'}]},
+ {name:'홍실 제주',handle:'@hongsileeinjeju',cats:['전통섬유','공예','제주'],
+  desc:'전통과 제주의 가치를 담은 생활섬유 용품을 짓는 제조 브랜드. 손끝에서 전통을 잇는 메이커입니다.',
+  work:['전통·제주 감성 생활섬유 제조','브랜드 협업·OEM 파트너십','제주 기반 전통 생활공예'],
+  links:[{t:'Instagram',u:'https://www.instagram.com/hongsileeinjeju'},{t:'Threads',u:'https://www.threads.net/@hongsileeinjeju'}]}
 ];
-function partnerCard(p){
+function partnerCard(p,i){
  var media;
  if(p.video) media='<div class="pm" style="background-image:url(https://i.ytimg.com/vi/'+p.video+'/hqdefault.jpg)"><span class="pl">▶</span></div>';
  else if(p.img) media='<div class="pm" style="background-image:url('+p.img+')"></div>';
  else media='<div class="pm txt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
- var links=(p.links||[]).map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener">'+l.t+' ↗</a>';}).join('');
- return '<div class="pc">'+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div><div class="plk">'+links+'</div></div></div>';
+ var links=(p.links||[]).map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+l.t+' ↗</a>';}).join('');
+ return '<div class="pc" onclick="openPartner('+i+')">'+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div><div class="plk">'+links+'</div></div></div>';
 }
 function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;g.innerHTML=PARTNERS.map(partnerCard).join('');}
-function gallery(){document.getElementById('mgal').innerHTML='<div class="chal"><div class="in"><img class="av" src="muui_avatar.png" onerror="this.style.display=\'none\'"><div class="tx"><div class="k">무이의 이번 주 챌린지</div><div class="t">우리 동네 전통, 한 줄로 남겨줘</div><div class="s">남기면 <b>지도에 전시</b> + 첫 참여 배지 🏅 · 지금 <b id="chCount">0</b>명 참여</div></div><button class="go" onclick="chOpen()">참여하기 →</button></div></div>'
- +'<div class="gsec">오늘의 기회 <small id="mghp">매일 갱신되는 전통·미디어아트 공모·발주 — 지도의 파란 점을 누르면 그 지역만</small></div>'
- +'<div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="gongmo">공모·발주</div><div class="f" data-f="space">초인 제안 공간</div></div><div class="mgrid" id="mgrid"></div>'
- +'<div class="gsec" style="margin-top:10px">함께하는 창작자 <small>전통 하는 사람들 — 여기서 만나고 홍보됩니다</small></div>'
+function openPartner(i){var p=PARTNERS[i];if(!p)return;
+ var m=document.getElementById('pmodal');
+ if(!m){m=document.createElement('div');m.id='pmodal';m.className='pmodal';m.innerHTML='<div class="pmbox"><button class="pmx" onclick="closePartner()">&times;</button><div class="pmmedia" id="pmmedia"></div><div class="pmbody" id="pmbody"></div></div>';document.body.appendChild(m);m.addEventListener('click',function(e){if(e.target===m)closePartner();});}
+ var media;
+ if(p.video) media='<iframe src="https://www.youtube.com/embed/'+p.video+'?rel=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>';
+ else if(p.img) media='<img src="'+p.img+'" alt="'+p.name+'">';
+ else media='<div class="pmtxt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
+ document.getElementById('pmmedia').innerHTML=media;
+ var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
+ var work=(p.work||[]).map(function(w){return '<li>'+w+'</li>';}).join('');
+ var links=(p.links||[]).map(function(l){return '<a class="pmlk" href="'+l.u+'" target="_blank" rel="noopener">'+l.t+' ↗</a>';}).join('');
+ document.getElementById('pmbody').innerHTML='<div class="pmn">'+p.name+'</div>'+(p.handle?'<div class="pmh">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><p class="pmd">'+p.desc+'</p>'+(work?'<div class="pmw"><div class="pmwl">하는 일</div><ul>'+work+'</ul></div>':'')+'<div class="pmlks">'+links+'</div>';
+ m.classList.add('on');}
+window.openPartner=openPartner;
+window.closePartner=function(){var m=document.getElementById('pmodal');if(m)m.classList.remove('on');var mm=document.getElementById('pmmedia');if(mm)mm.innerHTML='';};
+function gallery(){document.getElementById('mgal').innerHTML='<div class="gsec">함께하는 창작자 <small>전통 하는 사람들 — 여기서 만나고 홍보됩니다</small></div>'
  +'<div class="pgrid" id="pgrid"></div>'
- +'<div class="pjoin">전통 하고 계신가요? <a href="mailto:choin2626@gmail.com?subject=%5B%EC%A0%84%ED%86%B5%20%ED%8C%8C%ED%8A%B8%EB%84%88%20%EB%93%B1%EB%A1%9D%5D&body=%E2%97%8F%20%EC%9D%B4%EB%A6%84%2F%ED%99%9C%EB%8F%99%EB%AA%85%3A%0A%E2%97%8F%20%EB%B6%84%EC%95%BC%3A%0A%E2%97%8F%20%ED%95%9C%20%EC%A4%84%20%EC%86%8C%EA%B0%9C%3A%0A%E2%97%8F%20%EB%A7%81%ED%81%AC(%EC%9D%B8%EC%8A%A4%ED%83%80%2F%EC%98%81%EC%83%81%2F%EC%82%AC%EC%9D%B4%ED%8A%B8)%3A">파트너로 등록</a> · <a href="파트너.html" target="_blank" rel="noopener">전체 보기 →</a></div>';
+ +'<div class="pjoin">전통 하고 계신가요? <a href="mailto:choin2626@gmail.com?subject=%5B%EC%A0%84%ED%86%B5%20%ED%8C%8C%ED%8A%B8%EB%84%88%20%EB%93%B1%EB%A1%9D%5D&body=%E2%97%8F%20%EC%9D%B4%EB%A6%84%2F%ED%99%9C%EB%8F%99%EB%AA%85%3A%0A%E2%97%8F%20%EB%B6%84%EC%95%BC%3A%0A%E2%97%8F%20%ED%95%9C%20%EC%A4%84%20%EC%86%8C%EA%B0%9C%3A%0A%E2%97%8F%20%EB%A7%81%ED%81%AC(%EC%9D%B8%EC%8A%A4%ED%83%80%2F%EC%98%81%EC%83%81%2F%EC%82%AC%EC%9D%B4%ED%8A%B8)%3A">파트너로 등록</a> · <a href="파트너.html" target="_blank" rel="noopener">전체 보기 →</a></div>'
+ +'<div class="chal"><div class="in"><img class="av" src="muui_avatar.png" onerror="this.style.display=\'none\'"><div class="tx"><div class="k">무이의 이번 주 챌린지</div><div class="t">우리 동네 전통, 한 줄로 남겨줘</div><div class="s">남기면 <b>지도에 전시</b> + 첫 참여 배지 🏅 · 지금 <b id="chCount">0</b>명 참여</div></div><button class="go" onclick="chOpen()">참여하기 →</button></div></div>'
+ +'<div class="gsec">오늘의 기회 <small id="mghp">매일 갱신되는 전통·미디어아트 공모·발주 — 지도의 파란 점을 누르면 그 지역만</small></div>'
+ +'<div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="gongmo">공모·발주</div><div class="f" data-f="space">초인 제안 공간</div></div><div class="mgrid" id="mgrid"></div>';
  document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});var p=document.getElementById('mghp');if(p)p.textContent='전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.';renderGrid();});
  renderGrid();renderPartners();}
 // 모달
