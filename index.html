@@ -92,6 +92,11 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .mc-note:hover{background:#fffaf0;}
 .mc-note .m{font-size:12px;color:#40381f;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .mc-note .r{font-size:10.5px;color:var(--gold);font-weight:600;margin-top:3px;}
+/* 투표 TOP만 한 줄 압축(자랑글은 유지) */
+#mcVotes{display:flex;flex-direction:column;gap:5px;}
+#mcVotes .mc-note{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 11px;}
+#mcVotes .mc-note .m{-webkit-line-clamp:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;margin:0;}
+#mcVotes .mc-note .r{margin-top:0;white-space:nowrap;}
 .mc-empty{font-size:11.5px;color:var(--t3);line-height:1.5;}
 @media(max-width:900px){#mapcard{display:none;}}
 .votebox{margin-top:18px;padding:15px 16px;border:1px solid #cfe0d6;border-radius:14px;background:#f3faf6;}
@@ -344,6 +349,27 @@ circle.city{cursor:pointer;}
 .pmlks{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;}
 .pmlk{font-size:13px;font-weight:700;color:#fff;background:var(--brick);border-radius:999px;padding:9px 16px;text-decoration:none;}
 .pmlk:hover{opacity:.9;}
+/* 등급 배지·VIP 카드 */
+.pc{position:relative;}
+.pc.vip{grid-column:span 2;}
+.pc.vip .pm{height:196px;}
+@media(max-width:640px){.pc.vip{grid-column:auto;}.pc.vip .pm{height:158px;}}
+.pbadge{position:absolute;top:10px;left:10px;z-index:3;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.pbadge.vip{background:var(--gold);color:#3a2a06;}
+.pbadge.prem{background:rgba(255,255,255,.94);color:#5a4420;}
+/* 자기등록 폼 */
+.rbox{width:min(520px,94vw);}
+.rform{padding:26px 26px 28px;}
+.rform h3{font-family:var(--serif);font-size:21px;margin-bottom:4px;}
+.rform .rsub{font-size:13px;color:var(--t2);margin-bottom:16px;}
+.rform label{display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:12px;}
+.rform input,.rform textarea{width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:13.5px;font-family:inherit;font-weight:400;color:var(--ink);background:#fff;}
+.rform textarea{resize:vertical;}
+.rsend{width:100%;margin-top:4px;background:var(--brick);color:#fff;border:0;border-radius:999px;padding:13px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;}
+.rsend:hover{opacity:.92;}
+.rsend:disabled{opacity:.6;cursor:default;}
+.rmsg{font-size:13px;margin-top:12px;text-align:center;font-weight:600;line-height:1.5;}
+.rnote{font-size:11.5px;color:var(--t3);margin-top:12px;line-height:1.5;}
 .mgc{break-inside:avoid;margin-bottom:13px;border-radius:14px;overflow:hidden;cursor:pointer;position:relative;background:#2c2519 center/cover;display:flex;align-items:flex-end;transition:.16s;}
 .mgc:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(90,70,20,.22);}
 .mgc.big{min-height:270px;}.mgc.mid{min-height:205px;}.mgc.sm{min-height:158px;}
@@ -648,19 +674,19 @@ function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;
  MC.forEach(function(c,i){if(c.type!=='video' && LZ[c.type]!==false) grid.appendChild(imgEl(c,i));});}
 // 함께하는 창작자(파트너) — 카드 하나 = 데이터 한 덩어리(이미지 img / 영상 video(유튜브id) / 텍스트). 추가는 이 배열에 한 줄.
 var PARTNERS=[
- {name:'초인 스튜디오',handle:'@choin_creative_lab',cats:['미디어아트','전통'],img:'poster/hero_deoksugung.png',
-  desc:'대한민국 전통을 미디어아트로 되살리는 스튜디오. 전통의 이야기를 빛과 공간으로 다시 짓습니다.',
-  work:['랜드마크 미디어파사드','실감·인터랙티브 전시','유물 복원 미디어아트','캐릭터 IP(무이·대령숙수)','교육·다큐멘터리'],
-  links:[{t:'포트폴리오',u:'초인_포트폴리오.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'}]},
- {name:'무이 유물복원단',handle:'@muuimaster',cats:['미디어아트','유물복원'],video:'40Q4jTn0PtM',
+ {tier:'vip',name:'초인 스튜디오',handle:'CHOIN Studio · 미디어아트',cats:['미디어아트','전통','제작'],img:'poster/hero_deoksugung.png',
+  desc:'대한민국 전통을 미디어아트로 되살리는 스튜디오. 미디어파사드·실감 전시·유물 복원·캐릭터 IP를 기획부터 제작·송출까지 한 곳에서.',
+  work:['랜드마크 미디어파사드','실감·인터랙티브 전시','유물 복원 미디어아트','캐릭터 IP(무이·대령숙수)','교육·다큐멘터리','지자체·기관 맞춤 제작'],
+  links:[{t:'포트폴리오',u:'초인_포트폴리오.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'},{t:'Instagram',u:'https://www.instagram.com/choin_creative_lab/'},{t:'Threads',u:'https://www.threads.net/@korea.traditional.with.ai'},{t:'✉ 협업 문의',u:'mailto:choin2626@gmail.com?subject=%5B%EC%B4%88%EC%9D%B8%20%ED%98%91%EC%97%85%20%EB%AC%B8%EC%9D%98%5D'}]},
+ {tier:'premium',name:'무이 유물복원단',handle:'@muuimaster',cats:['미디어아트','유물복원'],video:'40Q4jTn0PtM',
   desc:'망가진 국보를 닦고 메우고 색을 입혀 다시 깨어나게 하는 작은 복원사, 무이.',
   work:['국보·보물 복원 영상','전통 캐릭터 IP','지역 유산 미디어아트 확장'],
   links:[{t:'무이 페이지',u:'muui/index.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'}]},
- {name:'소연 · 가야금',handle:'@soyeon_ga_ya_geum',cats:['국악','가야금','체험'],
+ {tier:'premium',name:'소연 · 가야금',handle:'@soyeon_ga_ya_geum',cats:['국악','가야금','체험'],
   desc:'외국인 관객에게 한국 전통음악을 경험으로 전하는 국악 아티스트·기획자. 듣는 공연을 넘어 입고·연주하고·나누는 자리를 만듭니다.',
   work:['영문 국악 렉처콘서트(외국인 대상)','가야금 원데이 클래스(한복+수업+차+스낵)','웰니스 네트워킹 파티 기획'],
   links:[{t:'Instagram',u:'https://www.instagram.com/soyeon_ga_ya_geum'},{t:'Threads',u:'https://www.threads.net/@soyeon_ga_ya_geum'}]},
- {name:'홍실 제주',handle:'@hongsileeinjeju',cats:['전통섬유','공예','제주'],
+ {tier:'premium',name:'홍실 제주',handle:'@hongsileeinjeju',cats:['전통섬유','공예','제주'],
   desc:'전통과 제주의 가치를 담은 생활섬유 용품을 짓는 제조 브랜드. 손끝에서 전통을 잇는 메이커입니다.',
   work:['전통·제주 감성 생활섬유 제조','브랜드 협업·OEM 파트너십','제주 기반 전통 생활공예'],
   links:[{t:'Instagram',u:'https://www.instagram.com/hongsileeinjeju'},{t:'Threads',u:'https://www.threads.net/@hongsileeinjeju'}]}
@@ -672,9 +698,52 @@ function partnerCard(p,i){
  else media='<div class="pm txt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
  var links=(p.links||[]).map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+l.t+' ↗</a>';}).join('');
- return '<div class="pc" onclick="openPartner('+i+')">'+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div><div class="plk">'+links+'</div></div></div>';
+ var badge=p.tier==='vip'?'<span class="pbadge vip">VIP</span>':(p.tier==='premium'?'<span class="pbadge prem">FOUNDING</span>':'');
+ return '<div class="pc '+(p.tier||'basic')+'" onclick="openPartner('+i+')">'+badge+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div><div class="plk">'+links+'</div></div></div>';
 }
-function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;g.innerHTML=PARTNERS.map(partnerCard).join('');}
+function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;var rank={vip:1,premium:2,basic:3};var arr=PARTNERS.map(function(p,idx){return{p:p,idx:idx};});arr.sort(function(a,b){return (rank[a.p.tier]||9)-(rank[b.p.tier]||9);});g.innerHTML=arr.map(function(o){return partnerCard(o.p,o.idx);}).join('');}
+// 일반(무료) 자기등록 — Supabase partners 테이블에서 승인된 것 읽어와 카드로. (테이블 없으면 조용히 패스)
+function loadPartnersFromSupa(){
+ if(typeof SUPA_URL==='undefined'||typeof _SH==='undefined')return;
+ fetch(SUPA_URL+'/rest/v1/partners?approved=eq.true&hidden=eq.false&select=name,handle,cats,descr,work,links,img,video&order=created_at.desc',{headers:_SH})
+ .then(function(r){return r.ok?r.json():[];})
+ .then(function(rows){if(!rows||!rows.length)return;
+  rows.forEach(function(r){PARTNERS.push({tier:'basic',name:r.name,handle:r.handle||'',cats:r.cats||[],desc:r.descr||'',work:r.work||[],img:r.img||'',video:r.video||'',links:r.links||[]});});
+  renderPartners();}).catch(function(){});
+}
+// 자기등록 폼 모달
+window.openReg=function(){var m=document.getElementById('rmodal');
+ if(!m){m=document.createElement('div');m.id='rmodal';m.className='pmodal';m.innerHTML='<div class="pmbox rbox"><button class="pmx" onclick="closeReg()">&times;</button><div class="rform"><h3>전통 창작자 무료 등록</h3><p class="rsub">보내주시면 초인이 확인 후 카드로 게시하고, SNS로도 함께 알립니다. 무료.</p>'
+  +'<label>이름 · 활동명 *<input id="r_name" maxlength="40" placeholder="예: 소연 가야금"></label>'
+  +'<label>핸들(인스타/쓰레드)<input id="r_handle" maxlength="40" placeholder="@id"></label>'
+  +'<label>분야 (쉼표로 구분) *<input id="r_cats" maxlength="60" placeholder="국악, 가야금, 체험"></label>'
+  +'<label>한 줄 소개 *<input id="r_desc" maxlength="120" placeholder="무엇을 하는 분인지 한 줄로"></label>'
+  +'<label>하는 일 (줄바꿈으로 여러 개)<textarea id="r_work" rows="3" maxlength="400" placeholder="영문 국악 렉처콘서트\n가야금 원데이 클래스"></textarea></label>'
+  +'<label>대표 이미지 URL (선택)<input id="r_img" maxlength="300" placeholder="https://... .jpg"></label>'
+  +'<label>유튜브 링크/ID (선택)<input id="r_video" maxlength="120" placeholder="youtube.com/watch?v=..."></label>'
+  +'<label>링크 (인스타/사이트, 쉼표로 구분)<input id="r_links" maxlength="300" placeholder="https://instagram.com/id, https://..."></label>'
+  +'<button class="rsend" onclick="submitReg()">등록 신청하기</button><div class="rmsg" id="r_msg"></div>'
+  +'<p class="rnote">이미지 파일 업로드는 준비 중 — 지금은 이미지 URL 또는 유튜브 링크로. 없으면 텍스트 카드로 올라갑니다.</p></div></div>';
+  document.body.appendChild(m);m.addEventListener('click',function(e){if(e.target===m)closeReg();});}
+ document.getElementById('r_msg').textContent='';m.classList.add('on');};
+window.closeReg=function(){var m=document.getElementById('rmodal');if(m)m.classList.remove('on');};
+function _ytid(s){if(!s)return '';var m=s.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);return m?m[1]:(/^[\w-]{11}$/.test(s.trim())?s.trim():'');}
+window.submitReg=function(){
+ var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+ var name=g('r_name'),cats=g('r_cats'),desc=g('r_desc');
+ var msg=document.getElementById('r_msg');
+ if(!name||!cats||!desc){msg.style.color='#b0472f';msg.textContent='이름·분야·한 줄 소개는 필수예요.';return;}
+ if(typeof SUPA_URL==='undefined'){msg.style.color='#b0472f';msg.textContent='지금은 저장이 안 됩니다. 잠시 후 다시 시도해주세요.';return;}
+ var links=g('r_links').split(',').map(function(s){return s.trim();}).filter(Boolean).map(function(u){var t=/instagram/.test(u)?'Instagram':(/threads/.test(u)?'Threads':(/youtu/.test(u)?'YouTube':'사이트'));return{t:t,u:u};});
+ var body={name:name,handle:g('r_handle'),cats:cats.split(',').map(function(s){return s.trim();}).filter(Boolean),descr:desc,work:g('r_work').split('\n').map(function(s){return s.trim();}).filter(Boolean),img:g('r_img'),video:_ytid(g('r_video')),links:links,approved:false,hidden:false};
+ var btn=document.querySelector('.rsend');if(btn){btn.disabled=true;btn.textContent='보내는 중…';}
+ fetch(SUPA_URL+'/rest/v1/partners',{method:'POST',headers:Object.assign({'Content-Type':'application/json','Prefer':'return=minimal'},_SH),body:JSON.stringify(body)})
+ .then(function(r){if(btn){btn.disabled=false;btn.textContent='등록 신청하기';}
+  if(!r.ok){msg.style.color='#b0472f';msg.textContent='저장 실패. 잠시 후 다시 시도하거나 choin2626@gmail.com 로 보내주세요.';return;}
+  msg.style.color='#1E6B58';msg.textContent='신청 완료! 초인 확인 후 카드로 게시됩니다. 감사해요 🙌';
+  ['r_name','r_handle','r_cats','r_desc','r_work','r_img','r_video','r_links'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});})
+ .catch(function(){if(btn){btn.disabled=false;btn.textContent='등록 신청하기';}msg.style.color='#b0472f';msg.textContent='네트워크 오류. 잠시 후 다시 시도해주세요.';});
+};
 function openPartner(i){var p=PARTNERS[i];if(!p)return;
  var m=document.getElementById('pmodal');
  if(!m){m=document.createElement('div');m.id='pmodal';m.className='pmodal';m.innerHTML='<div class="pmbox"><button class="pmx" onclick="closePartner()">&times;</button><div class="pmmedia" id="pmmedia"></div><div class="pmbody" id="pmbody"></div></div>';document.body.appendChild(m);m.addEventListener('click',function(e){if(e.target===m)closePartner();});}
@@ -692,12 +761,12 @@ window.openPartner=openPartner;
 window.closePartner=function(){var m=document.getElementById('pmodal');if(m)m.classList.remove('on');var mm=document.getElementById('pmmedia');if(mm)mm.innerHTML='';};
 function gallery(){document.getElementById('mgal').innerHTML='<div class="gsec">함께하는 창작자 <small>전통 하는 사람들 — 여기서 만나고 홍보됩니다</small></div>'
  +'<div class="pgrid" id="pgrid"></div>'
- +'<div class="pjoin">전통 하고 계신가요? <a href="mailto:choin2626@gmail.com?subject=%5B%EC%A0%84%ED%86%B5%20%ED%8C%8C%ED%8A%B8%EB%84%88%20%EB%93%B1%EB%A1%9D%5D&body=%E2%97%8F%20%EC%9D%B4%EB%A6%84%2F%ED%99%9C%EB%8F%99%EB%AA%85%3A%0A%E2%97%8F%20%EB%B6%84%EC%95%BC%3A%0A%E2%97%8F%20%ED%95%9C%20%EC%A4%84%20%EC%86%8C%EA%B0%9C%3A%0A%E2%97%8F%20%EB%A7%81%ED%81%AC(%EC%9D%B8%EC%8A%A4%ED%83%80%2F%EC%98%81%EC%83%81%2F%EC%82%AC%EC%9D%B4%ED%8A%B8)%3A">파트너로 등록</a> · <a href="파트너.html" target="_blank" rel="noopener">전체 보기 →</a></div>'
+ +'<div class="pjoin">전통 하고 계신가요? <a href="#" onclick="openReg();return false;">✎ 무료로 등록하기</a> · <a href="파트너.html" target="_blank" rel="noopener">전체 보기 →</a></div>'
  +'<div class="chal"><div class="in"><img class="av" src="muui_avatar.png" onerror="this.style.display=\'none\'"><div class="tx"><div class="k">무이의 이번 주 챌린지</div><div class="t">우리 동네 전통, 한 줄로 남겨줘</div><div class="s">남기면 <b>지도에 전시</b> + 첫 참여 배지 🏅 · 지금 <b id="chCount">0</b>명 참여</div></div><button class="go" onclick="chOpen()">참여하기 →</button></div></div>'
  +'<div class="gsec">오늘의 기회 <small id="mghp">매일 갱신되는 전통·미디어아트 공모·발주 — 지도의 파란 점을 누르면 그 지역만</small></div>'
  +'<div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="gongmo">공모·발주</div><div class="f" data-f="space">초인 제안 공간</div></div><div class="mgrid" id="mgrid"></div>';
  document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});var p=document.getElementById('mghp');if(p)p.textContent='전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.';renderGrid();});
- renderGrid();renderPartners();}
+ renderGrid();renderPartners();loadPartnersFromSupa();}
 // 모달
 function openM(i){var c=MC[i],isS=c.type==='space';
  var mmh=document.getElementById('mmh');
