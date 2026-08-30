@@ -160,6 +160,34 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 .lb .info h3{font-family:var(--serif);font-size:23px;font-weight:800;margin:6px 0 4px;}
 .lb .info .venue{font-size:12.5px;color:var(--bandgold);margin-bottom:6px;}
 .lb .info p{color:#c9bda3;font-size:13.5px;max-width:660px;margin:0 auto;}
+/* --- 브랜드 리뉴얼 액센트 (2026) --- */
+.wwd{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:clamp(17px,2.4vw,25px);font-weight:700;margin-top:16px;letter-spacing:.3px}
+.herofig{max-width:1200px;margin:6px auto 0;padding:0 30px}
+.herofig img{width:100%;height:clamp(190px,32vw,400px);object-fit:cover;object-position:center 60%;border-radius:12px;display:block;border:1px solid var(--line)}
+.blk{max-width:1200px;margin:56px auto 0;padding:0 30px}
+.blk .kick{margin-bottom:12px}
+.blk h2{font-family:var(--serif);font-weight:800;font-size:30px;margin-bottom:6px}
+.blk .bsub{color:var(--t3);font-size:13px;margin-bottom:26px;max-width:760px;line-height:1.6}
+.msteps{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+@media(max-width:860px){.msteps{grid-template-columns:repeat(2,1fr);gap:24px}}
+@media(max-width:520px){.msteps{grid-template-columns:1fr}}
+.mstep{padding:0 20px;border-left:1px solid var(--line)}
+.mstep:first-child{border-left:0;padding-left:0}
+@media(max-width:860px){.mstep{border-left:0;padding-left:0}}
+.mstep .no{font-family:var(--serif);font-size:32px;font-weight:800;color:var(--gold);line-height:1}
+.mstep .en{font-size:10.5px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin:10px 0 5px}
+.mstep b{display:block;font-size:16px;margin-bottom:6px;color:var(--ink)}
+.mstep span{font-size:12.5px;color:var(--t2);line-height:1.6}
+.wwmgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:860px){.wwmgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.wwmgrid{grid-template-columns:1fr}}
+.wwmc{border:1px solid var(--line);border-radius:12px;padding:22px 20px;background:#fffdf8}
+.wwmc .ic{font-size:22px;margin-bottom:12px}
+.wwmc b{display:block;font-family:var(--serif);font-size:17.5px;margin-bottom:8px;color:var(--ink)}
+.wwmc span{font-size:12.5px;color:var(--t2);line-height:1.6}
+.caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.caps .cap{font-size:12px;font-weight:600;color:var(--t2);border:1px solid var(--line);border-radius:999px;padding:6px 13px}
+.caps .cap b{color:var(--ink);font-weight:700}
 </style>
 </head>
 <body>
@@ -187,7 +215,10 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <div class="kick">CHOIN Studio — Selected Works</div>
   <h1>전통을 빛으로,<br><em>공간을</em> 이야기로.</h1>
   <p class="lead">초인은 대한민국의 전통을 미디어아트로 되살리는 스튜디오입니다. 미디어파사드, 실감 전시, 유물 복원, 캐릭터 IP까지 — 우리가 만든 장면들을 모았습니다.</p>
+  <div class="wwd">What We Do Is Korea.</div>
 </section>
+
+<div class="herofig"><img src="poster/hero_deoksugung.png" alt="덕수궁 중화전 · 조각보 미디어아트"></div>
 
 <section class="prod">
   <div class="inner">
@@ -217,10 +248,49 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <div class="grid" id="grid2"></div>
 </section>
 
+<section class="blk">
+  <div class="kick">WHAT WE MAKE</div>
+  <h2>우리가 만드는 것</h2>
+  <div class="bsub">전통의 이야기를 네 가지 형태로 짓습니다.</div>
+  <div class="wwmgrid">
+    <div class="wwmc"><div class="ic">🏛</div><b>미디어파사드</b><span>랜드마크 건축과 공간을 빛의 서사로. 초대형 LED·프로젝션 매핑.</span></div>
+    <div class="wwmc"><div class="ic">✨</div><b>실감 · 인터랙티브 전시</b><span>다면 영상과 인터랙션으로 관객이 걸어 들어가는 몰입 공간.</span></div>
+    <div class="wwmc"><div class="ic">🏺</div><b>유물 복원 · 캐릭터 IP</b><span>사라진 유물과 설화를 AI·3D로 되살리고, 무이 등 전통 IP로 확장.</span></div>
+    <div class="wwmc"><div class="ic">🎬</div><b>영상 · 교육 · 다큐</b><span>브랜드 필름과 다큐멘터리, 3D·AI 제작 강의까지 — 만들고 가르칩니다.</span></div>
+  </div>
+</section>
+
+<section class="blk">
+  <div class="kick">CHOIN METHOD</div>
+  <h2>전통을 오늘로 잇는 5단계</h2>
+  <div class="bsub">유산을 그대로 옮기지 않습니다. 발견하고, 해석하고, 다시 짓습니다.</div>
+  <div class="msteps">
+    <div class="mstep"><div class="no">01</div><div class="en">Discover</div><b>발견</b><span>기억·정서·생활문화 속에서 이야기의 본질을 찾습니다.</span></div>
+    <div class="mstep"><div class="no">02</div><div class="en">Interpret</div><b>해석</b><span>고증과 자료를 바탕으로 오늘의 관객이 공감할 의미로 읽어냅니다.</span></div>
+    <div class="mstep"><div class="no">03</div><div class="en">Reconstruct</div><b>재구성</b><span>전통의 형태·질감·색을 미디어아트의 언어로 다시 설계합니다.</span></div>
+    <div class="mstep"><div class="no">04</div><div class="en">Produce</div><b>제작</b><span>Houdini·Unreal·TouchDesigner·AI로 공간에 구현합니다.</span></div>
+    <div class="mstep"><div class="no">05</div><div class="en">Expand</div><b>확장</b><span>전시·파사드에서 IP·굿즈·교육으로 — 살아남는 문화로 잇습니다.</span></div>
+  </div>
+</section>
+
+<section class="blk">
+  <div class="kick">PRODUCTION CAPABILITY</div>
+  <h2>제작 역량</h2>
+  <div class="bsub">기획부터 촬영·3D·실시간 렌더링·송출까지 자체 제작합니다.</div>
+  <div class="caps">
+    <span class="cap"><b>Houdini</b> 시뮬레이션·FX</span>
+    <span class="cap"><b>Unreal Engine</b> 실시간 렌더</span>
+    <span class="cap"><b>TouchDesigner</b> 인터랙션·송출</span>
+    <span class="cap"><b>Blender · Cinema4D</b> 3D</span>
+    <span class="cap"><b>Generative AI</b> 이미지·영상</span>
+    <span class="cap"><b>8K · 멀티프로젝션</b> 대형 출력</span>
+  </div>
+</section>
+
 <section class="about" id="about">
   <div class="kick">ABOUT CHOIN</div>
   <h2>초인 소개</h2>
-  <p class="lead2">초인(CHOIN)은 대한민국의 전통을 미디어아트로 되살리는 미디어아트 스튜디오입니다. 다양한 시선과 기술을 가진 창작자들이 모여 감각과 인식의 경계를 확장하는 작업을 이어갑니다. 미디어파사드·실감 전시·유물 복원·캐릭터 IP부터 강의·다큐멘터리까지 — 만드는 것을 넘어 가르치고 기록합니다.</p>
+  <p class="lead2">초인(CHOIN)은 한국인의 기억과 정서, 생활문화 속에서 <b style="color:var(--ink);font-weight:700">이야기의 본질</b>을 발견하고, 그것을 오늘의 언어 — 미디어아트로 번역합니다. 소비되고 사라지는 문화가 아니라, 다시 경험되고 <b style="color:var(--ink);font-weight:700">살아남는 문화</b>를 만드는 것. 그것이 우리가 하는 모든 일의 이유입니다.</p>
   <div class="abgrid">
     <div><b>제작 영역</b><span>미디어파사드 · 실감/인터랙티브 전시 · 유물 복원 미디어아트 · 캐릭터 IP · 교육/다큐</span></div>
     <div><b>기술</b><span>Houdini · Blender · Unreal Engine · TouchDesigner · AI</span></div>
