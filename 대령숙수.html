@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>대령숙수 · 궁중 한식 시리즈 — 초인 스튜디오</title>
+<meta name="description" content="궁중 수라간 대령숙수가 잊힌 한국의 맛을 되살립니다. 조선 왕실의 조리법을 오늘의 한 그릇으로 — 초인 스튜디오의 전통 IP." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Gaegu:wght@700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC; --hanji:#F2E7D4; --ink:#241F1B; --muted:#6B6258;
+    --red:#B8392A; --green:#1E6B58; --gold:#C09238; --line:#E4D7C0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:"Noto Sans KR",sans-serif;line-height:1.75}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+  section{padding:70px 0}
+  h2{font-family:"Gowun Batang",serif;font-size:27px;margin-bottom:8px;line-height:1.35}
+  h2 .en{display:block;font-family:"Cormorant Garamond",serif;font-style:italic;font-size:19px;color:var(--green);font-weight:500;margin-bottom:2px}
+  .eyebrow{letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--red);font-weight:700;margin-bottom:14px}
+  .sub{color:var(--muted);margin-bottom:34px;max-width:680px}
+  a{color:inherit}
+  .btn{display:inline-block;padding:14px 24px;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px;border:2px solid transparent;cursor:pointer}
+  .btn-red{background:var(--red);color:#fff}
+  .btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+  .btn-gold{background:var(--gold);color:#3a2a06}
+
+  .nav{position:sticky;top:0;z-index:30;background:rgba(251,246,236,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .nav .right{display:flex;align-items:center}
+  .logo{font-family:"Gaegu",cursive;font-size:30px;color:var(--red);line-height:1;text-decoration:none}
+  .logo small{font-family:"Noto Sans KR";font-size:11px;color:var(--muted);letter-spacing:.12em;margin-left:7px}
+  .nav nav a{margin-left:22px;font-size:14px;text-decoration:none;color:var(--muted)}
+  .nav nav a:hover{color:var(--ink)}
+  .nav nav{display:flex;align-items:center}
+
+  .hero{background:radial-gradient(120% 100% at 50% 0,var(--hanji),var(--cream) 70%);border-bottom:1px solid var(--line)}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding:60px 24px}
+  .hero .badge{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:12px;color:var(--green);font-weight:700;margin-bottom:20px}
+  .hero h1{font-family:"Cormorant Garamond",serif;font-size:46px;line-height:1.08;font-weight:600;margin-bottom:6px}
+  .hero h1 .kr{display:block;font-family:"Gaegu",cursive;color:var(--red);font-size:30px;margin-top:6px}
+  .hero .def{font-size:17px;margin:18px 0 26px;max-width:460px}
+  .hero .def b{color:var(--red)}
+  .hero .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .hero .figimg{width:100%;border-radius:18px;border:1px solid var(--line);display:block;background:var(--hanji)}
+
+  .vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .vcard{display:block;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);transition:.15s}
+  .vcard:hover{transform:translateY(-3px);border-color:var(--ink)}
+  .thumb{position:relative;height:118px;background:var(--hanji) center/cover;display:flex;align-items:center;justify-content:center}
+  .thumb .pl{position:absolute;right:8px;bottom:8px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:12px}
+  .vb{padding:11px 13px}
+  .vt{font-family:"Cormorant Garamond",serif;font-size:15px;font-weight:600;line-height:1.25}
+  .vs{font-size:12px;color:var(--muted);margin-top:3px}
+  .vcard.more{display:flex;align-items:center;justify-content:center;background:var(--hanji);border-style:dashed;color:var(--red);font-weight:700;min-height:118px}
+  @media(max-width:760px){.vgrid{grid-template-columns:1fr 1fr}}
+
+  .cross{background:var(--hanji);border-top:1px solid var(--line)}
+  .cross .wrap{display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:space-between}
+  .cross .t b{font-family:"Gowun Batang",serif;font-size:20px;display:block}
+  .cross .t span{color:var(--muted);font-size:14px}
+
+  footer{background:var(--ink);color:#E8DEC9;text-align:center;padding:48px 0}
+  footer .logo{color:#fff}
+  footer .social a{display:inline-block;margin:16px 11px 8px;font-size:14px;color:#E8DEC9;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:2px}
+  footer small{display:block;margin-top:14px;color:#9c9384;font-size:12px}
+
+  @media(max-width:760px){
+    .hero .wrap{grid-template-columns:1fr}
+    .hero h1{font-size:38px}.nav nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html" title="전통 스토리 지도로">대령숙수<small>DAERYEONG-SUKSU</small></a>
+    <div class="right">
+      <nav>
+        <a href="#films">컬렉션</a>
+        <a href="index.html">전국 지도</a>
+        <a href="muui/index.html">무이 유물단</a>
+        <a href="#work">함께하기</a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="badge">궁중 한식 · 초인 스튜디오 IP</span>
+      <h1>The Royal Chef<span class="kr">대령숙수</span></h1>
+      <p class="def">궁중 수라간의 <b>대령숙수</b>가 잊힌 한국의 맛을 되살립니다. 조선 왕실의 조리법을, 오늘의 한 그릇으로 다시 차립니다.</p>
+      <div class="cta-row">
+        <a href="#films" class="btn btn-red">궁중 한식 보기</a>
+        <a href="#work" class="btn btn-line">함께 만들기</a>
+      </div>
+    </div>
+    <div>
+      <img class="figimg" src="muui/suksu_hero.png" alt="대령숙수 캐릭터" style="max-width:360px;margin:0 auto" onerror="this.onerror=null;this.src='muui/suksu_char.png'">
+    </div>
+  </div>
+</section>
+
+<section id="films">
+  <div class="wrap">
+    <div class="eyebrow">The Collection</div>
+    <h2><span class="en">Set the royal table again</span>다시 차리는 수라상</h2>
+    <p class="sub">한 그릇씩, 궁중의 맛을 되살립니다. 보고 싶은 메뉴를 눌러 영상으로 들어가세요.</p>
+    <div class="vgrid">
+      <a class="vcard" href="https://www.youtube.com/watch?v=MTdV1HdtQ-c" target="_blank" rel="noopener"><div class="thumb" style="background:#111 url(https://i.ytimg.com/vi/MTdV1HdtQ-c/hqdefault.jpg) center/cover"><span class="pl">▶</span></div><div class="vb"><div class="vt">비빔밥</div><div class="vs">Bibimbap</div></div></a>
+      <a class="vcard" href="https://www.youtube.com/watch?v=TayqVlPqaBQ" target="_blank" rel="noopener"><div class="thumb" style="background:#111 url(https://i.ytimg.com/vi/TayqVlPqaBQ/hqdefault.jpg) center/cover"><span class="pl">▶</span></div><div class="vb"><div class="vt">삼겹살</div><div class="vs">Samgyeopsal</div></div></a>
+      <a class="vcard" href="https://www.youtube.com/watch?v=3p6o1oKYdmY" target="_blank" rel="noopener"><div class="thumb" style="background:#111 url(https://i.ytimg.com/vi/3p6o1oKYdmY/hqdefault.jpg) center/cover"><span class="pl">▶</span></div><div class="vb"><div class="vt">양념치킨</div><div class="vs">Yangnyeom Chicken</div></div></a>
+      <a class="vcard" href="https://www.youtube.com/watch?v=HImdsCEXmcE" target="_blank" rel="noopener"><div class="thumb" style="background:#111 url(https://i.ytimg.com/vi/HImdsCEXmcE/hqdefault.jpg) center/cover"><span class="pl">▶</span></div><div class="vb"><div class="vt">김치찌개</div><div class="vs">Kimchi-jjigae</div></div></a>
+    </div>
+    <div style="margin-top:16px"><a class="vcard more" href="https://www.youtube.com/@c.c.c-z4w" target="_blank" rel="noopener" style="display:inline-block;padding:12px 22px;min-height:0;border-radius:999px">더보기 ▶</a></div>
+    <p class="sub" style="margin-top:20px;font-size:14px">매일 새 궁중 한식 영상이 <a href="https://www.youtube.com/@c.c.c-z4w" target="_blank" rel="noopener" style="color:var(--red);font-weight:700">유튜브</a>에 공개됩니다. <b style="color:var(--ink)">시리즈 제작 중.</b></p>
+  </div>
+</section>
+
+<section class="cross">
+  <div class="wrap">
+    <div class="t"><b>또 다른 초인 전통 IP — 무이</b><span>망가진 국보를 닦고 메우고 색을 입혀 다시 깨어나게 하는 작은 복원사.</span></div>
+    <a href="muui/index.html" class="btn btn-gold">무이 유물단 보기 →</a>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap" style="text-align:center">
+    <div class="eyebrow">Work with us</div>
+    <h2><span class="en">Bring your region's flavor to life</span>우리 지역의 맛도, 대령숙수로</h2>
+    <p class="sub" style="margin:0 auto 26px">지자체·기관·브랜드와 함께 지역의 전통 음식과 이야기를 미디어아트 콘텐츠로 되살립니다.</p>
+    <a href="mailto:choin2626@gmail.com?subject=%5B%EB%8C%80%EB%A0%B9%EC%88%99%EC%88%98%5D%20%ED%98%91%EC%97%85%20%EB%AC%B8%EC%9D%98" class="btn btn-red">협업 문의 · choin2626@gmail.com</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">대령숙수</div>
+    <div class="social">
+      <a href="https://www.youtube.com/@c.c.c-z4w" target="_blank" rel="noopener">YouTube</a>
+      <a href="index.html">전통 스토리 지도</a>
+      <a href="muui/index.html">무이 유물단</a>
+    </div>
+    <small>대령숙수는 초인 스튜디오의 전통문화 IP입니다. · 한국 전통을 미디어아트, 그 너머로.</small>
+  </div>
+</footer>
+
+</body>
+</html>
