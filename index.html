@@ -88,6 +88,16 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .mc-stat span{font-size:10px;color:var(--t2);}
 .mc-lab{font-size:10px;font-weight:600;letter-spacing:.5px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;}
 .mc-recent{display:flex;flex-direction:column;gap:6px;}
+.mc-artists{display:flex;flex-direction:column;gap:6px;}
+.mca{display:flex;align-items:center;gap:9px;width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 9px;cursor:pointer;text-align:left;font:inherit;transition:.13s;}
+.mca:hover{border-color:var(--gold);box-shadow:0 2px 8px rgba(90,70,20,.1);}
+.mca-av{width:34px;height:34px;border-radius:8px;background:#2a2318 center/cover;background-position:center top;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#f3ece0;font-family:var(--serif);font-weight:800;font-size:15px;}
+.mca-tx{min-width:0;line-height:1.25;flex:1;}
+.mca-tx b{display:block;font-size:12.5px;color:var(--ink);font-family:var(--serif);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mca-tx i{font-style:normal;font-size:10.5px;color:var(--t3);}
+.mca-badge{font-size:9px;font-weight:800;color:#3a2a06;background:var(--gold);border-radius:999px;padding:2px 6px;flex:0 0 auto;}
+.mca-more{display:block;text-align:center;font-size:11px;font-weight:700;color:#b0472f;text-decoration:none;padding:5px 0 1px;}
+.mca-more:hover{text-decoration:underline;}
 .mc-note{text-align:left;border:0;width:100%;background:#fff;border-radius:9px;padding:8px 10px;cursor:pointer;font:inherit;box-shadow:0 1px 2px rgba(90,70,20,.08);}
 .mc-note:hover{background:#fffaf0;}
 .mc-note .m{font-size:12px;color:#40381f;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
@@ -437,12 +447,12 @@ circle.city{cursor:pointer;}
 .mmcta{display:block;background:var(--teal);color:#fff;text-align:center;padding:13px;border-radius:11px;font-weight:600;font-size:14px;text-decoration:none;}
 @media(max-width:780px){#meet.on{flex-direction:column;height:auto;}#mmap{flex:0 0 46vh;}#mresizer{display:none;}#mgal{flex:auto;}}
 /* ===== v2 가치제안 밴드 (뭐 하는 곳 / 누구에게 뭐) ===== */
-.vband{background:linear-gradient(90deg,#f7f0e0,#efe4cd);border-bottom:1px solid var(--line);padding:12px 24px 13px;}
-.vband .vtop{font-family:var(--serif);font-size:16.5px;color:var(--ink);font-weight:700;}
+.vband{background:linear-gradient(90deg,#f7f0e0,#efe4cd);border-bottom:1px solid var(--line);padding:8px 24px 9px;}
+.vband .vtop{font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:700;}
 .vband .vtop b{color:var(--gold);}
 .vband .vtop .vstat{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--t2);margin-left:10px;white-space:nowrap;}
-.vband .vwho{display:flex;gap:10px;margin-top:11px;flex-wrap:wrap;}
-.vband .w{flex:1 1 0;min-width:210px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.6);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;cursor:pointer;transition:.15s;}
+.vband .vwho{display:flex;gap:8px;margin-top:7px;flex-wrap:wrap;}
+.vband .w{flex:1 1 0;min-width:210px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.6);border:1px solid var(--line2);border-radius:11px;padding:8px 13px;cursor:pointer;transition:.15s;}
 .vband .w:hover{background:#fff;border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(90,70,20,.12);}
 .vband .w .ic{font-size:20px;flex:0 0 auto;}
 .vband .w b{font-size:13.5px;color:var(--ink);margin-right:2px;display:block;}
@@ -546,7 +556,9 @@ circle.city{cursor:pointer;}
      <div class="mc-head"><img src="muui_avatar.png" class="mc-ava" alt="무이"><div class="mc-title">전국 전통 복원 지도</div></div>
      <div class="mc-sub">도깨비 <b>무이</b>와 함께, 도시를 누르면 그 지역의 이야기가 미디어아트가 됩니다</div>
      <div class="mc-stats" id="mcStats"></div>
-     <div class="mc-lab">최근 우리 동네 자랑 ✎</div>
+     <div class="mc-lab">함께하는 창작자</div>
+     <div id="mcArtists" class="mc-artists"></div>
+     <div class="mc-lab" style="margin-top:11px">최근 우리 동네 자랑 ✎</div>
      <div id="mcRecent" class="mc-recent"><div class="mc-empty">불러오는 중…</div></div>
      <div class="mc-lab" id="mcVoteLab" style="display:none">🗳 다음 복원지 투표 TOP</div>
      <div id="mcVotes" class="mc-recent"></div>
@@ -742,6 +754,15 @@ function partnerCard(p,i){
  return '<div class="pc '+(p.tier||'basic')+(p.cardlayout==='side'?' side':'')+'" onclick="openPartner('+i+')">'+badge+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div>'+hi+strip+'<div class="plk">'+links+'</div></div></div>';
 }
 function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;var rank={vip:1,premium:2,basic:3};var arr=PARTNERS.map(function(p,idx){return{p:p,idx:idx};});arr.sort(function(a,b){return (rank[a.p.tier]||9)-(rank[b.p.tier]||9);});g.innerHTML=arr.map(function(o){return partnerCard(o.p,o.idx);}).join('');}
+// 메인(스토리) 좌측 카드 — 함께하는 창작자 미니 프리뷰
+function renderMcArtists(){var el=document.getElementById('mcArtists');if(!el)return;
+ el.innerHTML=PARTNERS.slice(0,3).map(function(p,idx){
+  var av=p.cardimg||p.img||(p.media&&p.media[0]&&p.media[0].img)||'';
+  var avh=av?'<span class="mca-av" style="background-image:url('+av+')"></span>':'<span class="mca-av">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,1)+'</span>';
+  var bd=p.tier==='vip'?'<span class="mca-badge">으뜸</span>':'';
+  return '<button class="mca" onclick="openPartner('+idx+')">'+avh+'<span class="mca-tx"><b>'+p.name+'</b><i>'+((p.cats||[]).slice(0,2).join(' · '))+'</i></span>'+bd+'</button>';
+ }).join('')+'<a class="mca-more" href="#" onclick="if(window.mainMode)mainMode(\'meet\');return false;">만남의 장에서 더 보기 →</a>';}
+try{renderMcArtists();}catch(e){}
 // 일반(무료) 자기등록 — Supabase partners 테이블에서 승인된 것 읽어와 카드로. (테이블 없으면 조용히 패스)
 function loadPartnersFromSupa(){
  if(typeof SUPA_URL==='undefined'||typeof _SH==='undefined')return;
@@ -749,7 +770,7 @@ function loadPartnersFromSupa(){
  .then(function(r){return r.ok?r.json():[];})
  .then(function(rows){if(!rows||!rows.length)return;
   rows.forEach(function(r){PARTNERS.push({tier:'basic',name:r.name,handle:r.handle||'',cats:r.cats||[],desc:r.descr||'',work:r.work||[],img:r.img||'',video:r.video||'',links:r.links||[]});});
-  renderPartners();}).catch(function(){});
+  renderPartners();try{renderMcArtists();}catch(e){}}).catch(function(){});
 }
 // 자기등록 폼 모달
 window.openReg=function(){var m=document.getElementById('rmodal');
