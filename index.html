@@ -758,7 +758,7 @@ function partnerCard(p,i){
  var strip=((p.media&&p.media.length>1)?'<div class="pcmedia">'+p.media.slice(1).map(function(m){var bg=m.video?'https://i.ytimg.com/vi/'+m.video+'/hqdefault.jpg':m.img;return '<span class="pcm'+(m.video?' vid':'')+'" style="background-image:url('+bg+')">'+(m.video?'<span class="vpl">▶</span>':'')+'</span>';}).join('')+'</div>':'');
  return '<div class="pc '+(p.tier||'basic')+(p.cardlayout==='side'?' side':'')+'" onclick="openPartner('+i+')">'+badge+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div>'+hi+strip+'<div class="plk">'+links+'</div></div></div>';
 }
-function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;var rank={vip:1,premium:2,basic:3};var arr=PARTNERS.map(function(p,idx){return{p:p,idx:idx};}).filter(function(o){return !o.p.self;});arr.sort(function(a,b){return (rank[a.p.tier]||9)-(rank[b.p.tier]||9);});g.innerHTML=arr.map(function(o){return partnerCard(o.p,o.idx);}).join('');}
+function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;var rank={vip:1,premium:2,basic:3};var arr=PARTNERS.map(function(p,idx){return{p:p,idx:idx};});arr.sort(function(a,b){return (rank[a.p.tier]||9)-(rank[b.p.tier]||9);});g.innerHTML=arr.map(function(o){return partnerCard(o.p,o.idx);}).join('');}
 // 메인(스토리) 좌측 카드 — 함께하는 창작자 미니 프리뷰
 function renderMcArtists(){var el=document.getElementById('mcArtists');if(!el)return;
  var list=PARTNERS.filter(function(p){return !p.self;}).slice(0,3);
