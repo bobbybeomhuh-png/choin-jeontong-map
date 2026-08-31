@@ -349,6 +349,15 @@ circle.city{cursor:pointer;}
 .pmlks{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;}
 .pmlk{font-size:13px;font-weight:700;color:#fff;background:#b0472f;border-radius:999px;padding:9px 16px;text-decoration:none;}
 .pmlk:hover{opacity:.9;}
+/* 상세 미디어 갤러리 썸네일 */
+.pmthumbs{display:flex;gap:8px;margin:14px 0 2px;flex-wrap:wrap;}
+.pmth{width:78px;height:54px;border-radius:8px;border:2px solid transparent;background:#2a2318 center/cover;cursor:pointer;position:relative;padding:0;overflow:hidden;}
+.pmth.on{border-color:#b0472f;}
+.pmth .thpl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(0,0,0,.32);font-size:13px;}
+/* 상세 경력 섹션(전문 그대로) */
+.pmsecs{margin-top:16px;display:flex;flex-direction:column;gap:13px;}
+.pmsec .pmsh{font-family:var(--serif);font-weight:800;font-size:14.5px;color:var(--ink);margin-bottom:3px;line-height:1.35;}
+.pmsec .pmsd{font-size:13.5px;color:var(--t2);line-height:1.65;}
 /* 등급 배지·VIP 카드 */
 .pc{position:relative;}
 .pc.vip{grid-column:span 2;}
@@ -686,14 +695,23 @@ var PARTNERS=[
   work:['랜드마크 미디어파사드','실감·인터랙티브 전시','유물 복원 미디어아트','캐릭터 IP(무이·대령숙수)','교육·다큐멘터리','지자체·기관 맞춤 제작'],
   links:[{t:'포트폴리오',u:'초인_포트폴리오.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'},{t:'Instagram',u:'https://www.instagram.com/choin_creative_lab/'},{t:'Threads',u:'https://www.threads.net/@korea.traditional.with.ai'},{t:'✉ 협업 문의',u:'mailto:choin2626@gmail.com?subject=%5B%EC%B4%88%EC%9D%B8%20%ED%98%91%EC%97%85%20%EB%AC%B8%EC%9D%98%5D'}]},
  {tier:'vip',name:'소연 · 가야금',handle:'소연가야금스튜디오 · @soyeon_ga_ya_geum',cats:['국악','가야금','렉처콘서트','글로벌'],
+  img:'poster/soyeon1.png',imgpos:'center 12%',
+  media:[{img:'poster/soyeon1.png',pos:'center 12%'},{img:'poster/soyeon2.png',pos:'center 20%'},{video:'ask5I7ZkiGI'}],
   desc:'대사관 초청부터 앙리·카카 VIP 무대까지 — 영어 진행과 전통의 깊이로 세계를 잇는 소연가야금스튜디오.',
-  work:['정통 가야금 연주 (한예종 학·석사 · 이대 박사수료 / 빛고을 명인부 대상 · 난계국악 1등)','글로벌 초청·VIP 공연 (쿠웨이트·칠레 대사관, KBS 국악한마당, 넥슨 아이콘매치)','외국인 대상 영어 렉처 콘서트 (The Melody of Korea)','가야금 원데이 클래스 (프라이빗 한복·다과 / 미니가야금 30~50명, 영어 가능)','융복합 프로젝트·네트워킹 파티 (차·주얼리·명상 콜라보)'],
+  sections:[
+   {h:'🎓 정통 국악의 깊이 (수상 & 학력)',d:'한국예술종합학교 학·석사 졸업 후 이화여자대학교 박사 수료(논문 집필 중) 및 대한민국 빛고을기악대제전 명인부 대상, 전국난계국악경연대회 1등을 거친 깊은 학술적·실전 전문성의 정통 가야금 연주자입니다.'},
+   {h:'🇨🇱 글로벌 초청 연주 & VIP 퍼포먼스',d:'쿠웨이트 국제학교 재학 및 어린 시절 거주 경험을 바탕으로 한 「주한 쿠웨이트 대사관저 초청 미니 콘서트」, 「칠레 대사관 초청 한국주간문화 가야금 공연 및 마스터클래스」 등 다수의 국외 초청 연주를 성공적으로 수행했습니다.'},
+   {h:'📺 매체 출연 & 대형 이벤트',d:'KBS 「국악한마당」 출연을 비롯해, 넥슨 「아이콘 매치」에서 세계적 축구 전설(앙리·카카·셰우첸코) 내한 VIP 프로그램으로 가야금 연주를 올리는 등 대중과 매체를 아우르는 다채로운 퍼포먼스 이력을 보유하고 있습니다.'},
+   {h:'🌍 맞춤형 글로벌 렉처 콘서트 (영어 진행 가능)',d:'현대건설 외국인 임직원 대상 「영어 렉처 콘서트(The Melody of Korea)」부터, 이태원 레스토랑에서 국내 거주 외국인들이 가야금을 친근하게 접할 수 있도록 기획한 「대중적 렉처 콘서트」까지 외국인 대상 완벽한 영어 진행으로 문턱을 낮춘 문화 프로그램을 직접 기획·진행합니다.'},
+   {h:'👘 공간 & 규모 맞춤형 가야금 원데이 클래스',d:'스튜디오 클래스 — 개인 스튜디오에서 수강생이 직접 한복을 착용하고 전통 차와 다과를 즐기는 프라이빗 오감 만족 체험. 대형 그룹/단체 클래스 — 휴대와 세팅이 용이한 미니가야금을 활용해 기업·기관 워크숍 및 외국인 단체를 대상으로 최소 30명에서 최대 50명까지 한 번에 대규모 클래스 진행 가능(영어 클래스 가능).'},
+   {h:'🍵 융복합 프로젝트 & 네트워킹 파티',d:'전통문양 베이스 주얼리, 한국 차(茶), 명상 분야와의 콜라보에 이어 오는 9월 12~13일에는 「차 클래스 + 가야금 클래스 + 가야금 연주 + 네트워킹 파티」가 한데 어우러진 다채로운 융복합 문화를 기획·진행하며, 전통 문화 기반 브랜드 대표 인터뷰 및 내·외국인 네트워크를 직접 연결하는 역할을 수행합니다.'}
+  ],
   links:[{t:'Instagram',u:'https://www.instagram.com/soyeon_ga_ya_geum'},{t:'출연 영상',u:'https://www.youtube.com/watch?v=ask5I7ZkiGI'}]}
 ];
 function partnerCard(p,i){
  var media;
  if(p.video) media='<div class="pm" style="background-image:url(https://i.ytimg.com/vi/'+p.video+'/hqdefault.jpg)"><span class="pl">▶</span></div>';
- else if(p.img) media='<div class="pm" style="background-image:url('+p.img+')"></div>';
+ else if(p.img) media='<div class="pm" style="background-image:url('+p.img+');background-position:'+(p.imgpos||'center')+'"></div>';
  else media='<div class="pm txt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
  var links=(p.links||[]).map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+l.t+' ↗</a>';}).join('');
@@ -746,15 +764,24 @@ window.submitReg=function(){
 function openPartner(i){var p=PARTNERS[i];if(!p)return;
  var m=document.getElementById('pmodal');
  if(!m){m=document.createElement('div');m.id='pmodal';m.className='pmodal';m.innerHTML='<div class="pmbox"><button class="pmx" onclick="closePartner()">&times;</button><div class="pmmedia" id="pmmedia"></div><div class="pmbody" id="pmbody"></div></div>';document.body.appendChild(m);m.addEventListener('click',function(e){if(e.target===m)closePartner();});}
- var media;
- if(p.video) media='<iframe src="https://www.youtube.com/embed/'+p.video+'?rel=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>';
- else if(p.img) media='<img src="'+p.img+'" alt="'+p.name+'">';
- else media='<div class="pmtxt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
- document.getElementById('pmmedia').innerHTML=media;
+ var init=p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2);
+ var gal=(p.media&&p.media.length)?p.media:(p.video?[{video:p.video}]:(p.img?[{img:p.img,pos:p.imgpos}]:[]));
+ function mediaHTML(m){
+  if(!m) return '<div class="pmtxt">'+init+'</div>';
+  if(m.video) return '<iframe src="https://www.youtube.com/embed/'+m.video+'?rel=0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe>';
+  if(m.img) return '<img src="'+m.img+'" alt="'+p.name+'" style="object-position:'+(m.pos||p.imgpos||'center')+'">';
+  return '<div class="pmtxt">'+init+'</div>';
+ }
+ document.getElementById('pmmedia').innerHTML=mediaHTML(gal[0]);
+ var thumbs='';
+ if(gal.length>1){ thumbs='<div class="pmthumbs">'+gal.map(function(m,idx){var bg=m.video?'https://i.ytimg.com/vi/'+m.video+'/hqdefault.jpg':m.img;return '<button class="pmth'+(idx===0?' on':'')+'" data-i="'+idx+'" style="background-image:url('+bg+')">'+(m.video?'<span class="thpl">▶</span>':'')+'</button>';}).join('')+'</div>'; }
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
- var work=(p.work||[]).map(function(w){return '<li>'+w+'</li>';}).join('');
+ var detail='';
+ if(p.sections&&p.sections.length){ detail='<div class="pmsecs">'+p.sections.map(function(s){return '<div class="pmsec"><div class="pmsh">'+s.h+'</div><div class="pmsd">'+s.d+'</div></div>';}).join('')+'</div>'; }
+ else if(p.work&&p.work.length){ detail='<div class="pmw"><div class="pmwl">하는 일</div><ul>'+p.work.map(function(w){return '<li>'+w+'</li>';}).join('')+'</ul></div>'; }
  var links=(p.links||[]).map(function(l){return '<a class="pmlk" href="'+l.u+'" target="_blank" rel="noopener">'+l.t+' ↗</a>';}).join('');
- document.getElementById('pmbody').innerHTML='<div class="pmn">'+p.name+'</div>'+(p.handle?'<div class="pmh">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><p class="pmd">'+p.desc+'</p>'+(work?'<div class="pmw"><div class="pmwl">하는 일</div><ul>'+work+'</ul></div>':'')+'<div class="pmlks">'+links+'</div>';
+ document.getElementById('pmbody').innerHTML='<div class="pmn">'+p.name+'</div>'+(p.handle?'<div class="pmh">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div>'+thumbs+'<p class="pmd">'+p.desc+'</p>'+detail+'<div class="pmlks">'+links+'</div>';
+ Array.prototype.forEach.call(document.querySelectorAll('#pmbody .pmth'),function(b){b.addEventListener('click',function(){var idx=+b.getAttribute('data-i');document.getElementById('pmmedia').innerHTML=mediaHTML(gal[idx]);Array.prototype.forEach.call(document.querySelectorAll('#pmbody .pmth'),function(x){x.classList.toggle('on',x===b);});});});
  m.classList.add('on');}
 window.openPartner=openPartner;
 window.closePartner=function(){var m=document.getElementById('pmodal');if(m)m.classList.remove('on');var mm=document.getElementById('pmmedia');if(mm)mm.innerHTML='';};
