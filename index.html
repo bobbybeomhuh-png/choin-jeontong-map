@@ -332,9 +332,10 @@ circle.city{cursor:pointer;}
 .pmodal.on{display:flex;}
 .pmbox{background:var(--bg,#f3ece0);width:min(720px,94vw);max-height:88vh;overflow:auto;border-radius:16px;position:relative;box-shadow:0 30px 90px rgba(0,0,0,.5);}
 .pmx{position:absolute;top:12px;right:14px;z-index:2;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.4);color:#fff;font-size:22px;line-height:1;cursor:pointer;}
-.pmmedia{width:100%;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.pmmedia iframe,.pmmedia img{width:100%;height:100%;border:0;object-fit:cover;display:block;}
-.pmmedia .pmtxt{font-family:var(--serif);font-size:64px;font-weight:800;color:#f3ece0;background:linear-gradient(120deg,#3b3326,#6b4f26);width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.pmmedia{width:100%;background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden;max-height:64vh;min-height:200px;}
+.pmmedia img{max-width:100%;max-height:64vh;width:auto;height:auto;object-fit:contain;display:block;}
+.pmmedia iframe{width:100%;aspect-ratio:16/9;border:0;display:block;}
+.pmmedia .pmtxt{font-family:var(--serif);font-size:64px;font-weight:800;color:#f3ece0;background:linear-gradient(120deg,#3b3326,#6b4f26);width:100%;min-height:220px;display:flex;align-items:center;justify-content:center;}
 .pmbody{padding:22px 26px 28px;}
 .pmbody .pmn{font-family:var(--serif);font-weight:800;font-size:24px;}
 .pmbody .pmh{font-size:13px;color:var(--t3);margin-top:2px;}
@@ -351,13 +352,13 @@ circle.city{cursor:pointer;}
 .pmlk:hover{opacity:.9;}
 /* 상세 미디어 갤러리 썸네일 */
 .pmthumbs{display:flex;gap:8px;margin:14px 0 2px;flex-wrap:wrap;}
-.pmth{width:78px;height:54px;border-radius:8px;border:2px solid transparent;background:#2a2318 center/cover;cursor:pointer;position:relative;padding:0;overflow:hidden;}
+.pmth{width:58px;height:80px;border-radius:8px;border:2px solid transparent;background:#2a2318 center/cover;cursor:pointer;position:relative;padding:0;overflow:hidden;}
 .pmth.on{border-color:#b0472f;}
 .pmth .thpl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(0,0,0,.32);font-size:13px;}
 /* 상세 경력 섹션(전문 그대로) */
-.pmsecs{margin-top:16px;display:flex;flex-direction:column;gap:13px;}
-.pmsec .pmsh{font-family:var(--serif);font-weight:800;font-size:14.5px;color:var(--ink);margin-bottom:3px;line-height:1.35;}
-.pmsec .pmsd{font-size:13.5px;color:var(--t2);line-height:1.65;}
+.pmsecs{margin-top:18px;display:flex;flex-direction:column;gap:17px;}
+.pmsec .pmsh{font-family:var(--serif);font-weight:800;font-size:17.5px;color:var(--ink);margin-bottom:5px;line-height:1.35;}
+.pmsec .pmsd{font-size:15px;color:var(--t2);line-height:1.72;}
 /* 등급 배지·VIP 카드 */
 .pc{position:relative;}
 .pc.vip{grid-column:span 2;}
@@ -699,12 +700,12 @@ var PARTNERS=[
   media:[{img:'poster/soyeon1.png',pos:'center 12%'},{img:'poster/soyeon2.png',pos:'center 20%'},{video:'ask5I7ZkiGI'}],
   desc:'대사관 초청부터 앙리·카카 VIP 무대까지 — 영어 진행과 전통의 깊이로 세계를 잇는 소연가야금스튜디오.',
   sections:[
-   {h:'🎓 정통 국악의 깊이 (수상 & 학력)',d:'한국예술종합학교 학·석사 졸업 후 이화여자대학교 박사 수료(논문 집필 중) 및 대한민국 빛고을기악대제전 명인부 대상, 전국난계국악경연대회 1등을 거친 깊은 학술적·실전 전문성의 정통 가야금 연주자입니다.'},
-   {h:'🇨🇱 글로벌 초청 연주 & VIP 퍼포먼스',d:'쿠웨이트 국제학교 재학 및 어린 시절 거주 경험을 바탕으로 한 「주한 쿠웨이트 대사관저 초청 미니 콘서트」, 「칠레 대사관 초청 한국주간문화 가야금 공연 및 마스터클래스」 등 다수의 국외 초청 연주를 성공적으로 수행했습니다.'},
-   {h:'📺 매체 출연 & 대형 이벤트',d:'KBS 「국악한마당」 출연을 비롯해, 넥슨 「아이콘 매치」에서 세계적 축구 전설(앙리·카카·셰우첸코) 내한 VIP 프로그램으로 가야금 연주를 올리는 등 대중과 매체를 아우르는 다채로운 퍼포먼스 이력을 보유하고 있습니다.'},
-   {h:'🌍 맞춤형 글로벌 렉처 콘서트 (영어 진행 가능)',d:'현대건설 외국인 임직원 대상 「영어 렉처 콘서트(The Melody of Korea)」부터, 이태원 레스토랑에서 국내 거주 외국인들이 가야금을 친근하게 접할 수 있도록 기획한 「대중적 렉처 콘서트」까지 외국인 대상 완벽한 영어 진행으로 문턱을 낮춘 문화 프로그램을 직접 기획·진행합니다.'},
-   {h:'👘 공간 & 규모 맞춤형 가야금 원데이 클래스',d:'스튜디오 클래스 — 개인 스튜디오에서 수강생이 직접 한복을 착용하고 전통 차와 다과를 즐기는 프라이빗 오감 만족 체험. 대형 그룹/단체 클래스 — 휴대와 세팅이 용이한 미니가야금을 활용해 기업·기관 워크숍 및 외국인 단체를 대상으로 최소 30명에서 최대 50명까지 한 번에 대규모 클래스 진행 가능(영어 클래스 가능).'},
-   {h:'🍵 융복합 프로젝트 & 네트워킹 파티',d:'전통문양 베이스 주얼리, 한국 차(茶), 명상 분야와의 콜라보에 이어 오는 9월 12~13일에는 「차 클래스 + 가야금 클래스 + 가야금 연주 + 네트워킹 파티」가 한데 어우러진 다채로운 융복합 문화를 기획·진행하며, 전통 문화 기반 브랜드 대표 인터뷰 및 내·외국인 네트워크를 직접 연결하는 역할을 수행합니다.'}
+   {h:'정통 국악의 깊이 (수상 & 학력)',d:'한국예술종합학교 학·석사 졸업 후 이화여자대학교 박사 수료(논문 집필 중) 및 대한민국 빛고을기악대제전 명인부 대상, 전국난계국악경연대회 1등을 거친 깊은 학술적·실전 전문성의 정통 가야금 연주자입니다.'},
+   {h:'글로벌 초청 연주 & VIP 퍼포먼스',d:'쿠웨이트 국제학교 재학 및 어린 시절 거주 경험을 바탕으로 한 「주한 쿠웨이트 대사관저 초청 미니 콘서트」, 「칠레 대사관 초청 한국주간문화 가야금 공연 및 마스터클래스」 등 다수의 국외 초청 연주를 성공적으로 수행했습니다.'},
+   {h:'매체 출연 & 대형 이벤트',d:'KBS 「국악한마당」 출연을 비롯해, 넥슨 「아이콘 매치」에서 세계적 축구 전설(앙리·카카·셰우첸코) 내한 VIP 프로그램으로 가야금 연주를 올리는 등 대중과 매체를 아우르는 다채로운 퍼포먼스 이력을 보유하고 있습니다.'},
+   {h:'맞춤형 글로벌 렉처 콘서트 (영어 진행 가능)',d:'현대건설 외국인 임직원 대상 「영어 렉처 콘서트(The Melody of Korea)」부터, 이태원 레스토랑에서 국내 거주 외국인들이 가야금을 친근하게 접할 수 있도록 기획한 「대중적 렉처 콘서트」까지 외국인 대상 완벽한 영어 진행으로 문턱을 낮춘 문화 프로그램을 직접 기획·진행합니다.'},
+   {h:'공간 & 규모 맞춤형 가야금 원데이 클래스',d:'스튜디오 클래스 — 개인 스튜디오에서 수강생이 직접 한복을 착용하고 전통 차와 다과를 즐기는 프라이빗 오감 만족 체험. 대형 그룹/단체 클래스 — 휴대와 세팅이 용이한 미니가야금을 활용해 기업·기관 워크숍 및 외국인 단체를 대상으로 최소 30명에서 최대 50명까지 한 번에 대규모 클래스 진행 가능(영어 클래스 가능).'},
+   {h:'융복합 프로젝트 & 네트워킹 파티',d:'전통문양 베이스 주얼리, 한국 차(茶), 명상 분야와의 콜라보에 이어 오는 9월 12~13일에는 「차 클래스 + 가야금 클래스 + 가야금 연주 + 네트워킹 파티」가 한데 어우러진 다채로운 융복합 문화를 기획·진행하며, 전통 문화 기반 브랜드 대표 인터뷰 및 내·외국인 네트워크를 직접 연결하는 역할을 수행합니다.'}
   ],
   links:[{t:'Instagram',u:'https://www.instagram.com/soyeon_ga_ya_geum'},{t:'출연 영상',u:'https://www.youtube.com/watch?v=ask5I7ZkiGI'}]}
 ];
