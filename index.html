@@ -318,6 +318,9 @@ circle.city{cursor:pointer;}
 .mclabel{font-size:10px;fill:var(--ink);font-family:var(--sans);pointer-events:none;paint-order:stroke;stroke:var(--bg);stroke-width:2.5px;font-weight:700;}
 .ghd{padding:20px 22px 4px;}.ghd h3{font-family:var(--serif);font-size:22px;font-weight:800;margin:0;}.ghd p{font-size:13px;color:var(--t2);margin:5px 0 0;}
 .ghd .disc{font-size:11.5px;color:var(--t3);margin-top:6px;}
+.gsrch{padding:10px 22px 2px;}
+.gsrch input{width:100%;box-sizing:border-box;border:1.5px solid var(--line2);border-radius:999px;padding:11px 18px;font-size:14px;font-family:var(--sans);color:var(--ink);background:#fff;outline:none;transition:.15s;}
+.gsrch input:focus{border-color:#2f6db5;box-shadow:0 0 0 3px rgba(47,109,181,.13);}
 .gfilt{display:flex;gap:7px;padding:12px 22px 6px;flex-wrap:wrap;}
 .gfilt .f{border:1px solid var(--line2);background:#fff;border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-weight:600;color:var(--t2);}
 .gfilt .f.on{background:var(--ink);color:var(--bg);border-color:var(--ink);}
@@ -434,6 +437,9 @@ circle.city{cursor:pointer;}
 .mgc.txt .pv,.mgc.txt .play{display:none;}
 .mgc.txt .in{color:var(--ink);width:100%;}
 .mgc.txt .dd{font-family:var(--serif);font-size:32px;font-weight:800;color:var(--brick,#b0472f);line-height:1;margin:2px 0 5px;}
+.mgc.txt .dd .ddate{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--t3);margin-left:7px;vertical-align:3px;}
+.mgc .gtag{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#efe6d4;color:#7a5a1e;margin-left:5px;vertical-align:1px;}
+.mgc .gtag-tgt{background:#e3edf7;color:#2f6db5;}
 .mgc.txt.soon{background:linear-gradient(158deg,#fdeef0,#f6dbdf);}
 .mgc.txt .n{color:var(--ink);text-shadow:none;font-size:15.5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;}
 .mgc.txt .s{color:var(--t3);font-size:12px;}
@@ -601,7 +607,7 @@ circle.city{cursor:pointer;}
 <script src="details.js?v=13"></script>
 <script src="discover.js?v=3"></script>
 <script src="videos.js?v=3"></script>
-<script src="gongmo.js?v=8"></script>
+<script src="gongmo.js?v=9"></script>
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
@@ -653,7 +659,7 @@ function videoList(){var VS=(typeof VIDEOS!=='undefined')?VIDEOS:{};var all=[],s
 function videoEl(v){var el=document.createElement('div');el.className='mgc '+(v.sz||'mid');el.style.backgroundImage='url('+v.th+')';
  el.innerHTML='<div class="pv"></div><div class="play">▶</div><div class="in"><span class="badge b-video">복원 영상</span><div class="n">'+v.n+'</div><div class="s">'+v.reg+' · '+(v.ch==='f'?'대령숙수':'무이 유물복원단')+'</div></div>';
  el.onclick=function(){window.open(v.url,'_blank');};return el;}
-var LZ={space:true,proj:true,video:true,gongmo:true},F='all',FREG=null,proj,gLayer,inited=false;
+var LZ={space:true,proj:true,video:true,gongmo:true},F='all',FREG=null,GQ='',proj,gLayer,inited=false;
 COL.gongmo='#2f6db5';LAB.gongmo='공모·자금';
 // 전 지역 공모 허브 좌표(CITIES 권역 중심 + 서울/인천 고정)
 function provPoints(){var fixed={'서울':[126.98,37.57],'인천':[126.70,37.46]};
@@ -698,7 +704,10 @@ function mapCard(){var ns=MC.filter(function(c){return c.type==='space';}).lengt
 // 갤러리
 function gongCards(){var gs=[];Object.keys(GG).forEach(function(r){if(FREG&&r!==FREG)return;(GG[r]||[]).forEach(function(o){gs.push({r:r,o:o});});});
  var today=new Date();gs.forEach(function(x){x.dd=Math.ceil((new Date(x.o.d)-today)/864e5);});
- return gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;}).sort(function(a,b){return a.dd-b.dd;}).slice(0,FREG?60:16);}
+ var q=(GQ||'').trim().toLowerCase(),r0=gs.filter(function(x){return !isNaN(x.dd)&&x.dd>=0;});
+ if(q){r0=r0.filter(function(x){return ((x.o.t||'')+' '+(x.r||'')+' '+(x.o.f||'')+' '+(x.o.k||'')+' '+(x.o.tgt||'')).toLowerCase().indexOf(q)>=0;});}
+ return r0.sort(function(a,b){return a.dd-b.dd;}).slice(0,(q||FREG)?80:16);}
+function gongSearch(v){GQ=v;if(v&&v.trim()){F='gongmo';var gf=document.getElementById('mgfilt');if(gf)gf.querySelectorAll('.f').forEach(function(x){x.classList.toggle('on',x.dataset.f==='gongmo');});}renderGrid();}
 function imgEl(c,i){var el=document.createElement('div');
  if(c.type==='video'){  // 영상 = 실제 썸네일(정확) + 재생
    el.className='mgc '+(c.sz||'mid');el.style.backgroundImage='url('+cimg(c)+')';
@@ -711,7 +720,15 @@ function imgEl(c,i){var el=document.createElement('div');
  el.innerHTML='<div class="in"><span class="badge '+BD[c.type]+'">'+LAB[c.type]+'</span>'+prop+'<div class="n">'+c.n+'</div><div class="s">'+c.reg+' · '+c.soul+'</div></div>';
  el.onclick=function(){openM(i);};return el;}
 function gongEl(g){var soon=g.dd<=7,sz=g.dd<=3?'mid':'sm';var el=document.createElement('div');el.className='mgc txt '+sz+(soon?' soon':'');
- el.innerHTML='<div class="in"><span class="badge b-gong">공모·자금</span><div class="dd">D-'+g.dd+'</div><div class="n">'+g.o.t+'</div><div class="s">'+g.r+' · '+(g.o.k||'공모')+'</div></div>';
+ // ★대상(개인/단체/기업) 배지 — ARKO 벤치마킹, 응모 자격을 카드에 바로
+ var tgt=g.o.tgt?'<span class="gtag gtag-tgt">'+g.o.tgt+'</span>':'';
+ var fld=(g.o.f&&g.o.f!=='전통·문화일반')?'<span class="gtag">'+g.o.f+'</span>':'';
+ // ★마감 날짜(구체) — D-day와 함께
+ var dl=(g.o.d||'').slice(5).replace('-','.');
+ el.innerHTML='<div class="in"><span class="badge b-gong">'+(g.o.k||'공모')+'</span>'+tgt
+   +'<div class="dd">D-'+g.dd+'<span class="ddate">~'+dl+'</span></div>'
+   +'<div class="n">'+g.o.t+'</div>'
+   +'<div class="s">'+g.r+fld+'</div></div>';
  el.onclick=function(){window.open(g.o.u,'_blank');};return el;}
 function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;grid.innerHTML='';
  if(F==='gongmo'){var gc=gongCards();if(!gc.length){grid.innerHTML='<div style="color:var(--t3);font-size:13px">표시할 공모가 없습니다.</div>';return;}gc.forEach(function(g){grid.appendChild(gongEl(g));});return;}
@@ -840,8 +857,10 @@ function gallery(){document.getElementById('mgal').innerHTML='<div class="gsec p
  +'<div class="pjoin">한국 전통 관련 작업을 하시나요? <a href="#" onclick="openReg();return false;">✎ 무료로 등록하기</a> · <a href="파트너.html" target="_blank" rel="noopener">전체 보기 →</a></div>'
  +'<div class="chal"><div class="in"><img class="av" src="muui_avatar.png" onerror="this.style.display=\'none\'"><div class="tx"><div class="k">무이의 이번 주 챌린지</div><div class="t">우리 동네 전통, 한 줄로 남겨줘</div><div class="s">남기면 <b>지도에 전시</b> + 첫 참여 배지 🏅 · 지금 <b id="chCount">0</b>명 참여</div></div><button class="go" onclick="chOpen()">참여하기 →</button></div></div>'
  +'<div class="gsec">오늘의 기회 <small id="mghp">매일 갱신되는 전통·미디어아트 공모·발주 — 지도의 파란 점을 누르면 그 지역만</small></div>'
+ +'<div class="gsrch"><input id="gq" type="search" placeholder="🔍 공모·지역·분야·대상 검색  (예: 공예, 부산, AI영상, 개인)" autocomplete="off"></div>'
  +'<div class="gfilt" id="mgfilt"><div class="f on" data-f="all">전체</div><div class="f" data-f="gongmo">공모·발주</div><div class="f" data-f="space">초인 제안 공간</div></div><div class="mgrid" id="mgrid"></div>';
  document.getElementById('mgfilt').addEventListener('click',function(e){var f=e.target.closest('.f');if(!f)return;F=f.dataset.f;FREG=null;document.querySelectorAll('#mgfilt .f').forEach(function(x){x.classList.toggle('on',x===f);});var p=document.getElementById('mghp');if(p)p.textContent='전국의 공모·자금(실시간)과 초인의 공간 구상·영상이 한 벽에. 지도의 파란 점을 누르면 그 지역 공모만 모여요.';renderGrid();});
+ var _gq=document.getElementById('gq');if(_gq)_gq.addEventListener('input',function(){gongSearch(this.value);});   // ★검색: IIFE 안에서 연결(inline은 클로저라 안 됨)
  renderGrid();renderPartners();loadPartnersFromSupa();}
 // 모달
 function openM(i){var c=MC[i],isS=c.type==='space';
