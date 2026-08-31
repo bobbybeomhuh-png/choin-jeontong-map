@@ -706,7 +706,9 @@ function renderGrid(){var grid=document.getElementById('mgrid');if(!grid)return;
  MC.forEach(function(c,i){if(c.type!=='video' && LZ[c.type]!==false) grid.appendChild(imgEl(c,i));});}
 // 함께하는 창작자(파트너) — 카드 하나 = 데이터 한 덩어리(이미지 img / 영상 video(유튜브id) / 텍스트). 추가는 이 배열에 한 줄.
 var PARTNERS=[
- {tier:'vip',name:'초인 스튜디오',handle:'CHOIN Studio · 미디어아트',cats:['미디어아트','전통','제작'],img:'poster/sinmyeong.jpg',
+ {tier:'vip',name:'초인 스튜디오',handle:'CHOIN Studio · 미디어아트',cats:['미디어아트','전통','제작'],
+  cardlayout:'side',cardimg:'poster/choin_side.jpg',imgpos:'center',img:'poster/sinmyeong.jpg',
+  media:[{img:'poster/sinmyeong.jpg'},{img:'poster/sinmyeong_alt1.jpg'},{img:'poster/sinmyeong_alt2.jpg'}],
   desc:'대한민국 전통을 미디어아트로 되살리는 스튜디오. 미디어파사드·실감 전시·유물 복원·캐릭터 IP를 기획부터 제작·송출까지 한 곳에서.',
   work:['랜드마크 미디어파사드','실감·인터랙티브 전시','유물 복원 미디어아트','캐릭터 IP(무이·대령숙수)','교육·다큐멘터리','지자체·기관 맞춤 제작'],
   highlights:['랜드마크 미디어파사드 · 실감 전시','유물 복원 미디어아트 · 캐릭터 IP','지자체·기관 맞춤 제작'],
@@ -728,7 +730,8 @@ var PARTNERS=[
 ];
 function partnerCard(p,i){
  var media;
- if(p.video) media='<div class="pm" style="background-image:url(https://i.ytimg.com/vi/'+p.video+'/hqdefault.jpg)"><span class="pl">▶</span></div>';
+ if(p.cardimg) media='<div class="pm" style="background-image:url('+p.cardimg+');background-position:'+(p.imgpos||'center')+'"></div>';
+ else if(p.video) media='<div class="pm" style="background-image:url(https://i.ytimg.com/vi/'+p.video+'/hqdefault.jpg)"><span class="pl">▶</span></div>';
  else if(p.img) media='<div class="pm" style="background-image:url('+p.img+');background-position:'+(p.imgpos||'center')+'"></div>';
  else media='<div class="pm txt">'+p.name.replace(/[^가-힣A-Za-z]/g,'').slice(0,2)+'</div>';
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
