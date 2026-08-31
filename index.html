@@ -320,7 +320,10 @@ circle.city{cursor:pointer;}
 .pc .ph{font-size:11.5px;color:var(--t3);margin-top:2px;}
 .pc .pt{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0 7px;}
 .pc .pt span{font-size:10.5px;font-weight:700;color:#b0472f;background:rgba(176,71,47,.09);border-radius:999px;padding:3px 8px;}
-.pc .pd{font-size:13px;color:var(--t2);line-height:1.55;flex:1;}
+.pc .pd{font-size:13px;color:var(--t2);line-height:1.55;}
+.pc .pcw{list-style:none;margin:9px 0 2px;flex:1;}
+.pc .pcw li{font-size:12.5px;color:var(--ink);line-height:1.55;padding:2px 0 2px 14px;position:relative;font-weight:500;}
+.pc .pcw li::before{content:'·';position:absolute;left:3px;color:#b0472f;font-weight:800;}
 .pc .plk{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
 .pc .plk a{font-size:11px;font-weight:600;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:5px 11px;text-decoration:none;transition:.13s;}
 .pc .plk a:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
@@ -694,11 +697,13 @@ var PARTNERS=[
  {tier:'vip',name:'초인 스튜디오',handle:'CHOIN Studio · 미디어아트',cats:['미디어아트','전통','제작'],img:'poster/sinmyeong.jpg',
   desc:'대한민국 전통을 미디어아트로 되살리는 스튜디오. 미디어파사드·실감 전시·유물 복원·캐릭터 IP를 기획부터 제작·송출까지 한 곳에서.',
   work:['랜드마크 미디어파사드','실감·인터랙티브 전시','유물 복원 미디어아트','캐릭터 IP(무이·대령숙수)','교육·다큐멘터리','지자체·기관 맞춤 제작'],
+  highlights:['랜드마크 미디어파사드 · 실감 전시','유물 복원 미디어아트 · 캐릭터 IP','지자체·기관 맞춤 제작'],
   links:[{t:'포트폴리오',u:'초인_포트폴리오.html'},{t:'YouTube',u:'https://www.youtube.com/@muuimaster'},{t:'Instagram',u:'https://www.instagram.com/choin_creative_lab/'},{t:'Threads',u:'https://www.threads.net/@korea.traditional.with.ai'},{t:'✉ 협업 문의',u:'mailto:choin2626@gmail.com?subject=%5B%EC%B4%88%EC%9D%B8%20%ED%98%91%EC%97%85%20%EB%AC%B8%EC%9D%98%5D'}]},
  {tier:'vip',name:'소연 · 가야금',handle:'소연가야금스튜디오 · @soyeon_ga_ya_geum',cats:['국악','가야금','렉처콘서트','글로벌'],
   img:'poster/soyeon1.png',imgpos:'center 12%',
   media:[{img:'poster/soyeon1.png',pos:'center 12%'},{img:'poster/soyeon2.png',pos:'center 20%'},{video:'ask5I7ZkiGI'}],
   desc:'대사관 초청부터 앙리·카카 VIP 무대까지 — 영어 진행과 전통의 깊이로 세계를 잇는 소연가야금스튜디오.',
+  highlights:['외국인 대상 영어 렉처 콘서트','가야금 원데이 클래스 (한복·다과·미니가야금)','대사관·KBS·VIP 초청 공연'],
   sections:[
    {h:'정통 국악의 깊이 (수상 & 학력)',d:'한국예술종합학교 학·석사 졸업 후 이화여자대학교 박사 수료(논문 집필 중) 및 대한민국 빛고을기악대제전 명인부 대상, 전국난계국악경연대회 1등을 거친 깊은 학술적·실전 전문성의 정통 가야금 연주자입니다.'},
    {h:'글로벌 초청 연주 & VIP 퍼포먼스',d:'쿠웨이트 국제학교 재학 및 어린 시절 거주 경험을 바탕으로 한 「주한 쿠웨이트 대사관저 초청 미니 콘서트」, 「칠레 대사관 초청 한국주간문화 가야금 공연 및 마스터클래스」 등 다수의 국외 초청 연주를 성공적으로 수행했습니다.'},
@@ -717,7 +722,7 @@ function partnerCard(p,i){
  var tags=(p.cats||[]).map(function(c){return '<span>'+c+'</span>';}).join('');
  var links=(p.links||[]).map(function(l){return '<a href="'+l.u+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+l.t+' ↗</a>';}).join('');
  var badge=p.tier==='vip'?'<span class="pbadge vip">으뜸</span>':(p.tier==='premium'?'<span class="pbadge prem">초기 파트너</span>':'');
- return '<div class="pc '+(p.tier||'basic')+'" onclick="openPartner('+i+')">'+badge+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div><div class="plk">'+links+'</div></div></div>';
+ return '<div class="pc '+(p.tier||'basic')+'" onclick="openPartner('+i+')">'+badge+media+'<div class="pb"><div class="pn">'+p.name+'</div>'+(p.handle?'<div class="ph">'+p.handle+'</div>':'')+'<div class="pt">'+tags+'</div><div class="pd">'+p.desc+'</div>'+((p.highlights&&p.highlights.length)?'<ul class="pcw">'+p.highlights.slice(0,4).map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>':'')+'<div class="plk">'+links+'</div></div></div>';
 }
 function renderPartners(){var g=document.getElementById('pgrid');if(!g)return;var rank={vip:1,premium:2,basic:3};var arr=PARTNERS.map(function(p,idx){return{p:p,idx:idx};});arr.sort(function(a,b){return (rank[a.p.tier]||9)-(rank[b.p.tier]||9);});g.innerHTML=arr.map(function(o){return partnerCard(o.p,o.idx);}).join('');}
 // 일반(무료) 자기등록 — Supabase partners 테이블에서 승인된 것 읽어와 카드로. (테이블 없으면 조용히 패스)
