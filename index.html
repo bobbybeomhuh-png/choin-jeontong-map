@@ -440,6 +440,7 @@ circle.city{cursor:pointer;}
 .mgc.txt .dd .ddate{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--t3);margin-left:7px;vertical-align:3px;}
 .mgc .gtag{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:#efe6d4;color:#7a5a1e;margin-left:5px;vertical-align:1px;}
 .mgc .gtag-tgt{background:#e3edf7;color:#2f6db5;}
+.mgc .gtag-trad{background:#b0472f;color:#fff;}
 /* ★성격 레이어 색 구분(C): 미디어=파랑 / 전통예술=갈색 / 문화·행사=초록 */
 .mgc.txt.seong-media{border-left:3px solid #2f6db5;}
 .mgc.txt.seong-art{border-left:3px solid #a9803a;}
@@ -618,7 +619,7 @@ circle.city{cursor:pointer;}
 <script src="details.js?v=13"></script>
 <script src="discover.js?v=3"></script>
 <script src="videos.js?v=3"></script>
-<script src="gongmo.js?v=10"></script>
+<script src="gongmo.js?v=11"></script>
 <script src="images.js?v=12"></script>
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
@@ -737,11 +738,13 @@ function imgEl(c,i){var el=document.createElement('div');
 function gongEl(g){var soon=g.dd<=7,sz=g.dd<=3?'mid':'sm';var el=document.createElement('div');el.className='mgc txt '+sz+(soon?' soon':'');
  // ★대상(개인/단체/기업) 배지 — ARKO 벤치마킹, 응모 자격을 카드에 바로
  var sc=seongCls(g.o.g); el.className+=' '+sc;   // 성격 색 구분(레이어)
+ var trad=g.o.trad?'<span class="gtag gtag-trad">전통</span>':'';
  var tgt=g.o.tgt?'<span class="gtag gtag-tgt">'+g.o.tgt+'</span>':'';
  var fld=(g.o.f&&g.o.f!=='전통·문화일반')?'<span class="gtag '+sc+'">'+g.o.f+'</span>':'';
  // ★마감 날짜(구체) — D-day와 함께
  var dl=(g.o.d||'').slice(5).replace('-','.');
  el.innerHTML='<div class="in"><span class="badge b-gong">'+(g.o.k||'공모')+'</span>'+tgt
+   +trad
    +'<div class="dd">D-'+g.dd+'<span class="ddate">~'+dl+'</span></div>'
    +'<div class="n">'+g.o.t+'</div>'
    +'<div class="s">'+g.r+fld+'</div></div>';
