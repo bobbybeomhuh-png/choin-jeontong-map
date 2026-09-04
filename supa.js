@@ -243,9 +243,9 @@ function subscribe(){
 function loadBoard(){
   if(typeof SUPA_URL==='undefined') return;
   var el=document.getElementById('board'); if(!el) return;
-  el.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(_en()?'All Village Notes':'우리 동네 자랑 모아보기')
-    +'</h2><p>'+(_en()?'Every note left across the country, grouped by region. Tap a region to open it.':'전국에서 남긴 한마디를 지역별로 모았어요. 지역 이름을 누르면 그 지역으로 이동합니다.')
-    +'</p></div><div id="bbody"><div class="wempty">'+(_en()?'Loading…':'불러오는 중…')+'</div></div></div>';
+  el.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(_en()?'Community Board':'✎ 자유 게시판')
+    +'</h2><p>'+(_en()?'Anyone can leave a note — like sticky notes on a school board. Grouped by region; tap a region to open it.':'누구나 한 줄 툭 남기는 곳 — 학교 게시판에 쪽지 붙이듯. 지역별로 모았고, 지역 이름을 누르면 그 지역으로 이동합니다.')
+    +'</p></div><div id="bbody" class="corkboard"><div class="wempty">'+(_en()?'Loading…':'불러오는 중…')+'</div></div></div>';
   var url=SUPA_URL+'/rest/v1/postits?hidden=eq.false&select=region,name,message,created_at&order=created_at.desc&limit=500';
   fetch(url,{headers:_SH}).then(function(r){return r.ok?r.json():[];}).then(function(rows){
     var body=document.getElementById('bbody'); if(!body) return;

@@ -257,11 +257,11 @@ function setView(v){
   document.querySelector('.wrap').style.display = isMap?'flex':'none';
   $('grid').style.display = isGrid?'flex':'none';
   const bd=$('board'); if(bd) bd.style.display = isBoard?'block':'none';
-  const cl=$('calls'); if(cl) cl.style.display = isCalls?'block':'none';
+  const cl=$('calls'); if(cl) cl.style.display = (isCalls||isGrid)?'block':'none';   // ★전체보기 = 도시이야기 + 공모 구간 둘 다
   $('vmap').classList.toggle('on',isMap); $('vgrid').classList.toggle('on',isGrid);
   const vb=$('vboard'); if(vb) vb.classList.toggle('on',isBoard);
   const vc=$('vcalls'); if(vc) vc.classList.toggle('on',isCalls);
-  if(isGrid){ renderGrid(); if(window.logEvent) logEvent('view','grid'); }
+  if(isGrid){ renderGrid(); renderCalls(); if(window.logEvent) logEvent('view','grid'); }
   if(isBoard){ if(window.loadBoard) loadBoard(); if(window.logEvent) logEvent('view','board'); }
   if(isCalls){ renderCalls(); if(window.logEvent) logEvent('view','calls'); }
 }
@@ -270,12 +270,16 @@ function setView(v){
 var CALLS_FILTER='';   // 유형 필터(공모전/지원사업/발주/레지던시/교육·체험)
 var FIELD_FILTER='';   // 분야 필터(공예/국악/서예/회화·미술/미디어아트/문학/무용/축제/전통·문화일반)
 var GROUP_FILTER='';   // 성격 대분류 필터(🎬미디어·기술/🎨전통예술·공예/🎪문화·행사·교육)
+var TRACK_FILTER='';   // ★2026-09-04 4분류(허범): t공모(전통 공모)/t용역(전통 용역)/g공모(일반 공모)/g용역(일반 용역)
+function matchTrack(g){ if(!TRACK_FILTER) return true; var y=(g.trk==='용역'), d=!!g.trad;
+  if(TRACK_FILTER==='t공모') return d&&!y; if(TRACK_FILTER==='t용역') return d&&y;
+  if(TRACK_FILTER==='g공모') return !d&&!y; if(TRACK_FILTER==='g용역') return !d&&y; return true; }
 function renderCalls(){
   var box=$('calls'); if(!box) return;
   var t=(LANG==='en');
   if(typeof GONGMO==='undefined'){ box.innerHTML='<div class="bwrap"><div class="bhead"><h2>'+(t?'Open Calls':'공모·공고')+'</h2><p>'+(t?'Coming soon.':'준비 중입니다.')+'</p></div></div>'; return; }
   var order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
-  function pass(g){ return (!GROUP_FILTER||g.g===GROUP_FILTER) && (!CALLS_FILTER||g.k===CALLS_FILTER) && (!FIELD_FILTER||g.f===FIELD_FILTER); }
+  function pass(g){ return matchTrack(g) && (!GROUP_FILTER||g.g===GROUP_FILTER) && (!CALLS_FILTER||g.k===CALLS_FILTER) && (!FIELD_FILTER||g.f===FIELD_FILTER); }
   function gwonRank(g){var i=order.indexOf(g);return i<0?98:i;}
   var nat=[], groups={}, seen={};   // groups: 키=시군명 또는 광역명, 값={gwon,list}
   (GONGMO['전국']||[]).forEach(function(g){ if(!seen[g.t]&&pass(g)){seen[g.t]=1; nat.push(g);} });
@@ -291,6 +295,9 @@ function renderCalls(){
     var aw=(a===groups[a].gwon), bw=(b===groups[b].gwon); if(aw!==bw) return aw?-1:1;
     return groups[b].list.length-groups[a].list.length; });
   var total=nat.length; names.forEach(function(k){ total+=groups[k].list.length; });
+  // ★4분류(전통 먼저·강조) — 전통 공모 / 전통 용역 / 일반 공모 / 일반 용역
+  var TRACKS=[['',t?'All':'전체'],['t공모',t?'Traditional · Calls':'🏛 전통 공모'],['t용역',t?'Traditional · Tenders':'🏛 전통 용역'],['g공모',t?'Media · Calls':'🎬 일반 공모'],['g용역',t?'Media · Tenders':'🎬 일반 용역']];
+  var tkchips=TRACKS.map(function(c){return '<button class="gochip tkchip'+(TRACK_FILTER===c[0]?' on':'')+(c[0].charAt(0)==='t'?' trad':'')+'" onclick="TRACK_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var GROUPS=[['',t?'All':'전체 성격'],['🎬 미디어·기술','🎬 미디어·기술'],['🎨 전통예술·공예','🎨 전통예술·공예'],['🎪 문화·행사·교육','🎪 문화·행사·교육']];
   var gchips=GROUPS.map(function(c){return '<button class="gochip'+(GROUP_FILTER===c[0]?' on':'')+'" onclick="GROUP_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var chips=[['',t?'All':'전체'],['공모전',t?'Calls':'공모전'],['지원사업',t?'Grants':'지원사업'],['발주',t?'Tenders':'발주'],['레지던시',t?'Residency':'레지던시'],['교육·체험',t?'Programs':'교육·체험']]
@@ -300,6 +307,7 @@ function renderCalls(){
     .map(function(c){return '<button class="gochip fchip'+(FIELD_FILTER===c[0]?' on':'')+'" onclick="FIELD_FILTER=\''+c[0]+'\';renderCalls();">'+c[1]+'</button>';}).join('');
   var h='<div class="bwrap"><div class="bhead"><h2>'+(t?'Traditional-Culture Open Calls':'전통문화 공모·공고')+'</h2>'
     +'<p>'+(t?'Nationwide calls, grants and tenders — updated daily. Click a region on the map for that region only.':'전국 전통문화 공모·지원·발주를 매일 자동 수집합니다. 지도에서 지역을 누르면 그 지역만 볼 수 있습니다.')+' · '+total+(t?' open':'건')+'</p>'
+    +'<div class="gochips gotrack" style="font-weight:800">'+tkchips+'</div>'
     +'<div class="gochips" style="font-weight:700">'+gchips+'</div>'
     +'<div class="gochips">'+chips+'</div>'
     +'<div class="gochips ffilter">'+fchips+'</div></div>';
@@ -318,7 +326,8 @@ window.renderCalls=renderCalls;
 function renderGrid(){
   const order=['수도권','강원','충북','충남','전북','전남','경북','경남','제주'];
   const byReg={}; CITIES.forEach(c=>{(byReg[c[1]]=byReg[c[1]]||[]).push(c);});
-  let h='';
+  // ★2026-09-04 구간 구분(허범): 전체보기 = [도시 이야기] + [공모 전체]
+  let h='<div class="secttl">📖 '+(LANG==='en'?'Traditional stories · 90 cities':'전국 전통 이야기 · 90개 도시')+'<span>'+(LANG==='en'?'Tap a city → map':'도시를 누르면 그 지역 지도로')+'</span></div>';
   order.forEach(rg=>{ const arr=byReg[rg]; if(!arr) return;
     h+='<div class="ghdr">'+(RNAME[LANG][rg]||rg)+' <span style="color:var(--t3);font-weight:400;font-size:12px">'+arr.length+'</span></div>';
     arr.forEach(c=>{ const nm=c[0];
