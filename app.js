@@ -264,6 +264,7 @@ function setView(v){
   if(isGrid){ renderGrid(); renderCalls(); if(window.logEvent) logEvent('view','grid'); }
   if(isBoard){ if(window.loadBoard) loadBoard(); if(window.logEvent) logEvent('view','board'); }
   if(isCalls){ renderCalls(); if(window.logEvent) logEvent('view','calls'); }
+  if(window._pushHash) window._pushHash(isMap?'map':(isBoard?'board':(isCalls?'calls':'grid')));
 }
 // ── 공모 종합 게시판(독립 뷰) ── 지역 클릭(gongmoHtml)과 같은 GONGMO 데이터·같은 gongmoRows를
 //    쓴다 → 밤샘 수집이 갱신되면 지역 개별 뷰와 종합 게시판이 동시에 갱신(유기연결).
@@ -342,6 +343,24 @@ function renderGrid(){
   g.onclick=e=>{ const card=e.target.closest('.gcard'); if(!card) return; const c=CITIES.find(x=>x[0]===card.dataset.city); if(c){ setView('map'); if(window._select) window._select(c); } };
 }
 window.setView=setView;
+
+// ★2026-09-04 해시 라우팅(허범: 뒤로가기하면 사이트 나감 → 뷰 간 이동으로). 각 뷰에 URL(#) 부여.
+var _rt=false;
+window._pushHash=function(h){ if(_rt) return; try{ if(location.hash!=='#'+h) history.pushState(null,'','#'+encodeURIComponent(h)); }catch(e){} };
+function applyHash(){
+  _rt=true;
+  try{
+    var h=decodeURIComponent((location.hash||'').replace(/^#/,''));
+    if(!h || h==='map'){ if(window.mainMode) mainMode('story'); setView('map'); }
+    else if(h==='grid'||h==='calls'){ if(window.boardView) boardView('grid'); }
+    else if(h==='board'){ if(window.boardView) boardView('board'); }
+    else if(h==='meet'){ if(window.mainMode) mainMode('meet'); }
+    else { var c=(typeof CITIES!=='undefined')&&CITIES.find(function(x){return x[0]===h;}); if(c){ if(window.mainMode) mainMode('story'); setView('map'); if(window._select) window._select(c); } }
+  }catch(e){}
+  _rt=false;
+}
+window.applyHash=applyHash;
+window.addEventListener('popstate', applyHash);   // 뒤로/앞으로 → 해당 뷰 복원
 
 // 헤더 로고 = 메인(홈)으로. 클릭 시 지도 기본화면으로 리셋(새로고침 없이)
 $('brand').addEventListener('click', function(e){ e.preventDefault(); setView('map'); if(window.homeView) homeView(500); window.scrollTo(0,0); });
@@ -457,6 +476,8 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   function select(c){
     if(window.logEvent) logEvent('region', c[0]);   // 어느 지역을 눌렀나
     renderCity(c);
+    var _sd=$('side'); if(_sd) _sd.scrollTop=0;   // ★2026-09-04 지역 클릭 시 오른쪽 패널 맨 위로(지명부터 보이게)
+    if(window._pushHash) window._pushHash(c[0]);   // ★해시에 지역명(뒤로가기·딥링크)
     gc.selectAll('circle').attr('r',d=>d===c?9:5.5).attr('stroke',d=>d===c?'#fff':'#f3ece0').attr('stroke-width',d=>d===c?3:1.6);
     halo.interrupt().attr('cx',c._p[0]).attr('cy',c._p[1]).attr('stroke',RC[c[1]]).attr('r',9).attr('opacity',.95)
         .transition().duration(550).attr('r',24).attr('opacity',0);
