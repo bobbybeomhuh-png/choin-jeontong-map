@@ -341,6 +341,17 @@ circle.city{cursor:pointer;}
 .mgrid{columns:2 180px;column-gap:12px;padding:8px 22px 44px;}
 /* 함께하는 창작자(파트너) 카드 그리드 — 만남의 장 */
 .pgrid{padding:6px 22px 8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+/* 이번 호 인터뷰 피처(만남의 장 최상단) — 잡지 매거진 톤 */
+.mfeature{margin:14px 22px 6px;background:linear-gradient(135deg,#2c241b,#12100b);border-radius:16px;overflow:hidden;display:flex;box-shadow:0 10px 26px rgba(59,51,38,.16);}
+.mfeature .fcov{width:230px;flex:0 0 230px;background-size:cover;background-position:center top;}
+.mfeature .fx{padding:28px 30px;color:#f4efe2;display:flex;flex-direction:column;justify-content:center;flex:1;}
+.mfeature .fk{font-size:11px;letter-spacing:3px;color:#c9a765;font-weight:800;}
+.mfeature h3{font-family:var(--serif);font-size:27px;font-weight:800;margin:10px 0 6px;line-height:1.24;}
+.mfeature .fw{font-size:12px;color:#c8bda6;letter-spacing:.3px;}
+.mfeature p{font-size:13px;color:#e6ddcb;line-height:1.72;margin:13px 0 17px;opacity:.94;}
+.mfeature .fbtn{align-self:flex-start;background:#f4efe2;color:#241f18;text-decoration:none;font-size:12.5px;font-weight:700;padding:10px 22px;border-radius:7px;letter-spacing:.3px;transition:.15s;}
+.mfeature .fbtn:hover{background:#fff;transform:translateY(-1px);}
+@media(max-width:640px){.mfeature{flex-direction:column}.mfeature .fcov{width:100%;flex:none;height:180px}.mfeature h3{font-size:23px}}
 .pc{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:.15s;cursor:pointer;}
 .pc:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 8px 20px rgba(59,51,38,.1);}
 .pc .pm{height:158px;background:#2a2318 center/cover;background-size:cover;position:relative;display:flex;align-items:center;justify-content:center;}
@@ -886,7 +897,8 @@ function openPartner(i){var p=PARTNERS[i];if(!p)return;
  m.classList.add('on');}
 window.openPartner=openPartner;
 window.closePartner=function(){var m=document.getElementById('pmodal');if(m)m.classList.remove('on');var mm=document.getElementById('pmmedia');if(mm)mm.innerHTML='';};
-function gallery(){document.getElementById('mgal').innerHTML='<div class="gsec psec-h"><span>함께하는 창작자 <small>한국 전통 관련 작업을 하시나요?</small></span><button class="preg-btn" onclick="openReg()">✎ 무료 등록하기</button></div>'
+function gallery(){document.getElementById('mgal').innerHTML='<div class="mfeature"><div class="fcov" style="background-image:url(poster/soyeon1.png)"></div><div class="fx"><div class="fk">이번 호 인터뷰 · MAKERS OF KOREA</div><h3>세계를 잇는 여섯 줄</h3><div class="fw">가야금 · 김소연 · 소연가야금스튜디오</div><p>대사관 초청부터 앙리·카카 VIP 무대까지, 영어 진행과 전통의 깊이로 세계를 잇는 연주자. 전통이 무대 위에서 오늘의 언어가 되는 순간.</p><a class="fbtn" href="#" onclick="openPartner(1);return false;">인터뷰 읽기 →</a></div></div>'
+ +'<div class="gsec psec-h"><span>함께하는 창작자 <small>한국 전통 관련 작업을 하시나요?</small></span><button class="preg-btn" onclick="openReg()">✎ 무료 등록하기</button></div>'
  +'<div class="pgrid" id="pgrid"></div>'
  +'<div class="pjoin">한국 전통 관련 작업을 하시나요? <a href="#" onclick="openReg();return false;">✎ 무료로 등록하기</a> · <a href="파트너.html" target="_blank" rel="noopener">전체 보기 →</a></div>'
  +'<div class="chal"><div class="in"><img class="av" src="muui_avatar.png" onerror="this.style.display=\'none\'"><div class="tx"><div class="k">무이의 이번 주 챌린지</div><div class="t">우리 동네 전통, 한 줄로 남겨줘</div><div class="s">남기면 <b>지도에 전시</b> + 첫 참여 배지 🏅 · 지금 <b id="chCount">0</b>명 참여</div></div><button class="go" onclick="chOpen()">참여하기 →</button></div></div>'
