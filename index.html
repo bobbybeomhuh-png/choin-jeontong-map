@@ -375,6 +375,11 @@ circle.city{cursor:pointer;}
 .th-celadon{background:linear-gradient(160deg,#5fa08f,#274f46);} .th-celadon .em{color:#eaf4ee;}
 .th-dancheong{background:linear-gradient(160deg,#1c3a44,#0f2129);} .th-dancheong .em{color:#7fb0a2;}
 .th-najeon{background:linear-gradient(150deg,#20222c,#0b0c11);} .th-najeon .em{color:#8fa9c9;}
+/* 실제 사진 커버 — 초인·무이 등 우리 소유 이미지 */
+.ivc.photo{background-size:cover;background-position:center;}
+.ivc.photo::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(12,9,5,.92) 6%,rgba(12,9,5,.3) 52%,rgba(12,9,5,.02));}
+.ivc.photo .em{display:none}
+.ivc.photo .lay{background:rgba(0,0,0,.42)}
 @media(max-width:640px){.iv-grid{grid-template-columns:repeat(2,1fr)}.ivc.big{grid-column:span 2;grid-row:auto}.ivc.big .tt{font-size:22px}}
 .pc{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:.15s;cursor:pointer;}
 .pc:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 8px 20px rgba(59,51,38,.1);}
@@ -926,8 +931,9 @@ function gallery(){document.getElementById('mgal').innerHTML='<div class="gsec p
  +'<a class="ivc big th-minhwa" href="인터뷰_민화.html" target="_blank" rel="noopener"><span class="lay">몰입형</span><span class="em">鵲</span><span class="fd">민화 · no.01</span><span class="tt">까치가 호랑이를 비웃던 밤</span><span class="nm">이단오 · 전주</span></a>'
  +'<a class="ivc th-meok" href="인터뷰_서예.html" target="_blank" rel="noopener"><span class="lay">인터뷰</span><span class="em">墨</span><span class="fd">서예 · no.02</span><span class="tt">번지는 것이 곧 글씨다</span><span class="nm">정한결 · 대구</span></a>'
  +'<a class="ivc th-celadon" href="인터뷰_도자.html" target="_blank" rel="noopener"><span class="lay">도록</span><span class="em">靑</span><span class="fd">도자 · no.03</span><span class="tt">흙이 물빛이 되기까지</span><span class="nm">예시 · 여주</span></a>'
+ +'<a class="ivc photo" style="background-image:url(poster/sinmyeong.jpg)" href="초인_포트폴리오.html" target="_blank" rel="noopener"><span class="lay">스튜디오</span><span class="fd">초인 스튜디오</span><span class="tt">전통을 미디어아트로 되살리다</span><span class="nm">CHOIN · 미디어아트</span></a>'
+ +'<a class="ivc photo" style="background-image:url(poster/sinmyeong_alt1.jpg)" href="https://www.youtube.com/@muuimaster" target="_blank" rel="noopener"><span class="lay">IP</span><span class="fd">무이 유물복원단</span><span class="tt">유물을 깨우는 캐릭터</span><span class="nm">CHOIN IP</span></a>'
  +'<span class="ivc soon th-dancheong"><span class="em">丹</span><span class="fd">단청</span><span class="tt">천장에 우주를 그리다</span><span class="soonlab">곧 공개</span></span>'
- +'<span class="ivc soon th-najeon"><span class="em">螺</span><span class="fd">나전</span><span class="tt">빛을 오려 붙이다</span><span class="soonlab">곧 공개</span></span>'
  +'</div>'
  +'<div class="gsec psec-h"><span>함께하는 창작자 <small>한국 전통 관련 작업을 하시나요?</small></span><button class="preg-btn" onclick="openReg()">✎ 무료 등록하기</button></div>'
  +'<div class="pgrid" id="pgrid"></div>'
