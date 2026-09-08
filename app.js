@@ -254,6 +254,10 @@ function regionContactsHtml(c){
 // 전체보기 그리드 (한번에 보기) — 권역별 도시 카드
 function setView(v){
   const isGrid=v==='grid', isBoard=v==='board', isCalls=v==='calls', isMap=!isGrid&&!isBoard&&!isCalls;
+  // ★2026-09-08 지도 중복(위아래 두 개) 수리 — setView는 전통이야기 쪽 뷰 전용이므로 항상 만남의 장을 닫는다.
+  var _mt=document.getElementById('meet'); if(_mt) _mt.classList.remove('on');
+  var _mm=document.getElementById('m-meet'); if(_mm) _mm.classList.remove('on');
+  var _ms=document.getElementById('m-story'); if(_ms) _ms.classList.add('on');
   document.querySelector('.wrap').style.display = isMap?'flex':'none';
   $('grid').style.display = isGrid?'flex':'none';
   const bd=$('board'); if(bd) bd.style.display = isBoard?'block':'none';
