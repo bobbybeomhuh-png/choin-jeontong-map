@@ -80,6 +80,32 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .pitem .scale{font-size:12.5px;color:#b8ab90;line-height:1.5;min-height:38px;}
 .pitem .st{margin-top:9px;font-size:10.5px;letter-spacing:1px;font-weight:700;display:inline-flex;align-items:center;gap:6px;}
 .pitem .st.go{color:#7fdca0;}
+/* 선정·수상·전시 */
+.hist{border-top:2px solid var(--ink);}
+.hitem{display:grid;grid-template-columns:460px 1fr;gap:0 38px;padding:34px 0;border-bottom:1px solid var(--line);align-items:center;}
+@media(max-width:980px){.hitem{grid-template-columns:360px 1fr;gap:0 26px;}}
+@media(max-width:760px){.hitem{grid-template-columns:1fr;gap:16px;padding:26px 0;}}
+.hitem .hthumb{position:relative;width:100%;aspect-ratio:16/9;border-radius:4px;overflow:hidden;
+  background:var(--land);border:1px solid var(--line2);box-shadow:0 2px 10px rgba(90,70,20,.10);}
+.hitem .hthumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.hitem .hthumb .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;
+  font-family:var(--serif);font-size:21px;font-weight:800;color:#8a7a5c;line-height:1.4;letter-spacing:-.3px;
+  background:linear-gradient(135deg,#ece0c8,#dfd0b0);}
+.hitem .hthumb .ph .soon{display:block;margin-top:10px;font-family:var(--sans);font-size:12px;
+  font-weight:700;color:#a3936f;letter-spacing:.5px;}
+.hitem .hbadge{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:11px;}
+.hitem .hbadge .yr{font-size:13px;letter-spacing:1.5px;font-weight:800;color:var(--gold);}
+.hitem .hbadge .role{font-size:12.5px;font-weight:700;color:var(--t2);background:var(--panel);
+  border:1px solid var(--line2);border-radius:999px;padding:4px 12px;}
+.hitem .hbadge .on{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#fff;
+  background:var(--teal);border-radius:999px;padding:4px 12px;}
+.hitem .hbadge .on i{width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;}
+.hitem .ht{font-family:var(--serif);font-size:27px;font-weight:800;color:var(--ink);line-height:1.34;letter-spacing:-.4px;}
+@media(max-width:980px){.hitem .ht{font-size:22px;}}
+.hitem .hw{font-size:16.5px;font-weight:700;color:var(--ink);margin-top:11px;line-height:1.5;}
+.hitem .hw b{color:var(--gold);font-weight:800;margin-right:7px;font-size:12.5px;letter-spacing:1px;vertical-align:1px;}
+.hitem .hv{font-size:14.5px;color:var(--t2);margin-top:7px;line-height:1.6;}
+.hitem .hh{font-size:12.5px;color:var(--t3);margin-top:10px;line-height:1.6;}
 .pitem .st.talk{color:#e0b667;}
 .pitem .st i{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;}
 
@@ -226,6 +252,13 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   </div>
 </section>
 
+<section class="blk" id="histSec">
+  <div class="wrap">
+    <h2>선정 · 수상 · 전시</h2>
+    <div class="hist" id="hist"></div>
+  </div>
+</section>
+
 <section class="works">
   <div class="top">
     <h2>Selected Works</h2>
@@ -323,16 +356,28 @@ var PROD=[
 // 작품 — video:구글드라이브 fileId(재생), src:포스터 URL, 없으면 gradient. venue:전시·송출처
 var GT='https://drive.google.com/thumbnail?id=';
 var WORKS=[
+ {cat:'immersive',size:'feat',title:'무이유물복원단 × 청주',sub:'팝업 전시 기획·운영 · 2026 · 상영 중',src:'poster/cheongju_popup.jpg',
+  venue:'2026 국가유산 미디어아트 청주 「빛으로 여는 청주의 보물」 제7경 「창조의 공간, 빛으로 피어나는 내일」 · 청주 성안길 빈점포 팝업 전시',
+  desc:'원도심 성안길의 빈 점포를 팝업 전시 공간으로 되살린 프로젝트. 지역 국가유산을 소재로 한 캐릭터 IP 협업 전시로, 공간 기획부터 콘텐츠 상영, 굿즈 운영까지 맡았다. 아날로그 공간과 디지털 미디어 기술을 결합해 쇠퇴한 상권에 사람의 흐름을 되돌리는 것을 목표로 했다. 10월 3일부터 24일까지 22일간 운영한다. 주최 국가유산청·충청북도·청주시 / 주관 국가유산진흥원·청주시문화산업진흥재단.'},
+ {cat:'facade',size:'feat',title:'한 땀의 도시, 청주',sub:'미디어파사드 · 2026 · 상영 중',src:'poster/cheongju_cheoldanggan.jpg',
+  venue:'2026 국가유산 미디어아트 청주 「빛으로 여는 청주의 보물」 · 용두사지 철당간(국보) 거점 미디어파사드 · CJB 청주방송 개막 중계 배경 송출',
+  desc:'조각보와 누빔천의 공예 기법으로 청주의 상상 풍경을 만든 미디어아트. 건축물·구름·꽃·길·비행기까지 모든 요소가 천을 잇고 겹친 바느질의 결로 구성된다. 서로 다른 조각을 한 땀씩 잇듯, 청주에 쌓인 사람들의 손길과 공예의 시간을 엮어냈다. 청주공항을 상징하는 다리미 비행기는 공예의 감각과 창조적 에너지가 멀리 퍼지기를 기원한다. 청주를 과거의 공예를 보존하는 도시를 넘어, 오늘의 감각으로 계속 만들어지는 도시로 보여준다. 주최 국가유산청·충청북도·청주시 / 주관 국가유산진흥원·청주시문화산업진흥재단.'},
+ {cat:'facade',size:'std',title:'무이 수호대, 청주 수호 작전',sub:'미디어파사드 · 2026 · 상영 중',src:'poster/cheongju_yeongmun.jpg',
+  venue:'2026 국가유산 미디어아트 청주 「빛으로 여는 청주의 보물」 · 충청도병마절도사영문 미디어파사드',
+  desc:'충청도병마절도사영문은 조선시대 충청도의 군사 업무를 관장하던 병영의 출입문이다. 작품은 영문의 역사적 역할을 청주를 지키는 수호의 이야기로 새롭게 풀어냈다. 여섯 무이가 창문마다 등장해 공격에 맞서고, 힘을 모아 수호의 빛을 펼친다. 화살·빛·전통 문양·백목련으로 구성된 수호진은 영문을 역동적인 모험의 무대로 바꾼다. 과거 병영의 문 위에서 오늘의 청주와 문화유산, 일상의 평화를 함께 지키는 의미를 전한다. 주최 국가유산청·충청북도·청주시 / 주관 국가유산진흥원·청주시문화산업진흥재단.'},
+ {cat:'facade',size:'std',title:'무이풍물단, 망선루로 가는 길',sub:'미디어파사드 · 2026 · 상영 중',src:'poster/cheongju_mangseonru.jpg',
+  venue:'2026 국가유산 미디어아트 청주 「빛으로 여는 청주의 보물」 · 망선루 미디어파사드',
+  desc:'망선루에 남은 왕의 행차, 과거시험, 연회의 기억을 무이풍물단의 행진으로 재해석한 작품. 망선루는 고려 공민왕의 청주 체류부터 교육·집회·시민 활동까지 이어진 문화유산이다. 장단과 함께 자연·유산·도시·마당의 풍경이 깨어나고, 무이들은 망선루를 향해 행진한다. 이 행렬은 옛 행차와 선비들의 발걸음, 연회의 흥을 오늘의 관객과 다시 나누는 축제의 장면이다. 사람들이 모여 배움과 기쁨, 공동체의 기억을 나누던 망선루의 의미를 빛과 움직임으로 되살린다. 주최 국가유산청·충청북도·청주시 / 주관 국가유산진흥원·청주시문화산업진흥재단.'},
  {cat:'immersive',size:'feat',title:'헤이와 둥둥',sub:'실감 전시 · 가로 · 1분 15초',video:'1fDlYN8P7-hkLTpiBcYls8Rb-EmNMNdkA',
   venue:'명동 자유상가 · 분당 페퍼저축은행 대형 LED 파사드 송출 · 헤이뮤지엄 아카이빙 상영',
   desc:'전통 서사의 시각적 치환. 한국 설화 속 생명의 근원 「서천꽃밭」을 전통 누빔기법을 텍스쳐화한 3D 공간으로 구축해 탄생과 순환의 서사를 시각화했습니다. 수호의 의미를 담은 「헤이」와 「둥둥」 풍물놀이단이 관객을 가이드하며 가상 세계와 정서적으로 교감하는 몰입형 내러티브.'},
  {cat:'facade',size:'feat',title:'빛의 계보 외 4테마',sub:'미디어파사드 · 2025',video:'1yM1czaz5WV-L9QsVMKQw-diDGzoFiC7R',
   venue:'', desc:'네 개 테마의 빛으로 풀어낸 미디어파사드.'},
  {cat:'facade',size:'pano',title:'신명, 길을 열다',sub:'초광폭 미디어파사드 · 2025',video:'1iWpDdZZSpb8VmtguQh1Vdeqsiih5awtV',src:'poster/sinmyeong.jpg',
-  venue:'', desc:'초광폭 화면에 펼친 신명의 서사. 밤 서울의 스카이라인을 배경으로 눈사람 풍물놀이단이 길을 연다.'},
+  venue:'',   desc:'초광폭 화면에 펼친 신명의 서사. 밤 서울의 스카이라인을 배경으로 눈사람 풍물놀이단이 길을 연다.'},
  {cat:'immersive',size:'std',title:'홍천',sub:'실감 콘텐츠 · 2025',video:'1YYYC8pH18DGT46cviGqoEwu10EuREaz3',
   venue:'', desc:'홍천의 자연과 이야기를 담은 실감 콘텐츠.'},
- {cat:'immersive',size:'std',title:'낙제의 궤적',sub:'미디어아트 · 2025',yt:'5CEDXFMljJQ',src:'https://img.youtube.com/vi/5CEDXFMljJQ/maxresdefault.jpg',
+ {cat:'immersive',size:'std',title:'낙재의 궤적',sub:'미디어아트 · 2025',yt:'5CEDXFMljJQ',src:'https://img.youtube.com/vi/5CEDXFMljJQ/maxresdefault.jpg',
   venue:'명동 자유상가 · 분당 페퍼저축은행 대형 LED 파사드 송출 · 파주 헤이뮤지엄 아카이빙 상영',
   desc:'디지털 아티스트 최수한·유승대·허범·홍경진의 미디어아트. 전통 장작가마(청도 무유장작가마)의 불과 그 흔적을 AI·3D·영상·사운드로 시각화했다. 「흙은 지구의 파동이고, 불은 변화의 진동이다」 — 그 파동을 빛과 영상으로 기록한 작업(프로젝트 「불과 파동의 기록」).'},
  {cat:'art',size:'std',title:'HARMONY',sub:'아트필름 · 세로 · 25초 · 4K',src:'https://images.gettyimageskorea.com/frm_jbos/2026/mediaart/2026-04/mediaart_1776390870.jpg',venue:'',desc:'화이트 배경 위에서 자연물과 유기적 형태, 유체의 흐름이 클래식 음악과 함께 전개되며 각 요소가 독립적 아름다움을 지닌 채 등장한다. 이후 서로 얽히고 결합해 하나의 조화로운 구조로 수렴, 마지막엔 하나의 물체로 완성된다. 보이지 않는 향(香)의 구조를 시각 경험으로 치환해 감각 간의 전이를 탐구한다.'},
@@ -348,6 +393,71 @@ var WORKS=[
 var CATL={facade:'MEDIA FACADE',immersive:'IMMERSIVE',art:'ART FILM',docu:'DOCUMENTARY',edu:'EDUCATION'};
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function poster(w){ return w.src ? w.src : (w.video ? (GT+w.video+'&sz=w1400') : ''); }
+
+var HIST=[
+ {y:'2026',t:'국가유산 미디어아트 청주 「빛으로 여는 청주의 보물」',r:'참여작가',on:1,
+  img:'poster/cheongju_hist_street.jpg',
+  w:'한 땀의 도시, 청주 · 무이 수호대, 청주 수호 작전 · 무이풍물단, 망선루로 가는 길',
+  v:'용두사지 철당간 · 충청도병마절도사영문 · 망선루 미디어파사드',
+  h:'주최 국가유산청 · 충청북도 · 청주시 / 주관 국가유산진흥원 · 청주시문화산업진흥재단'},
+ {y:'2026',t:'국가유산 미디어아트 청주 성안길 팝업스토어',r:'참여',on:1,
+  img:'poster/cheongju_hist_popup.jpg',
+  w:'무이유물복원단 × 청주',
+  v:'지역 국가유산 캐릭터 IP 협업 전시 · 전시 공간 기획 및 운영',
+  h:'주최 국가유산청 · 충청북도 · 청주시 / 주관 국가유산진흥원 · 청주시문화산업진흥재단'},
+ {y:'2026',t:'대한민국 문화도시 전주 전통문화 기반 실감미디어 테스트베드',r:'선정',soon:1,
+  w:'뻘불 통가마',
+  v:'미디어아트 부문 선정 · 팔복예술공장 실감미디어 공간 실증',
+  h:'주최 전주시 / 주관 전주문화재단'},
+ {y:'2026',t:'제1회 신세계스퀘어 미디어아트 어워즈',r:'오리지널 부문 최우수상',
+  img:'poster/hist_yeominrak.jpg',
+  w:'여민, 樂',
+  v:'신세계백화점 본점 신세계스퀘어 상영',
+  h:'공동 개최 국가유산청 · 신세계백화점'},
+ {y:'2026',t:'아트코리아랩 예술기술 융합 테스트베드',r:'초대형 미디어파사드 프로젝트 선정',
+  img:'poster/hist_deoksugung.jpg',
+  w:'덕수궁, 시간을 누비다',
+  v:'교원 스퀘어 미디어파사드 상영',
+  h:'주최 문화체육관광부 / 주관 예술경영지원센터 아트코리아랩'},
+ {y:'2026',t:'제6회 중앙 미디어아트 공모전',r:'본선 선정',soon:1,
+  w:'사계도시록 四季都市錄',
+  v:'코엑스 · 파르나스 미디어타워 제작 프로젝트',
+  h:'주최·주관 중앙일보 · WTC Seoul / 후원 대한항공'},
+ {y:'2026',t:'움직이는 한국화 : AI 미디어아트 공모전',r:'본선 선정',
+  img:'poster/hist_hwaryong.jpg',
+  w:'화룡점정',
+  v:'',
+  h:'주최·주관 CJ CGV · EASYWITH / 사업 지원 문화체육관광부 · 한국콘텐츠진흥원'},
+ {y:'',t:'Getty Images Korea 미디어아트 아티스트',r:'',
+  img:'poster/hist_seocheon.jpg',
+  w:'서천꽃밭 · 목화세상',
+  v:'명동 자유상가빌딩 · 분당 페퍼저축은행 대형 디지털 사이니지 상영',
+  h:'플랫폼 Getty Images Korea · Getty Media Art'},
+ {y:'',t:'파주 MUSEUM HEI 미디어아트 아티스트 · 상영',r:'',
+  img:'poster/hist_heydungdung.jpg',
+  w:'서천꽃밭 · 목화세상 · 낙재의 궤적',
+  v:'HEI PARK 디지털 아티스트 전시공간',
+  h:'전시기관 MUSEUM HEI / 운영 ㈜헤이미디어'}
+];
+(function(){
+  var el=document.getElementById('hist'); if(!el) return;
+  el.innerHTML=HIST.map(function(x){
+    var th=x.img
+      ? '<div class="hthumb"><img src="'+x.img+'" alt="" loading="lazy"></div>'
+      : '<div class="hthumb"><div class="ph">'+esc(x.w||x.t)
+        +(x.soon?'<span class="soon">이미지 준비 중</span>':'')+'</div></div>';
+    var b='<div class="hbadge">'
+      +(x.y?'<span class="yr">'+esc(x.y)+'</span>':'')
+      +(x.r?'<span class="role">'+esc(x.r)+'</span>':'')
+      +(x.on?'<span class="on"><i></i>상영 중</span>':'')+'</div>';
+    return '<div class="hitem">'+th+'<div>'+b
+      +'<div class="ht">'+esc(x.t)+'</div>'
+      +(x.w?'<div class="hw"><b>작품</b>'+esc(x.w)+'</div>':'')
+      +(x.v?'<div class="hv">'+esc(x.v)+'</div>':'')
+      +(x.h?'<div class="hh">'+esc(x.h)+'</div>':'')
+      +'</div></div>';
+  }).join('');
+})();
 
 document.getElementById('prodgrid').innerHTML=PROD.map(function(p,i){
   var st=p.ok?'<div class="st go"><i></i>'+esc(p.status)+'</div>':'<div class="st talk"><i></i>'+esc(p.status)+'</div>';
