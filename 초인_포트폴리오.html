@@ -252,6 +252,34 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   </div>
 </section>
 
+<style>
+.cjfeat{padding:0 20px;margin:48px 0;}
+.cjfeat-wrap{display:grid;grid-template-columns:1.25fr 1fr;max-width:1180px;margin:0 auto;background:var(--band);color:var(--bandtx);border-radius:18px;overflow:hidden;text-decoration:none;box-shadow:0 24px 60px -30px rgba(0,0,0,.55);border:1px solid rgba(230,190,106,.18);transition:transform .35s,box-shadow .35s;}
+.cjfeat-wrap:hover{transform:translateY(-3px);box-shadow:0 34px 80px -34px rgba(0,0,0,.65);}
+.cjfeat-img{position:relative;min-height:330px;}
+.cjfeat-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.cjfeat-img::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,rgba(28,23,16,.65));}
+.cjfeat-txt{padding:clamp(28px,4vw,52px);display:flex;flex-direction:column;justify-content:center;}
+.cjfeat-kick{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--bandgold);text-transform:uppercase;margin-bottom:14px;}
+.cjfeat-txt h2{font-family:var(--serif);font-size:clamp(23px,2.6vw,33px);line-height:1.25;margin:0 0 14px;color:var(--bandtx);}
+.cjfeat-txt h2 em{color:var(--bandgold);font-style:normal;}
+.cjfeat-txt p{font-size:14px;line-height:1.7;color:#cdbf9f;margin:0 0 22px;}
+.cjfeat-cta{font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--bandgold);}
+.cjfeat-wrap:hover .cjfeat-cta{text-decoration:underline;text-underline-offset:4px;}
+@media(max-width:760px){.cjfeat-wrap{grid-template-columns:1fr;}.cjfeat-img{min-height:210px;}.cjfeat-img::after{background:linear-gradient(180deg,transparent 60%,rgba(28,23,16,.6));}}
+</style>
+<section class="cjfeat">
+  <a class="cjfeat-wrap" href="cheongju.html">
+    <div class="cjfeat-img"><img src="poster/cheongju_cheoldanggan.jpg" alt="2026 청주 국가유산 미디어아트 · 용두사지 철당간 미디어파사드" loading="lazy"></div>
+    <div class="cjfeat-txt">
+      <div class="cjfeat-kick">Featured Project · 2026</div>
+      <h2>청주 국가유산 미디어아트<br><em>빛으로 여는 청주의 보물</em></h2>
+      <p>원도심 파사드 거점 세 곳과 성안길 빈 점포 팝업까지. 공간 기획부터 콘텐츠 제작, 굿즈 운영까지 전 과정을 맡은 2026년 대표 프로젝트.</p>
+      <span class="cjfeat-cta">프로젝트 자세히 보기</span>
+    </div>
+  </a>
+</section>
+
 <section class="blk" id="histSec">
   <div class="wrap">
     <h2>선정 · 수상 · 전시</h2>
