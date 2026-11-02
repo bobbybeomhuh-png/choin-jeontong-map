@@ -354,7 +354,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <div class="abgrid">
     <div><b>제작 영역</b><span>미디어파사드 · 실감/인터랙티브 전시 · 유물 복원 미디어아트 · 캐릭터 IP · 교육/다큐</span></div>
     <div><b>기술</b><span>Houdini · Blender · Unreal Engine · TouchDesigner · AI</span></div>
-    <div><b>함께한 곳</b><span>국내 대기업 신사옥 · 랜드마크 파사드 · 지자체·문화기관 · 글로벌 팝업(바르셀로나·두바이) 등 다수</span></div>
+    <div><b>함께한 곳</b><span>국가유산청 · 문화체육관광부 · 전주문화재단(팔복예술공장) · 청주시문화산업진흥재단 · 아트코리아랩(예술경영지원센터) · 충북콘텐츠코리아랩 · 신세계 · 중앙일보 · CJ CGV · Getty Images Korea · MUSEUM HEI · 대기업 신사옥·랜드마크 파사드 다수</span></div>
     <div><b>거점</b><span>서울 마포 · 대구·경북</span></div>
   </div>
   <a class="abmail" href="mailto:choin2626@gmail.com">협업 문의 · choin2626@gmail.com →</a>
@@ -432,6 +432,7 @@ var HIST=[
   v:'지역 국가유산 캐릭터 IP 협업 전시 · 전시 공간 기획 및 운영',
   h:'주최 국가유산청 · 충청북도 · 청주시 / 주관 국가유산진흥원 · 청주시문화산업진흥재단'},
  {y:'2026',t:'대한민국 문화도시 전주 전통문화 기반 실감미디어 테스트베드',r:'선정',soon:1,
+  img:'poster/hist_tonggama.jpg',
   w:'뻘불 통가마',
   v:'미디어아트 부문 선정 · 팔복예술공장 실감미디어 공간 실증',
   h:'주최 전주시 / 주관 전주문화재단'},
@@ -446,6 +447,7 @@ var HIST=[
   v:'교원 스퀘어 미디어파사드 상영',
   h:'주최 문화체육관광부 / 주관 예술경영지원센터 아트코리아랩'},
  {y:'2026',t:'제6회 중앙 미디어아트 공모전',r:'본선 선정',soon:1,
+  img:'poster/hist_sagye.jpg',
   w:'사계도시록 四季都市錄',
   v:'코엑스 · 파르나스 미디어타워 제작 프로젝트',
   h:'주최·주관 중앙일보 · WTC Seoul / 후원 대한항공'},
@@ -468,10 +470,11 @@ var HIST=[
 (function(){
   var el=document.getElementById('hist'); if(!el) return;
   el.innerHTML=HIST.map(function(x){
+    var ph='<div class="ph">'+esc(x.w||x.t)
+        +(x.soon?'<span class="soon">이미지 준비 중</span>':'')+'</div>';
     var th=x.img
-      ? '<div class="hthumb"><img src="'+x.img+'" alt="" loading="lazy"></div>'
-      : '<div class="hthumb"><div class="ph">'+esc(x.w||x.t)
-        +(x.soon?'<span class="soon">이미지 준비 중</span>':'')+'</div></div>';
+      ? '<div class="hthumb"><img src="'+x.img+'" alt="" loading="lazy" data-ph="'+ph.replace(/"/g,'&quot;')+'" onerror="this.parentNode.innerHTML=this.getAttribute(\'data-ph\')"></div>'
+      : '<div class="hthumb">'+ph+'</div>';
     var b='<div class="hbadge">'
       +(x.y?'<span class="yr">'+esc(x.y)+'</span>':'')
       +(x.r?'<span class="role">'+esc(x.r)+'</span>':'')
