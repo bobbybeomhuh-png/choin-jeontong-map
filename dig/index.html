@@ -20,6 +20,7 @@ body{background:#8fb4d8;color:var(--paper);font-family:var(--body);-webkit-user-
 #quest .t{font:20px/1.15 var(--display);color:var(--gold);text-wrap:balance}
 #quest .d{font-size:14px;line-height:1.3;text-wrap:balance}
 #auto{position:absolute;right:8px;top:7px}
+#redo{pointer-events:auto;font:15px var(--display);padding:7px 14px;background:var(--gold);color:#2a1b0c;border:2px solid var(--edge);cursor:pointer}
 #auto{pointer-events:auto;font:14px var(--display);padding:6px 12px;background:var(--wood2);color:var(--paper);border:2px solid var(--gold);cursor:pointer}
 #pin{position:fixed;left:0;top:0;z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:0;will-change:transform}
 #pinT{font:15px/1 var(--display);color:#2a1b0c;background:var(--gold);border:3px solid var(--edge);padding:5px 9px;white-space:nowrap}
@@ -79,7 +80,7 @@ button:focus-visible{outline:3px solid #fff;outline-offset:1px}
 </style>
 
 <canvas id="c" aria-label="무이 발굴단 블록 세계"></canvas>
-<div class="ui panel" id="quest"><div id="steps"><span>걷기</span><span>스캔</span><span>발굴</span><span>복원</span><span>전시</span></div><div class="t" id="qt"></div><div class="d" id="qd"></div><button id="auto" type="button" hidden>자동으로 가기</button></div>
+<div class="ui panel" id="quest"><div id="steps"><span>걷기</span><span>스캔</span><span>발굴</span><span>복원</span><span>전시</span></div><div class="t" id="qt"></div><div class="d" id="qd"></div><button id="auto" type="button" hidden>자동으로 가기</button><button id="redo" type="button" hidden>새로 발굴하기</button></div>
 <div id="pin" hidden><span id="pinT"></span><i id="pinA"></i></div>
 <div class="ui panel" id="stat"><div class="n">금관 <span id="fc">0</span>/5</div><div class="p">보존도 <span id="pres">100</span>%</div><div class="p" id="on">혼자 탐사 중</div><div class="minis"><button class="mini" id="mus" type="button" aria-pressed="true">음악 켬</button><button class="mini" id="snd" type="button" aria-pressed="true">소리 켬</button><button class="mini" id="cjgo" type="button" hidden>철당간 광장</button><button class="mini" id="invite" type="button">친구 부르기</button><button class="mini" id="view" type="button" aria-pressed="false">1인칭 (V)</button><button class="mini" id="help" type="button">설명</button><button class="mini" id="rst" type="button">처음부터</button></div></div>
 <div class="ui panel" id="say" role="status" hidden></div>
@@ -112,6 +113,7 @@ button:focus-visible{outline:3px solid #fff;outline-offset:1px}
   <p>지금 할 일은 화면 위쪽에 계속 알려 드립니다. 가입 없이, 이 주소로 들어온 사람은 모두 같은 세계에서 만납니다.</p>
   <ul id="howto"></ul>
   <button id="enter" type="button">발굴 시작</button>
+  <button id="fresh" class="btn g" type="button" hidden>처음부터 새로 하기</button>
 </div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
@@ -124,7 +126,7 @@ $('#howto').innerHTML=touch?'<li><b>왼쪽 원</b> 걷기 · <b>화면 끌기</b
 const rand=(()=>{let s=20261104;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}})();const rr=(a,b)=>a+rand()*(b-a);const rnd=(a,b)=>a+Math.random()*(b-a);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const ang2=(a,b)=>{let d=(b-a)%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d};
 /* ---------- 블록 ---------- */
-const PLAZA=false,CJ={x:24,z:96},CJ_SRC='assets/sanghwa_540.mp4';const W=160,D=160,H=56,CS=16;const blocks=new Uint8Array(W*D*H),sky=new Uint8Array(W*D*H),blk=new Uint8Array(W*D*H),locked=new Uint8Array(W*D*H);const I=(x,y,z)=>x+W*(z+D*y);const inb=(x,y,z)=>x>=0&&y>=0&&z>=0&&x<W&&y<H&&z<D;
+const PLAZA=true,CJ={x:24,z:96},CJ_SRC='assets/sanghwa_540.mp4';const W=160,D=160,H=56,CS=16;const blocks=new Uint8Array(W*D*H),sky=new Uint8Array(W*D*H),blk=new Uint8Array(W*D*H),locked=new Uint8Array(W*D*H);const I=(x,y,z)=>x+W*(z+D*y);const inb=(x,y,z)=>x>=0&&y>=0&&z>=0&&x<W&&y<H&&z<D;
 const AIR=0,GRASS=1,DIRT=2,CLAY=3,COBBLE=4,STONE=5,SAND=6,GRAVEL=7,LOG=8,LEAF=9,PINE=10,PLANK=11,WALL=12,ROOF=13,GOLD=14,EARTH=15,CHAMBER=16,CANVAS=17,BED=18,WATER=19,TALL=20,FLOWER=21,POST=22,LANT=23,TECH=24,BRICK=25,FLOWER2=26,IRON=27,GRANITE=28,PAVE=29,GLASS=30,CONC=31;
 /* 타일 번호 */
 const TN=['gt','gs','d','cl','co','st','sa','gr','ls','lt','lf','pn','pl','wl','rf','au','ea','ch','cv','be','ta','fl','te','br','f2','lg','ir','gn','pv','gl','cn'];const TI={};TN.forEach((n,i)=>TI[n]=i);
@@ -335,7 +337,7 @@ function endPtr(e){ptr.delete(e.pointerId);if(press&&press.id===e.pointerId){if(
 canvas.addEventListener('wheel',e=>{e.preventDefault();tdist=clamp(tdist+e.deltaY*.005,1.8,10)},{passive:false});
 {const j=$('#joy'),st=$('#stick');let id=null;const up=()=>{id=null;joyV={x:0,y:0};st.style.transform=''};j.addEventListener('pointerdown',e=>{id=e.pointerId;j.setPointerCapture(id);audio()});j.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;const r=j.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),l=Math.min(1,Math.hypot(dx,dy)/38),a=Math.atan2(dy,dx);joyV={x:Math.cos(a)*l,y:Math.sin(a)*l};st.style.transform=`translate(${joyV.x*28}px,${joyV.y*28}px)`});j.addEventListener('pointerup',up);j.addEventListener('pointercancel',up);const jb=$('#jump');jb.addEventListener('pointerdown',e=>{e.preventDefault();jumpReq=true;jb.setPointerCapture(e.pointerId)});jb.addEventListener('pointerup',()=>{jumpReq=false})}
 $('#mus').addEventListener('click',e=>{musicOn=!musicOn;e.currentTarget.textContent=musicOn?'음악 켬':'음악 끔';e.currentTarget.setAttribute('aria-pressed',musicOn);if(mus)mus.gain.value=musicOn?.6:0});$('#snd').addEventListener('click',e=>{soundOn=!soundOn;e.currentTarget.textContent=soundOn?'소리 켬':'소리 끔';e.currentTarget.setAttribute('aria-pressed',soundOn);if(sfx)sfx.gain.value=soundOn?1:0});
-const wipe=()=>{try{localStorage.removeItem(SAVE);localStorage.removeItem(SAVE+'-view')}catch(e){}location.reload()};let rstArm=0;$('#rst').addEventListener('click',e=>{const now=Date.now();if(now-rstArm<3000){wipe();return}rstArm=now;e.currentTarget.textContent='한 번 더';setTimeout(()=>{$('#rst').textContent='처음부터'},3000)});$('#again').addEventListener('click',wipe);$('#keep').addEventListener('click',()=>{$('#card').hidden=true});
+const wipe=()=>{try{localStorage.removeItem(SAVE);localStorage.removeItem(SAVE+'-view')}catch(e){}location.reload()};$('#redo').addEventListener('click',wipe);$('#fresh').addEventListener('click',wipe);let rstArm=0;$('#rst').addEventListener('click',e=>{const now=Date.now();if(now-rstArm<3000){wipe();return}rstArm=now;e.currentTarget.textContent='한 번 더';setTimeout(()=>{$('#rst').textContent='처음부터'},3000)});$('#again').addEventListener('click',wipe);$('#keep').addEventListener('click',()=>{$('#card').hidden=true});
 /* ---------- 길 안내: 바닥 화살표, 빛기둥, 화면 표시, 파낼 블록 ---------- */
 const floorAt=(x,z,yr)=>{const xi=Math.floor(x),zi=Math.floor(z);let y=clamp(Math.ceil(yr)+1,1,H-2);while(y<H-2&&isSolid(get(xi,y,zi)))y++;while(y>0&&!isSolid(get(xi,y-1,zi)))y--;return y};
 const CHEV=64;{}
@@ -372,7 +374,7 @@ function guideTick(){const c=found.filter(Boolean).length,dGo=Math.hypot(you.x-E
  if(PLAZA&&inPlaza()){route=null;pinP=null;digT=null;need=null;qt='청주 철당간 광장';qd='철당간 앞에서 초인 스튜디오 작품 「상화병」을 상영합니다. 화면 가까이 가면 소리가 커져요.'}
  if(route&&route.length){const r=route[route.length-1];let dist=0,px=you.x,pz=you.z;for(const q of route){dist+=Math.hypot(q[0]-px,q[1]-pz);px=q[0];pz=q[1]}const n=route[0],ny=floorAt(n[0],n[1],you.y)+1.5;if(st!==2||!pinP){pinP=[n[0],ny,n[1]];pinOn=`여기로 ${Math.max(1,Math.round(dist))}칸`}pinOff=`이쪽으로 ${Math.max(1,Math.round(dist))}칸`;beam.position.set(r[0],floorAt(r[0],r[1],you.y),r[1]);beam.visible=true;layChevrons()}else{beam.visible=false;chev.count=0;autoWalk=false}
  $('#steps').hidden=inPlaza();if(PLAZA)setTxt($('#cjgo'),inPlaza()?'공방으로':'철당간 광장');if(st!==stageNow){stageNow=st;document.querySelectorAll('#steps span').forEach((e,i)=>{e.className=i===Math.min(st,4)?'on':i<st?'done':''});if(st===0||st===2)lastDrag=-9999}
- setTxt($('#qt'),qt);setTxt($('#qd'),qd);const ab=$('#auto');ab.hidden=!route;if(route)setTxt(ab,autoWalk?'멈추기':T_KEY('자동으로 가기 (G)','자동으로 가기'));
+ $('#redo').hidden=!(completed)||inPlaza();setTxt($('#qt'),qt);setTxt($('#qd'),qd);const ab=$('#auto');ab.hidden=!route;if(route)setTxt(ab,autoWalk?'멈추기':T_KEY('자동으로 가기 (G)','자동으로 가기'));
  document.querySelectorAll('#bar .need').forEach(e=>{if(!need||!e.matches(need))e.classList.remove('need')});if(need){const e=$(need);if(e&&!e.hidden)e.classList.add('need')}}
 function layChevrons(){let px=you.x,pz=you.z,y=you.y,left=2.2,n=0;for(const q of route){let dx=q[0]-px,dz=q[1]-pz,L=Math.hypot(dx,dz);if(L<.01)continue;dx/=L;dz/=L;let t=left;while(t<L&&n<CHEV){const x=px+dx*t,z=pz+dz*t;y=floorAt(x,z,y);chevD[n]={x,y:y+.3,z,r:Math.atan2(-dx,-dz)};n++;t+=2.3}left=t-L;px=q[0];pz=q[1];if(n>=CHEV)break}chev.count=n}
 let stuckT=0,stuckX=0,stuckZ=0;function guideFrame(dt){if(route&&you.walk>.5&&!autoWalk){stuckT+=dt;if(stuckT>2.5){if(Math.hypot(you.x-stuckX,you.z-stuckZ)<.6)tell('<b>길이 막혔나요?</b> 자동으로 가기 버튼을 누르면 빠져나갑니다.',4);stuckT=0;stuckX=you.x;stuckZ=you.z}}else stuckT=0;for(let i=0;i<chev.count;i++){const d=chevD[i];m4.position.set(d.x,d.y,d.z);m4.rotation.set(0,d.r,0);const s=reduced?1:.82+.3*Math.max(0,Math.sin(time*5.5-i*.62));m4.scale.set(s,1,s);m4.updateMatrix();chev.setMatrixAt(i,m4.matrix)}chev.instanceMatrix.needsUpdate=true;
@@ -445,7 +447,7 @@ function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta()
  saveT-=dt;if(saveT<=0){saveT=8;saveNow()}
  if(sayT>0){sayT-=dt;if(sayT<=0)say.hidden=true}
  R.render(scene,cam)}
-loadSave();refreshUI();try{if(localStorage.getItem(SAVE+'-view')==='1'){fp=true;resize();$('#view').textContent='3인칭 (V)';$('#view').setAttribute('aria-pressed','true')}}catch(e){}
+loadSave();refreshUI();if(mods.size>0||found.some(Boolean)){$('#enter').textContent='이어하기';$('#fresh').hidden=false}try{if(localStorage.getItem(SAVE+'-view')==='1'){fp=true;resize();$('#view').textContent='3인칭 (V)';$('#view').setAttribute('aria-pressed','true')}}catch(e){}
 frame();$('#enter').addEventListener('click',()=>{audio();$('#gate').hidden=true;gateOpen=false;netStart();guideTick();if(route&&route[0]){const ax=route[0][0]-you.x,az=route[0][1]-you.z;yaw=Math.atan2(-ax,-az);you.dir=Math.atan2(ax,az);camT.set(you.x+Math.sin(yaw)*dist,you.y+2.4,you.z+Math.cos(yaw)*dist)}$('#enter').textContent='계속하기'});$('#help').addEventListener('click',()=>{gateOpen=true;for(const k in keys)keys[k]=false;autoWalk=false;$('#gate').hidden=false});
 })();
 </script>
