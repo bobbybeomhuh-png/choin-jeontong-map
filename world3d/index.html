@@ -7,7 +7,7 @@
 <title>무이 월드 3D</title>
 <meta name="description" content="무이 월드를 3D 무이로 다시 지은 시험판. 회랑의 쇼츠 문 옆에서 3D 무이 복원단이 유물을 실제로 작업한다">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&family=Do+Hyeon&display=swap" rel="stylesheet">
-<!-- ⏱ 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
+<!-- ⏱ 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
 <style>
 :root{--panel:rgba(22,16,11,.84);--line:rgba(255,236,210,.18);--ink:#f3eadb;--muted:#c8b9a2;--gold:#e7b75a}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#cfd8e0;color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;-webkit-tap-highlight-color:transparent}
@@ -26,8 +26,13 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #stick{position:fixed;left:24px;bottom:calc(env(safe-area-inset-bottom) + 30px);width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);z-index:4;touch-action:none}
 #stick i{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.55)}
 #yt{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:30;display:grid;place-items:center;padding:14px}#yt .in{display:grid;gap:10px;justify-items:center;width:min(420px,100%)}#yt iframe{width:min(380px,90vw);aspect-ratio:9/16;border:0;border-radius:12px}
+#cd{position:fixed;inset:0;display:grid;place-items:center;font:700 120px "Do Hyeon",sans-serif;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,.5);pointer-events:none;z-index:6}
+#ph{position:fixed;inset:0;background:rgba(10,7,4,.82);z-index:30;display:grid;place-items:center;padding:14px}#ph .in{display:grid;gap:12px;justify-items:center;width:min(900px,100%)}#ph img{max-width:100%;max-height:72vh;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5)}#ph a{text-decoration:none;display:inline-grid;place-items:center}
 [hidden]{display:none!important}
 @media (pointer:fine){#stick{display:none}}
+#top .btn,#ttl{white-space:nowrap}
+@media (max-width:560px){#top{gap:5px;padding-left:8px;padding-right:8px}#ttl{font-size:14px;padding:6px 9px}#top .btn{padding:6px 8px;font-size:13px;min-height:34px}#qCnt{position:fixed;left:8px;top:calc(env(safe-area-inset-top) + 54px)}#hint{top:calc(env(safe-area-inset-top) + 94px);font-size:13.5px}}
+@media (pointer:coarse){#act{left:auto;right:14px;transform:none;font-size:18px;padding:10px 16px;max-width:calc(100vw - 175px);white-space:normal}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
@@ -41,8 +46,10 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
  <div id="kinds"></div>
  <div><button class="btn main" id="go" type="button" style="font-size:18px;padding:11px 30px">들어가기</button> <button class="btn" id="toBlock" type="button">블록 세상으로</button></div>
 </div></section>
-<header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button">블록 세상</button></header>
+<header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><span class="btn" id="qCnt" hidden style="pointer-events:none"></span><button class="btn" id="bPhoto" type="button">기념사진</button><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button">블록 세상</button></header>
 <div id="hint" hidden></div>
+<div id="cd" hidden></div>
+<section id="ph" hidden><div class="in"><img id="phImg" alt="무이 월드 기념사진"><div><a class="btn main" id="phSave" download="muui-world-3d.png">사진 저장</a> <button class="btn" id="phX" type="button">닫기</button></div></div></section>
 <button id="act" type="button" hidden></button>
 <div id="stick" hidden><i></i></div>
 <section id="yt" hidden><div class="in"><iframe id="ytf" allow="autoplay; encrypted-media" allowfullscreen></iframe><button class="btn main" id="ytx" type="button">닫기</button></div></section>
@@ -152,6 +159,7 @@ async function makeMuui(k,height=1.0){const g=await loadKind(k);const m=Skeleton
  const mx=new THREE.AnimationMixer(m),A={};for(const c of g.animations){const cl=c.clone();A[c.name]=mx.clipAction(cl)}
  const props=['prop_shovel','prop_brush','prop_pot','prop_hammer','prop_broom','prop_loupe','prop_paintbrush','prop_scroll'].map(n=>m.getObjectByName(n)).filter(Boolean);props.forEach(p=>p.visible=false);
  const PM={dig:'prop_shovel',brush:'prop_brush',carry:'prop_pot',hammer:'prop_hammer',sweep:'prop_broom',magnify:'prop_loupe',paint:'prop_paintbrush',read:'prop_scroll'};
+ for(const n of['sit','keunjeol','bow'])if(A[n]){A[n].setLoop(THREE.LoopOnce,1);A[n].clampWhenFinished=true}
  const me={k,root,mx,A,cur:null,play(n,fade=.3){const a=A[n]||A.idle;if(!a||me.cur===a)return;a.reset().fadeIn(fade).play();if(me.cur)me.cur.fadeOut(fade);me.cur=a;props.forEach(p=>p.visible=p.name===PM[n])}};
  scene.add(root);return me}
 /* 복원단: 유물마다 공정을 반복한다 */
@@ -159,7 +167,73 @@ const CREW_JOBS={ceramic:[['brush',1.6,0],['knead',-1.7,.4]],science:[['magnify'
 const CREW=[];
 async function placeCrew(){for(const s of SITES){const jobs=CREW_JOBS[s.k];for(let i=0;i<jobs.length;i++){const[j,off,dz]=jobs[i];const kind=i?KINDS[(KINDS.findIndex(q=>q.k===s.k)+2)%5].k:s.k;const m=await makeMuui(kind,.95);
  /* 유물 앞(마당 쪽)에서 유물을 보게 */const dir=new THREE.Vector3(-s.x,0,2.5-s.z).normalize(),side=new THREE.Vector3(dir.z,0,-dir.x);const p=new THREE.Vector3(s.x,0,s.z).addScaledVector(dir,1.7+dz).addScaledVector(side,off);
- m.root.position.copy(p);m.root.rotation.y=Math.atan2(s.x-p.x,s.z-p.z);m.play(j,0);m.job=j;m.home=p.clone();m.site=s;m.t=Math.random()*3;CREW.push(m)}}}
+ m.root.position.copy(p);m.root.rotation.y=Math.atan2(s.x-p.x,s.z-p.z);m.play(j,0);m.job=j;m.lead=i===0;m.home=p.clone();m.site=s;m.t=Math.random()*3;CREW.push(m)}}}
+/* ---------------- 모닥불 잔치: 밤이면 둘레를 돌며 어깨춤, 같이 출 수 있다 ---------------- */
+const NOARM={science:1,painter:1};/* 소매가 넓은 둘은 팔을 높이 들면 날개처럼 펴져서 박수·끄덕으로 */
+const FX=-9,FZ=14,FR=2.7;const ashM=M(0x3a2c22,{roughness:1,emissive:0xff4a10,emissiveIntensity:0}),logM=M(0x4a2f1c,{roughness:.9,emissive:0xff5a14,emissiveIntensity:0});const fireG=new THREE.Group();fireG.position.set(FX,0,FZ);scene.add(fireG);
+{const st=M(0x8d867b,{roughness:.95});for(let i=0;i<11;i++){const a=i/11*6.28,r=new THREE.Mesh(new THREE.DodecahedronGeometry(.2+Math.random()*.07,0),st);r.position.set(Math.cos(a)*.75,.12,Math.sin(a)*.75);r.rotation.set(Math.random()*3,Math.random()*3,0);r.castShadow=true;fireG.add(r)}
+ const lg=logM;for(let i=0;i<4;i++){const l=cyl(.08,.1,1.1,lg,8);l.rotation.set(Math.PI/2-.5,i*Math.PI/4*2+.4,0);l.position.y=.28;l.castShadow=true;fireG.add(l)}
+ const ash=new THREE.Mesh(new THREE.CircleGeometry(.62,24).rotateX(-Math.PI/2),ashM);ash.position.y=.02;fireG.add(ash);
+ /* 둘레 방석: 낮에는 여기 앉아 쉰다 */const cu=[M(0x9c3b2c,{roughness:.9}),M(0x2f5f8a,{roughness:.9}),M(0xc59b3a,{roughness:.9})];for(let i=0;i<6;i++){const a=i/6*6.28+.3,c=cyl(.38,.4,.1,cu[i%3],20);c.position.set(Math.cos(a)*FR,.05,Math.sin(a)*FR);c.receiveShadow=true;fireG.add(c)}}
+const flameM=[0xff6a1f,0xffb43a,0xfff0a0].map((c,i)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:[.75,.8,.9][i],blending:THREE.AdditiveBlending,depthWrite:false}));
+const flames=[];for(let i=0;i<7;i++){const k=i<4?0:i<6?1:2,f=new THREE.Mesh(new THREE.ConeGeometry([.32,.22,.12][k],[1.1,.8,.45][k],10,1,true),flameM[k]);const a=i*2.4,d=k===2?0:k===1?.08:.14;f.position.set(Math.cos(a)*d,.3+[.5,.38,.25][k],Math.sin(a)*d);f.userData={b:f.position.y,h:[1.1,.8,.45][k],p:Math.random()*6};f.visible=false;fireG.add(f);flames.push(f)}
+const fireL=new THREE.PointLight(0xff9040,0,16,1.5);fireL.position.set(0,1.3,0);fireL.castShadow=false;fireG.add(fireL);
+const EMB=60,embG=new THREE.BufferGeometry(),embP=new Float32Array(EMB*3),embV=[];for(let i=0;i<EMB;i++){embV.push(Math.random());embP[i*3+1]=-9}embG.setAttribute('position',new THREE.BufferAttribute(embP,3));
+const embers=new THREE.Points(embG,new THREE.PointsMaterial({color:0xffa050,size:.07,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));embers.visible=false;fireG.add(embers);
+const DANCERS=[];let joined=false,joinA=0;
+async function placeDancers(){const sit=['sit_idle','sit_look','sit_clap','sit_doze','sit_idle'];for(let i=0;i<5;i++){const k=KINDS[(i+1)%5].k,m=await makeMuui(k,.95);m.a=i/5*6.28;m.seat=i/6*6.28+.3;m.sitAct=sit[i];m.danceAct=NOARM[k]?'clap':'dance';m.state='';
+ m.root.position.set(FX+Math.cos(m.seat)*FR,0,FZ+Math.sin(m.seat)*FR);DANCERS.push(m)}}
+function fireTick(dt,now){const lit=night;for(const f of flames){f.visible=lit;if(lit){const u=f.userData,s=.8+.3*Math.sin(now*.011+u.p)+.15*Math.sin(now*.027+u.p*2);f.scale.set(1,s,1);f.position.y=u.b+(s-1)*u.h*.5}}
+ ashM.emissiveIntensity=lit?.9+.3*Math.sin(now*.013):0;logM.emissiveIntensity=lit?.55+.2*Math.sin(now*.017):0;fireL.intensity=lit?26+6*Math.sin(now*.019)+4*Math.sin(now*.047):0;embers.visible=lit;
+ if(lit){for(let i=0;i<EMB;i++){let y=embP[i*3+1];if(y<0||y>3.2){embP[i*3]=(Math.random()-.5)*.6;embP[i*3+2]=(Math.random()-.5)*.6;y=.4}embP[i*3+1]=y+dt*(.6+embV[i]*.9);embP[i*3]+=Math.sin(now*.003+i)*dt*.15}embG.attributes.position.needsUpdate=true}
+ for(const m of DANCERS){let tx,tz,face,want;if(lit){m.a+=dt*.22;tx=FX+Math.cos(m.a)*FR;tz=FZ+Math.sin(m.a)*FR;want=m.danceAct}else{tx=FX+Math.cos(m.seat)*FR;tz=FZ+Math.sin(m.seat)*FR;want=m.sitAct}
+  const p=m.root.position,dx=tx-p.x,dz=tz-p.z,d=Math.hypot(dx,dz);
+  if(d>.35){/* 자리로 걸어간다 */const st=Math.min(d,dt*(d>2?3.6:1.6));p.x+=dx/d*st;p.z+=dz/d*st;m.root.rotation.y=Math.atan2(dx,dz);m.play(d>2?'run':'walk',.25)}
+  else{p.x+=dx*Math.min(1,dt*4);p.z+=dz*Math.min(1,dt*4);
+   /* 춤은 도는 쪽을 보고, 앉으면 불을 본다 */const ry=lit?Math.atan2(-Math.sin(m.a),Math.cos(m.a)):Math.atan2(FX-p.x,FZ-p.z);let r=ry-m.root.rotation.y;r=Math.atan2(Math.sin(r),Math.cos(r));m.root.rotation.y+=r*Math.min(1,dt*6);
+   if(!m.busy)m.play(want==='sit_idle'||want.startsWith('sit_')?(m.state==='sat'?want:(m.state='sitting','sit')):want,.35);
+   if(!lit&&m.state==='sitting'&&m.cur===m.A.sit&&m.cur.time>=m.cur.getClip().duration*.95){m.state='sat'}if(lit)m.state=''}
+  m.mx.update(dt)}}
+/* ---------------- 부탁: 유물마다 반장 무이가 먼저 부탁을 건다 ---------------- */
+const QUEST={ceramic:{item:'흙 바구니',at:[-22,4],ask:'달항아리 틈을 메울 고운 흙이 모자라요. 서쪽 담장 아래 흙 바구니를 가져다 줄래요?',thx:'고마워요! 이 흙이면 허리 이음선 틈을 메울 수 있어요.'},
+ science:{item:'빗물 기록지',at:[5.5,7],ask:'비 온 날 적은 기록지가 바람에 날아갔어요. 단풍나무 아래 어딘가 떨어졌을 거예요.',thx:'찾았네요! 이 날 비가 두 치 내렸다고 적혀 있어요.'},
+ carpenter:{item:'기와 조각',at:[7.5,26.5],ask:'다보탑 지붕돌에 맞춰 볼 기와 조각을 대문 옆에 두고 왔어요. 가져다 줄래요?',thx:'딱 맞아요! 이제 지붕돌 모서리를 다시 잡을 수 있어요.'},
+ painter:{item:'붉은 물감 그릇',at:[21,10.5],ask:'일월오봉도의 해를 칠할 붉은 물감 그릇이 동쪽 나무 아래 있어요.',thx:'이 붉은색이면 해가 다시 또렷해져요. 고마워요!'},
+ metal:{item:'광택 천',at:[-13,21.5],ask:'향로를 닦을 광택 천을 모닥불 근처에 두고 왔어요. 부탁해요!',thx:'반짝반짝! 봉황 날개 금빛이 살아났어요.'}};
+const qDone=new Set((()=>{try{return JSON.parse(localStorage.getItem('muui3d-quests')||'[]')}catch(e){return[]}})());let qActive=null,qHeld=null;
+function qItem(k){const g=new THREE.Group();
+ if(k==='ceramic'){const b=cyl(.26,.2,.24,M(0x9a6a3a,{roughness:.9}),14);b.position.y=.12;g.add(b);const c=new THREE.Mesh(new THREE.SphereGeometry(.22,14,8,0,6.29,0,1.4),M(0xb08a62,{roughness:1}));c.position.y=.2;g.add(c)}
+ else if(k==='science'){const p=box(.34,.01,.46,M(0xf1e8d2,{roughness:.9}));p.position.y=.02;g.add(p);for(let i=0;i<5;i++){const l=box(.24,.012,.012,M(0x2b2218));l.position.set(0,.03,-.16+i*.08);g.add(l)}}
+ else if(k==='carpenter'){const t=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,.42,12,1,true,0,Math.PI),M(0x3d4046,{roughness:.5,side:THREE.DoubleSide}));t.rotation.z=Math.PI/2;t.position.y=.06;g.add(t)}
+ else if(k==='painter'){const b=lathe([[0,0],[.14,0],[.2,.08],[.2,.1],[0,.1]],M(0xe8e0cf,{roughness:.6}),20);g.add(b);const r=cyl(.17,.17,.01,M(0xc8281e,{roughness:.4}),20);r.position.y=.09;g.add(r)}
+ else{const c=box(.36,.04,.28,M(0xe2b84a,{roughness:.95}));c.position.y=.03;c.rotation.y=.4;g.add(c)}
+ g.traverse(o=>{if(o.isMesh)o.castShadow=true});return g}
+for(const k in QUEST){const q=QUEST[k];q.mesh=qItem(k);q.mesh.position.set(q.at[0],0,q.at[1]);q.mesh.visible=!qDone.has(k);scene.add(q.mesh)}
+const qMark=new THREE.Mesh(new THREE.OctahedronGeometry(.18),new THREE.MeshStandardMaterial({color:0xf2c14e,emissive:0xf2a020,emissiveIntensity:1.2}));qMark.visible=false;scene.add(qMark);
+function qUI(){const c=$('#qCnt');c.hidden=!qDone.size&&!qActive;c.textContent=`부탁 ${qDone.size}/5`+(qHeld?` · ${QUEST[qHeld].item} 들고 있음`:qActive?` · ${QUEST[qActive].item} 찾는 중`:'')}
+function qTick(now){if(qActive&&!qHeld){const q=QUEST[qActive];qMark.visible=true;qMark.position.set(q.at[0],.9+Math.sin(now*.004)*.15,q.at[1]);qMark.rotation.y=now*.002}else qMark.visible=false;
+ if(qHeld&&me){const q=QUEST[qHeld],f=new THREE.Vector3(Math.sin(yaw)*.36,.5,Math.cos(yaw)*.36);q.mesh.position.copy(pos).add(f);q.mesh.rotation.y=yaw}}
+/* 반장 무이 앞에서 누르는 버튼 */
+function leadAct(c,a){const k=c.site.k,q=QUEST[k],nm=KINDS.find(x=>x.k===c.k).n;
+ if(qDone.has(k))return false;
+ if(qHeld===k){a.textContent=`${q.item} 건네주기`;actFn=()=>{qDone.add(k);try{localStorage.setItem('muui3d-quests',JSON.stringify([...qDone]))}catch(e){}qHeld=null;qActive=null;q.mesh.visible=false;
+   c.busy=1;c.play(NOARM[c.k]?'laugh':'cheer',.2);setTimeout(()=>{c.busy=0;c.play(c.job,.4)},2200);hint(`${nm}: ${q.thx}`,5500);qUI();
+   if(qDone.size===5)setTimeout(()=>{hint('다섯 부탁을 다 들어줬어요! 이제 복원단 명예 단원이에요.',7000);for(const m of CREW){m.busy=1;m.play(NOARM[m.k]?'nod':'cheer',.3);setTimeout(()=>{m.busy=0;m.play(m.job,.4)},2600)}},2400)};return true}
+ if(qActive===k){a.textContent=`${nm}: ${q.item} 아직이에요`;actFn=()=>hint(`${nm}: ${q.ask}`,5000);return true}
+ if(qActive||qHeld)return false;
+ a.textContent=`${nm}의 부탁 듣기`;actFn=()=>{qActive=k;c.busy=1;c.play('point',.2);setTimeout(()=>{c.busy=0;c.play(c.job,.4)},1800);hint(`${nm}: ${q.ask}`,7000);qUI()};return true}
+/* ---------------- 기념사진: 내 무이가 돌아서서 포즈, 3·2·1 뒤 찍는다 ---------------- */
+let photo=null;const flash=new THREE.PointLight(0xfff3e0,0,12,1.2);scene.add(flash);
+function shoot(){const ui=['#top','#act','#hint','#stick'].map(q=>[q,$(q).hidden]);ui.forEach(([q])=>$(q).hidden=true);flash.position.copy(cam.position);flash.position.y+=.3;flash.intensity=night?9:2.5;R.render(scene,cam);flash.intensity=0;const src=R.domElement.toDataURL('image/png');ui.forEach(([q,h])=>$(q).hidden=h);
+ const im=new Image();im.onload=()=>{const W=im.width,H=im.height,b=Math.round(Math.min(W,H)*.035),band=Math.round(Math.min(W,H)*.11),c=document.createElement('canvas');c.width=W+b*2;c.height=H+b+band;const q=c.getContext('2d');
+  q.fillStyle='#f4efe6';q.fillRect(0,0,c.width,c.height);q.drawImage(im,b,b);q.fillStyle='#2a1d12';q.textBaseline='middle';q.font=`700 ${Math.round(band*.36)}px "Noto Serif KR",serif`;q.fillText('MUUI WORLD · 3D',b,H+b+band*.48);
+  const d=new Date(),nm=KINDS.find(x=>x.k===me.k).n;q.font=`${Math.round(band*.26)}px "Gowun Dodum",sans-serif`;q.textAlign='right';q.fillStyle='#6b5540';q.fillText(`${nm}와 함께 · ${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`+(qDone.size?` · 부탁 ${qDone.size}/5`:''),c.width-b,H+b+band*.48);
+  const u=c.toDataURL('image/png');$('#phImg').src=u;$('#phSave').href=u;$('#ph').hidden=false};im.src=src}
+$('#bPhoto').addEventListener('click',()=>{if(!me||photo)return;joined=false;photo={t:3.2,yaw:camYaw,pose:NOARM[me.k]?'shy':'cheer'};$('#cd').hidden=false});
+$('#phX').addEventListener('click',()=>{$('#ph').hidden=true});
+function photoTick(dt){if(!photo)return;photo.t-=dt;const n=Math.ceil(photo.t-.2);$('#cd').textContent=n>0?n:'';
+ yaw=photo.yaw;speed=0;const ex=pos.x+Math.sin(yaw)*3.3,ez=pos.z+Math.cos(yaw)*3.3;cam.position.set(ex,1.35,ez);cam.lookAt(pos.x,.72,pos.z);
+ if(photo.t<=0){$('#cd').hidden=true;shoot();photo=null}}
 /* 내 무이 */
 let me=null,pos=new THREE.Vector3(0,0,24),yaw=Math.PI,camYaw=Math.PI,camPitch=.32,camDist=5.2,speed=0;const keys={};
 /* ---------------- 조작 ---------------- */
@@ -190,34 +264,41 @@ $('#bBlock').addEventListener('click',()=>{location.href='../world/?from=world3d
 let pickK=(()=>{try{return localStorage.getItem('muui3d-kind')}catch(e){}})()||'ceramic';
 {const box_=$('#kinds');for(const q of KINDS){const b=document.createElement('button');b.type='button';b.innerHTML=`<img alt="" src="media/pick_${q.k}.jpg" onerror="this.style.visibility='hidden'"><b>${q.n}</b><span>${q.d}</span>`;b.classList.toggle('on',q.k===pickK);b.addEventListener('click',()=>{pickK=q.k;box_.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});box_.appendChild(b)}}
 $('#go').addEventListener('click',async()=>{try{localStorage.setItem('muui3d-kind',pickK)}catch(e){}$('#pick').hidden=true;$('#load').hidden=false;$('#load').style.opacity=1;
- me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);await placeCrew();
+ me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);await placeCrew();await placeDancers();qUI();
  $('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);$('#top').hidden=false;if(matchMedia('(pointer:coarse)').matches)$('#stick').hidden=false;
  DOORS.forEach(d=>d.vid.play().then(()=>{const t=new THREE.VideoTexture(d.vid);t.colorSpace=THREE.SRGBColorSpace;d.mat.map=t;d.mat.needsUpdate=true}).catch(()=>{}));
  hint(matchMedia('(pointer:coarse)').matches?'왼쪽 원으로 걷고, 화면을 밀어 둘러보세요. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.':'WASD로 걷고 Shift로 뛰어요. 끌어서 둘러보고 휠로 가까이. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.',8000)});
 /* ---------------- 프레임 ---------------- */
 let last=performance.now(),uiT=0;const tmp=new THREE.Vector3();
 R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
- if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}
+ if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}if(photo){fx=0;sx=0}
   const mag=Math.min(1,Math.hypot(fx,sx)),run=keys.ShiftLeft||keys.ShiftRight||(stickId!==null&&mag>.85);const want=mag>.05?(run?4.2:1.8):0;speed+=(want-speed)*Math.min(1,dt*8);
-  if(mag>.05){const a=camYaw+Math.atan2(sx,fx)+Math.PI;let d=a-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*10)}
+  if(joined&&(mag>.05||!night)){joined=false;hint('춤에서 빠져나왔어요.',2500)}
+  if(joined){joinA+=dt*.22;pos.set(FX+Math.cos(joinA)*FR,0,FZ+Math.sin(joinA)*FR);yaw=Math.atan2(-Math.sin(joinA),Math.cos(joinA));speed=0}
+  else{if(mag>.05){const a=camYaw+Math.atan2(sx,fx)+Math.PI;let d=a-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*10)}
   pos.x+=Math.sin(yaw)*speed*dt;pos.z+=Math.cos(yaw)*speed*dt;const r=Math.hypot(pos.x,pos.z);if(r>28.5){pos.x*=28.5/r;pos.z*=28.5/r}if(pos.z<0&&r>RC-2.6&&r<RC+2.4){/* 회랑 기둥 안쪽으로만 */}
   for(const s of SITES){const dx=pos.x-s.x,dz=pos.z-s.z,dd=Math.hypot(dx,dz),min=s.k==='carpenter'?2.1:1.2;if(dd<min){pos.x=s.x+dx/dd*min;pos.z=s.z+dz/dd*min}}
   {const dx=pos.x,dz=pos.z-2.5,dd=Math.hypot(dx,dz);if(dd<.9){pos.x=dx/dd*.9;pos.z=2.5+dz/dd*.9}}
-  me.root.position.copy(pos);me.root.rotation.y=yaw;me.play(speed>3?'run':speed>.25?'walk':'idle',.25);if(me.cur&&me.cur===me.A.walk)me.cur.timeScale=Math.max(.6,speed/1.8);me.mx.update(dt);
+  {const dx=pos.x-FX,dz=pos.z-FZ,dd=Math.hypot(dx,dz);if(dd<1.2){pos.x=FX+dx/dd*1.2;pos.z=FZ+dz/dd*1.2}}}
+  me.root.position.copy(pos);me.root.rotation.y=yaw;me.play(photo?photo.pose:joined?(NOARM[me.k]?'clap':'dance'):speed>3?'run':speed>.25?'walk':'idle',.25);if(me.cur&&me.cur===me.A.walk)me.cur.timeScale=Math.max(.6,speed/1.8);me.mx.update(dt);
   const ty=1.0;tmp.set(pos.x+Math.sin(camYaw)*Math.cos(camPitch)*camDist,ty+Math.sin(camPitch)*camDist,pos.z+Math.cos(camYaw)*Math.cos(camPitch)*camDist);cam.position.lerp(tmp,Math.min(1,dt*8));cam.lookAt(pos.x,ty,pos.z)}
  else{const t=now/1000*.06;cam.position.set(Math.sin(t)*30,9,Math.cos(t)*30);cam.lookAt(0,2,0)}
  for(const c of CREW){c.mx.update(dt);c.t+=dt;
   if(c.job==='carry'){/* 돌을 들고 탑까지 왔다 갔다 */const a=Math.sin(c.t*.35);const p=c.home.clone();p.x+=Math.cos(c.root.rotation.y)*a*2.2;p.z-=Math.sin(c.root.rotation.y)*a*2.2;c.root.position.copy(p)}
-  if(me){const d=c.root.position.distanceTo(pos);if(d<3&&!c.greet){c.greet=1;c.prev=c.job;c.play('wave',.3);setTimeout(()=>{c.play(c.prev,.4)},1700)}if(d>5)c.greet=0}}
+  if(me){const d=c.root.position.distanceTo(pos);if(d<3&&!c.greet&&!c.busy){c.greet=1;c.prev=c.job;c.play(NOARM[c.k]?'nod':'wave',.3);setTimeout(()=>{if(!c.busy)c.play(c.prev,.4)},1700)}if(d>5)c.greet=0}}
+ fireTick(dt,now);qTick(now);if(me)photoTick(dt);
  uiT-=dt;if(uiT<=0&&me){uiT=.15;const a=$('#act');a.hidden=true;actFn=null;
   for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){a.textContent='쇼츠 보기';actFn=()=>openYT(d);a.hidden=false;break}}
+  if(a.hidden&&qActive&&!qHeld){const q=QUEST[qActive];if(Math.hypot(pos.x-q.at[0],pos.z-q.at[1])<1.6){a.textContent=`${q.item} 줍기`;actFn=()=>{qHeld=qActive;hint(`${q.item}을(를) 들었어요. ${KINDS.find(x=>x.k===qHeld).d} 복원단에게 가져가요.`,4500);qUI()};a.hidden=false}}
+  if(a.hidden)for(const c of CREW){if(c.lead&&c.root.position.distanceTo(pos)<2.6&&leadAct(c,a)){a.hidden=false;break}}
   if(a.hidden)for(const c of CREW){if(c.root.position.distanceTo(pos)<2.2){a.textContent=`${KINDS.find(q=>q.k===c.k).n}: ${JOBKO[c.job]||'일하는 중'}`;actFn=()=>{c.play('nod',.2);setTimeout(()=>c.play(c.job,.3),1100);hint(`${KINDS.find(q=>q.k===c.k).n}가 ${c.site?KINDS.find(q=>q.k===c.site.k).d:''} 복원을 하고 있어요. ${JOBKO[c.job]||''}.`,4000)};a.hidden=false;break}}
+  if(a.hidden&&!joined&&Math.hypot(pos.x-FX,pos.z-FZ)<FR+3.4){if(night){a.textContent='같이 어깨춤 추기';actFn=()=>{joined=true;joinA=Math.atan2(pos.z-FZ,pos.x-FX);const j=DANCERS[(Math.random()*5)|0];if(j&&!NOARM[j.k]){j.busy=1;j.play('joy',.2);setTimeout(()=>{j.busy=0},1600)}hint('모닥불 둘레를 같이 돌아요. 움직이면 빠져나와요.',4000)}}else{a.textContent='모닥불 피우기 (해 질 녘으로)';actFn=()=>{setNight(true);hint('해가 졌어요. 무이들이 일어나 모닥불 둘레에서 어깨춤을 춰요.',5000)}}a.hidden=false}
   for(const d of DOORS){const near=Math.hypot(pos.x-d.fx,pos.z-d.fz)<16;if(near&&d.vid.paused)d.vid.play().catch(()=>{});else if(!near&&!d.vid.paused)d.vid.pause()}}
  R.render(scene,cam)});
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
 setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>{$('#load').hidden=true;$('#pick').hidden=false},500)},600);
 if(qs.has('night'))setNight(true);
-window.__W3={get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
+window.__W3={QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
 </script>
 </body>
 </html>
