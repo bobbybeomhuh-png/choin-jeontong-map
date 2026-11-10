@@ -981,7 +981,7 @@ function portalTick(P,dt,near){P.t+=dt;P.d1.rotation.z+=dt*1.3;P.d2.rotation.z-=
 /* ---------- 발굴단과 공방 입구 ---------- */
 const PORTS=[{k:'dig',th:142.07,url:'dig'}].map(d=>{const[x,z]=rP(24.6,d.th),[fx,fz]=rP(22.4,d.th),g=new T.Group();g.position.set(x,G+1,z);g.rotation.y=(d.th+180)*Math.PI/180;const W0=3,H0=4.7,gold=new T.Mesh(new T.BoxGeometry(W0+.5,H0+.5,.12),bayMat.gtrim);gold.position.y=H0/2+.15;gold.castShadow=true;const mt=new T.MeshBasicMaterial({color:0xffffff,fog:false,toneMapped:false});new T.TextureLoader().load('assets/portal_'+d.k+'.jpg',q=>{q.colorSpace=T.SRGBColorSpace;mt.map=q;mt.needsUpdate=true});const sc=new T.Mesh(new T.PlaneGeometry(W0,H0),mt);sc.position.set(0,H0/2+.15,.07);g.add(gold,sc);scene.add(g);const s=capSprite();const[lx,lz]=rP(23.3,d.th);s.position.set(lx,G+5.5,lz);s.scale.set(2.9,.45,1);return{...d,fx,fz,s}});
 const PGATE=PORTS.map(q=>{const[x,z]=rP(23.6,q.th);return makePortal(x,G+1,z,(q.th+180)*Math.PI/180,'',  'rgba(120,220,170,.95)','rgba(40,120,90,.55)')});
-function portLabels(){for(const q of PORTS)q.s.userData.set(L().port[q.k]);PGATE.forEach((p,i)=>p.setLabel(L().port[PORTS[i].k].replace(/ ?(로 )?들어가기| ?\(.*/,'').replace('Enter the ','')))}
+function portLabels(){if(typeof STAMP!=='undefined')STAMP.relabel();for(const q of PORTS)q.s.userData.set(L().port[q.k]);PGATE.forEach((p,i)=>p.setLabel(L().port[PORTS[i].k].replace(/ ?(로 )?들어가기| ?\(.*/,'').replace('Enter the ','')))}
 function portFrame(dt){PGATE.forEach((p,i)=>{const q=PORTS[i],near=Math.hypot(you.x-q.fx,you.z-q.fz)<4;portalTick(p,dt,near);p.g.visible=!potMode;q.s.visible=false;if(near&&Math.random()<dt*4)burst(p.x+rnd(-1,1),G+1+p.cy+rnd(-1,1),p.z+rnd(-1,1),1,[0xbff5dc,0xf2c14e],.6,-1.2,.8)})}
 function goPort(q){let dn=0;const base=location.hostname==='choin-studio.pages.dev'?'../':'https://choin-studio.pages.dev/';location.href=base+q.url+'/?lang='+lang+'&from=world';void dn}
 
@@ -990,6 +990,61 @@ function fillGo(){const v=L().go,box=$('#atgo');box.innerHTML='';{const cd=docum
  const bay=(k,r=17.6)=>{const b=bayOf(k),a=b.th*Math.PI/180;return()=>tpTo(44.5+Math.sin(a)*r,41.5+Math.cos(a)*r,a)};
  
  grp(v.inn,[[v.jar,()=>tpTo(47,44.5,-1.2)],[L().relicN.science,bay('science')],[L().relicN.carpenter,bay('carpenter',17)],[L().relicN.painter,bay('painter',19)],[L().relicN.metal,bay('metal',18.2)],[v.bench,()=>{const b=nextBench()||BENCH[(benchCyc++)%3];tpTo(b.sx,b.sz,Math.PI)}],[v.wheel,()=>tpTo(BOOTH.stool.x,BOOTH.stool.z+1.4,0)],[v.fire,()=>sitAt(SEATS[0])],[v.pond,()=>sitAt(SEATS.find(q=>q.id==='pond'))]])}
+
+/* ---------- 복원단 도장판 (무이 월드와 발굴 터 공용). 기록은 이 브라우저의 저장값에서 읽는다 ---------- */
+function installStamps(o){
+ const DEF=[
+  {k:'jar',area:'w',ko:'달항아리',en:'Moon jar',has:(p)=>!!(p.relics&&p.relics.jarFix)},
+  {k:'wheel',area:'w',ko:'물레',en:'Wheel',has:(p)=>!!(p.relics&&p.relics.moonjar)},
+  {k:'science',area:'w',ko:'측우기',en:'Rain gauge',has:(p)=>!!(p.relics&&p.relics.rain)},
+  {k:'carpenter',area:'w',ko:'다보탑',en:'Dabotap',has:(p)=>!!(p.relics&&p.relics.dabo)},
+  {k:'painter',area:'w',ko:'일월오봉도',en:'Five Peaks',has:(p)=>!!(p.relics&&p.relics.ywol)},
+  {k:'metal',area:'w',ko:'금동대향로',en:'Incense burner',has:(p)=>!!(p.relics&&p.relics.censer)},
+  {k:'bench',area:'w',ko:'복원대',en:'Benches',has:(p,w)=>!!(w.done&&Object.values(w.done).some(Boolean))},
+  {k:'tomb',area:'d',ko:'신라 고분',en:'Silla tomb',has:(p,w,d)=>!!(d.done&&d.done[0])},
+  {k:'lake',area:'d',ko:'호수 침몰선',en:'Sunken ship',has:(p,w,d)=>!!(d.done&&d.done[1])},
+  {k:'fort',area:'d',ko:'산성',en:'Mountain fort',has:(p,w,d)=>!!(d.done&&d.done[2])}];
+ const J=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch(e){return {}}};
+ const state=()=>{const p=J('muui-profile'),w=J('muui-world-v1'),d=J('muui-dig-v3');return DEF.map(s=>s.has(p,w,d))};
+ const ko=()=>o.lang()==='ko';
+ const TX={ko:{title:'복원단 도장판',sub:'무이 월드 마당과 발굴 터를 돌며 도장 {0}개를 모아요. 다 모으면 단원증을 드려요.',w:'무이 월드 마당',d:'발굴 터',go:'가기',got:'받음',toast:'도장을 받았어요',done:'도장을 다 모았어요! 무이 복원단 정식 단원이 되었어요.',save:'단원증 이미지 저장',close:'닫기',chip:'도장 {0}/{1}'},
+  en:{title:'Restorer stamp card',sub:'Collect all {0} stamps across the MUUI WORLD courtyard and the Dig Site. Fill it to get your crew card.',w:'MUUI WORLD courtyard',d:'Dig Site',go:'Go',got:'Done',toast:'New stamp',done:'All stamps collected! You are now an official MUUI restorer.',save:'Save crew card',close:'Close',chip:'Stamps {0}/{1}'}};
+ const t=k=>TX[ko()?'ko':'en'][k];
+ const css=document.createElement('style');css.textContent=`
+#stampB{font:15px var(--display);background:var(--gold);color:#2a1b0c;border:2px solid var(--edge);padding:3px 10px;cursor:pointer;white-space:nowrap}
+#stampP{position:fixed;z-index:9;left:50%;top:50%;transform:translate(-50%,-50%);width:min(680px,calc(100vw - 16px));max-height:calc(100dvh - 16px);overflow:auto;box-sizing:border-box;padding:16px;display:grid;gap:10px}
+#stampP h2{margin:0;font:26px var(--display);color:var(--gold);font-weight:400}#stampP p{margin:0;font-size:14.5px;color:var(--muted)}
+.stg{display:grid;gap:8px;background:rgba(0,0,0,.22);padding:10px}.stg b{font:18px var(--display);font-weight:400;color:var(--paper)}
+.stw{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.st{display:grid;justify-items:center;gap:5px}
+.seal{width:70px;height:70px;display:grid;place-items:center;text-align:center;font:15px/1.1 var(--display);border:3px dashed rgba(247,236,210,.35);color:rgba(247,236,210,.5);border-radius:12px;padding:4px;box-sizing:border-box;word-break:keep-all}
+.st.on .seal{border:3px solid #c0392b;background:#c0392b;color:#fff3e0;transform:rotate(-7deg);box-shadow:inset 0 0 0 3px #fff3e0,inset 0 0 0 5px #c0392b}
+.st button{font:13px var(--display);background:var(--wood2);color:var(--paper);border:2px solid var(--edge);padding:2px 10px;cursor:pointer}
+.st.on button{opacity:.7}
+#stampDone{display:grid;gap:8px;justify-items:center;text-align:center}#stampDone canvas{width:min(320px,100%);border:3px solid var(--edge)}
+#stampT{position:fixed;z-index:12;left:50%;top:calc(env(safe-area-inset-top,0px) + 112px);transform:translateX(-50%);display:flex;gap:12px;align-items:center;padding:10px 16px;pointer-events:none;animation:stin .35s ease-out}
+#stampT .seal{width:52px;height:52px;font-size:13px;border:3px solid #c0392b;background:#c0392b;color:#fff3e0;transform:rotate(-7deg)}#stampT b{font:19px var(--display);color:var(--gold);font-weight:400;display:block}#stampT span{font-size:14px}
+@keyframes stin{from{transform:translate(-50%,-14px) scale(1.25);opacity:0}to{transform:translate(-50%,0) scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){#stampT{animation:none}}`;document.head.appendChild(css);
+ const btn=document.createElement('button');btn.type='button';btn.id='stampB';const anc=document.querySelector(o.anchor);anc.insertAdjacentElement('afterend',btn);
+ document.body.insertAdjacentHTML('beforeend','<section class="ui panel" id="stampP" hidden><h2 id="stT"></h2><p id="stS"></p><div id="stG" style="display:grid;gap:10px"></div><div id="stampDone" hidden><b id="stD" style="font:20px var(--display);color:var(--gold);font-weight:400"></b><canvas id="stC" width="900" height="1125"></canvas><button class="btn" id="stSave" type="button"></button></div><div class="rowe"><button class="btn" id="stX" type="button"></button></div></section><div class="ui panel" id="stampT" hidden><div class="seal" id="stTS"></div><div><b id="stTB"></b><span id="stTN"></span></div></div>');
+ const $$=id=>document.getElementById(id);
+ function chip(){const s=state();btn.textContent=t('chip').replace('{0}',s.filter(Boolean).length).replace('{1}',DEF.length)}
+ function cert(){const c=$$('stC'),q=c.getContext('2d'),p=J('muui-profile'),W0=900,H0=1125;q.fillStyle='#f6ecd2';q.fillRect(0,0,W0,H0);q.strokeStyle='#3b2a1c';q.lineWidth=14;q.strokeRect(20,20,W0-40,H0-40);q.lineWidth=3;q.strokeRect(44,44,W0-88,H0-88);q.fillStyle='#3b2a1c';q.textAlign='center';q.font='64px "Do Hyeon","Malgun Gothic",sans-serif';q.fillText(ko()?'무이 복원단 단원증':'MUUI Restorer Card',W0/2,150);q.font='40px "Do Hyeon","Malgun Gothic",sans-serif';q.fillStyle='#8a2b20';q.fillText((ko()?'복원단 ':'Restorer ')+(p.no||'?'),W0/2,225);
+  DEF.forEach((s,i)=>{const col=i%5,row=(i/5)|0,x=140+col*155,y=390+row*230;q.save();q.translate(x,y);q.rotate(-.12);q.fillStyle='#c0392b';q.fillRect(-66,-66,132,132);q.strokeStyle='#fff3e0';q.lineWidth=5;q.strokeRect(-56,-56,112,112);q.fillStyle='#fff3e0';const L=(ko()?s.ko:s.en).split(' ');q.font=(Math.max(...L.map(w0=>w0.length))>4?22:30)+'px "Do Hyeon","Malgun Gothic",sans-serif';L.forEach((w0,j)=>q.fillText(w0,0,(j-(L.length-1)/2)*34+10));q.restore()});
+  q.fillStyle='#3b2a1c';q.font='34px "Gowun Dodum","Malgun Gothic",sans-serif';q.fillText(ko()?'무이 월드 마당과 발굴 터를 모두 돌아본 복원단':'Visited every site in MUUI WORLD',W0/2,880);q.font='30px "Gowun Dodum","Malgun Gothic",sans-serif';q.fillText(new Date().toLocaleDateString(ko()?'ko-KR':'en-US'),W0/2,940);q.fillStyle='#8a2b20';q.fillText('choin-studio.pages.dev/world',W0/2,1010)}
+ function render(){const s=state(),n=s.filter(Boolean).length;$$('stT').textContent=t('title');$$('stS').textContent=t('sub').replace('{0}',DEF.length);const G=$$('stG');G.innerHTML='';for(const area of['w','d']){const g=document.createElement('div');g.className='stg';const h=document.createElement('b');h.textContent=t(area)+(area===o.here?(ko()?' · 지금 여기':' · you are here'):'');const r=document.createElement('div');r.className='stw';DEF.forEach((d,i)=>{if(d.area!==area)return;const x=document.createElement('div');x.className='st'+(s[i]?' on':'');const se=document.createElement('div');se.className='seal';se.textContent=ko()?d.ko:d.en;const b=document.createElement('button');b.type='button';b.textContent=s[i]?t('got'):t('go');b.addEventListener('click',()=>{$$('stampP').hidden=true;o.go(d)});x.append(se,b);r.appendChild(x)});g.append(h,r);G.appendChild(g)}
+  const all=n===DEF.length;$$('stampDone').hidden=!all;if(all){$$('stD').textContent=t('done');$$('stSave').textContent=t('save');cert()}$$('stX').textContent=t('close');chip()}
+ btn.addEventListener('click',()=>{render();$$('stampP').hidden=false;if(o.tone)o.tone()});$$('stX').addEventListener('click',()=>{$$('stampP').hidden=true});
+ $$('stSave').addEventListener('click',()=>{$$('stC').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='muui-restorer-card.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)},'image/png')});
+ let seen=state(),toT=null;
+ function toast(i){const d=DEF[i],n=state().filter(Boolean).length;$$('stTS').textContent=ko()?d.ko:d.en;$$('stTB').textContent=t('toast');$$('stTN').textContent=(ko()?d.ko:d.en)+' · '+n+'/'+DEF.length;const e=$$('stampT');e.hidden=true;void e.offsetWidth;e.hidden=false;clearTimeout(toT);toT=setTimeout(()=>{e.hidden=true},4200);if(o.tone)o.tone(true)}
+ setInterval(()=>{const s=state();s.forEach((v,i)=>{if(v&&!seen[i])setTimeout(()=>toast(i),i*80)});seen=s;chip()},1500);
+ chip();return{relabel(){chip();if(!$$('stampP').hidden)render()},state,DEF}}
+
+function goTo(k){const bay=(kk,r)=>{const b=bayOf(kk),a=b.th*Math.PI/180;tpTo(44.5+Math.sin(a)*r,41.5+Math.cos(a)*r,a)};if(k==='jar')tpTo(47,44.5,-1.2);else if(k==='wheel')tpTo(BOOTH.stool.x,BOOTH.stool.z+1.4,0);else if(k==='science')bay('science',17.6);else if(k==='carpenter')bay('carpenter',17);else if(k==='painter')bay('painter',19);else if(k==='metal')bay('metal',18.2);else if(k==='bench'){const b=nextBench()||BENCH[0];tpTo(b.sx,b.sz,Math.PI)}}
+const STAMP=installStamps({here:'w',anchor:'#top .area',lang:()=>lang,go:d=>{if(d.area==='w')goTo(d.k);else goPort(PORTS[0])},tone:(big)=>{if(ac0){big?[523,659,784].forEach((f,i)=>tone(f,.25,.05,i*.08)):tone(660,.1,.04)}}});
+{const GOTO=new URLSearchParams(location.search).get('goto');if(GOTO)$('#enter').addEventListener('click',()=>setTimeout(()=>goTo(GOTO),700))}
 
 /* ---------- 프레임 ---------- */
 const clock=new T.Clock(),v3=new T.Vector3(),camT=new T.Vector3(),look=new T.Vector3();let uiT=0,shX=0,chipT=0,fetchT=0,stuckT=0;camT.set(you.x,you.y+2.6,you.z+5);look.set(you.x,you.y+1,you.z);
