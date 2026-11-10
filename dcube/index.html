@@ -306,7 +306,7 @@ function clampPos(p){if(!room)return;const hw=room.W/2-.45,hd=room.D/2;p.x=Math.
 const ptr=new Map();let downT=0,downXY=null,moved=0;
 canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});downT=performance.now();downXY=[e.clientX,e.clientY];moved=0;hideHint()});
 canvas.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);
- if(ptr.size===1){const k=fov/70*.0042;yaw+=dx*k;pitch=Math.max(-1.2,Math.min(1.45,pitch+dy*k));gliding=gliding&&false}
+ if(ptr.size===1){const k=fov/70*.0042;yaw-=dx*k;pitch=Math.max(-1.2,Math.min(1.45,pitch-dy*k));gliding=gliding&&false}
  else if(ptr.size===2){const a=[...ptr.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(p.pd)fov=Math.max(30,Math.min(95,fov*(p.pd/d)));a.forEach(q=>q.pd=d)}});
 const endP=e=>{const p=ptr.get(e.pointerId);ptr.delete(e.pointerId);if(p&&moved<8&&performance.now()-downT<350)tapAt(e.clientX,e.clientY)};
 canvas.addEventListener('pointerup',endP);canvas.addEventListener('pointercancel',e=>ptr.delete(e.pointerId));
