@@ -265,32 +265,41 @@ function playLocal(o){/* 내 파일 */
 
 
 /* ---------------- 무이 관객 ----------------
-   매쉬로 만든 무이 5명. 파일마다 sit(바닥에 책상다리) / walk 두 동작. 정면 벽을 보고 앉았다가, 한참 뒤 일어나 다른 방석으로 걸어간다. */
+   매쉬 정지 모델에 블렌더로 무이 몸(큰 머리, 짧은 팔다리)에 맞춘 뼈대를 직접 넣고 동작을 손으로 짰다(2026-11-10).
+   동작: idle walk sit(한 번) sit_idle sit_clap wave look_up cheer. 소매가 넓은 과학·화공 무이는 팔을 높이 드는 동작(wave, cheer)을 쓰지 않는다. */
 let crowd=[];const gl=new GLTFLoader();
+const NOARMUP={science:1,painter:1};
 function clearCrowd(){for(const m of crowd)if(m.root)room&&room.g.remove(m.root);crowd=[]}
 function freeCushion(me){if(!room)return null;const taken=new Set(crowd.filter(c=>c!==me&&c.cu).map(c=>c.cu));const avoid=Object.values(VIEWS()).map(v=>new THREE.Vector3(v.p[0],0,v.p[1]));
  const ok=room.cush.filter(c=>!taken.has(c)&&avoid.every(a=>a.distanceTo(c)>1.3)&&crowd.every(o=>o===me||!o.root||o.root.position.distanceTo(c)>.9));return ok.length?ok[(Math.random()*ok.length)|0]:null}
 function loadCrowd(list){clearCrowd();if(!room)return;const g0=room.g;
  list.forEach((k,i)=>gl.load('media/muui/muui_'+k+'.glb',gt=>{if(!room||room.g!==g0)return;const root=new THREE.Group(),m=gt.scene;
-  m.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(o.material){o.material.envMapIntensity=.6}}});
-  const b=new THREE.Box3().setFromObject(m),h=b.getSize(new THREE.Vector3()).y||1;m.scale.setScalar(.92/h);root.add(m);g0.add(root);
-  const mx=new THREE.AnimationMixer(m),clip=n=>gt.animations.find(a=>a.name===n)||gt.animations[0];
-  /* 걷기 동작의 앞뒤 이동은 지우고(제자리 걸음), 위치는 코드로 옮긴다 */
-  const wk=clip('walk').clone();for(const t of wk.tracks)if(/position$/.test(t.name)){const v=t.values;for(let j=3;j<v.length;j+=3){v[j]=v[0];v[j+2]=v[2]}}
-  const A={sit:mx.clipAction(clip('sit')),walk:mx.clipAction(wk)};
-  const me={k,root,mx,A,cur:null,cu:null,st:'sit',t:0,speed:.42+Math.random()*.1};crowd.push(me);
-  const start=freeCushion(me)||room.cush[i];if(i<3){me.cu=start;root.position.copy(start);root.rotation.y=Math.PI+(Math.random()-.5)*.5;setAct(me,'sit');me.t=8+Math.random()*30}
+  m.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(o.material)o.material.envMapIntensity=.6}});
+  const b=new THREE.Box3().setFromObject(m),h=b.getSize(new THREE.Vector3()).y||1;m.scale.setScalar(.95/h);m.position.y=-b.min.y*.95/h;root.add(m);g0.add(root);
+  const mx=new THREE.AnimationMixer(m),A={};for(const c of gt.animations)A[c.name]=mx.clipAction(c);
+  A.sit.setLoop(THREE.LoopOnce,1);A.sit.clampWhenFinished=true;for(const n of['sit_clap','wave','cheer'])if(A[n])A[n].setLoop(THREE.LoopRepeat,n==='sit_clap'?2:n==='wave'?2:3);
+  const me={k,root,mx,A,cur:null,cu:null,st:'sit',t:0,speed:.36+Math.random()*.08,ev:0};crowd.push(me);
+  mx.addEventListener('finished',e=>{if(e.action===A.sit&&me.st==='sitting_down'){me.st='sit';setAct(me,'sit_idle',.5)}else if(e.action===A.sit&&me.st==='standing_up'){A.sit.timeScale=1;goNext(me)}else if(me.st==='sit'&&e.action===A.sit_clap)setAct(me,'sit_idle',.4);else if(me.st==='stand'&&(e.action===A.wave||e.action===A.cheer))setAct(me,'idle',.4)});
+  const start=freeCushion(me)||room.cush[i];
+  if(i<3){me.cu=start;root.position.copy(start);root.rotation.y=Math.PI+(Math.random()-.5)*.4;setAct(me,'sit_idle',0);me.t=10+Math.random()*30;me.ev=4+Math.random()*10}
   else{const sd=i%2?1:-1;root.position.set(sd*(room.W/2-1),0,-room.D/2+1.6+Math.random()*2);goNext(me)}
  },undefined,()=>{}))}
-function setAct(me,n){const a=me.A[n];if(me.cur===a)return;a.reset().fadeIn(.45).play();if(me.cur)me.cur.fadeOut(.45);me.cur=a}
-function goNext(me){const c=freeCushion(me);if(!c){me.st='sit';me.t=10;setAct(me,'sit');return}me.cu=c;me.st='walk';setAct(me,'walk')}
-function crowdTick(dt){if(!crowd.length||!room)return;for(const me of crowd){me.mx.update(dt);
- if(me.st==='sit'){me.t-=dt;const ty=Math.PI;let d=ty-me.root.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));me.root.rotation.y+=d*Math.min(1,dt*2);if(me.t<=0){me.cu=null;goNext(me)}}
- else{const to=me.cu.clone().sub(me.root.position);to.y=0;const L=to.length();if(L<.06){me.st='sit';me.t=25+Math.random()*45;setAct(me,'sit');continue}
-  const want=Math.atan2(to.x,to.z);let d=want-me.root.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));me.root.rotation.y+=d*Math.min(1,dt*5);
-  const dir=to.normalize(),off=me.root.position.clone().sub(pos);off.y=0;const od=off.length();if(od<1.4&&od>.001)dir.addScaledVector(off.normalize(),(1.4-od)*1.6).normalize();
-  me.root.position.addScaledVector(dir,Math.min(L,me.speed*dt*(Math.abs(d)<.8?1:.3)))}}}
-
+function setAct(me,n,fade=.35){const a=me.A[n];if(!a||me.cur===a)return;a.reset().setEffectiveTimeScale(1).fadeIn(fade).play();if(me.cur)me.cur.fadeOut(fade);me.cur=a}
+function goNext(me){const c=freeCushion(me);if(!c){me.st='sit';me.t=10;setAct(me,'sit_idle');return}me.cu=c;me.st='walk';setAct(me,'walk',.3)}
+function crowdTick(dt){if(!crowd.length||!room)return;for(const me of crowd){me.mx.update(dt);const R0=me.root;
+ if(me.st==='sit'){me.t-=dt;me.ev-=dt;let d=Math.PI-R0.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));R0.rotation.y+=d*Math.min(1,dt*2);
+  if(me.ev<=0){me.ev=9+Math.random()*16;if(Math.random()<.55)setAct(me,'sit_clap',.3)}
+  if(me.t<=0){me.st='standing_up';const a=me.A.sit;if(me.cur)me.cur.fadeOut(.25);a.reset();a.timeScale=-1;a.time=a.getClip().duration;a.fadeIn(.25).play();me.cur=a;me.cu=null}}
+ else if(me.st==='stand'){me.t-=dt;if(me.t<=0){me.st='sitting_down';setAct(me,'sit',.3)}}
+ else if(me.st==='walk'){const to=me.cu.clone().sub(R0.position);to.y=0;const L=to.length();
+  if(L<.06){/* 도착: 가끔은 서서 천장을 올려다보거나 손을 흔들고 앉는다 */let d=Math.PI-R0.rotation.y;R0.rotation.y+=Math.atan2(Math.sin(d),Math.cos(d))*.0;
+   const r=Math.random();if(r<.35){me.st='stand';me.t=4+Math.random()*3;setAct(me,'look_up',.4)}else if(r<.5&&!NOARMUP[me.k]){me.st='stand';me.t=3.5;setAct(me,Math.random()<.5?'wave':'cheer',.3)}else{me.st='sitting_down';setAct(me,'sit',.3)}
+   me.t2=25+Math.random()*45;continue}
+  const want=Math.atan2(to.x,to.z);let d=want-R0.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));R0.rotation.y+=d*Math.min(1,dt*5);
+  const dir=to.normalize(),off=R0.position.clone().sub(pos);off.y=0;const od=off.length();if(od<1.4&&od>.001)dir.addScaledVector(off.normalize(),(1.4-od)*1.6).normalize();
+  R0.position.addScaledVector(dir,Math.min(L,me.speed*dt*(Math.abs(d)<.8?1:.3)))}
+ else if(me.st==='sitting_down'||me.st==='standing_up'){let d=Math.PI-R0.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));R0.rotation.y+=d*Math.min(1,dt*3)}
+ if(me.st==='sit'&&me.t2){me.t=me.t2;me.t2=0}}}
 /* ---------------- 보는 자리와 움직임 ---------------- */
 let yaw=0,pitch=.08,eye=1.6,sit=false,fov=innerWidth/innerHeight<.8?88:70,gyro=null;const pos=new THREE.Vector3(),goal=new THREE.Vector3();let gliding=false;
 const VIEWS=()=>{const d=room?room.D:10,h=room?room.H:6;return{
