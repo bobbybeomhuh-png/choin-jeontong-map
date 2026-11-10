@@ -79,6 +79,7 @@ button,input,select{font:inherit;color:inherit}
  <span id="brand" title="상영 목록으로">CHOIN<span class="full"> 상영관</span></span>
  <span id="wt"></span><span id="ws"></span>
  <span class="sp"></span>
+ <button class="btn" id="bOut" type="button">골목으로 나가기</button>
  <button class="btn" id="bInfo" type="button">작품 정보</button>
  <button class="btn" id="bList" type="button">목록</button>
 </header>
@@ -332,7 +333,7 @@ $('#bMute').addEventListener('click',()=>{if(!master)return;master.muted=!master
 let seeking=false;$('#seek').addEventListener('input',()=>{seeking=true;if(master&&master.duration){const t=$('#seek').value/1000*master.duration;vids.forEach(v=>{try{v.currentTime=t}catch(e){}})}});$('#seek').addEventListener('change',()=>seeking=false);
 $('#bSit').addEventListener('click',()=>{sit=!sit;$('#bSit').textContent=sit?'일어서기':'앉기';$('#bSit').classList.toggle('on',sit)});
 $('#bFull').addEventListener('click',()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.().catch(()=>{})});
-$('#brand').addEventListener('click',showGallery);$('#bList').addEventListener('click',showGallery);
+$('#bOut').addEventListener('click',()=>{location.href='../palbok/?from=dcube'});$('#brand').addEventListener('click',showGallery);$('#bList').addEventListener('click',showGallery);
 let curWork=null;
 $('#bInfo').addEventListener('click',()=>{const w=curWork;if(!w)return;const p=$('#pInfo');const r=w.room;p.innerHTML='';const h=document.createElement('h2');h.textContent='「'+w.title+'」';p.appendChild(h);if(w.about)[].concat(w.about).forEach(t=>{const a=document.createElement('p');a.textContent=t;p.appendChild(a)});
  const dl=document.createElement('dl');[['작가',w.artist],['형식',w.form],['상영 장소',w.place],['행사',w.event],['기간',w.period],['길이',w.dur],['공간 (안쪽)',`폭 ${r.w.toFixed(2)} m × 깊이 ${r.d.toFixed(2)} m × 높이 ${r.h.toFixed(2)} m`]].forEach(([k,v])=>{if(!v)return;const dt=document.createElement('dt');dt.textContent=k;const dd=document.createElement('dd');dd.textContent=v;dl.append(dt,dd)});p.appendChild(dl);
@@ -342,11 +343,11 @@ $('#bInfo').addEventListener('click',()=>{const w=curWork;if(!w)return;const p=$
 function hint(t,ms=5200){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
 function hideHint(){const h=$('#hint');if(!h.hidden){h.style.opacity=0;setTimeout(()=>h.hidden=true,600)}}
 
-function afterLoad(w){curWork=w;$('#gal').hidden=true;$('#top').hidden=false;$('#bar').hidden=false;$('#mini').hidden=false;$('#wt').textContent='「'+w.title+'」';$('#ws').textContent=w.place||'';$('#bInfo').hidden=!!w.local;
+function afterLoad(w){curWork=w;$('#gal').hidden=true;$('#top').hidden=false;$('#bar').hidden=false;$('#mini').hidden=false;$('#wt').textContent='「'+w.title+'」';$('#ws').textContent=w.place||'';$('#bInfo').hidden=!!w.local;$('#bOut').hidden=!!w.local||w.id!=='pambok';
  drawViews();setView('door',true);setTimeout(()=>{if(!gliding)setView('center')},900);
  $('#load').hidden=false;master.addEventListener('canplay',()=>{$('#load').hidden=true},{once:true});
  master.addEventListener('error',()=>{$('#load').hidden=false;$('#load').textContent='이 영상은 브라우저에서 열 수 없어요. mp4(H.264)로 바꿔서 다시 골라 주세요.'},{once:true});
- vids.forEach(v=>v.play().catch(()=>{}));
+ vids.forEach(v=>v.play().catch(()=>{/* 소리 때문에 막히면 소리 없이 틀고 소리 버튼을 켜 둔다 */v.muted=true;v.play().catch(()=>{});if(v===master){$('#bMute').textContent='소리 켜기';$('#bMute').classList.add('on')}}));
  hint(matchMedia('(pointer:coarse)').matches?'화면을 밀어 둘러보세요. 두 번 톡 치면 그 자리로 걸어가요.':'끌어서 둘러보고, 바닥을 두 번 누르면 그 자리로 걸어가요. 휠로 확대, WASD로 걷기.')}
 function showGallery(){stopVideos();clearRoom();$('#gal').hidden=false;['#top','#bar','#mini','#pInfo','#pUp'].forEach(s=>$(s).hidden=true);history.replaceState(null,'',location.pathname)}
 

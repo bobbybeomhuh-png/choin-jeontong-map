@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>팔복 골목 상영관</title>
+<meta name="description" content="전주 팔복예술공장 골목을 걸어 매표소에서 티켓을 받고 D-CUBE 상영관에 들어가는 초인 실감 상영관 입구">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&family=Do+Hyeon&display=swap" rel="stylesheet">
+<!-- ⏱ 2026-11-10 21:00 초판: 허범 사진 2장(빨간 공장동 골목, D-CUBE 입구) 참고. 다른 프로그램 현수막·축제 포스터 그림은 쓰지 않고 우리 글자와 우리 작품 장면만 씀 -->
+<style>
+:root{--panel:rgba(16,14,12,.86);--line:rgba(255,236,210,.18);--ink:#f3eadb;--muted:#b9ab96;--gold:#e7b75a}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#9cc7ef;color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+button{font:inherit;color:inherit}
+.btn{background:rgba(20,16,12,.72);border:1px solid var(--line);color:var(--ink);padding:8px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;min-height:38px;backdrop-filter:blur(6px)}
+.btn.main{background:var(--gold);color:#1d1408;border-color:var(--gold);font-weight:700}
+#top{position:fixed;left:0;right:0;top:0;display:flex;gap:8px;align-items:center;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;pointer-events:none}
+#top>*{pointer-events:auto}#top .sp{flex:1}
+#ttl{font:700 17px "Noto Serif KR",serif;background:rgba(20,16,12,.72);padding:7px 12px;border-radius:8px;border:1px solid var(--line)}
+#act{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);font:22px "Do Hyeon",sans-serif;padding:12px 26px;border-radius:12px;background:var(--gold);color:#1d1408;border:3px solid #3b2a1c;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#hint{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 62px);transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:8px 16px;font-size:14.5px;text-align:center;max-width:calc(100vw - 28px);transition:opacity .6s;pointer-events:none}
+#tk{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.55);z-index:20;padding:14px}
+#tk .in{display:grid;gap:12px;justify-items:center;width:min(560px,100%)}
+#tkc{width:100%;height:auto;border-radius:10px;box-shadow:0 20px 50px rgba(0,0,0,.5);transform-origin:50% 50%}
+#tk .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#tk p{margin:0;text-align:center;font-size:14.5px;color:#f3eadb}
+.punch{animation:punch .5s ease-out}@keyframes punch{0%{transform:scale(1)}40%{transform:scale(.96) rotate(-1.5deg)}100%{transform:scale(1)}}
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .9s;z-index:30}
+#load{position:fixed;inset:0;display:grid;place-items:center;z-index:25;background:#0b0a09;color:var(--muted);font-size:15px;transition:opacity .6s}
+[hidden]{display:none!important}
+@media (max-width:640px){#ttl{font-size:14px}.btn{padding:6px 9px;font-size:13.5px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="load">팔복예술공장 골목으로 가는 중…</div>
+<header id="top">
+ <span id="ttl">전주 팔복예술공장 · 골목</span><span class="sp"></span>
+ <button class="btn" id="bWorld" type="button">무이 월드로</button>
+</header>
+<div id="hint" hidden></div>
+<button id="act" type="button" hidden></button>
+<section id="tk" hidden><div class="in"><canvas id="tkc" width="1000" height="440"></canvas><p id="tkm"></p><div class="row"><button class="btn" id="tkSave" type="button">티켓 이미지 저장</button><button class="btn main" id="tkOk" type="button">받았어요</button></div></div></section>
+<div id="fade"></div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const $=s=>document.querySelector(s);const qs=new URLSearchParams(location.search);
+
+/* ---------------- 장면 ----------------
+   단위는 m. 골목은 -z 방향으로 뻗는다. 왼쪽 빨간 공장동, 오른쪽 검은 망 벽(앞쪽, D-CUBE 입구)과 콘크리트 골조(뒤쪽),
+   가운데 파란 선, 흰 파라솔, 끝에 철골 지붕 무대. 허범이 보낸 사진 두 장을 따라 배치. */
+const R=new THREE.WebGLRenderer({canvas:$('#c'),antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,1.75));R.setSize(innerWidth,innerHeight);
+R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(innerWidth/innerHeight<.8?82:66,innerWidth/innerHeight,.05,400);
+/* 하늘 */
+{const g=new THREE.SphereGeometry(300,32,16),m=new THREE.ShaderMaterial({side:THREE.BackSide,depthWrite:false,uniforms:{},vertexShader:'varying vec3 v;void main(){v=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec3 v;void main(){float h=clamp(v.y,0.,1.);vec3 c=mix(vec3(.78,.88,.97),vec3(.16,.42,.86),pow(h,.6));gl_FragColor=vec4(c,1.);}'});scene.add(new THREE.Mesh(g,m))}
+scene.add(new THREE.HemisphereLight(0xdcecff,0x9a8a74,1.25));
+const sun=new THREE.DirectionalLight(0xfff1dc,2.6);sun.position.set(-14,26,8);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-26,right:26,top:30,bottom:-30,near:1,far:80});sun.target.position.set(0,0,-16);scene.add(sun,sun.target);
+
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
+function box(w,h,d,mat,x,y,z,ry=0){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.rotation.y=ry;m.castShadow=m.receiveShadow=true;scene.add(m);return m}
+/* 글자·그림 판 */
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t}
+function plane(w,h,tex,x,y,z,ry=0,basic=false){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),basic?new THREE.MeshBasicMaterial({map:tex,toneMapped:false}):new THREE.MeshStandardMaterial({map:tex,roughness:.8}));m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);return m}
+const loadTex=u=>{const t=new THREE.TextureLoader().load(u);t.colorSpace=THREE.SRGBColorSpace;return t};
+
+/* 바닥: 콘크리트 + 가운데 파란 선 */
+{const t=canvasTex(512,512,(q,w,h)=>{q.fillStyle='#cfccc6';q.fillRect(0,0,w,h);for(let i=0;i<5000;i++){const v=180+Math.random()*40|0;q.fillStyle=`rgba(${v},${v-2},${v-6},.35)`;q.fillRect(Math.random()*w,Math.random()*h,2,2)}q.strokeStyle='rgba(120,116,110,.35)';q.lineWidth=3;for(let y=0;y<h;y+=128){q.beginPath();q.moveTo(0,y);q.lineTo(w,y);q.stroke()}});t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,14);
+ const f=new THREE.Mesh(new THREE.PlaneGeometry(40,70).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({map:t,roughness:.95}));f.position.set(0,0,-20);f.receiveShadow=true;scene.add(f);
+ const bl=new THREE.Mesh(new THREE.PlaneGeometry(.3,36).rotateX(-Math.PI/2),M(0x2f6fd0,{roughness:.6}));bl.position.set(0,.005,-17);bl.receiveShadow=true;scene.add(bl)}
+
+/* 왼쪽 빨간 공장동: 벽돌에 칠한 짙은 빨강, 기둥처럼 튀어나온 벽기둥, 높은 작은 창 */
+const RED=M(0x8e2e22,{roughness:.9}),RED2=M(0x7a261c,{roughness:.9});
+{const L=-4.3;box(1.2,8.6,34,RED,L-.6,4.3,-15);
+ for(let z=1;z>-32;z-=4.2){box(.55,8.9,.9,RED2,L+.2,4.45,z);}
+ for(let z=-1;z>-30;z-=4.2){box(.1,.9,.7,M(0x1b1512),L+.02,6.4,z-2.1)}
+ /* 지붕(왼쪽으로 기운 박공) */const rf=box(6,.3,34.6,M(0x6b5d55),L-2.6,9.2,-15);rf.rotation.z=.32;
+ /* 우리 축제 안내판(글자만) */
+ const sign=canvasTex(900,1200,(q,w,h)=>{const g=q.createLinearGradient(0,0,w,h);g.addColorStop(0,'#fff6e8');g.addColorStop(1,'#f3e3c8');q.fillStyle=g;q.fillRect(0,0,w,h);q.strokeStyle='#2c1e16';q.lineWidth=18;q.strokeRect(9,9,w-18,h-18);
+  for(let i=0;i<14;i++){q.strokeStyle=['#f0c040','#45b6e8','#e25a8c'][i%3]+'88';q.lineWidth=26;q.beginPath();q.moveTo(w/2,h*.92);q.lineTo(w/2+Math.cos(-.2-i*.2)*w,h*.92+Math.sin(-.2-i*.2)*h*.7);q.stroke()}
+  q.fillStyle='#1d1410';q.textAlign='center';q.font='700 64px "Noto Serif KR",serif';q.fillText('2026 미래문화축제',w/2,190);q.font='170px "Do Hyeon",sans-serif';q.fillText('팔 복',w/2,420);q.font='700 52px "Noto Serif KR",serif';q.fillText('전주 팔복예술공장',w/2,520)});
+ plane(3.4,4.5,sign,L+.62,3.6,-6.2,Math.PI/2)}
+
+/* 오른쪽 앞: 검은 망 벽 + D-CUBE 입구(오른쪽 끝) */
+const NET=canvasTex(256,256,(q,w,h)=>{q.fillStyle='#141414';q.fillRect(0,0,w,h);q.strokeStyle='#2c2c2c';q.lineWidth=3;for(let i=-w;i<w*2;i+=16){q.beginPath();q.moveTo(i,0);q.lineTo(i+h,h);q.stroke();q.beginPath();q.moveTo(i,h);q.lineTo(i+h,0);q.stroke()}});NET.wrapS=NET.wrapT=THREE.RepeatWrapping;NET.repeat.set(5,3);
+const RX=4.3;
+{const nm=new THREE.MeshStandardMaterial({map:NET,roughness:.9});box(.4,7.4,2.9,nm,RX+.2,3.7,1.35);box(.4,7.4,7.1,nm,RX+.2,3.7,-5.65);box(.4,4,2,nm,RX+.2,5.4,-1.1);
+ const dk=M(0x0d0b0a,{roughness:1});box(4,3.2,.1,dk,RX+2.2,1.6,-2.15);box(4,3.2,.1,dk,RX+2.2,1.6,-.05);box(4,.1,2.2,dk,RX+2.2,3.25,-1.1);box(4,.05,2.2,M(0x1a1512),RX+2.2,.03,-1.1);
+ const end=plane(2,3.2,loadTex('media/pambok_poster2.jpg'),RX+4.1,1.6,-1.1,-Math.PI/2,true);end.material.color.setScalar(.85)}
+/* 우리 작품 현수막: 「뺄불통가마」 장면 + 글자 */
+const keyImg=new Image();keyImg.src='media/key_front.jpg';
+const banner=canvasTex(700,1300,(q,w,h)=>{q.fillStyle='#120d0a';q.fillRect(0,0,w,h)});
+keyImg.onload=()=>{const c=banner.image,q=c.getContext('2d'),w=c.width,h=c.height;q.drawImage(keyImg,0,0,w,w*keyImg.height/keyImg.width);const g=q.createLinearGradient(0,h*.5,0,h);g.addColorStop(0,'rgba(18,13,10,0)');g.addColorStop(.35,'#120d0a');q.fillStyle=g;q.fillRect(0,h*.45,w,h*.55);
+ q.fillStyle='#f3c56b';q.textAlign='center';q.font='700 46px "Noto Serif KR",serif';q.fillText('실감미디어 · 4면 D-CUBE',w/2,h*.72);q.fillStyle='#fff3e0';q.font='118px "Do Hyeon",sans-serif';q.fillText('뺄불통가마',w/2,h*.83);q.font='700 44px "Noto Serif KR",serif';q.fillStyle='#e7d6bc';q.fillText('초인 (CHOIN)',w/2,h*.9);q.font='34px "Gowun Dodum",sans-serif';q.fillText('이팝나무홀 · 약 7분',w/2,h*.95);banner.needsUpdate=true};
+plane(3.6,6.7,banner,RX-.02,3.7,-6.6,-Math.PI/2);
+/* 입구: 검은 문틀, 안쪽은 어둡게, 위에 간판 */
+const DOOR={x:RX-.05,z:-1.1};
+{box(.5,3.4,.35,M(0x0c0c0c),RX,1.7,DOOR.z-1.15);box(.5,3.4,.35,M(0x0c0c0c),RX,1.7,DOOR.z+1.15);box(.5,.4,2.65,M(0x0c0c0c),RX,3.4,DOOR.z);
+ /* 문 안쪽에서 새어 나오는 빛(영상 색) */const glow=new THREE.PointLight(0xff9a5a,0,6,1.6);glow.position.set(RX-.6,1.6,DOOR.z);scene.add(glow);window.__glow=glow;
+ const sg=canvasTex(800,220,(q,w,h)=>{q.fillStyle='#0b0b0b';q.fillRect(0,0,w,h);q.fillStyle='#f3c56b';q.font='700 70px "Noto Serif KR",serif';q.textAlign='center';q.fillText('D-CUBE',w/2,96);q.fillStyle='#fff';q.font='48px "Gowun Dodum",sans-serif';q.fillText('실감미디어 상영관 입구',w/2,170)});plane(2.6,.72,sg,RX-.3,4.05,DOOR.z,-Math.PI/2,true)}
+/* 매표소: 입구 앞 작은 탁자와 안내판 */
+const BOOTH={x:2.6,z:.9};
+{const wood=M(0xd8d2c6,{roughness:.6});box(1.6,.06,.8,wood,BOOTH.x,.95,BOOTH.z);for(const[dx,dz]of[[-.7,-.32],[.7,-.32],[-.7,.32],[.7,.32]])box(.05,.95,.05,M(0x8b8b8b),BOOTH.x+dx,.47,BOOTH.z+dz);
+ const st=canvasTex(600,300,(q,w,h)=>{q.fillStyle='#f6efe2';q.fillRect(0,0,w,h);q.strokeStyle='#3b2a1c';q.lineWidth=10;q.strokeRect(5,5,w-10,h-10);q.fillStyle='#3b2a1c';q.textAlign='center';q.font='92px "Do Hyeon",sans-serif';q.fillText('매표소',w/2,130);q.font='40px "Gowun Dodum",sans-serif';q.fillText('뺄불통가마 · 무료 관람',w/2,215)});
+ const p=plane(1.3,.65,st,BOOTH.x,1.4,BOOTH.z+.42,0);p.rotation.x=-.08;
+ /* 티켓 묶음 */box(.24,.04,.12,M(0xe7b75a),BOOTH.x-.4,1.0,BOOTH.z+.1)}
+
+/* 오른쪽 뒤: 낡은 콘크리트 골조(기둥·보) */
+const CON=M(0x9b9790,{roughness:.95});
+{for(let z=-10;z>=-30;z-=4){box(.6,7.4,.6,CON,RX+.3,3.7,z);box(.6,.6,4.2,CON,RX+.3,7.1,z-2)}box(.6,.6,21,CON,RX+.3,4,-20.5);
+ for(let z=-11;z>-30;z-=3){const iv=new THREE.Mesh(new THREE.SphereGeometry(.5+Math.random()*.4,8,6),M(0x4c6a33));iv.position.set(RX+.6,6.6+Math.random()*.8,z);iv.scale.y=.5;scene.add(iv)}
+ box(2.4,1.2,20,M(0x7f7b74),RX+2,.6,-20)}
+
+/* 흰 파라솔과 탁자, 의자 */
+const WHITE=M(0xf4f2ee,{roughness:.6}),GREY=M(0xc9c6c0,{roughness:.7});
+function parasol(x,z){const g=new THREE.Group();g.position.set(x,0,z);
+ const cone=new THREE.Mesh(new THREE.ConeGeometry(1.35,.55,8,1,true),new THREE.MeshStandardMaterial({color:0xf8f6f1,roughness:.7,side:THREE.DoubleSide}));cone.position.y=2.45;cone.castShadow=true;g.add(cone);
+ const top=new THREE.Mesh(new THREE.ConeGeometry(.35,.22,8),WHITE);top.position.y=2.8;g.add(top);
+ const pole=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,2.6,8),WHITE);pole.position.y=1.3;g.add(pole);const base=new THREE.Mesh(new THREE.CylinderGeometry(.28,.3,.08,16),M(0x2a2a2a));base.position.y=.04;g.add(base);
+ const tb=new THREE.Mesh(new THREE.BoxGeometry(1.6,.05,.7),WHITE);tb.position.set(0,.74,-.9);tb.castShadow=true;g.add(tb);for(const[dx,dz]of[[-.7,-1.2],[.7,-1.2],[-.7,-.6],[.7,-.6]]){const l=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,.74,6),GREY);l.position.set(dx,.37,dz);g.add(l)}
+ for(const dz of[-.2,-1.6]){const ch=new THREE.Group();const s=new THREE.Mesh(new THREE.BoxGeometry(.45,.05,.45),GREY);s.position.y=.45;ch.add(s);const bk=new THREE.Mesh(new THREE.BoxGeometry(.45,.45,.05),GREY);bk.position.set(0,.68,dz>-1?.2:-.2);ch.add(bk);for(const[a,b]of[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]]){const l=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,.45,6),GREY);l.position.set(a,.22,b);ch.add(l)}ch.position.set(0,0,dz);g.add(ch)}
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});scene.add(g)}
+for(const z of[-4.5,-8,-11.5,-15,-18.5,-22])parasol(-2.7,z);for(const z of[-13,-16.5,-20])parasol(2.6,z);
+
+/* 위를 가로지르는 우리 현수막 */
+{const t=canvasTex(1600,220,(q,w,h)=>{const g=q.createLinearGradient(0,0,w,0);g.addColorStop(0,'#16302f');g.addColorStop(1,'#1f2b3a');q.fillStyle=g;q.fillRect(0,0,w,h);q.strokeStyle='#d9b45a';q.lineWidth=6;q.beginPath();q.moveTo(0,h-14);q.bezierCurveTo(w*.3,h*.2,w*.6,h*1.1,w,30);q.stroke();q.fillStyle='#f3d27a';q.textAlign='center';q.font='700 64px "Noto Serif KR",serif';q.fillText('실감미디어 상영 「뺄불통가마」',w/2,112);q.fillStyle='#e8e0cf';q.font='38px "Gowun Dodum",sans-serif';q.fillText('2026 미래문화축제 팔복 · 이팝나무홀 D-CUBE · 초인(CHOIN)',w/2,175)});
+ plane(8.2,1.15,t,0,6.3,-.6,0,false).material.side=THREE.DoubleSide;const r1=new THREE.Mesh(new THREE.CylinderGeometry(.01,.01,8.7,4),M(0x222222));r1.rotation.z=Math.PI/2;r1.position.set(0,6.9,-.6);scene.add(r1)}
+
+/* 끝: 철골 지붕과 그늘막, 무대 */
+{const P=M(0xb7b9bc,{roughness:.5,metalness:.4}),cyl=(len,x,y,z,rx,rz)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,len,8),P);m.position.set(x,y,z);m.rotation.set(rx||0,0,rz||0);m.castShadow=true;scene.add(m)};
+ for(const z of[-27,-31,-35]){for(const x of[-5,5])cyl(6,x,3,z);cyl(10,0,6,z,0,Math.PI/2);/* 삼각 지붕 */cyl(5.9,-2.5,7.1,z,0,-0.43);cyl(5.9,2.5,7.1,z,0,0.43)}
+ for(const x of[-5,0,5])cyl(8,x,6,-31,Math.PI/2);
+ const sail=new THREE.MeshStandardMaterial({color:0xd9c7a4,roughness:.9,side:THREE.DoubleSide});for(const[x,z,r]of[[-2,-28,.3],[2,-29.5,-.3],[-1.5,-32,.2],[2.2,-33.5,-.2]]){const s=new THREE.Mesh(new THREE.PlaneGeometry(4,2.2),sail);s.position.set(x,5.4,z);s.rotation.set(-Math.PI/2+.25,0,r);s.castShadow=true;scene.add(s)}
+ box(9,.5,4,M(0x3a3f4a),0,.25,-36.5);const bd=canvasTex(1200,500,(q,w,h)=>{const g=q.createLinearGradient(0,0,w,h);g.addColorStop(0,'#ffe36a');g.addColorStop(.5,'#ff7fb4');g.addColorStop(1,'#5cc8ff');q.fillStyle=g;q.fillRect(0,0,w,h);q.fillStyle='rgba(255,255,255,.9)';q.font='160px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText('팔 복',w/2,250);q.font='700 56px "Noto Serif KR",serif';q.fillText('2026 미래문화축제',w/2,360)});plane(8,3.3,bd,0,2.3,-38.4,0,true);
+ const ch=M(0xe8e6e1,{roughness:.6});for(let r=0;r<3;r++)for(let c=0;c<6;c++){const x=-3+c*1.2,z=-32.5+r*1.1;box(.45,.05,.45,ch,x,.45,z);box(.45,.45,.05,ch,x,.68,z+.2);for(const[a,b]of[[-.2,-.2],[.2,-.2],[-.2,.2],[.2,.2]])box(.04,.45,.04,ch,x+a,.22,z+b)}}
+/* 출발점 뒤: 바깥 길, 건너편 건물과 담 */
+{box(1.2,8.6,10,RED,-4.9,4.3,7);box(.4,3,10,M(0x9b9790),RX+.2,1.5,7);box(30,7,3,M(0xa8a29a),0,3.5,15);for(const x of[-9,-5,5,9])box(1.6,.9,.1,M(0x2a2622),x,4.5,13.45);for(const x of[-7,7]){const t=new THREE.Mesh(new THREE.SphereGeometry(1.8,10,8),M(0x5f7d45));t.position.set(x,4.2,11.5);t.castShadow=true;scene.add(t);box(.3,2.6,.3,M(0x6b4a2c),x,1.3,11.5)}}
+/* 먼 배경: 건너편 공장 지붕과 나무 */
+{box(30,6,4,M(0x8b8f93),0,3,-44);for(const x of[-12,-8,9,13]){const t=new THREE.Mesh(new THREE.SphereGeometry(2.2,10,8),M(0x5f7d45));t.position.set(x,6,-41);t.castShadow=true;scene.add(t)}}
+
+/* ---------------- 무이들(매쉬로 만든 정지 모델) ---------------- */
+const gl=new GLTFLoader();const NPCS=[];
+function npc(k,x,z,ry,h=.95,talk){gl.load('media/npc_'+k+'.glb',g=>{const m=g.scene;const b=new THREE.Box3().setFromObject(m);const sc=h/(b.max.y-b.min.y);m.scale.setScalar(sc);const c=b.getCenter(new THREE.Vector3());m.position.set(-c.x*sc,-b.min.y*sc,-c.z*sc);m.userData.y0=m.position.y;m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});const r=new THREE.Group();r.add(m);r.position.set(x,0,z);r.rotation.y=ry;scene.add(r);NPCS.push({r,ph:Math.random()*6,talk})})}
+npc('ceramic',BOOTH.x-1.15,BOOTH.z+.15,0,1.25,'booth');
+npc('science',-1.5,-10.4,.6,1.2);npc('painter',1.2,-14,-.9,1.2);npc('carpenter',-1.6,-19,2.6,1.2);npc('metal',3.0,-7.4,-1.6,1.2);
+
+/* ---------------- 걷기와 둘러보기 ---------------- */
+let yaw=0,pitch=.06,fov=cam.fov;const pos=new THREE.Vector3(0,0,7.5),goal=new THREE.Vector3();let gliding=false;const EYE=1.6;
+function clampPos(p){p.x=Math.max(-3.4,Math.min(3.6,p.x));if(Math.hypot(p.x-(BOOTH.x-1.15),p.z-(BOOTH.z+.15))<.6){p.x=BOOTH.x-1.15-.6}p.z=Math.max(-34,Math.min(12,p.z));const dz=p.z-BOOTH.z,dx=p.x-BOOTH.x;if(Math.abs(dx)<1.1&&Math.abs(dz)<.75){p.z=BOOTH.z+(dz>0?.75:-.75)}}
+const cv=$('#c'),ptr=new Map();let downT=0,moved=0,lastTap=0;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});downT=performance.now();moved=0;hideHint()});
+cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);if(ptr.size===1){const k=fov/70*.0042;yaw+=dx*k;pitch=Math.max(-1.1,Math.min(1.2,pitch+dy*k))}else if(ptr.size===2){const a=[...ptr.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(p.pd)fov=Math.max(35,Math.min(95,fov*(p.pd/d)));a.forEach(q=>q.pd=d)}});
+cv.addEventListener('pointerup',e=>{const p=ptr.get(e.pointerId);ptr.delete(e.pointerId);if(p&&moved<8&&performance.now()-downT<350){const now=performance.now();if(now-lastTap<400){lastTap=0;tapFloor(e.clientX,e.clientY)}else lastTap=now}});
+cv.addEventListener('pointercancel',e=>ptr.delete(e.pointerId));
+cv.addEventListener('wheel',e=>{e.preventDefault();fov=Math.max(35,Math.min(95,fov+e.deltaY*.03))},{passive:false});
+const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();function tapFloor(x,y){ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,cam);const t=-ray.ray.origin.y/ray.ray.direction.y;if(!(t>0))return;const p=ray.ray.at(t,new THREE.Vector3());clampPos(p);goal.set(p.x,0,p.z);gliding=true}
+const keys={};addEventListener('keydown',e=>{keys[e.code]=true;if((e.code==='KeyE'||e.code==='Enter'||e.code==='Space')&&!$('#act').hidden&&$('#tk').hidden){e.preventDefault();$('#act').click()}});addEventListener('keyup',e=>keys[e.code]=false);
+
+/* ---------------- 티켓 ---------------- */
+let ticket=null;try{ticket=JSON.parse(sessionStorage.getItem('choin-ticket'))}catch(e){}
+function drawTicket(t,punched){const c=$('#tkc'),q=c.getContext('2d'),W=c.width,H=c.height;q.clearRect(0,0,W,H);
+ const g=q.createLinearGradient(0,0,W,H);g.addColorStop(0,'#fbf4e6');g.addColorStop(1,'#f1e2c6');q.fillStyle=g;q.beginPath();q.roundRect(0,0,W,H,26);q.fill();
+ q.fillStyle='#1c130d';q.fillRect(0,0,250,H);const k=new Image();k.src='media/key_front.jpg';if(k.complete)q.drawImage(k,0,0,250,H);q.fillStyle='rgba(20,13,9,.35)';q.fillRect(0,0,250,H);
+ q.setLineDash([10,9]);q.strokeStyle='#8b6b45';q.lineWidth=3;q.beginPath();q.moveTo(760,24);q.lineTo(760,H-24);q.stroke();q.setLineDash([]);
+ q.fillStyle='#8b4a2b';q.font='700 26px "Noto Serif KR",serif';q.fillText('CHOIN 실감 상영관 · ADMIT ONE',280,62);
+ q.fillStyle='#1c130d';q.font='86px "Do Hyeon",sans-serif';q.fillText('뺄불통가마',280,162);q.font='700 28px "Noto Serif KR",serif';q.fillText('초인 (CHOIN)',282,206);
+ q.font='26px "Gowun Dodum",sans-serif';q.fillStyle='#3b2a1c';[['장소','전주 팔복예술공장 이팝나무홀 D-CUBE'],['형식','실감미디어 · 4면 LED · 약 7분'],['좌석','방석 자유석'],['날짜',t.date]].forEach(([a,b],i)=>{q.fillStyle='#8b6b45';q.fillText(a,282,262+i*38);q.fillStyle='#1c130d';q.fillText(b,350,262+i*38)});
+ q.fillStyle='#1c130d';q.font='700 24px "Noto Serif KR",serif';q.fillText('관람번호',790,70);q.font='44px "Do Hyeon",sans-serif';q.fillText('No.'+t.no,790,126);
+ for(let i=0,x=790;x<960;i++){const w=((t.no*(i+7))%4)+2;q.fillRect(x,170,w,150);x+=w+3}q.font='20px "Gowun Dodum",sans-serif';q.fillText('choin-studio.pages.dev',790,350);
+ if(punched){q.fillStyle='rgba(0,0,0,.0)';q.save();q.globalCompositeOperation='destination-out';q.beginPath();q.arc(760,H-70,22,0,7);q.fill();q.restore();q.save();q.translate(870,380);q.rotate(-.18);q.strokeStyle='#c0392b';q.lineWidth=5;q.strokeRect(-92,-34,184,62);q.fillStyle='#c0392b';q.font='38px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText('입장 확인',0,10);q.restore()}}
+function giveTicket(){if(!ticket){const d=new Date();ticket={no:String(Math.floor(Math.random()*900000)+100000),date:`${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}.`};try{sessionStorage.setItem('choin-ticket',JSON.stringify(ticket))}catch(e){}}
+ $('#tkm').textContent='매표소 무이가 티켓을 건네요. 오른쪽 검은 벽의 D-CUBE 입구로 가서 보여 주세요.';$('#tkOk').textContent='받았어요';$('#tkOk').onclick=()=>{$('#tk').hidden=true};drawTicket(ticket,false);setTimeout(()=>drawTicket(ticket,false),400);$('#tk').hidden=false;beep(660)}
+function enterCube(){if(!ticket){hint('먼저 앞쪽 매표소에서 티켓을 받아 주세요.');return}
+ $('#tkm').textContent='입구 무이가 티켓에 구멍을 뚫어요. 안으로 들어갑니다.';$('#tkOk').textContent='들어가기';drawTicket(ticket,false);$('#tk').hidden=false;
+ setTimeout(()=>{drawTicket(ticket,true);$('#tkc').classList.remove('punch');void $('#tkc').offsetWidth;$('#tkc').classList.add('punch');beep(880)},600);
+ const go=()=>{$('#fade').style.opacity=1;setTimeout(()=>{location.href='../dcube/?w=pambok&auto=1&from=palbok'},900)};$('#tkOk').onclick=go;setTimeout(go,2600)}
+$('#tkSave').addEventListener('click',()=>{$('#tkc').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='choin-ticket-'+ticket.no+'.png';document.body.append(a);a.click();a.remove()},'image/png')});
+let ac=null;function beep(f){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.06,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.25);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.26)}catch(e){}}
+$('#bWorld').addEventListener('click',()=>{location.href='../world/?from=palbok'});
+
+/* 안내 */
+function hint(t,ms=5200){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
+function hideHint(){const h=$('#hint');if(!h.hidden){h.style.opacity=0;setTimeout(()=>h.hidden=true,600)}}
+
+/* ---------------- 프레임 ---------------- */
+let last=performance.now(),uiT=0,curYaw=0,actFn=null;$('#act').addEventListener('click',()=>actFn&&actFn());
+R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
+ const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+ if(f||s){gliding=false;pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*s)*2.6*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*s)*2.6*dt;clampPos(pos)}
+ if(gliding){const d=goal.clone().sub(pos);d.y=0;const L=d.length();if(L<.03)gliding=false;else pos.addScaledVector(d,Math.min(1,dt*2.2))}
+ curYaw+=(yaw-curYaw)*Math.min(1,dt*14);cam.position.set(pos.x,EYE,pos.z);cam.rotation.set(pitch,curYaw,0,'YXZ');cam.rotation.x=pitch;cam.fov+=(fov-cam.fov)*Math.min(1,dt*10);cam.updateProjectionMatrix();
+ for(const n of NPCS){n.ph+=dt;n.r.children[0].position.y=n.r.children[0].userData.y0+Math.abs(Math.sin(n.ph*1.6))*.015;if(n.talk==='booth'){const d=Math.hypot(pos.x-n.r.position.x,pos.z-n.r.position.z);const want=d<5?Math.atan2(pos.x-n.r.position.x,pos.z-n.r.position.z):0;let dd=want-n.r.rotation.y;dd=Math.atan2(Math.sin(dd),Math.cos(dd));n.r.rotation.y+=dd*Math.min(1,dt*3)}}
+ if(window.__glow)window.__glow.intensity=3+Math.sin(now/700)*1.4+Math.sin(now/230)*.6;
+ uiT-=dt;if(uiT<=0){uiT=.15;const a=$('#act'),dB=Math.hypot(pos.x-BOOTH.x,pos.z-(BOOTH.z+.9)),dD=Math.hypot(pos.x-DOOR.x,pos.z-DOOR.z);
+  if(!$('#tk').hidden){a.hidden=true}else if(dB<2.3){a.textContent=ticket?'티켓 다시 보기':'티켓 받기';actFn=giveTicket;a.hidden=false}else if(dD<3.1){a.textContent=ticket?'D-CUBE 들어가기':'입장하기 (티켓 필요)';actFn=enterCube;a.hidden=false}else a.hidden=true}
+ R.render(scene,cam)});
+addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
+
+/* 시작: 골목 입구에서 안쪽을 본다 */
+document.fonts&&document.fonts.ready.then(()=>{banner.needsUpdate=true});
+setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);hint(matchMedia('(pointer:coarse)').matches?'화면을 밀어 둘러보고, 바닥을 두 번 톡 치면 걸어가요. 오른쪽 앞 매표소에서 티켓을 받으세요.':'끌어서 둘러보고 WASD로 걸어요. 바닥을 두 번 누르면 그 자리로 가요. 오른쪽 앞 매표소에서 티켓을 받으세요.',7000)},700);
+if(qs.get('from')==='dcube'){pos.set(DOOR.x-1.6,0,DOOR.z+.4);yaw=-Math.PI/2+.3;curYaw=yaw}
+window.__PB={get pos(){return pos},look(y,p){yaw=y;pitch=p;curYaw=y},tp(x,z){pos.set(x,0,z)},giveTicket,enterCube,get ticket(){return ticket},NPCS};
+</script>
+</body>
+</html>
