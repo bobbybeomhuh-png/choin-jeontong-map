@@ -145,6 +145,7 @@ button,input,select{font:inherit;color:inherit}
 import * as THREE from 'three';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 /* ---------------- 상영 목록 ----------------
    room: 안쪽 치수(m). layout: 영상 한 장 안에서 각 면이 차지하는 픽셀 칸.
@@ -156,7 +157,8 @@ const WORKS=[{
  place:'전주 팔복예술공장 이팝나무홀 D-CUBE',event:'2026 미래문화축제 팔복 : 상상 과부하 (전주문화재단)',period:'2026.10.16 ~ 11.22',
  dur:'6분 47초',form:'실감미디어아트 · LED 벽 3면 + 천장',
  room:PAMBOK_ROOM,
- src:'media/hls/index.m3u8',poster:'media/pambok_poster.jpg',
+ src:'media/hls/index.m3u8',
+ crowd:['ceramic','science','carpenter','painter','metal'],poster:'media/pambok_poster.jpg',
  layout:{aw:3456,ah:1664,walls:[0,0,3456,768],ceil:[0,768,1280,896],split:[2560/6912,4352/6912]},
  about:['〈뺄불통가마〉는 청도 태성룡 도예가의 통가마 작업에서 한국적 정체성과 전통 도자의 깊이를 발견하며 시작된 몰입형 미디어아트 프로젝트다.','도예가들은 가마를 어머니의 자궁에, 기물을 굽는 시간을 생명을 품는 시간에, 완성된 도자기를 꺼내는 순간을 출산에 비유한다. 초인(CHOIN)은 통가마 작업을 곁에서 지켜보며 흙과 불, 시간과 우연이 함께 하나의 기물을 탄생시키는 과정에서 느낀 숭고함을 작품으로 옮겼다.','하나의 점토가 세포처럼 분열하고 서로 다른 도자기 형태로 변화한 뒤, 불의 대류와 백열의 시간을 지나 저마다의 표면을 획득한다. 관객은 약7분 동안 4면 LED 공간 한가운데에서 마치 통가마 내부를 통과하듯 흙이 도자기로 변화하는 시간을 경험한다.']
 }];
@@ -178,7 +180,7 @@ const rig=new THREE.Group();rig.add(cam);scene.add(rig);
 scene.add(new THREE.HemisphereLight(0x8c8a86,0x1a1814,.18));
 
 let room=null; /* 지금 세운 공간 */
-function clearRoom(){if(!room)return;scene.remove(room.g);room.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==room.ledMat)o.material.dispose?.()});room=null}
+function clearRoom(){clearCrowd();if(!room)return;scene.remove(room.g);room.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==room.ledMat)o.material.dispose?.()});room=null}
 
 /* 네 꼭짓점과 각 꼭짓점의 영상 좌표로 면 하나 */
 function quad(p,uv){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p.flat(),3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv.flat(),2));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();return g}
@@ -199,8 +201,8 @@ function buildRoom(W,D,H,maps){
  /* 바닥: 광택 있는 콘크리트, 벽빛을 받는다 */
  const fl=new THREE.Mesh(new THREE.PlaneGeometry(W+.02,D+6).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x6f6b66,roughness:.38,metalness:.05}));fl.position.z=3;g.add(fl);
  /* 입구 바깥: 옛 공장 홀 */
- const hall=new THREE.Mesh(new THREE.BoxGeometry(W+14,H+4,D+16),new THREE.MeshStandardMaterial({color:0x2a2724,roughness:.9,side:THREE.BackSide}));hall.position.set(0,(H+4)/2-.01,3);g.add(hall);
- const hf=new THREE.Mesh(new THREE.PlaneGeometry(W+14,10).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x4a4641,roughness:.8}));hf.position.set(0,-.002,hd+5);g.add(hf);
+ const hall=new THREE.Mesh(new THREE.BoxGeometry(W+14,H+4,D+16),new THREE.MeshStandardMaterial({color:0x34302b,emissive:0x16130f,roughness:.9,side:THREE.BackSide}));hall.position.set(0,(H+4)/2-.01,3);g.add(hall);
+ const hf=new THREE.Mesh(new THREE.PlaneGeometry(W+14,10).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x4a4641,roughness:.8}));hf.position.set(0,-.002,hd+5);g.add(hf);{const hl=new THREE.PointLight(0xffe2c0,6,14,1.6);hl.position.set(0,H*.8,hd+4);g.add(hl)}
  /* 큐브 바깥 껍데기와 입구 테두리 */
  const shell=new THREE.MeshStandardMaterial({color:0x111111,roughness:.7});
  const sideBox=(w,h,d,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),shell);m.position.set(x,y,z);g.add(m)};
@@ -211,14 +213,14 @@ function buildRoom(W,D,H,maps){
  /* 바닥 방석: 현장처럼 둥글게 흩어 둠 */
  const cush=new THREE.MeshStandardMaterial({color:0x5b5a58,roughness:.85});const cg=new THREE.CylinderGeometry(.24,.25,.08,20);
  const rnd=(()=>{let s=7;return()=>(s=(s*16807)%2147483647)/2147483647})();
- for(let i=0;i<22;i++){const x=(rnd()-.5)*(W-2.2),z=-hd+3+rnd()*(D-4.5);const m=new THREE.Mesh(cg,cush);m.position.set(x,.04,z);g.add(m)}
+ const cushPos=[];for(let i=0;i<22;i++){const x=(rnd()-.5)*(W-2.2),z=-hd+3+rnd()*(D-4.5);const m=new THREE.Mesh(cg,cush);m.position.set(x,.04,z);g.add(m);cushPos.push(new THREE.Vector3(x,0,z))}
  /* 벽빛: 면마다 평판 조명 하나, 색은 영상에서 읽는다 */
  const L=[];const mk=(w,h,pos,look)=>{const l=new THREE.RectAreaLight(0xffffff,0,w,h);l.position.copy(pos);l.lookAt(look);g.add(l);L.push(l);return l};
  mk(D,H,new THREE.Vector3(-hw+.02,H/2,0),new THREE.Vector3(0,H/2,0));
  mk(W,H,new THREE.Vector3(0,H/2,-hd+.02),new THREE.Vector3(0,H/2,0));
  mk(D,H,new THREE.Vector3(hw-.02,H/2,0),new THREE.Vector3(0,H/2,0));
  mk(W,D,new THREE.Vector3(0,H-.02,0),new THREE.Vector3(0,0,0));
- room={g,W,D,H,lights:L};
+ room={g,W,D,H,lights:L,cush:cushPos};
 }
 
 /* ---------------- 영상 ---------------- */
@@ -247,7 +249,7 @@ function makeSampler(sources){/* sources: 면마다 [video, 칸] */const c=docum
 function playWork(w){
  stopVideos();const lay=w.layout;const v=mkVideo(qs.get('src')||w.src);vids=[v];master=v;const tex=vtex(v);
  const{maps,reg}=atlasMaps(tex,lay,w.room);buildRoom(w.room.w,w.room.d,w.room.h,maps);
- sampler=makeSampler(reg.map(r=>r?[v,r]:null));afterLoad(w)}
+ sampler=makeSampler(reg.map(r=>r?[v,r]:null));afterLoad(w);if(w.crowd)v.addEventListener('canplay',()=>loadCrowd(w.crowd),{once:true})}
 
 function playLocal(o){/* 내 파일 */
  stopVideos();const W=o.w,D=o.d,H=o.h,rm={w:W,d:D,h:H};
@@ -259,6 +261,34 @@ function playLocal(o){/* 내 파일 */
    else lay={aw,ah,walls:[0,0,aw,ah],ceil:null};
    const{maps,reg}=atlasMaps(tex,lay,rm);buildRoom(W,D,H,maps);sampler=makeSampler(reg.map(r=>r?[v,r]:null));setView('center',true)},{once:true})}
  afterLoad({title:o.name||'내 영상',place:'내 컴퓨터에서 고른 파일',room:rm,local:true})}
+
+
+/* ---------------- 무이 관객 ----------------
+   매쉬로 만든 무이 5명. 파일마다 sit(바닥에 책상다리) / walk 두 동작. 정면 벽을 보고 앉았다가, 한참 뒤 일어나 다른 방석으로 걸어간다. */
+let crowd=[];const gl=new GLTFLoader();
+function clearCrowd(){for(const m of crowd)if(m.root)room&&room.g.remove(m.root);crowd=[]}
+function freeCushion(me){if(!room)return null;const taken=new Set(crowd.filter(c=>c!==me&&c.cu).map(c=>c.cu));const avoid=Object.values(VIEWS()).map(v=>new THREE.Vector3(v.p[0],0,v.p[1]));
+ const ok=room.cush.filter(c=>!taken.has(c)&&avoid.every(a=>a.distanceTo(c)>1.3)&&crowd.every(o=>o===me||!o.root||o.root.position.distanceTo(c)>.9));return ok.length?ok[(Math.random()*ok.length)|0]:null}
+function loadCrowd(list){clearCrowd();if(!room)return;const g0=room.g;
+ list.forEach((k,i)=>gl.load('media/muui/muui_'+k+'.glb',gt=>{if(!room||room.g!==g0)return;const root=new THREE.Group(),m=gt.scene;
+  m.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(o.material){o.material.envMapIntensity=.6}}});
+  const b=new THREE.Box3().setFromObject(m),h=b.getSize(new THREE.Vector3()).y||1;m.scale.setScalar(.92/h);root.add(m);g0.add(root);
+  const mx=new THREE.AnimationMixer(m),clip=n=>gt.animations.find(a=>a.name===n)||gt.animations[0];
+  /* 걷기 동작의 앞뒤 이동은 지우고(제자리 걸음), 위치는 코드로 옮긴다 */
+  const wk=clip('walk').clone();for(const t of wk.tracks)if(/position$/.test(t.name)){const v=t.values;for(let j=3;j<v.length;j+=3){v[j]=v[0];v[j+2]=v[2]}}
+  const A={sit:mx.clipAction(clip('sit')),walk:mx.clipAction(wk)};
+  const me={k,root,mx,A,cur:null,cu:null,st:'sit',t:0,speed:.42+Math.random()*.1};crowd.push(me);
+  const start=freeCushion(me)||room.cush[i];if(i<3){me.cu=start;root.position.copy(start);root.rotation.y=Math.PI+(Math.random()-.5)*.5;setAct(me,'sit');me.t=8+Math.random()*30}
+  else{const sd=i%2?1:-1;root.position.set(sd*(room.W/2-1),0,-room.D/2+1.6+Math.random()*2);goNext(me)}
+ },undefined,()=>{}))}
+function setAct(me,n){const a=me.A[n];if(me.cur===a)return;a.reset().fadeIn(.45).play();if(me.cur)me.cur.fadeOut(.45);me.cur=a}
+function goNext(me){const c=freeCushion(me);if(!c){me.st='sit';me.t=10;setAct(me,'sit');return}me.cu=c;me.st='walk';setAct(me,'walk')}
+function crowdTick(dt){if(!crowd.length||!room)return;for(const me of crowd){me.mx.update(dt);
+ if(me.st==='sit'){me.t-=dt;const ty=Math.PI;let d=ty-me.root.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));me.root.rotation.y+=d*Math.min(1,dt*2);if(me.t<=0){me.cu=null;goNext(me)}}
+ else{const to=me.cu.clone().sub(me.root.position);to.y=0;const L=to.length();if(L<.06){me.st='sit';me.t=25+Math.random()*45;setAct(me,'sit');continue}
+  const want=Math.atan2(to.x,to.z);let d=want-me.root.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));me.root.rotation.y+=d*Math.min(1,dt*5);
+  const dir=to.normalize(),off=me.root.position.clone().sub(pos);off.y=0;const od=off.length();if(od<1.4&&od>.001)dir.addScaledVector(off.normalize(),(1.4-od)*1.6).normalize();
+  me.root.position.addScaledVector(dir,Math.min(L,me.speed*dt*(Math.abs(d)<.8?1:.3)))}}}
 
 /* ---------------- 보는 자리와 움직임 ---------------- */
 let yaw=0,pitch=.08,eye=1.6,sit=false,fov=innerWidth/innerHeight<.8?88:70,gyro=null;const pos=new THREE.Vector3(),goal=new THREE.Vector3();let gliding=false;
@@ -356,7 +386,7 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
   if(gyro){/* 기기 방향 + 끌기로 돌린 만큼 */const{a,b,g,o}=gyro;eu.set(b,a,-g,'YXZ');cam.quaternion.setFromEuler(eu);cam.quaternion.multiply(q1);cam.quaternion.multiply(q0.setFromAxisAngle(zee,-o));if(gyroYaw0===null)gyroYaw0=a-yaw;const qy=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),-gyroYaw0);cam.quaternion.premultiply(qy);curYaw=new THREE.Euler().setFromQuaternion(cam.quaternion,'YXZ').y}
   else{curYaw+=(yaw-curYaw)*Math.min(1,dt*14);cam.rotation.set(pitch,curYaw,0,'YXZ');cam.rotation.x=pitch}
   cam.fov+=(fov-cam.fov)*Math.min(1,dt*10);cam.updateProjectionMatrix()}
- if(sampler)sampler(dt);
+ if(sampler)sampler(dt);crowdTick(dt);
  /* 여러 파일일 때 맞춰 돌린다 */
  if(vids.length>1&&master&&!master.paused){for(const v of vids)if(v!==master&&Math.abs(v.currentTime-master.currentTime)>.15)v.currentTime=master.currentTime}
  uiT-=dt;if(uiT<=0&&master){uiT=.25;const d=master.duration||0;$('#tm').textContent=fmt(master.currentTime)+' / '+fmt(d);if(!seeking&&d)$('#seek').value=master.currentTime/d*1000;$('#bPlay').textContent=master.paused?'재생':'멈춤';drawMini()}
@@ -367,7 +397,7 @@ addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=inne
 const w0=WORKS.find(w=>w.id===qs.get('w'));
 if(w0&&qs.has('auto')){playWork(w0)}
 else if(w0){const c=[...cards.children][WORKS.indexOf(w0)];c.style.outline='2px solid var(--gold)';c.scrollIntoView({block:'center'})}
-window.__DC={setView,get pos(){return pos},get room(){return room},get vids(){return vids},play:playWork,WORKS,look(y,p){yaw=y;pitch=p;curYaw=y},setFov(f){fov=f;cam.fov=f}};
+window.__DC={get crowd(){return crowd},setView,get pos(){return pos},get room(){return room},get vids(){return vids},play:playWork,WORKS,look(y,p){yaw=y;pitch=p;curYaw=y},setFov(f){fov=f;cam.fov=f}};
 </script>
 </body>
 </html>
