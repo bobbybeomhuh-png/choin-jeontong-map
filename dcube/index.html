@@ -275,7 +275,7 @@ function freeCushion(me){if(!room)return null;const taken=new Set(crowd.filter(c
 function loadCrowd(list){clearCrowd();if(!room)return;const g0=room.g;
  list.forEach((k,i)=>gl.load('media/muui/muui_'+k+'.glb',gt=>{if(!room||room.g!==g0)return;const root=new THREE.Group(),m=gt.scene;
   m.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(o.material)o.material.envMapIntensity=.6}});
-  const b=new THREE.Box3().setFromObject(m),h=b.getSize(new THREE.Vector3()).y||1;m.scale.setScalar(.95/h);m.position.y=-b.min.y*.95/h;root.add(m);g0.add(root);
+  /* 뼈대로 키와 발 높이를 잡는다(뼈대 있는 모델은 상자 크기가 맞지 않음): root 뼈=발바닥, head 뼈=목, 키≈목 높이의 두 배 */root.add(m);g0.add(root);m.updateMatrixWorld(true);const rb=m.getObjectByName('root'),hb=m.getObjectByName('head'),vr=new THREE.Vector3(),vh=new THREE.Vector3();rb.getWorldPosition(vr);hb.getWorldPosition(vh);const hm=Math.max(.2,2*(vh.y-vr.y));m.scale.setScalar(.95/hm);m.updateMatrixWorld(true);rb.getWorldPosition(vr);m.position.y-=vr.y;
   const mx=new THREE.AnimationMixer(m),A={};for(const c of gt.animations)A[c.name]=mx.clipAction(c);
   A.sit.setLoop(THREE.LoopOnce,1);A.sit.clampWhenFinished=true;for(const n of['sit_clap','wave','cheer'])if(A[n])A[n].setLoop(THREE.LoopRepeat,n==='sit_clap'?2:n==='wave'?2:3);
   const me={k,root,mx,A,cur:null,cu:null,st:'sit',t:0,speed:.36+Math.random()*.08,ev:0};crowd.push(me);
