@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>초인 실감 상영관</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="초인(CHOIN) 실감미디어 작업을 실제 전시 공간 그대로 들어가서 보는 상영 아카이브">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<!-- ⏱ 2026-11-10 20:00 초판: 전주 팔복 D-CUBE 「뻘불통가마」 -->
+<style>
+:root{--bg:#0b0a09;--panel:rgba(16,14,12,.86);--line:rgba(255,236,210,.16);--ink:#f3eadb;--muted:#b9ab96;--gold:#e7b75a;--red:#c9492f}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+canvas#c:active{cursor:grabbing}
+button,input,select{font:inherit;color:inherit}
+.btn{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);padding:8px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;min-height:38px}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn.on{background:var(--gold);color:#1d1408;border-color:var(--gold)}
+.btn.main{background:var(--gold);color:#1d1408;border-color:var(--gold);font-weight:700}
+/* 위 */
+#top{position:fixed;left:0;right:0;top:0;display:flex;gap:10px;align-items:center;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;background:linear-gradient(rgba(0,0,0,.6),transparent);pointer-events:none}
+#top>*{pointer-events:auto}
+#brand{font:700 15px "Noto Serif KR",serif;letter-spacing:.08em;color:var(--gold);cursor:pointer}
+#wt{font:700 18px "Noto Serif KR",serif}
+#ws{font-size:13px;color:var(--muted)}
+#top .sp{flex:1}
+/* 아래 막대 */
+#bar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 12px);transform:translateX(-50%);width:min(1040px,calc(100vw - 20px));background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:8px;backdrop-filter:blur(8px)}
+#bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#seek{flex:1;accent-color:var(--gold);min-width:120px}
+#tm{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:92px;text-align:center}
+.grp{display:flex;gap:6px;flex-wrap:wrap}
+#bar .lab{font-size:12px;color:var(--muted);margin-right:2px}
+/* 작은 지도 */
+#mini{position:fixed;right:14px;top:calc(env(safe-area-inset-top) + 58px);width:92px;height:118px;border:1px solid var(--line);border-radius:8px;background:rgba(0,0,0,.45)}
+/* 첫 화면(아카이브) */
+#gal{position:fixed;inset:0;overflow:auto;background:radial-gradient(1200px 600px at 50% -10%,#3a2414 0%,#0b0a09 60%);z-index:20;padding:calc(env(safe-area-inset-top) + 28px) 18px 40px}
+#gal .in{max-width:1080px;margin:0 auto;display:grid;gap:22px}
+#gal h1{font:700 clamp(26px,4.4vw,44px)/1.2 "Noto Serif KR",serif;margin:0;letter-spacing:-.01em}
+#gal .kick{font:700 13px "Noto Serif KR",serif;letter-spacing:.2em;color:var(--gold)}
+#gal p.lead{margin:0;color:var(--muted);font-size:16px;line-height:1.7;max-width:720px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;display:grid;text-align:left;padding:0;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);border-color:rgba(231,183,90,.6)}
+.card .im{aspect-ratio:16/7;background:#222 center/cover no-repeat;position:relative}
+.card .im b{position:absolute;left:10px;top:10px;font-size:12px;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:20px;font-weight:400}
+.card .tx{padding:14px 16px 16px;display:grid;gap:4px}
+.card h3{margin:0;font:700 21px "Noto Serif KR",serif}
+.card .meta{font-size:13.5px;color:var(--muted);line-height:1.6}
+.card.up .im{display:grid;place-items:center;background:repeating-linear-gradient(45deg,#1a1612 0 14px,#211b15 14px 28px);font-size:15px;color:var(--muted)}
+/* 패널 */
+.pn{position:fixed;z-index:30;left:50%;top:50%;transform:translate(-50%,-50%);width:min(620px,calc(100vw - 20px));max-height:calc(100dvh - 20px);overflow:auto;background:#15120f;border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.pn h2{margin:0;font:700 22px "Noto Serif KR",serif}
+.pn p{margin:0;line-height:1.7;color:#e3d7c4}
+.pn .note{font-size:13px;color:var(--muted)}
+.pn dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:14.5px}
+.pn dt{color:var(--muted)}.pn dd{margin:0}
+.pn label{display:grid;gap:5px;font-size:14px}
+.pn input[type=number],.pn select,.pn input[type=file]{background:#0e0c0a;border:1px solid var(--line);border-radius:8px;padding:8px}
+.pn .three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pn .rowe{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+[hidden]{display:none!important}
+#load{position:fixed;inset:0;display:grid;place-items:center;z-index:15;pointer-events:none;font-size:15px;color:var(--muted)}
+#hint{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 64px);transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:8px 16px;font-size:14px;transition:opacity .6s;pointer-events:none;text-align:center;max-width:calc(100vw - 30px)}
+#wt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media (max-width:640px){#ws,#brand .full{display:none}#brand{font-size:13px}#wt{font-size:16px}#mini{width:62px;height:80px}#bar{padding:7px;gap:6px}.btn{padding:6px 9px;font-size:13.5px;min-height:34px}#bar .lab{display:none}#seek{min-width:60px}#tm{min-width:74px;font-size:12px}#bar .row:last-child{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}#bar .row:last-child>span[style]{display:none}#views{flex-wrap:nowrap}#top .btn{padding:6px 8px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="load" hidden>영상을 불러오는 중이에요</div>
+<div id="hint" hidden></div>
+<header id="top" hidden>
+ <span id="brand" title="상영 목록으로">CHOIN<span class="full"> 상영관</span></span>
+ <span id="wt"></span><span id="ws"></span>
+ <span class="sp"></span>
+ <button class="btn" id="bInfo" type="button">작품 정보</button>
+ <button class="btn" id="bList" type="button">목록</button>
+</header>
+<canvas id="mini" width="184" height="236" hidden></canvas>
+<div id="bar" hidden>
+ <div class="row">
+  <button class="btn main" id="bPlay" type="button" style="min-width:64px">재생</button>
+  <input type="range" id="seek" min="0" max="1000" value="0" aria-label="재생 위치">
+  <span id="tm">0:00 / 0:00</span>
+  <button class="btn" id="bMute" type="button">소리 켬</button>
+ </div>
+ <div class="row">
+  <span class="lab">보는 자리</span>
+  <div class="grp" id="views"></div>
+  <span style="flex:1"></span>
+  <button class="btn" id="bSit" type="button">앉기</button>
+  <button class="btn" id="bGyro" type="button" hidden>기울여 보기</button>
+  <button class="btn" id="bFull" type="button">전체 화면</button>
+  <span id="vrSlot"></span>
+ </div>
+</div>
+
+<section id="gal">
+ <div class="in">
+  <div class="kick">CHOIN · IMMERSIVE ARCHIVE</div>
+  <h1>전시장 그대로, 안으로 들어가서 보는 초인 상영관</h1>
+  <p class="lead">실감미디어 작업은 화면 한 장으로 옮기면 반쪽이 됩니다. 작품이 걸렸던 공간을 실제 치수 그대로 다시 세우고, 그 안에 상영본을 다시 틀었습니다. 들어가서 고개를 돌리면 네 면이 한꺼번에 움직입니다. 마우스로 끌거나 화면을 밀어 둘러보고, VR 기기에서는 그대로 들어갈 수 있어요.</p>
+  <div class="cards" id="cards"></div>
+ </div>
+</section>
+
+<section class="pn" id="pInfo" hidden></section>
+
+<section class="pn" id="pUp" hidden>
+ <h2>내 영상으로 상영해 보기</h2>
+ <p class="note">고른 파일은 이 브라우저 안에서만 재생돼요. 어디에도 올라가지 않습니다. mp4(H.264)가 가장 잘 돌아가고, mov는 코덱에 따라 안 열릴 수 있어요.</p>
+ <label>영상 배치
+  <select id="uLay">
+   <option value="dcube">D-CUBE 펼침 한 장 (좌·정면·우 벽 띠 + 오른쪽 천장 칸)</option>
+   <option value="strip">벽 3면 펼침 한 장 (천장 없음)</option>
+   <option value="each">면마다 따로 (좌·정면·우·천장 파일)</option>
+  </select>
+ </label>
+ <div id="uOne"><label>영상 파일<input type="file" id="uF" accept="video/*,.mov,.mp4,.m4v,.webm"></label></div>
+ <div id="uEach" hidden style="display:grid;gap:8px">
+  <label>좌측 벽<input type="file" id="uL" accept="video/*,.mov"></label>
+  <label>정면 벽<input type="file" id="uC" accept="video/*,.mov"></label>
+  <label>우측 벽<input type="file" id="uR" accept="video/*,.mov"></label>
+  <label>천장 (없으면 비워 두기, 위쪽이 정면 방향)<input type="file" id="uT" accept="video/*,.mov"></label>
+ </div>
+ <div>
+  <div style="font-size:14px;margin-bottom:5px">공간 크기 (mm, 안쪽 치수)</div>
+  <div class="three">
+   <label>정면 폭<input type="number" id="uW" value="7216" min="1000" step="1"></label>
+   <label>옆면 깊이<input type="number" id="uD" value="10112" min="1000" step="1"></label>
+   <label>높이<input type="number" id="uH" value="6116" min="1000" step="1"></label>
+  </div>
+  <p class="note" style="margin-top:6px">기본값은 전주 팔복예술공장 D-CUBE 안쪽 치수예요.</p>
+ </div>
+ <div class="rowe"><button class="btn" id="uX" type="button">닫기</button><button class="btn main" id="uGo" type="button">상영 시작</button></div>
+</section>
+
+<script type="module">
+import * as THREE from 'three';
+import {VRButton} from 'three/addons/webxr/VRButton.js';
+import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
+
+/* ---------------- 상영 목록 ----------------
+   room: 안쪽 치수(m). layout: 영상 한 장 안에서 각 면이 차지하는 픽셀 칸.
+   팔복 원본(9472×1792, 이팝나무홀 제작 가이드): 좌 2560·전면 1792·우 2560(높이 1536) 벽 띠, 오른쪽 2560×1792 칸이 천장.
+   천장 칸은 가로가 방 깊이(왼쪽 끝이 정면 쪽), 세로가 방 폭(위쪽이 좌측 벽 쪽). 원본 프레임 이음매로 확인. */
+const PAMBOK_ROOM={w:7.216,d:10.112,h:6.116};
+const WORKS=[{
+ id:'pambok',title:'뻘불통가마',artist:'초인(CHOIN)',year:'2026',
+ place:'전주 팔복예술공장 이팝나무홀 D-CUBE',event:'2026 미래문화축제 팔복 : 상상 과부하 (전주문화재단)',period:'2026.10.16 ~ 11.22',
+ dur:'6분 47초',form:'실감미디어아트 · LED 벽 3면 + 천장',
+ room:PAMBOK_ROOM,
+ src:'media/hls/index.m3u8',poster:'media/pambok_poster.jpg',
+ layout:{aw:3456,ah:1664,walls:[0,0,3456,768],ceil:[0,768,1280,896],split:[2560/6912,4352/6912]},
+ about:'한 줌의 흙 알갱이가 흩날리다 둥글게 뭉쳐 도자기로 태어나고, 그 도자기가 세포 분열하듯 끝없이 번져 나가 서로 맞물리며 하나의 거대한 가마로 재조립됩니다. 가마는 점점 자라나 관람객을 둘러싼 네 면을 전부 집어삼키고, 마침내 가마가 닫히는 순간 공간은 완전한 어둠에 잠깁니다. 그리고 그 어둠 속에서 불길이 차올라 가마 안을 밝히면, 흙이 불을 견뎌 그릇이 되는 그 순간이 사방에서 관람객을 감쌉니다.'
+}];
+
+const $=s=>document.querySelector(s);
+const qs=new URLSearchParams(location.search);
+const fmt=s=>{s=Math.max(0,s|0);return (s/60|0)+':'+String(s%60).padStart(2,'0')};
+
+/* ---------------- 장면 ---------------- */
+const canvas=$('#c');
+const R=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+R.setPixelRatio(Math.min(devicePixelRatio,1.75));R.setSize(innerWidth,innerHeight);
+R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.0;
+R.xr.enabled=true;
+RectAreaLightUniformsLib.init();
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x050505);
+const cam=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.05,200);
+const rig=new THREE.Group();rig.add(cam);scene.add(rig);
+scene.add(new THREE.HemisphereLight(0x8c8a86,0x1a1814,.18));
+
+let room=null; /* 지금 세운 공간 */
+function clearRoom(){if(!room)return;scene.remove(room.g);room.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==room.ledMat)o.material.dispose?.()});room=null}
+
+/* 네 꼭짓점과 각 꼭짓점의 영상 좌표로 면 하나 */
+function quad(p,uv){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p.flat(),3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv.flat(),2));g.setIndex([0,1,2,0,2,3]);g.computeVertexNormals();return g}
+
+function buildRoom(W,D,H,maps){
+ /* maps: {L,F,R,T}: {tex, uv(s,t)→[u,v]} s는 면의 가로(0→1), t는 세로(0=아래,1=위) / 천장은 (fx,fz) */
+ clearRoom();const g=new THREE.Group();scene.add(g);const hw=W/2,hd=D/2,e=.012;
+ const led=k=>new THREE.MeshBasicMaterial({map:maps[k]?maps[k].tex:null,color:maps[k]?0xffffff:0x050505,side:THREE.DoubleSide,toneMapped:false});
+ const U=(k,s,t)=>maps[k]?maps[k].uv(s,t):[0,0];
+ /* 좌측 벽: 입구(z=+hd)에서 정면(z=-hd)으로 */
+ g.add(new THREE.Mesh(quad([[-hw,0,hd],[-hw,0,-hd-e],[-hw,H+e,-hd-e],[-hw,H+e,hd]],[U('L',0,0),U('L',1,0),U('L',1,1),U('L',0,1)]),led('L')));
+ /* 정면: 왼쪽에서 오른쪽으로 */
+ g.add(new THREE.Mesh(quad([[-hw-e,0,-hd],[hw+e,0,-hd],[hw+e,H+e,-hd],[-hw-e,H+e,-hd]],[U('F',0,0),U('F',1,0),U('F',1,1),U('F',0,1)]),led('F')));
+ /* 우측 벽: 정면에서 입구로 */
+ g.add(new THREE.Mesh(quad([[hw,0,-hd-e],[hw,0,hd],[hw,H+e,hd],[hw,H+e,-hd-e]],[U('R',0,0),U('R',1,0),U('R',1,1),U('R',0,1)]),led('R')));
+ /* 천장: (가로 0=좌,1=우 / 깊이 0=정면,1=입구) */
+ g.add(new THREE.Mesh(quad([[-hw-e,H,-hd-e],[hw+e,H,-hd-e],[hw+e,H,hd],[-hw-e,H,hd]],[U('T',0,0),U('T',1,0),U('T',1,1),U('T',0,1)]),led('T')));
+ /* 바닥: 광택 있는 콘크리트, 벽빛을 받는다 */
+ const fl=new THREE.Mesh(new THREE.PlaneGeometry(W+.02,D+6).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x6f6b66,roughness:.38,metalness:.05}));fl.position.z=3;g.add(fl);
+ /* 입구 바깥: 옛 공장 홀 */
+ const hall=new THREE.Mesh(new THREE.BoxGeometry(W+14,H+4,D+16),new THREE.MeshStandardMaterial({color:0x2a2724,roughness:.9,side:THREE.BackSide}));hall.position.set(0,(H+4)/2-.01,3);g.add(hall);
+ const hf=new THREE.Mesh(new THREE.PlaneGeometry(W+14,10).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x4a4641,roughness:.8}));hf.position.set(0,-.002,hd+5);g.add(hf);
+ /* 큐브 바깥 껍데기와 입구 테두리 */
+ const shell=new THREE.MeshStandardMaterial({color:0x111111,roughness:.7});
+ const sideBox=(w,h,d,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),shell);m.position.set(x,y,z);g.add(m)};
+ sideBox(.3,H+.3,D+.3,-hw-.16,(H+.3)/2,0);sideBox(.3,H+.3,D+.3,hw+.16,(H+.3)/2,0);sideBox(W+.62,.3,D+.3,0,H+.16,0);sideBox(W+.62,H+.3,.3,0,(H+.3)/2,-hd-.16);
+ const trim=new THREE.MeshStandardMaterial({color:0x050505,roughness:.4});
+ for(const[x,w]of[[-hw-.03,.06],[hw+.03,.06]]){const m=new THREE.Mesh(new THREE.BoxGeometry(w,H+.06,.08),trim);m.position.set(x,H/2,hd+.04);g.add(m)}
+ {const m=new THREE.Mesh(new THREE.BoxGeometry(W+.12,.06,.08),trim);m.position.set(0,H+.03,hd+.04);g.add(m)}
+ /* 바닥 방석: 현장처럼 둥글게 흩어 둠 */
+ const cush=new THREE.MeshStandardMaterial({color:0x5b5a58,roughness:.85});const cg=new THREE.CylinderGeometry(.24,.25,.08,20);
+ const rnd=(()=>{let s=7;return()=>(s=(s*16807)%2147483647)/2147483647})();
+ for(let i=0;i<22;i++){const x=(rnd()-.5)*(W-2.2),z=-hd+3+rnd()*(D-4.5);const m=new THREE.Mesh(cg,cush);m.position.set(x,.04,z);g.add(m)}
+ /* 벽빛: 면마다 평판 조명 하나, 색은 영상에서 읽는다 */
+ const L=[];const mk=(w,h,pos,look)=>{const l=new THREE.RectAreaLight(0xffffff,0,w,h);l.position.copy(pos);l.lookAt(look);g.add(l);L.push(l);return l};
+ mk(D,H,new THREE.Vector3(-hw+.02,H/2,0),new THREE.Vector3(0,H/2,0));
+ mk(W,H,new THREE.Vector3(0,H/2,-hd+.02),new THREE.Vector3(0,H/2,0));
+ mk(D,H,new THREE.Vector3(hw-.02,H/2,0),new THREE.Vector3(0,H/2,0));
+ mk(W,D,new THREE.Vector3(0,H-.02,0),new THREE.Vector3(0,0,0));
+ room={g,W,D,H,lights:L};
+}
+
+/* ---------------- 영상 ---------------- */
+let vids=[],master=null,sampler=null;
+function mkVideo(src){const v=document.createElement('video');v.crossOrigin='anonymous';v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';v.loop=true;
+ /* 큰 상영본은 조각(HLS)으로: 사파리는 바로, 나머지는 hls.js */
+ if(/\.m3u8($|\?)/.test(src)&&!v.canPlayType('application/vnd.apple.mpegurl')&&window.Hls&&Hls.isSupported()){const h=new Hls({maxBufferLength:20,capLevelToPlayerSize:false});h.loadSource(src);h.attachMedia(v);v._hls=h}else v.src=src;return v}
+function vtex(v){const t=new THREE.VideoTexture(v);t.colorSpace=THREE.SRGBColorSpace;t.minFilter=THREE.LinearFilter;t.magFilter=THREE.LinearFilter;t.generateMipmaps=false;return t}
+function stopVideos(){for(const v of vids){v.pause();if(v._hls)v._hls.destroy();v.removeAttribute('src');v.load()}vids=[];master=null;sampler=null}
+
+/* 한 장 영상 안의 칸 배치로 네 면의 영상 좌표를 만든다 */
+function atlasMaps(tex,lay,room0){const{aw,ah}=lay,[wx,wy,ww,wh]=lay.walls,W=room0.w,D=room0.d;const s0=lay.split?lay.split[0]:D/(2*D+W),s1=lay.split?lay.split[1]:(D+W)/(2*D+W);
+ const px=(x,y)=>[x/aw,1-y/ah],IN=2,cl=(v,a,b)=>Math.max(a+IN,Math.min(b-IN,v));
+ const wall=(a,b)=>(s,t)=>px(wx+(a+(b-a)*s)*ww,cl(wy+(1-t)*wh,wy,wy+wh));
+ const m={L:{tex,uv:wall(0,s0)},F:{tex,uv:wall(s0,s1)},R:{tex,uv:wall(s1,1)}};
+ if(lay.ceil){const[cx,cy,cw,ch]=lay.ceil;/* 천장: 가로(s)=방 폭(0 좌), 세로(t)=깊이(0 정면). 칸 안에서는 가로=깊이, 세로=폭 */
+  m.T={tex,uv:(s,t)=>px(cl(cx+t*cw,cx,cx+cw),cl(cy+s*ch,cy,cy+ch))}}
+ /* 벽빛 색을 읽을 칸(0~1) */
+ const n=(x,y,w,h)=>[x/aw,y/ah,w/aw,h/ah];
+ const reg=[n(wx,wy,ww*s0,wh),n(wx+ww*s0,wy,ww*(s1-s0),wh),n(wx+ww*s1,wy,ww*(1-s1),wh)];reg.push(lay.ceil?n(...lay.ceil):null);
+ return{maps:m,reg}}
+
+function makeSampler(sources){/* sources: 면마다 [video, 칸] */const c=document.createElement('canvas');c.width=48;c.height=24;const q=c.getContext('2d',{willReadFrequently:true});let t=0;
+ return dt=>{t-=dt;if(t>0||!room)return;t=.12;sources.forEach((s,i)=>{const l=room.lights[i];if(!s||!s[0]||s[0].readyState<2){l.intensity+=(0-l.intensity)*.3;return}const[v,r]=s;try{q.drawImage(v,r[0]*v.videoWidth,r[1]*v.videoHeight,Math.max(1,r[2]*v.videoWidth),Math.max(1,r[3]*v.videoHeight),0,0,48,24);const d=q.getImageData(0,0,48,24).data;let a=0,b=0,cc=0;for(let k=0;k<d.length;k+=4){a+=d[k];b+=d[k+1];cc+=d[k+2]}const n=d.length/4;const col=new THREE.Color(a/n/255,b/n/255,cc/n/255);col.convertSRGBToLinear();const lum=col.r*.3+col.g*.59+col.b*.11;l.color.lerp(col.multiplyScalar(1/Math.max(.02,lum)),.35);l.intensity+=(Math.min(1.1,lum*2.6)*(i===3?.7:1)-l.intensity)*.35}catch(e){}})}}
+
+function playWork(w){
+ stopVideos();const lay=w.layout;const v=mkVideo(qs.get('src')||w.src);vids=[v];master=v;const tex=vtex(v);
+ const{maps,reg}=atlasMaps(tex,lay,w.room);buildRoom(w.room.w,w.room.d,w.room.h,maps);
+ sampler=makeSampler(reg.map(r=>r?[v,r]:null));afterLoad(w)}
+
+function playLocal(o){/* 내 파일 */
+ stopVideos();const W=o.w,D=o.d,H=o.h,rm={w:W,d:D,h:H};
+ if(o.mode==='each'){const maps={},src=[];const full=(s,t)=>[s,t];['L','F','R','T'].forEach(k=>{if(!o.files[k])return src.push(null);const v=mkVideo(URL.createObjectURL(o.files[k]));vids.push(v);maps[k]={tex:vtex(v),uv:full};src.push([v,[0,0,1,1]])});
+  if(!vids.length)return;master=vids[0];buildRoom(W,D,H,maps);sampler=makeSampler(src)}
+ else{const v=mkVideo(URL.createObjectURL(o.file));vids=[v];master=v;const tex=vtex(v);
+  v.addEventListener('loadedmetadata',()=>{const aw=v.videoWidth,ah=v.videoHeight;let lay;
+   if(o.mode==='dcube'){/* 팔복 원본 비율을 그대로 늘려 쓴다 */const sx=aw/9472,sy=ah/1792;lay={aw,ah,walls:[0,0,6912*sx,1536*sy],ceil:[6912*sx,0,2560*sx,1792*sy],split:[2560/6912,4352/6912]}}
+   else lay={aw,ah,walls:[0,0,aw,ah],ceil:null};
+   const{maps,reg}=atlasMaps(tex,lay,rm);buildRoom(W,D,H,maps);sampler=makeSampler(reg.map(r=>r?[v,r]:null));setView('center',true)},{once:true})}
+ afterLoad({title:o.name||'내 영상',place:'내 컴퓨터에서 고른 파일',room:rm,local:true})}
+
+/* ---------------- 보는 자리와 움직임 ---------------- */
+let yaw=0,pitch=.08,eye=1.6,sit=false,fov=innerWidth/innerHeight<.8?88:70,gyro=null;const pos=new THREE.Vector3(),goal=new THREE.Vector3();let gliding=false;
+const VIEWS=()=>{const d=room?room.D:10,h=room?room.H:6;return{
+ door:{l:'입구',p:[0,d/2+1.6],yaw:0,pitch:.12},
+ center:{l:'가운데',p:[0,.6],yaw:0,pitch:.1},
+ front:{l:'정면 앞',p:[0,-d/2+2.6],yaw:0,pitch:.18},
+ corner:{l:'모서리',p:[room?room.W/2-1.1:2,d/2-1.2],yaw:.55,pitch:.12},
+ up:{l:'천장 보기',p:[0,.4],yaw:0,pitch:1.25}}};
+function setView(k,now){const v=VIEWS()[k];goal.set(v.p[0],0,v.p[1]);yaw=v.yaw;pitch=v.pitch;if(now){pos.copy(goal);gliding=false}else gliding=true;document.querySelectorAll('#views .btn').forEach(b=>b.classList.toggle('on',b.dataset.k===k))}
+function clampPos(p){if(!room)return;const hw=room.W/2-.45,hd=room.D/2;p.x=Math.max(-hw,Math.min(hw,p.x));p.z=Math.max(-hd+.45,Math.min(hd+4,p.z));if(p.z>hd+.2)p.x=Math.max(-room.W/2-5,Math.min(room.W/2+5,p.x))}
+
+/* 끌어서 둘러보기, 두 손가락으로 확대 */
+const ptr=new Map();let downT=0,downXY=null,moved=0;
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});downT=performance.now();downXY=[e.clientX,e.clientY];moved=0;hideHint()});
+canvas.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);
+ if(ptr.size===1){const k=fov/70*.0042;yaw+=dx*k;pitch=Math.max(-1.2,Math.min(1.45,pitch+dy*k));gliding=gliding&&false}
+ else if(ptr.size===2){const a=[...ptr.values()];const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(p.pd)fov=Math.max(30,Math.min(95,fov*(p.pd/d)));a.forEach(q=>q.pd=d)}});
+const endP=e=>{const p=ptr.get(e.pointerId);ptr.delete(e.pointerId);if(p&&moved<8&&performance.now()-downT<350)tapAt(e.clientX,e.clientY)};
+canvas.addEventListener('pointerup',endP);canvas.addEventListener('pointercancel',e=>ptr.delete(e.pointerId));
+canvas.addEventListener('wheel',e=>{e.preventDefault();fov=Math.max(30,Math.min(95,fov+e.deltaY*.03))},{passive:false});
+/* 바닥을 누르면 그 자리로 걸어간다 */
+const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();let lastTap=0;
+function tapAt(x,y){const now=performance.now();if(now-lastTap>400){lastTap=now;return}lastTap=0;ndc.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);ray.setFromCamera(ndc,cam);const t=-ray.ray.origin.y/ray.ray.direction.y;if(!(t>0))return;const p=ray.ray.at(t,new THREE.Vector3());clampPos(p);goal.set(p.x,0,p.z);gliding=true}
+const keys={};addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;keys[e.code]=true;if(e.code==='Space'&&!$('#bar').hidden){e.preventDefault();togglePlay()}});addEventListener('keyup',e=>keys[e.code]=false);
+
+/* 휴대폰 기울여 보기 */
+const zee=new THREE.Vector3(0,0,1),q0=new THREE.Quaternion(),q1=new THREE.Quaternion(-Math.sqrt(.5),0,0,Math.sqrt(.5)),eu=new THREE.Euler();
+let gyroYaw0=null;
+function onOri(e){if(e.alpha==null)return;gyro={a:THREE.MathUtils.degToRad(e.alpha),b:THREE.MathUtils.degToRad(e.beta),g:THREE.MathUtils.degToRad(e.gamma),o:THREE.MathUtils.degToRad(screen.orientation?.angle||window.orientation||0)}}
+if('DeviceOrientationEvent' in window&&matchMedia('(pointer:coarse)').matches)$('#bGyro').hidden=false;
+$('#bGyro').addEventListener('click',async()=>{if(gyro||$('#bGyro').classList.contains('on')){removeEventListener('deviceorientation',onOri);gyro=null;$('#bGyro').classList.remove('on');return}
+ try{if(typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')return}}catch(e){return}
+ gyroYaw0=null;addEventListener('deviceorientation',onOri);$('#bGyro').classList.add('on')});
+
+/* ---------------- 화면 ---------------- */
+const vs=$('#views');function drawViews(){vs.innerHTML='';for(const[k,v]of Object.entries(VIEWS())){const b=document.createElement('button');b.className='btn';b.type='button';b.dataset.k=k;b.textContent=v.l;b.addEventListener('click',()=>setView(k));vs.appendChild(b)}}
+function togglePlay(){if(!master)return;if(master.paused){vids.forEach(v=>v.play().catch(()=>{}))}else vids.forEach(v=>v.pause())}
+$('#bPlay').addEventListener('click',togglePlay);
+$('#bMute').addEventListener('click',()=>{if(!master)return;master.muted=!master.muted;vids.forEach((v,i)=>{if(i)v.muted=true});$('#bMute').textContent=master.muted?'소리 꺼짐':'소리 켬';$('#bMute').classList.toggle('on',master.muted)});
+let seeking=false;$('#seek').addEventListener('input',()=>{seeking=true;if(master&&master.duration){const t=$('#seek').value/1000*master.duration;vids.forEach(v=>{try{v.currentTime=t}catch(e){}})}});$('#seek').addEventListener('change',()=>seeking=false);
+$('#bSit').addEventListener('click',()=>{sit=!sit;$('#bSit').textContent=sit?'일어서기':'앉기';$('#bSit').classList.toggle('on',sit)});
+$('#bFull').addEventListener('click',()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.().catch(()=>{})});
+$('#brand').addEventListener('click',showGallery);$('#bList').addEventListener('click',showGallery);
+let curWork=null;
+$('#bInfo').addEventListener('click',()=>{const w=curWork;if(!w)return;const p=$('#pInfo');const r=w.room;p.innerHTML='';const h=document.createElement('h2');h.textContent='「'+w.title+'」';p.appendChild(h);if(w.about){const a=document.createElement('p');a.textContent=w.about;p.appendChild(a)}
+ const dl=document.createElement('dl');[['작가',w.artist],['형식',w.form],['상영 장소',w.place],['행사',w.event],['기간',w.period],['길이',w.dur],['공간 (안쪽)',`폭 ${r.w.toFixed(2)} m × 깊이 ${r.d.toFixed(2)} m × 높이 ${r.h.toFixed(2)} m`]].forEach(([k,v])=>{if(!v)return;const dt=document.createElement('dt');dt.textContent=k;const dd=document.createElement('dd');dd.textContent=v;dl.append(dt,dd)});p.appendChild(dl);
+ const n=document.createElement('p');n.className='note';n.textContent='현장에서 상영한 원본을 웹에서 돌아가는 크기로 줄여 다시 틀었습니다. 공간은 도면의 안쪽 치수로 세웠어요.';p.appendChild(n);
+ const r0=document.createElement('div');r0.className='rowe';const x=document.createElement('button');x.className='btn';x.type='button';x.textContent='닫기';x.onclick=()=>p.hidden=true;r0.appendChild(x);p.appendChild(r0);p.hidden=false});
+
+function hint(t,ms=5200){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
+function hideHint(){const h=$('#hint');if(!h.hidden){h.style.opacity=0;setTimeout(()=>h.hidden=true,600)}}
+
+function afterLoad(w){curWork=w;$('#gal').hidden=true;$('#top').hidden=false;$('#bar').hidden=false;$('#mini').hidden=false;$('#wt').textContent='「'+w.title+'」';$('#ws').textContent=w.place||'';$('#bInfo').hidden=!!w.local;
+ drawViews();setView('door',true);setTimeout(()=>{if(!gliding)setView('center')},900);
+ $('#load').hidden=false;master.addEventListener('canplay',()=>{$('#load').hidden=true},{once:true});
+ master.addEventListener('error',()=>{$('#load').hidden=false;$('#load').textContent='이 영상은 브라우저에서 열 수 없어요. mp4(H.264)로 바꿔서 다시 골라 주세요.'},{once:true});
+ vids.forEach(v=>v.play().catch(()=>{}));
+ hint(matchMedia('(pointer:coarse)').matches?'화면을 밀어 둘러보세요. 두 번 톡 치면 그 자리로 걸어가요.':'끌어서 둘러보고, 바닥을 두 번 누르면 그 자리로 걸어가요. 휠로 확대, WASD로 걷기.')}
+function showGallery(){stopVideos();clearRoom();$('#gal').hidden=false;['#top','#bar','#mini','#pInfo','#pUp'].forEach(s=>$(s).hidden=true);history.replaceState(null,'',location.pathname)}
+
+/* 목록 카드 */
+const cards=$('#cards');
+for(const w of WORKS){const b=document.createElement('button');b.className='card';b.type='button';b.innerHTML='<div class="im"><b></b></div><div class="tx"><h3></h3><div class="meta"></div></div>';b.querySelector('.im').style.backgroundImage=`url(${w.poster})`;b.querySelector('b').textContent=w.form;b.querySelector('h3').textContent='「'+w.title+'」';b.querySelector('.meta').innerHTML='';const m=b.querySelector('.meta');m.append(w.place,document.createElement('br'),w.period+' · '+w.dur,document.createElement('br'),`공간 ${w.room.w.toFixed(1)} × ${w.room.d.toFixed(1)} × ${w.room.h.toFixed(1)} m`);b.addEventListener('click',()=>{history.replaceState(null,'','?w='+w.id);playWork(w)});cards.appendChild(b)}
+{const b=document.createElement('button');b.className='card up';b.type='button';b.innerHTML='<div class="im">＋ 내 영상 파일 고르기</div><div class="tx"><h3>내 영상으로 상영해 보기</h3><div class="meta">mp4나 mov를 고르면 같은 공간에 바로 걸어 봅니다. 파일은 이 브라우저 밖으로 나가지 않아요.</div></div>';b.addEventListener('click',()=>$('#pUp').hidden=false);cards.appendChild(b)}
+
+/* 내 영상 패널 */
+$('#uLay').addEventListener('change',()=>{const e=$('#uLay').value==='each';$('#uOne').hidden=e;$('#uEach').hidden=!e});
+$('#uX').addEventListener('click',()=>$('#pUp').hidden=true);
+$('#uGo').addEventListener('click',()=>{const mode=$('#uLay').value,mm=k=>Math.max(1,+$(k).value||0)/1000;const o={mode,w:mm('#uW'),d:mm('#uD'),h:mm('#uH')};
+ if(mode==='each'){o.files={L:$('#uL').files[0],F:$('#uC').files[0],R:$('#uR').files[0],T:$('#uT').files[0]};if(!o.files.L&&!o.files.F&&!o.files.R)return alert('벽 영상을 하나 이상 골라 주세요.');o.name=(o.files.F||o.files.L||o.files.R).name}
+ else{o.file=$('#uF').files[0];if(!o.file)return alert('영상 파일을 골라 주세요.');o.name=o.file.name}
+ $('#pUp').hidden=true;playLocal(o)});
+
+/* VR */
+if(navigator.xr){navigator.xr.isSessionSupported('immersive-vr').then(ok=>{if(!ok)return;const b=VRButton.createButton(R);b.style.cssText='';b.className='btn';$('#vrSlot').appendChild(b)}).catch(()=>{})}
+R.xr.addEventListener('sessionstart',()=>{rig.position.set(pos.x,0,pos.z)});
+
+/* 작은 지도 */
+const mq=$('#mini').getContext('2d');
+function drawMini(){if(!room||$('#mini').hidden)return;const c=$('#mini'),Wc=c.width,Hc=c.height;mq.clearRect(0,0,Wc,Hc);const s=Math.min((Wc-24)/room.W,(Hc-40)/(room.D+2.5)),ox=Wc/2,oz=12+room.D/2*s;
+ mq.strokeStyle='#e7b75a';mq.lineWidth=5;mq.beginPath();mq.moveTo(ox-room.W/2*s,oz+room.D/2*s);mq.lineTo(ox-room.W/2*s,oz-room.D/2*s);mq.lineTo(ox+room.W/2*s,oz-room.D/2*s);mq.lineTo(ox+room.W/2*s,oz+room.D/2*s);mq.stroke();
+ mq.fillStyle='rgba(231,183,90,.18)';mq.fillRect(ox-room.W/2*s,oz-room.D/2*s,room.W*s,room.D*s);
+ const px=ox+pos.x*s,pz=oz+pos.z*s;mq.fillStyle='#fff';mq.beginPath();mq.arc(px,pz,6,0,7);mq.fill();mq.strokeStyle='#fff';mq.lineWidth=3;mq.beginPath();mq.moveTo(px,pz);mq.lineTo(px-Math.sin(curYaw)*16,pz-Math.cos(curYaw)*16);mq.stroke();
+ mq.fillStyle='#b9ab96';mq.font='18px sans-serif';mq.textAlign='center';mq.fillText('입구',ox,Hc-8)}
+
+/* ---------------- 프레임 ---------------- */
+let last=performance.now(),curYaw=0,uiT=0;
+R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
+ if(room&&!R.xr.isPresenting){
+  /* 걷기 */const sp=2.2*dt;const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+  if(f||s){gliding=false;pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*s)*sp;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*s)*sp;clampPos(pos)}
+  if(gliding){const d=goal.clone().sub(pos);d.y=0;const L=d.length();if(L<.02){gliding=false}else pos.addScaledVector(d,Math.min(1,dt*2.4))}
+  eye+=((sit?1.0:1.6)-eye)*Math.min(1,dt*5);rig.position.set(pos.x,0,pos.z);cam.position.set(0,eye,0);
+  if(gyro){/* 기기 방향 + 끌기로 돌린 만큼 */const{a,b,g,o}=gyro;eu.set(b,a,-g,'YXZ');cam.quaternion.setFromEuler(eu);cam.quaternion.multiply(q1);cam.quaternion.multiply(q0.setFromAxisAngle(zee,-o));if(gyroYaw0===null)gyroYaw0=a-yaw;const qy=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),-gyroYaw0);cam.quaternion.premultiply(qy);curYaw=new THREE.Euler().setFromQuaternion(cam.quaternion,'YXZ').y}
+  else{curYaw+=(yaw-curYaw)*Math.min(1,dt*14);cam.rotation.set(pitch,curYaw,0,'YXZ');cam.rotation.x=pitch}
+  cam.fov+=(fov-cam.fov)*Math.min(1,dt*10);cam.updateProjectionMatrix()}
+ if(sampler)sampler(dt);
+ /* 여러 파일일 때 맞춰 돌린다 */
+ if(vids.length>1&&master&&!master.paused){for(const v of vids)if(v!==master&&Math.abs(v.currentTime-master.currentTime)>.15)v.currentTime=master.currentTime}
+ uiT-=dt;if(uiT<=0&&master){uiT=.25;const d=master.duration||0;$('#tm').textContent=fmt(master.currentTime)+' / '+fmt(d);if(!seeking&&d)$('#seek').value=master.currentTime/d*1000;$('#bPlay').textContent=master.paused?'재생':'멈춤';drawMini()}
+ R.render(scene,cam)});
+addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
+
+/* 주소로 바로 들어오기 (?w=pambok) — 소리 때문에 한 번 눌러야 시작 */
+const w0=WORKS.find(w=>w.id===qs.get('w'));
+if(w0&&qs.has('auto')){playWork(w0)}
+else if(w0){const c=[...cards.children][WORKS.indexOf(w0)];c.style.outline='2px solid var(--gold)';c.scrollIntoView({block:'center'})}
+window.__DC={setView,get pos(){return pos},get room(){return room},get vids(){return vids},play:playWork,WORKS,look(y,p){yaw=y;pitch=p;curYaw=y},setFov(f){fov=f;cam.fov=f}};
+</script>
+</body>
+</html>
