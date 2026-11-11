@@ -273,7 +273,7 @@ const STX=-24,STZ=3,STP={};
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.position.set(STX,0,STZ);g.rotation.y=Math.atan2(0-STX,2.5-STZ)-Math.PI/2;scene.add(g);BLOCK.push({c:[STX,STZ,2.3]},{c:[STX+.3,STZ+3,2.1]},{c:[STX+.3,STZ-3,2.1]})}
 /* --- 안내판, 장터 좌판 --- */
 {const bd=tex(640,420,(q,w,h)=>{q.fillStyle='#f3ead6';q.fillRect(0,0,w,h);q.strokeStyle='#5b3a22';q.lineWidth=16;q.strokeRect(8,8,w-16,h-16);q.fillStyle='#2a1d12';q.font='bold 46px "Noto Serif KR",serif';q.textAlign='center';q.fillText('무이 월드 안내도',w/2,72);
-  q.font='28px "Gowun Dodum",sans-serif';q.textAlign='left';['뒤 회랑: 쇼츠 문 다섯, 유물 복원 현장','왼쪽: 모닥불, 악사 무대, 장독대, 평상','오른쪽: 네모 연못과 차일 마루, 가마','회랑 양끝: 발굴 터 · 팔복 상영관 가는 문','반장 무이 부탁 다섯 · 기념사진'].forEach((t,i)=>q.fillText('· '+t,40,132+i*56))});
+  q.font='28px "Gowun Dodum",sans-serif';q.textAlign='left';['뒤 회랑: 쇼츠 문 다섯, 유물 복원 현장','왼쪽: 모닥불, 악사 무대, 장독대, 평상','오른쪽: 네모 연못과 차일 마루, 가마','회랑 양끝: 발굴 터 · 팔복 상영관 문, 뒤 돌계단: 기와집 세 채','반장 무이 부탁 다섯 · 기념사진'].forEach((t,i)=>q.fillText('· '+t,40,132+i*56))});
  const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(2.6,1.7,.1),[M(0x5b3a22),M(0x5b3a22),M(0x5b3a22),M(0x5b3a22),new THREE.MeshStandardMaterial({map:bd,roughness:.8}),M(0x5b3a22)]);b.position.y=1.6;g.add(b);for(const x of[-1.1,1.1]){const p=cyl(.06,.06,1.6,WOOD,6);p.position.set(x,.8,0);g.add(p)}add(g,4.2,0,21.5,-.5);BLOCK.push({c:[4.2,21.5,.6]});
  const s=new THREE.Group();const tb=box(2.6,.8,1.2,WOODL);tb.position.y=.4;s.add(tb);const aw=new THREE.Mesh(new THREE.PlaneGeometry(3,1.6),new THREE.MeshStandardMaterial({side:THREE.DoubleSide,map:tex(256,128,(q,w,h)=>{for(let x=0;x<w;x+=32){q.fillStyle=x/32%2?'#f3eee2':'#c8463a';q.fillRect(x,0,32,h)}})}));aw.rotation.x=-1.2;aw.position.set(0,2.1,.2);s.add(aw);
  for(const x of[-1.25,1.25]){const p=cyl(.05,.05,2.2,WOOD,6);p.position.set(x,1.1,-.5);s.add(p)}for(let i=0;i<5;i++){const j=lathe([[0,0],[.1,0],[.16,.1],[.12,.22],[.06,.26],[0,.26]],M([0xefe7d6,0x3f6b5a,0x8a4a2a,0xefe7d6,0x2f5f8a][i],{roughness:.3}),14);j.position.set(-1+i*.5,.8,.1);s.add(j)}
@@ -300,7 +300,7 @@ const SPOTS=[{x:5.6,z:13.6,r:2.6,t:'연못 이야기',h:'네모난 못에 둥근
  {x:5.2,z:23.4,r:2.2,t:'솟대 이야기',h:'솟대: 장대 끝의 새가 하늘과 마을을 잇는다고 믿었어요. 풍년과 안녕을 빌었지요.'},
  {x:-17,z:17.6,r:2.4,t:'평상에서 쉬기',h:'평상에 앉아 쉬어 가요. 지우산 그늘이 시원해요.',sit:[-17,19.5]},
  {x:KX-4.2,z:KZ+3.4,r:2.0,t:'가마 불멍',h:'가마 아궁이에 불이 타요. 장작 타는 소리를 들으며 잠깐 쉬어 가요.'},
- {x:4.2,z:20.3,r:2,t:'안내도 보기',h:'뒤 회랑엔 쇼츠 문과 유물 복원 현장, 왼쪽엔 모닥불·무대·장독대, 오른쪽엔 연못과 가마, 회랑 양끝엔 발굴 터와 팔복 상영관 문이 있어요.'}];
+ {x:4.2,z:20.3,r:2,t:'안내도 보기',h:'뒤 회랑엔 쇼츠 문과 유물 복원 현장, 왼쪽엔 모닥불·무대·장독대, 오른쪽엔 연못과 가마, 회랑 양끝엔 발굴 터와 팔복 상영관 문이 있고, 양끝을 돌아 회랑 뒤 돌계단을 오르면 기와집 전시실·복원대 공방·쇼츠 상영방이 있어요.'}];
 /* ---------------- 무이 ---------------- */
 const gl=new GLTFLoader();const CACHE={};
 function loadKind(k){return CACHE[k]||(CACHE[k]=new Promise((res,rej)=>gl.load('media/muui_'+k+'.glb',res,undefined,rej)))}
@@ -346,7 +346,7 @@ function fireTick(dt,now){const lit=night;for(const f of flames){f.visible=lit;i
    if(!lit&&m.state==='sitting'&&m.cur===m.A.sit&&m.cur.time>=m.cur.getClip().duration*.95){m.state='sat'}if(lit)m.state=''}
   m.mx.update(dt)}for(const st of STATUE)st.mx.update(dt);if(DOCENT){DOCENT.mx.update(dt);if(me&&!DOCENT.said&&DOCENT.root.position.distanceTo(pos)<3){DOCENT.said=1;DOCENT.play('wave',.3);setTimeout(()=>DOCENT.play('idle',.4),1800);hint('무이: 여기는 무이 전시실이에요. 복원단이 고친 유물 다섯 점과, 당신이 빚은 달항아리, 도장판이 있어요. 옆채엔 복원대와 상영방이 있어요.',8000)}}for(const b of BENCH3)if(b.crew)b.crew.mx.update(dt);
  if(GREETER&&me){const g=GREETER,d=g.root.position.distanceTo(pos);g.t-=dt;const want=Math.atan2(pos.x-g.root.position.x,pos.z-g.root.position.z);if(d<6){let r=want-g.root.rotation.y;r=Math.atan2(Math.sin(r),Math.cos(r));g.root.rotation.y+=r*Math.min(1,dt*3)}
-  if(d<3.2&&g.t<=0&&!g.busy){g.t=7;g.play('wave',.25);setTimeout(()=>{if(!g.busy)g.play('idle',.4)},1800);if(!GREETER.said){GREETER.said=1;hint('무이: 어서 와요! 여기는 무이 월드예요. 쇼츠 문, 유물 복원, 놀이 마당, 밤 공연까지 다 둘러봐요.',7000)}}g.mx.update(dt)}}
+  if(d<3.2&&g.t<=0&&!g.busy){g.t=7;g.play('wave',.25);setTimeout(()=>{if(!g.busy)g.play('idle',.4)},1800);if(!GREETER.said){GREETER.said=1;hint('무이: 어서 와요! 여기는 무이 월드예요. 쇼츠 문, 달항아리 복원 현장, 놀이 마당, 밤 공연, 그리고 회랑 양끝을 돌아 뒤 돌계단으로 오르면 기와집 전시실·복원대·상영방이 있어요.',9000)}}g.mx.update(dt)}}
 /* ---------------- 부탁: 유물마다 반장 무이가 먼저 부탁을 건다 ---------------- */
 const QUEST={ceramic:{item:'흙 바구니',at:[-20.5,12],ask:'달항아리 틈을 메울 고운 흙이 모자라요. 서쪽 장독대 옆에 둔 흙 바구니를 가져다 줄래요?',thx:'고마워요! 이 흙이면 허리 이음선 틈을 메울 수 있어요.'},
  science:{item:'빗물 기록지',at:[2.6,-1.6],ask:'비 온 날 적은 기록지가 바람에 날아갔어요. 단풍나무 아래 어딘가 떨어졌을 거예요.',thx:'찾았네요! 이 날 비가 두 치 내렸다고 적혀 있어요.'},
