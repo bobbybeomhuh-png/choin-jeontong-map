@@ -1,0 +1,125 @@
+/* 숭례문(서울 남대문) 실제 크기 모형. 단위 1 = 1m. 앞(성 밖, 남쪽)이 +z, 홍예 통로는 z축을 따라 뚫려 있다.
+   ⏱ 2026-11-12 만듦. 치수는 공개 자료의 대략값(육축 폭 약 30m·깊이 약 12m·높이 약 6.5m, 누각 정면 5칸·측면 2칸 중층, 전체 높이 약 20m)을 따름. */
+import * as THREE from 'three';
+const tex=(w,h,fn,rep)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;t.wrapS=t.wrapT=THREE.RepeatWrapping;if(rep)t.repeat.set(rep[0],rep[1]);return t};
+const noise=(q,w,h,n,cols,sz=2)=>{for(let i=0;i<n;i++){q.fillStyle=cols[(Math.random()*cols.length)|0];q.fillRect(Math.random()*w,Math.random()*h,sz,sz)}};
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
+function mulb(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+/* ---------- 재질 ---------- */
+export function materials(){
+ const r=mulb(11);
+ /* 화강암 마름돌: 4m×4m 한 장, 돌 하나 약 1.1m×0.55m */
+ const GRANITE=tex(512,512,(q,w,h)=>{q.fillStyle='#8e877c';q.fillRect(0,0,w,h);const rowH=70;for(let y=0,row=0;y<h;y+=rowH,row++){let x=-(row%2)*70;while(x<w){const bw=110+r()*60;const g=150+(r()*40|0);q.fillStyle=`rgb(${g},${g-6},${g-14})`;q.fillRect(x+3,y+3,bw-6,rowH-6);noise(q,0,0,0,['#000']);for(let k=0;k<60;k++){q.fillStyle=`rgba(${r()<.5?60:220},${r()<.5?60:215},${r()<.5?55:205},${.08+r()*.12})`;q.fillRect(x+3+r()*(bw-8),y+3+r()*(rowH-8),2+r()*4,2+r()*3)}q.fillStyle='rgba(255,255,255,.07)';q.fillRect(x+3,y+3,bw-6,4);q.fillStyle='rgba(0,0,0,.12)';q.fillRect(x+3,y+rowH-7,bw-6,4);x+=bw}}});
+ GRANITE.repeat.set(.25,.25);
+ const granite=new THREE.MeshStandardMaterial({map:GRANITE,roughness:.95,color:0xffffff});
+ const PAVE=tex(512,512,(q,w,h)=>{q.fillStyle='#a8a296';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=64)for(let x=-(y/64%2)*48;x<w;x+=96){const g=165+(r()*30|0);q.fillStyle=`rgb(${g},${g-4},${g-12})`;q.fillRect(x+2,y+2,92,60)}noise(q,w,h,4000,['rgba(0,0,0,.08)','rgba(255,255,255,.07)'],2)});PAVE.repeat.set(.125,.125);
+ const pave=new THREE.MeshStandardMaterial({map:PAVE,roughness:.95});
+ const WOODT=tex(256,256,(q,w,h)=>{q.fillStyle='#9a6a40';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=32){q.fillStyle=['#93633a','#a2724a','#8c5c34'][(x/32)%3];q.fillRect(x,0,32,h);q.fillStyle='rgba(50,25,10,.35)';q.fillRect(x,0,2,h)}for(let i=0;i<120;i++){q.strokeStyle='rgba(60,30,10,.18)';q.beginPath();const x=r()*w;q.moveTo(x,0);q.bezierCurveTo(x+r()*8-4,h*.3,x+r()*8-4,h*.6,x+r()*6-3,h);q.stroke()}});WOODT.repeat.set(.5,.5);
+ const floor=new THREE.MeshStandardMaterial({map:WOODT,roughness:.8});
+ const pillar=M(0xb4452e,{roughness:.55,emissive:0x2a0804});/* 석간주(붉은 기둥) */
+ const wood=M(0x6b4428,{roughness:.8});
+ /* 단청 띠: 뇌록 바탕 + 머리초(양끝 연꽃 무늬) */
+ const DAN=tex(1024,128,(q,w,h)=>{q.fillStyle='#2f7a64';q.fillRect(0,0,w,h);q.fillStyle='#1e5a4a';q.fillRect(0,0,w,10);q.fillRect(0,h-10,w,10);const head=(cx)=>{for(const[rr,c]of[[56,'#c8402e'],[46,'#f2f0e8'],[38,'#2d4f9a'],[28,'#f2c14e'],[18,'#c8402e'],[9,'#f2f0e8']]){q.fillStyle=c;q.beginPath();q.ellipse(cx,h/2,rr*1.3,rr*.95,0,0,7);q.fill()}for(let k=0;k<8;k++){q.fillStyle=k%2?'#3f8f5a':'#e8902a';q.beginPath();q.ellipse(cx+Math.cos(k/8*6.28)*70,h/2+Math.sin(k/8*6.28)*34,16,9,k/8*6.28,0,7);q.fill()}};head(110);head(w-110);q.fillStyle='#f2f0e8';for(let x=230;x<w-230;x+=26){q.fillRect(x,h/2-3,14,6)}});DAN.wrapS=THREE.ClampToEdgeWrapping;
+ const dan=new THREE.MeshStandardMaterial({map:DAN,roughness:.6});
+ const DAN2=tex(256,64,(q,w,h)=>{q.fillStyle='#2f7a64';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=64){q.fillStyle='#c8402e';q.beginPath();q.arc(x+32,h/2,18,0,7);q.fill();q.fillStyle='#f2c14e';q.beginPath();q.arc(x+32,h/2,9,0,7);q.fill();q.fillStyle='#2d4f9a';q.fillRect(x+2,6,6,h-12);q.fillRect(x+56,6,6,h-12)}});DAN2.repeat.set(.6,1);
+ const dan2=new THREE.MeshStandardMaterial({map:DAN2,roughness:.6});
+ const bracket=new THREE.MeshStandardMaterial({map:tex(64,64,(q,w,h)=>{q.fillStyle='#2f7a64';q.fillRect(0,0,w,h);q.fillStyle='#e8902a';q.fillRect(0,h-14,w,6);q.fillStyle='#f2f0e8';q.fillRect(0,4,w,4);q.fillStyle='#c8402e';q.fillRect(w/2-6,14,12,22)}),roughness:.6});
+ const TILE=tex(256,256,(q,w,h)=>{q.fillStyle='#4a4e54';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=32){const g=q.createLinearGradient(x,0,x+32,0);g.addColorStop(0,'#30343a');g.addColorStop(.5,'#7c8188');g.addColorStop(1,'#30343a');q.fillStyle=g;q.fillRect(x,0,32,h)}for(let y=0;y<h;y+=24){q.fillStyle='rgba(0,0,0,.28)';q.fillRect(0,y,w,3)}});
+ const tile=new THREE.MeshStandardMaterial({map:TILE,roughness:.7,side:THREE.DoubleSide});
+ const RAFT=tex(128,128,(q,w,h)=>{q.fillStyle='#2f7a64';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=16){q.fillStyle='#8a5c34';q.fillRect(x,0,10,h);q.fillStyle='#2d4f9a';q.fillRect(x,h-18,10,10)}});
+ const raft=new THREE.MeshStandardMaterial({map:RAFT,roughness:.8,side:THREE.DoubleSide});
+ const PLASTER=new THREE.MeshStandardMaterial({color:0xece4d4,roughness:.95,side:THREE.DoubleSide});
+ const LATT=tex(128,256,(q,w,h)=>{q.clearRect(0,0,w,h);q.strokeStyle='#5a3218';q.lineWidth=9;q.strokeRect(4,4,w-8,h-8);q.lineWidth=4;for(let x=16;x<w;x+=16){q.beginPath();q.moveTo(x,6);q.lineTo(x,h-6);q.stroke()}for(let y=16;y<h;y+=16){q.beginPath();q.moveTo(6,y);q.lineTo(w-6,y);q.stroke()}});
+ const lattice=new THREE.MeshStandardMaterial({map:LATT,transparent:true,alphaTest:.3,side:THREE.DoubleSide,roughness:.7});
+ const board=new THREE.MeshStandardMaterial({map:WOODT,color:0xd8b090,roughness:.85,side:THREE.DoubleSide});
+ const door=new THREE.MeshStandardMaterial({roughness:.8,map:tex(256,512,(q,w,h)=>{q.fillStyle='#6a3a20';q.fillRect(0,0,w,h);q.fillStyle='rgba(0,0,0,.25)';for(let x=0;x<w;x+=42)q.fillRect(x,0,3,h);q.fillStyle='#2a2a2a';for(let y=40;y<h;y+=56)for(let x=24;x<w;x+=42){q.beginPath();q.arc(x,y,6,0,7);q.fill()}q.fillStyle='#3a3a3a';for(const y of[90,h-90]){q.fillRect(0,y-8,w,16)}})});
+ /* 홍예 천장의 쌍룡 그림(구름 속 두 용) */
+ const DRAGON=tex(1024,512,(q,w,h)=>{q.fillStyle='#e9e2cc';q.fillRect(0,0,w,h);for(let i=0;i<70;i++){const x=r()*w,y=r()*h,s=20+r()*40;q.strokeStyle='rgba(60,110,150,.55)';q.lineWidth=4;q.beginPath();q.arc(x,y,s,0,Math.PI*1.4);q.stroke();q.beginPath();q.arc(x+s*.6,y,s*.6,Math.PI,Math.PI*2.3);q.stroke()}
+  const drag=(cx,cy,dir,col)=>{q.save();q.translate(cx,cy);q.scale(dir,1);q.strokeStyle=col;q.lineCap='round';q.lineWidth=46;q.beginPath();q.moveTo(-300,60);q.bezierCurveTo(-200,-120,-60,160,60,-20);q.bezierCurveTo(140,-130,200,40,260,-40);q.stroke();q.strokeStyle='rgba(255,230,140,.9)';q.lineWidth=8;q.setLineDash([10,12]);q.beginPath();q.moveTo(-300,60);q.bezierCurveTo(-200,-120,-60,160,60,-20);q.bezierCurveTo(140,-130,200,40,260,-40);q.stroke();q.setLineDash([]);
+   q.fillStyle=col;q.beginPath();q.ellipse(290,-50,60,40,-.3,0,7);q.fill();q.fillStyle='#fff';q.beginPath();q.arc(305,-62,9,0,7);q.fill();q.fillStyle='#000';q.beginPath();q.arc(307,-62,4,0,7);q.fill();q.strokeStyle='#e8902a';q.lineWidth=5;q.beginPath();q.moveTo(330,-40);q.quadraticCurveTo(400,-20,420,-70);q.moveTo(320,-80);q.quadraticCurveTo(360,-140,400,-130);q.stroke();
+   for(const[x,y]of[[-180,0],[-20,70],[130,-70]]){q.strokeStyle=col;q.lineWidth=12;q.beginPath();q.moveTo(x,y);q.lineTo(x+20,y+60);q.stroke();q.strokeStyle='#c8402e';q.lineWidth=5;for(let k=-1;k<=1;k++){q.beginPath();q.moveTo(x+20,y+60);q.lineTo(x+20+k*14,y+78);q.stroke()}}q.restore()};
+  drag(w*.3,h*.42,1,'#2f6a8a');drag(w*.7,h*.6,-1,'#c8902a');q.fillStyle='#c8402e';q.beginPath();q.arc(w/2,h/2,26,0,7);q.fill();q.fillStyle='rgba(255,200,80,.8)';q.beginPath();q.arc(w/2,h/2,40,0,7);q.lineWidth=6;q.strokeStyle='rgba(255,140,40,.7)';q.stroke()});
+ DRAGON.wrapS=DRAGON.wrapT=THREE.ClampToEdgeWrapping;
+ const dragon=new THREE.MeshStandardMaterial({map:DRAGON,roughness:.9,side:THREE.BackSide});
+ const SIGN=tex(256,640,(q,w,h)=>{q.fillStyle='#2a1a10';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=16;q.strokeRect(10,10,w-20,h-20);q.strokeStyle='#2f7a64';q.lineWidth=8;q.strokeRect(28,28,w-56,h-56);q.fillStyle='#f2e6c0';q.font='bold 150px "Noto Serif KR","Batang",serif';q.textAlign='center';q.textBaseline='middle';['崇','禮','門'].forEach((c,i)=>q.fillText(c,w/2,130+i*190))});SIGN.wrapS=SIGN.wrapT=THREE.ClampToEdgeWrapping;
+ const sign=new THREE.MeshStandardMaterial({map:SIGN,roughness:.6});
+ return{granite,pave,floor,pillar,wood,dan,dan2,bracket,tile,raft,PLASTER,lattice,board,door,dragon,sign,ridge:M(0x2e3136,{roughness:.6}),white:M(0xeee8dc)}}
+/* ---------- 처마 곡선 지붕 ---------- */
+function roofSurf(g,mat,a,b,d,c,curve,nu,nv,under){const pos=[],uv=[],idx=[];const ew=a.distanceTo(b),sl=a.distanceTo(d);for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){const u=i/nu,v=j/nv;const p=a.clone().lerp(b,u).lerp(d.clone().lerp(c,u),v);curve(p);pos.push(p.x,p.y,p.z);uv.push(u*ew/2,v*sl/2)}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const k=j*(nu+1)+i;idx.push(k,k+1,k+nu+2,k,k+nu+2,k+nu+1)}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;g.add(m);if(under){const u=new THREE.Mesh(geo,under);u.position.y=-.22;u.receiveShadow=true;g.add(u)}return m}
+/* 우진각 지붕(숭례문 2층): 네 면이 모두 경사, 처마 네 귀가 들린다 */
+function hipRoof(MT,X,Z,L,h0,h1,lift,sag){const g=new THREE.Group();const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+ const curve=p=>{const s=Math.max(0,Math.min(1,(p.y-h0)/(h1-h0)));const fx=Math.min(1,Math.abs(p.x)/X),fz=Math.min(1,Math.abs(p.z)/Z);const cor=Math.pow(fx,6)*Math.pow(fz,6);p.y+=lift*cor*(1-s)+lift*.25*(Math.pow(fx,8)+Math.pow(fz,8))*(1-s)*.5;p.y-=sag*Math.sin(s*Math.PI);const o=cor*(1-s)*.9;p.x*=1+o/X;p.z*=1+o/Z};
+ roofSurf(g,MT.tile,V(-X,h0,Z),V(X,h0,Z),V(-L,h1,0),V(L,h1,0),curve,40,12,MT.raft);roofSurf(g,MT.tile,V(X,h0,-Z),V(-X,h0,-Z),V(L,h1,0),V(-L,h1,0),curve,40,12,MT.raft);
+ roofSurf(g,MT.tile,V(X,h0,Z),V(X,h0,-Z),V(L,h1,0),V(L,h1,0),curve,24,12,MT.raft);roofSurf(g,MT.tile,V(-X,h0,-Z),V(-X,h0,Z),V(-L,h1,0),V(-L,h1,0),curve,24,12,MT.raft);
+ /* 용마루와 취두, 내림마루와 잡상 */const rg=new THREE.Mesh(new THREE.BoxGeometry(2*L+.6,.7,.8),MT.ridge);rg.position.y=h1+.3;rg.castShadow=true;g.add(rg);const wr=new THREE.Mesh(new THREE.BoxGeometry(2*L+.7,.12,.86),MT.white);wr.position.y=h1+.05;g.add(wr);
+ for(const sx of[-1,1]){const cd=new THREE.Mesh(new THREE.BoxGeometry(.9,1.5,.9),MT.ridge);cd.position.set(sx*(L+.35),h1+.8,0);cd.rotation.z=-sx*.18;cd.castShadow=true;g.add(cd)}
+ for(const sx of[-1,1])for(const sz of[-1,1]){const a=V(sx*X,h0,sz*Z);curve(a);const b=V(sx*L,h1,0);const len=a.distanceTo(b);const r=new THREE.Mesh(new THREE.BoxGeometry(.5,.45,len),MT.ridge);r.position.copy(a).add(b).multiplyScalar(.5);r.position.y+=.25;r.lookAt(b.x,b.y+.25,b.z);r.castShadow=true;g.add(r);
+  /* 잡상 일곱 */for(let i=1;i<=7;i++){const t=.12+i*.07;const p=a.clone().lerp(b,t);const fig=new THREE.Group();const bd=new THREE.Mesh(new THREE.CylinderGeometry(.13,.18,.42,6),MT.ridge);bd.position.y=.21;fig.add(bd);const hd=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),MT.ridge);hd.position.y=.5;fig.add(hd);fig.position.copy(p);fig.position.y+=.47;g.add(fig)}}
+ return g}
+/* 1층 처마(차양): 바깥 처마 선에서 2층 벽까지 올라가는 네 경사면 */
+function skirtRoof(MT,X0,Z0,X1,Z1,h0,h1,lift){const g=new THREE.Group();const V=(x,y,z)=>new THREE.Vector3(x,y,z);const curve=p=>{const s=Math.max(0,Math.min(1,(p.y-h0)/(h1-h0)));const fx=Math.min(1,Math.abs(p.x)/X0),fz=Math.min(1,Math.abs(p.z)/Z0);const cor=Math.pow(fx,6)*Math.pow(fz,6);p.y+=lift*cor*(1-s);p.y-=.25*Math.sin(s*Math.PI);const o=cor*(1-s)*.8;p.x*=1+o/X0;p.z*=1+o/Z0};
+ roofSurf(g,MT.tile,V(-X0,h0,Z0),V(X0,h0,Z0),V(-X1,h1,Z1),V(X1,h1,Z1),curve,40,6,MT.raft);roofSurf(g,MT.tile,V(X0,h0,-Z0),V(-X0,h0,-Z0),V(X1,h1,-Z1),V(-X1,h1,-Z1),curve,40,6,MT.raft);
+ roofSurf(g,MT.tile,V(X0,h0,Z0),V(X0,h0,-Z0),V(X1,h1,Z1),V(X1,h1,-Z1),curve,20,6,MT.raft);roofSurf(g,MT.tile,V(-X0,h0,-Z0),V(-X0,h0,Z0),V(-X1,h1,-Z1),V(-X1,h1,Z1),curve,20,6,MT.raft);
+ for(const sx of[-1,1])for(const sz of[-1,1]){const a=V(sx*X0,h0,sz*Z0);curve(a);const b=V(sx*X1,h1,sz*Z1);const len=a.distanceTo(b);const r=new THREE.Mesh(new THREE.BoxGeometry(.42,.38,len),MT.ridge);r.position.copy(a).add(b).multiplyScalar(.5);r.position.y+=.2;r.lookAt(b.x,b.y+.2,b.z);g.add(r)}return g}
+/* 서까래 끝(둥근 서까래 + 네모 부연)을 처마 선을 따라 한 줄로 */
+function rafters(MT,X,Z,y,step=.42){const pts=[];for(let x=-X+.3;x<=X-.3;x+=step){pts.push([x,Z,0]);pts.push([x,-Z,Math.PI])}for(let z=-Z+.3;z<=Z-.3;z+=step){pts.push([X,z,Math.PI/2]);pts.push([-X,z,-Math.PI/2])}
+ const geo=new THREE.CylinderGeometry(.11,.11,1.3,8);geo.rotateX(Math.PI/2);const im=new THREE.InstancedMesh(geo,MT.raft,pts.length);const geo2=new THREE.BoxGeometry(.18,.18,.9);const im2=new THREE.InstancedMesh(geo2,MT.dan2,pts.length);const o=new THREE.Object3D();
+ pts.forEach(([x,z,ry],i)=>{const f=Math.pow(Math.min(1,Math.abs(x)/X),6)*Math.pow(Math.min(1,Math.abs(z)/Z),6);o.position.set(x,y+f*.9,z);o.rotation.set(0,ry,0);o.translateZ(-.25);o.updateMatrix();im.setMatrixAt(i,o.matrix);o.position.set(x,y+.26+f*.9,z);o.rotation.set(0,ry,0);o.translateZ(.15);o.updateMatrix();im2.setMatrixAt(i,o.matrix)});im.castShadow=true;return[im,im2]}
+/* 공포(처마를 받치는 짜임)를 기둥 위 둘레에 */
+function brackets(MT,X,Z,y,step=1.1){const pts=[];for(let x=-X;x<=X+.01;x+=step){pts.push([x,Z,0]);pts.push([x,-Z,0])}for(let z=-Z+step;z<=Z-step+.01;z+=step){pts.push([X,z,Math.PI/2]);pts.push([-X,z,Math.PI/2])}const g=new THREE.Group();
+ const parts=[[.5,.28,.5,0,0],[1.1,.22,.32,.28,0],[.4,.22,.4,.5,0],[1.6,.22,.32,.72,0],[.4,.22,.4,.94,0]];for(const[w,h,d,yy]of parts){const geo=new THREE.BoxGeometry(w,h,d);const im=new THREE.InstancedMesh(geo,MT.bracket,pts.length);const o=new THREE.Object3D();pts.forEach(([x,z,ry],i)=>{o.position.set(x,y+yy+h/2,z);o.rotation.set(0,ry,0);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=true;g.add(im)}
+ /* 앞뒤로 내민 쇠서 */const geo=new THREE.BoxGeometry(.3,.26,1.6);const im=new THREE.InstancedMesh(geo,MT.bracket,pts.length);const o=new THREE.Object3D();pts.forEach(([x,z,ry],i)=>{o.position.set(x,y+.6,z);o.rotation.set(0,ry,0);o.updateMatrix();im.setMatrixAt(i,o.matrix)});g.add(im);return g}
+/* ---------- 짓기 ---------- */
+export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const S=(x0,x1,y0,y1,z0,z1)=>{solids.push({x0,x1,y0,y1,z0,z1})};
+ const add=(m,x,y,z,col=true)=>{m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;G.add(m);if(col)cam.push(m);return m};
+ const box=(w,h,d,mat)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat),cyl=(r0,r1,h,mat,s=16)=>new THREE.Mesh(new THREE.CylinderGeometry(r0,r1,h,s),mat);
+ const W=30,D=12,H=6.5,AR=2.35,AS=3.55;/* 육축 폭·깊이·높이, 홍예 반지름·홍예 아래 기둥 높이 */
+ /* 육축: 앞면 윤곽(홍예 구멍이 뚫린)을 깊이 방향으로 밀어낸다 */
+ {const sh=new THREE.Shape();sh.moveTo(-W/2,0);sh.lineTo(-AR,0);sh.lineTo(-AR,AS);sh.absarc(0,AS,AR,Math.PI,0,true);sh.lineTo(AR,0);sh.lineTo(W/2,0);sh.lineTo(W/2-.5,H);sh.lineTo(-W/2+.5,H);sh.closePath();
+  const geo=new THREE.ExtrudeGeometry(sh,{depth:D,bevelEnabled:false,curveSegments:24});geo.translate(0,0,-D/2);const m=new THREE.Mesh(geo,MT.granite);m.castShadow=true;m.receiveShadow=true;G.add(m);cam.push(m);
+  /* 홍예 테두리 돌(앞뒤) */for(const sz of[-1,1]){const ring=new THREE.Mesh(new THREE.TorusGeometry(AR+.28,.3,8,24,Math.PI),MT.granite);ring.position.set(0,AS,sz*(D/2+.05));G.add(ring);for(const sx of[-1,1]){const p=box(.6,AS,.3,MT.granite);p.position.set(sx*(AR+.28),AS/2,sz*(D/2+.05));G.add(p)}}
+  /* 홍예 천장 쌍룡 */const ceil=new THREE.Mesh(new THREE.CylinderGeometry(AR-.02,AR-.02,D-.1,32,1,true,Math.PI/2,Math.PI),MT.dragon);ceil.rotation.x=Math.PI/2;ceil.position.set(0,AS,0);G.add(ceil);
+  /* 육축 충돌: 홍예 양옆 덩어리와 홍예 위 */S(-W/2,-AR,0,H,-D/2,D/2);S(AR,W/2,0,H,-D/2,D/2);S(-AR,AR,AS+1.2,H,-D/2,D/2);
+  /* 문짝 두 짝: 안쪽으로 활짝 */for(const sx of[-1,1]){const dr=box(2.3,AS+1.6,.25,MT.door);const pv=new THREE.Group();dr.position.set(sx*1.15,(AS+1.6)/2,0);pv.add(dr);pv.position.set(sx*-AR,0,-1.5);pv.rotation.y=sx*1.35;G.add(pv);dr.castShadow=true}
+  spots.push({x:0,y:0,z:0,r:2.2,t:'홍예 천장의 쌍룡',h:'홍예 통로 천장을 올려다보세요. 구름 속에서 여의주를 두고 노니는 두 마리 용이 그려져 있어요. 성문을 지키는 뜻이 담겨 있어요.'})}
+ /* 여장(성가퀴): 육축 위 가장자리 */
+ {const crenel=(x0,z0,x1,z1,gaps=[])=>{const L=Math.hypot(x1-x0,z1-z0),n=Math.floor(L/2.2),ry=Math.atan2(x1-x0,z1-z0);for(let i=0;i<n;i++){const t=(i+.5)/n,x=x0+(x1-x0)*t,z=z0+(z1-z0)*t;if(gaps.some(([a,b])=>x>a&&x<b))continue;const b=box(.6,1.1,1.9,MT.granite);b.rotation.y=ry;add(b,x,H+.55,z);const cap=box(.7,.12,2,MT.granite);cap.rotation.y=ry;add(cap,x,H+1.16,z,false)}};
+  crenel(-W/2+.8,D/2-.35,W/2-.8,D/2-.35);crenel(-W/2+.8,-D/2+.35,W/2-.8,-D/2+.35,[[-15,-11.6],[11.6,15]]);crenel(-W/2+.6,-D/2+1,-W/2+.6,D/2-1);crenel(W/2-.6,-D/2+1,W/2-.6,D/2-1);
+  S(-W/2+.4,W/2-.4,H,H+1.1,D/2-.7,D/2);S(-11.6,11.6,H,H+1.1,-D/2,-D/2+.7);S(-W/2,-W/2+.9,H,H+1.1,-D/2,D/2);S(W/2-.9,W/2,H,H+1.1,-D/2,D/2)}
+ /* 육축 안쪽(북쪽) 돌계단 두 곳: 땅에서 육축 위까지 */
+ {const steps=26,rise=H/steps,run=.36;for(const sx of[-1,1]){for(let i=0;i<steps;i++){const x0=sx*(3+i*run),x1=sx*(3+(i+1)*run)+sx*(i===steps-1?1.2:0);const xa=Math.min(x0,x1),xb=Math.max(x0,x1);const st=box(xb-xa,(i+1)*rise,2.4,MT.granite);add(st,(xa+xb)/2,(i+1)*rise/2,-D/2-1.2);S(xa,xb,0,(i+1)*rise,-D/2-2.4,-D/2)}
+  const rail=box(.4,.9,.1,MT.granite);/* 바깥 난간 */const len=steps*run+1.2;const wall=box(len,1,.35,MT.granite);wall.rotation.z=-sx*Math.atan2(H,steps*run)*0;const rw=new THREE.Group();for(let i=0;i<steps;i+=2){const p=box(run*2,.9,.3,MT.granite);p.position.set(sx*(3+(i+1)*run),(i+1)*rise+.45,-D/2-2.4+.15);rw.add(p);S(Math.min(sx*(3+i*run),sx*(3+(i+2)*run)),Math.max(sx*(3+i*run),sx*(3+(i+2)*run)),0,(i+2)*rise+.9,-D/2-2.4,-D/2-2.1)}/* 꼭대기 참: 계단 끝에서 육축 모서리까지 평평하게 잇고 바깥에 난간 */{const xa=Math.min(sx*(3+steps*run+1.2),sx*15.2),xb=Math.max(sx*(3+steps*run+1.2),sx*15.2);const ld=box(xb-xa,H,2.4,MT.granite);ld.position.set((xa+xb)/2,H/2,-D/2-1.2);rw.add(ld);S(xa,xb,0,H,-D/2-2.4,-D/2);const pr=box(xb-xa,.9,.3,MT.granite);pr.position.set((xa+xb)/2,H+.45,-D/2-2.25);rw.add(pr);S(xa,xb,0,H+.9,-D/2-2.4,-D/2-2.1);const pe=box(.3,.9,2.4,MT.granite);pe.position.set(sx*15.05,H+.45,-D/2-1.2);rw.add(pe);S(Math.min(sx*14.9,sx*15.2),Math.max(sx*14.9,sx*15.2),0,H+.9,-D/2-2.4,-D/2)}
+  rw.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});G.add(rw)}
+  spots.push({x:-7,y:0,z:-D/2-3.4,r:2.4,t:'육축 돌계단',h:'성 안쪽에서 육축 위로 오르는 돌계단이에요. 위에 오르면 누각과 여장(성가퀴)을 가까이 볼 수 있어요.'})}
+ /* 누각 기단 */const B0=H,BH=.45,BW=24.4,BD=10.6;{const b=box(BW,BH,BD,MT.granite);add(b,0,B0+BH/2,0);S(-BW/2,BW/2,B0,B0+BH,-BD/2,BD/2)}
+ const F1=B0+BH;/* 1층 바닥 높이 */const C1=4.7;/* 1층 기둥 높이 */const XS=[-11,-6.6,-2.2,2.2,6.6,11],ZS=[-4.6,0,4.6];
+ {const fl=box(23.2,.12,10,MT.floor);add(fl,0,F1+.06,0,false);
+  for(const x of XS)for(const z of ZS){if(z===0&&Math.abs(x)<10)continue;const c=cyl(.34,.38,C1,MT.pillar,16);add(c,x,F1+C1/2,z);const base=cyl(.5,.56,.3,MT.granite,12);add(base,x,F1+.15,z,false);S(x-.35,x+.35,F1,F1+C1,z-.35,z+.35)}
+  /* 내부 높은기둥(고주): 2층까지 */for(const x of[-6.6,-2.2,2.2,6.6])for(const z of[-2.3,2.3]){const c=cyl(.34,.38,C1+4,MT.pillar,16);add(c,x,F1+(C1+4)/2,z);S(x-.35,x+.35,F1,F1+C1+4,z-.35,z+.35)}
+  /* 창방·평방 단청 */for(const z of[-4.6,4.6]){const b=box(22.6,.5,.42,MT.dan);add(b,0,F1+C1-.25,z);const b2=box(22.8,.3,.6,MT.dan2);add(b2,0,F1+C1+.15,z,false)}for(const x of[-11,11]){const b=box(.42,.5,9.6,MT.dan2);add(b,x,F1+C1-.25,0);const b2=box(.6,.3,9.8,MT.dan2);add(b2,x,F1+C1+.15,0,false)}
+  /* 난간: 앞뒤 칸 사이, 양 끝(동서)은 가운데 칸을 비워 드나든다 */for(const z of[-4.6,4.6])for(let i=0;i<5;i++){const x0=XS[i]+.4,x1=XS[i+1]-.4;const r=box(x1-x0,.12,.12,MT.pillar);add(r,(x0+x1)/2,F1+.85,z,false);for(let x=x0+.3;x<x1;x+=.6){const b=box(.08,.8,.08,MT.wood);add(b,x,F1+.42,z,false)}S(x0,x1,F1,F1+.95,z-.15,z+.15)}
+  for(const x of[-11,11])for(const[z0,z1]of[[-4.2,-1.4],[1.4,4.2]]){const r=box(.12,.12,z1-z0,MT.pillar);add(r,x,F1+.85,(z0+z1)/2,false);S(x-.15,x+.15,F1,F1+.95,z0,z1)}
+  G.add(brackets(MT,11,4.6,F1+C1+.3,1.1));
+  spots.push({x:0,y:F1,z:2.6,r:3,t:'누각 1층',h:'정면 다섯 칸, 옆면 두 칸의 2층 누각이에요. 처마 밑 공포(짜임)가 촘촘한 다포식이고, 붉은 기둥과 초록 단청이 어울려요.'})}
+ const F2=F1+C1+1.4;/* 2층 바닥 */const C2=3.6;
+ /* 1층에서 2층 오르는 나무 계단(가운데) */{const steps=Math.round((F2-F1)/.26),rise=(F2-F1)/steps,run=(9.2-1.6)/steps;for(let i=0;i<steps;i++){const x0=1.6+i*run,x1=x0+run+(i===steps-1?.8:0);const st=box(x1-x0,.16,1.8,MT.floor);add(st,(x0+x1)/2,F1+(i+1)*rise-.08,0,false);S(x0,x1,F1,F1+(i+1)*rise,-.9,.9)}for(const sz of[-1,1]){const side=box(steps*run+.8,.3,.12,MT.wood);side.rotation.z=Math.atan2(F2-F1,steps*run);add(side,1.6+(steps*run)/2,F1+(F2-F1)/2,sz*.95,false)}}
+ /* 2층 바닥(계단 위만 비움) */{const t=.3;const fl=(x0,x1,z0,z1)=>{const b=box(x1-x0,t,z1-z0,MT.floor);add(b,(x0+x1)/2,F2-t/2,(z0+z1)/2);S(x0,x1,F2-t,F2,z0,z1)};fl(-10.8,10.8,1.0,4.6);fl(-10.8,10.8,-4.6,-1.0);fl(-10.8,6.6,-1.0,1.0);fl(9.2,10.8,-1.0,1.0);/* 계단 구멍 둘레 난간 */for(const sz of[-1,1]){const r=box(2.6,.1,.1,MT.pillar);add(r,7.9,F2+.9,sz*1.02,false);for(let x=6.7;x<9.2;x+=.5){const b=box(.07,.9,.07,MT.wood);add(b,x,F2+.45,sz*1.02,false)}S(6.6,9.2,F2,F2+.95,sz*1.02-.08,sz*1.02+.08)}{const r=box(.1,.1,2.1,MT.pillar);add(r,6.62,F2+.9,0,false);S(6.54,6.7,F2,F2+.95,-1,1)}}
+ /* 2층: 기둥, 벽(아래 판벽 + 위 살창), 공포 */
+ {const X2=[-10,-6,-2,2,6,10],Z2=[-4.2,4.2];for(const x of X2)for(const z of Z2){const c=cyl(.3,.34,C2,MT.pillar,14);add(c,x,F2+C2/2,z);S(x-.3,x+.3,F2,F2+C2,z-.3,z+.3)}for(const x of[-10,10]){const c=cyl(.3,.34,C2,MT.pillar,14);add(c,x,F2+C2/2,0);S(x-.3,x+.3,F2,F2+C2,-.3,.3)}
+  for(const z of Z2)for(let i=0;i<5;i++){const x0=X2[i]+.3,x1=X2[i+1]-.3,w=x1-x0;const bd=box(w,1.1,.12,MT.board);add(bd,(x0+x1)/2,F2+.55,z);const lt=new THREE.Mesh(new THREE.PlaneGeometry(w,1.9),MT.lattice);add(lt,(x0+x1)/2,F2+2.1,z);S(x0,x1,F2,F2+1.1,z-.12,z+.12)}
+  for(const x of[-10,10])for(const[z0,z1]of[[-4,-.3],[.3,4]]){const bd=box(.12,1.1,z1-z0,MT.board);add(bd,x,F2+.55,(z0+z1)/2);const lt=new THREE.Mesh(new THREE.PlaneGeometry(z1-z0,1.9),MT.lattice);lt.rotation.y=Math.PI/2;add(lt,x,F2+2.1,(z0+z1)/2);S(x-.12,x+.12,F2,F2+1.1,z0,z1)}
+  for(const z of[-4.2,4.2]){const b=box(20.6,.45,.4,MT.dan);add(b,0,F2+C2-.22,z)}for(const x of[-10,10]){const b=box(.4,.45,8.8,MT.dan2);add(b,x,F2+C2-.22,0)}
+  G.add(brackets(MT,10,4.2,F2+C2+.1,1.0));
+  /* 2층 천장 서까래 */const ce=new THREE.Mesh(new THREE.PlaneGeometry(20,8.4).rotateX(Math.PI/2),MT.raft);ce.position.set(0,F2+C2+1.3,0);G.add(ce);cam.push(ce);
+  /* 세로 현판 崇禮門 */const sg=box(1.3,3,.18,MT.sign);sg.material=[MT.wood,MT.wood,MT.wood,MT.wood,MT.sign,MT.wood];add(sg,0,F2+C2-.2,4.75,false);
+  spots.push({x:0,y:0,z:9,r:3.5,t:'세로 현판 崇禮門',h:'다른 문의 현판은 가로로 쓰지만 숭례문 현판은 세로로 썼어요. 남쪽 관악산의 불 기운을 막으려 했다는 이야기가 전해요.'});
+  spots.push({x:0,y:F2,z:2.4,r:3,t:'누각 2층',h:'살창 너머로 서울 거리가 내려다보여요. 2008년 불이 났을 때 이 2층 지붕이 무너졌고, 5년 동안 전통 방식으로 다시 지어 2013년에 문을 열었어요.'})}
+ /* 지붕들 */{const h0=F1+C1+1.6;const sk=skirtRoof(MT,13.6,7.0,10.4,4.5,h0,h0+1.6,.9);G.add(sk);sk.traverse(o=>{if(o.isMesh)cam.push(o)});
+  for(const m of rafters(MT,13.2,6.6,h0-.15))G.add(m);
+  const r2h0=F2+C2+1.2;const top=hipRoof(MT,12.8,6.8,6,r2h0,r2h0+4.4,1.1,.45);G.add(top);top.traverse(o=>{if(o.isMesh)cam.push(o)});for(const m of rafters(MT,12.4,6.4,r2h0-.15))G.add(m)}
+ /* 바깥 성곽: 육축 양 끝에서 동서로 뻗는 돌 성벽(낮아지며 끊김) */
+ {for(const sx of[-1,1]){const L=opts.wallLen??26,h=5.2;const wall=box(L,h,7,MT.granite);wall.material=MT.granite;add(wall,sx*(W/2+L/2-.2),h/2,0);S(Math.min(sx*(W/2-.2),sx*(W/2+L-.2)),Math.max(sx*(W/2-.2),sx*(W/2+L-.2)),0,h,-3.5,3.5);
+   for(let i=0;i<Math.floor(L/2.2);i++){const x=sx*(W/2+1+i*2.2);for(const z of[-3.2,3.2]){const b=box(1.9,1,.6,MT.granite);add(b,x,h+.5,z)}}}
+  spots.push({x:-20,y:0,z:6.2,r:3,t:'한양도성 성벽',h:'숭례문은 한양도성의 남쪽 정문이에요. 조선 태조 때인 1398년에 처음 세웠어요. 옛 성벽은 대부분 헐렸고, 지금은 문 양쪽에 일부만 다시 쌓아 두었어요.'})}
+ spots.push({x:0,y:0,z:14,r:3.2,t:'숭례문 실제 크기',h:'지금 보는 숭례문은 실제 크기로 지었어요. 석축(육축) 폭 약 30m, 높이 약 6.5m, 지붕 꼭대기까지 약 20m예요. 무이 키가 1.5m쯤이니 얼마나 큰지 느껴 보세요. 국보예요.'});
+ return{group:G,solids,cam,spots,spawn:{x:0,z:26,yaw:Math.PI},size:{W,D,H,top:F2+C2+5.6}}}
