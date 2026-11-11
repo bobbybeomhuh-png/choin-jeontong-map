@@ -62,6 +62,10 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #fside .row{display:flex;gap:8px;flex-wrap:wrap}#fside .btn{background:#3b2a1c;color:#fff4dc;border-color:#3b2a1c}#fside .btn.main{background:#e7b75a;color:#1d1408;border-color:#e7b75a}
 @media (max-width:760px){#fol{flex-direction:column;justify-content:flex-start;gap:8px;padding:8px;overflow:auto}#fstage{height:min(62vh,calc((100vw - 16px)*1.742))}#fside{width:100%;max-height:none;padding:10px;gap:6px}#ft{font-size:19px}#fhow{font-size:14px}#fwhy{font-size:12.5px}}
 
+#flist{position:fixed;inset:0;z-index:61;background:rgba(8,6,4,.92);display:grid;place-items:center;padding:12px;overflow:auto}#flist .in{width:min(980px,100%);max-height:calc(100vh - 24px);overflow:auto;background:#f6efe2;color:#2a1d12;border-radius:16px;padding:16px;display:grid;gap:12px}
+#flist h2{margin:0;font:700 22px "Noto Serif KR",serif}#flist p{margin:0;font-size:14px;color:#5a4430}#flcats{display:flex;gap:6px;flex-wrap:wrap}#flcats button{border:1px solid #cbb99c;background:#fffaf0;border-radius:16px;padding:5px 12px;cursor:pointer;font-size:13.5px}#flcats button.on{background:#3b2a1c;color:#fff4dc}
+#flgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}#flgrid button{border:2px solid #d8cbb4;background:#fffaf0;border-radius:12px;padding:6px;cursor:pointer;display:grid;gap:4px;text-align:left;position:relative}#flgrid button:hover{border-color:#e7b75a}#flgrid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;background:#ddd}#flgrid b{font:16px "Do Hyeon",sans-serif}#flgrid span{font-size:12px;color:#6a5640}#flgrid i{position:absolute;right:10px;top:10px;background:#3f8f5a;color:#fff;font-style:normal;border-radius:12px;padding:2px 8px;font-size:12px}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
@@ -92,7 +96,8 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <button id="act" type="button" hidden></button>
 <div id="stick" hidden><i></i></div>
 <button id="bJump" type="button" hidden>점프</button>
-<section id="fol" hidden><div id="fstage"><video id="fv" playsinline preload="auto"></video><canvas id="fc" width="496" height="864"></canvas><div id="fsteps"></div><div id="fpop"></div></div><aside id="fside"><div class="tag" id="ftag">쇼츠 따라 복원</div><h3 id="ft"></h3><p id="fhow"></p><div id="ftools"></div><div id="fbar"><i></i></div><p id="fwhy"></p><div id="flog"></div><div class="row"><button class="btn main" id="fgo" type="button" hidden>이어서 보기</button><button class="btn" id="fre" type="button" hidden>다시 하기</button><button class="btn" id="fyt" type="button">유튜브로 보기</button><button class="btn" id="fx" type="button">닫기</button></div></aside></section>
+<section id="fol" hidden><div id="fstage"><video id="fv" playsinline preload="auto"></video><canvas id="fc" width="496" height="864"></canvas><div id="fsteps"></div><div id="fpop"></div></div><aside id="fside"><div class="tag" id="ftag">쇼츠 따라 복원</div><h3 id="ft"></h3><p id="fhow"></p><div id="ftools"></div><div id="fbar"><i></i></div><p id="fwhy"></p><div id="flog"></div><div class="row"><button class="btn main" id="fgo" type="button" hidden>이어서 보기</button><button class="btn" id="fre" type="button" hidden>다시 하기</button><button class="btn" id="flb" type="button">다른 쇼츠 고르기</button><button class="btn" id="fyt" type="button">유튜브로 보기</button><button class="btn" id="fx" type="button">닫기</button></div></aside></section>
+<section id="flist" hidden><div class="in"><div style="display:flex;align-items:center;gap:8px"><h2 style="flex:1">쇼츠 복원 서가</h2><button class="btn" id="flx" type="button" style="background:#3b2a1c;color:#fff4dc">닫기</button></div><p>무이 복원단 쇼츠를 보다가 영상이 멈추면, 그 장면의 복원 작업을 내가 직접 해요. 다 마친 쇼츠에는 완료 표시가 붙어요.</p><div id="flcats"></div><div id="flgrid"></div></div></section>
 <section id="yt" hidden><div class="in"><iframe id="ytf" allow="autoplay; encrypted-media" allowfullscreen></iframe><button class="btn main" id="ytx" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
@@ -143,6 +148,13 @@ for(const d of DOORS){const[x,z]=rP(RC+1.45,d.th),g=new THREE.Group();const fr=b
  const sc=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.8),mt);sc.position.set(0,2.05,.1);g.add(sc);const lt=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.8),new THREE.MeshBasicMaterial({map:LAT,transparent:true,toneMapped:false}));lt.position.set(0,2.05,.11);g.add(lt);
  add(g,x,.3,z,-d.th*Math.PI/180+Math.PI*0,false);g.lookAt(0,.3,0);const[fx,fz]=rP(RC-1.2,d.th);d.fx=fx;d.fz=fz}
 
+
+/* 쇼츠 복원 서가: 회랑 문 사이에 쇼츠 표지가 가득 꽂힌 책장 */
+const SHELVES=[];{const keys=['ceramic','science','carpenter','painter','metal','unhak','duck','maejuk','hojak','chaekga','inwang','kimhd','sungnye','seokguram','gyeonghoe','jagyeok','geobuk','honcheon','emille','cheonma','bangasayu'];
+ const cv2=document.createElement('canvas');cv2.width=512;cv2.height=720;const q=cv2.getContext('2d');const st=new THREE.CanvasTexture(cv2);st.colorSpace=THREE.SRGBColorSpace;
+ const draw=()=>{q.fillStyle='#3b2414';q.fillRect(0,0,512,720);q.fillStyle='#f2c14e';q.font='bold 44px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText('쇼츠 복원 서가',256,58);q.font='26px "Gowun Dodum",sans-serif';q.fillStyle='#f3ead6';q.fillText(`보면서 따라 복원 ${keys.length}편`,256,96);for(let i=0;i<keys.length;i++){const c=i%5,r=(i/5)|0,x=14+c*99,y=118+r*148;q.fillStyle='#5a3a20';q.fillRect(x-4,y+128,99,10);if(imgs[i]&&imgs[i].complete&&imgs[i].naturalWidth)q.drawImage(imgs[i],x,y,88,126);else{q.fillStyle='#6b4a2c';q.fillRect(x,y,88,126)}}st.needsUpdate=true};
+ const imgs=keys.map(k=>{const im=new Image();im.onload=draw;im.src='media/fp_'+k+'.jpg';return im});draw();
+ for(const th of[-45,45]){const[x,z]=rP(RC+1.45,th),g=new THREE.Group();const fr=box(3.1,4.4,.3,WOOD);fr.position.y=2.2;g.add(fr);const sc=new THREE.Mesh(new THREE.PlaneGeometry(2.8,3.94),new THREE.MeshBasicMaterial({map:st,toneMapped:false}));sc.position.set(0,2.2,.16);g.add(sc);add(g,x,.3,z,0,false);g.lookAt(0,.3,0);const[fx,fz]=rP(RC-1.2,th);SHELVES.push({fx,fz})}}
 /* --- 꽃담: 담장 판에 꽃무늬 --- */
 const FLOWERW=tex(256,256,(q,w,h)=>{q.fillStyle='#e8dfcf';q.fillRect(0,0,w,h);q.fillStyle='#9a5a3c';q.fillRect(0,h*.78,w,h*.22);for(let x=0;x<w;x+=32){q.fillStyle='#b06a48';q.fillRect(x+2,h*.8,28,h*.18)}
  const fl=(cx,cy,r,c)=>{q.fillStyle=c;for(let i=0;i<6;i++){const a=i/6*6.28;q.beginPath();q.arc(cx+Math.cos(a)*r*.6,cy+Math.sin(a)*r*.6,r*.42,0,7);q.fill()}q.fillStyle='#f2c14e';q.beginPath();q.arc(cx,cy,r*.3,0,7);q.fill()};
@@ -1087,6 +1099,7 @@ function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);la
  dayTick();fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);bandTick(dt);jarFrame(dt,now);seatTick(dt);wsFrame(dt);cinTick();if(me)bwTick();gameFrame(dt,now);if(game)gameCam();if(WK){WK.frame(dt);if(WK)WK.cam()}
  uiT-=dt;if(uiT<=0&&me){uiT=.15;const a=$('#act');a.hidden=true;actFn=null;
   for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){let done=[];try{done=JSON.parse(localStorage.getItem('muui3d-follow')||'[]')}catch(e){}a.textContent=(done.includes(d.k)?'✓ ':'')+'쇼츠 보며 따라 복원하기';actFn=()=>openFollow(d.k);a.hidden=false;break}}
+  if(a.hidden)for(const S of SHELVES){if(Math.hypot(pos.x-S.fx,pos.z-S.fz)<2.6){const n=folDone().size;a.textContent=`쇼츠 복원 서가 열기 (${n}/${Object.keys(FOLD).length} 완료)`;actFn=openFList;a.hidden=false;break}}
   if(a.hidden&&qActive&&!qHeld){const q=QUEST[qActive];if(Math.hypot(pos.x-q.at[0],pos.z-q.at[1])<1.6){a.textContent=`${q.item} 줍기`;actFn=()=>{qHeld=qActive;hint(`${q.item}을(를) 들었어요. ${KINDS.find(x=>x.k===qHeld).d} 복원단에게 가져가요.`,4500);qUI()};a.hidden=false}}
   if(SEATED){a.textContent=SEATED.a;actFn=seatAct;a.hidden=false}
   if(a.hidden&&!WK&&!ws&&!SEATED)for(const S of SEATS3){if(Math.hypot(pos.x-S.ax,pos.z-S.az)<1.4){a.textContent=`${S.n}에 앉기`;actFn=()=>sitAt(S);a.hidden=false;break}}
@@ -1145,6 +1158,119 @@ const FOLD={
   {t:10.6,k:'rhythm',title:'모루에서 휜 곳 펴기',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'휜 받침은 조금씩 두드려 펴요. 한 번에 세게 하면 금이 가요.',at:[.6,.6],n:5},
   {t:18.3,k:'trace',title:'금 간 곳 이어 붙이기',how:'금을 따라 천천히 그어 이어 붙여요.',why:'갈라진 금속은 금을 따라 조금씩 이어 붙이고, 이은 자리는 나중에 구별되게 남겨요.',path:[[.12,.52],[.26,.48],[.4,.45],[.55,.41],[.7,.38]]},
   {t:24.1,k:'drag',title:'봉황 장식 맞추기',how:'봉황을 끌어 꼭대기에 맞춰요.',why:'꼭대기 봉황은 여의주를 물고 날개를 편 모습이에요. 향 연기가 봉황 가슴의 구멍으로 나와요.',rect:[.3,0,.72,.28],off:[.22,.42]}]}};
+
+const FCAT={ceramic:'도자',science:'과학',carpenter:'건축',painter:'회화',metal:'금속'};
+Object.assign(FOLD,{
+ unhak:{cat:'도자',n:'청자 상감운학문 매병',crew:'도공 무이',fact:'구름과 학을 파낸 자리에 흰 흙과 붉은 흙을 메워 구운 상감 청자예요. 고려만의 기법으로, 이 매병은 국보로 간송미술관에 있어요.',steps:[
+  {t:12.2,k:'zoom',title:'확대경으로 금 찾기',how:'확대경을 움직여 갈라진 곳 세 군데를 찾아요.',why:'금이 어디서 시작해 어디로 뻗었는지 먼저 그려 둬요. 그래야 어디부터 붙일지 정할 수 있어요.',spots:[[.45,.35],[.55,.55],[.6,.75]]},
+  {t:16.6,k:'trace',title:'금 따라 메우기',how:'금을 따라 천천히 그어 메움재를 채워요.',why:'금 속에 메움재를 채워 넣고, 표면 높이를 둘레와 똑같이 맞춰요.',path:[[.44,.08],[.41,.28],[.45,.48],[.4,.68],[.44,.9]]},
+  {t:18.2,k:'hold',title:'따뜻하게 말려 굳히기',how:'꾹 누르고 있으면 메움재가 단단히 굳어요.',why:'메움재는 알맞은 온도에서 천천히 말려야 갈라지지 않아요.',at:[.5,.5]},
+  {t:19.7,k:'paint',title:'학 무늬 색 맞추기',how:'둘레 무늬와 같은 색을 골라 칠해요.',why:'메운 자리에는 둘레 무늬와 어울리게 색을 맞추되, 가까이 보면 구별되게 해요.',rect:[.2,.3,.75,.62],sw:['#f3f0e6','#8fb3a0','#3a4a5a'],ok:0},
+  {t:22.6,k:'drag',title:'떨어진 조각 끼우기',how:'조각을 끌어 빈 자리에 맞춰요.',why:'떨어진 조각은 깨진 면이 꼭 맞는 자리를 찾아 가역성 있는 접착제로 붙여요.',rect:[.38,.1,.74,.36],off:[.2,.4]},
+  {t:25.6,k:'scrub',title:'천으로 닦아 마무리',how:'문질러 남은 가루와 손자국을 닦아요.',why:'마지막으로 표면을 깨끗이 닦고 사진을 찍어 복원 기록을 남겨요.',rect:[.08,.15,.95,.85],col:[150,160,140]}]},
+ duck:{cat:'도자',n:'청자 오리모양 연적',crew:'도공 무이',fact:'붓글씨 쓸 때 벼루에 물을 따르던 연적이에요. 연꽃 줄기를 문 오리 모양으로, 국보예요.',steps:[
+  {t:7.6,k:'scrub',title:'부서진 자리 먼지 털기',how:'깨진 자리 둘레를 문질러 먼지를 털어요.',why:'깨진 면에 먼지가 있으면 조각이 딱 맞지 않아요.',rect:[.08,.3,.85,.9],col:[120,110,90]},
+  {t:12.1,k:'drag',title:'핀셋으로 조각 끼우기',how:'작은 조각을 끌어 제자리에 맞춰요.',why:'작은 조각은 핀셋으로 하나씩 맞춰 보고 자리를 확인한 뒤 붙여요.',rect:[.55,.32,.88,.6],off:[-.35,.3]},
+  {t:18.1,k:'trace',title:'금 따라 메우기',how:'금을 따라 천천히 그어 메워요.',why:'가는 금은 붓으로 메움재를 흘려 넣어 채워요.',path:[[.2,.2],[.35,.4],[.5,.5],[.62,.66],[.74,.86]]},
+  {t:19.6,k:'dab',title:'면봉으로 남은 풀 닦기',how:'삐져나온 풀을 하나씩 톡톡 닦아요.',why:'넘친 접착제는 굳기 전에 면봉으로 바로 닦아야 자국이 남지 않아요.',rect:[.2,.3,.8,.8],n:6},
+  {t:21.1,k:'paint',title:'깃털 무늬 색 맞추기',how:'둘레와 같은 비취색을 골라 칠해요.',why:'고려청자의 비취색은 흉내 내기 어려워 여러 번 덧칠해 맞춰요.',rect:[.3,.35,.72,.65],sw:['#7fa38f','#c9b48a','#3a4a5a'],ok:0},
+  {t:22.6,k:'scrub',title:'천으로 닦아 광 내기',how:'문질러 마무리해요.',why:'마무리 후에는 습도가 알맞은 진열장에 넣어 보관해요.',rect:[.1,.2,.9,.8],col:[140,150,130]}]},
+ maejuk:{cat:'도자',n:'백자 철화 매죽무늬 항아리',crew:'도공 무이',fact:'산화철 안료로 매화와 대나무를 그린 조선 백자예요. 철화 안료는 구우면 짙은 갈색이 돼요.',steps:[
+  {t:3.1,k:'zoom',title:'금 간 곳 찾기',how:'확대경으로 상한 곳 세 군데를 찾아요.',why:'항아리를 돌려 가며 금과 떨어진 곳을 빠짐없이 찾아 기록해요.',spots:[[.4,.4],[.6,.5],[.5,.65]]},
+  {t:4.6,k:'scrub',title:'깨진 자리 먼지 털기',how:'문질러 먼지를 털어요.',why:'붙이기 전에 깨진 면을 깨끗하게 해요.',rect:[.08,.15,.92,.85],col:[150,140,120]},
+  {t:6.1,k:'hold',title:'메움재 고루 개기',how:'꾹 누르고 있으면 메움재를 고루 개어요.',why:'메움재에 기포가 남으면 나중에 구멍이 생겨요. 천천히 고루 개요.',at:[.5,.55]},
+  {t:9.1,k:'paint',title:'대나무 그림 이어 그리기',how:'철화 갈색을 골라 끊긴 그림을 이어 칠해요.',why:'끊긴 그림은 남은 붓질을 따라 꼭 필요한 만큼만 이어 그려요.',rect:[.3,.3,.75,.7],sw:['#5a2a1a','#2d4fa0','#3f8f5a'],ok:0},
+  {t:16.6,k:'trace',title:'주걱으로 금 메우기',how:'금을 따라 천천히 그어 메워요.',why:'주걱으로 눌러 채운 뒤 넘친 것은 말리고 사포로 다듬어요.',path:[[.1,.36],[.3,.46],[.45,.6],[.56,.76],[.7,.95]]},
+  {t:19.6,k:'scrub',title:'천으로 마무리',how:'문질러 마무리해요.',why:'다 마치면 복원한 자리를 사진과 글로 남겨요.',rect:[.2,.3,.92,.82],col:[160,150,130]}]},
+ hojak:{cat:'회화',n:'까치호랑이 호작도',crew:'화공 무이',fact:'까치와 호랑이를 그린 민화예요. 새해에 나쁜 기운을 막고 기쁜 소식을 바라며 걸었어요.',steps:[
+  {t:1.6,k:'scrub',title:'빗자루로 먼지 쓸기',how:'그림 위를 살살 문질러 먼지를 쓸어요.',why:'종이 그림은 약해서 아주 부드러운 솔로 먼지만 쓸어요.',rect:[.05,.4,.95,.95],col:[140,125,100]},
+  {t:4.6,k:'drag',title:'찢어진 조각 맞추기',how:'찢어진 조각을 끌어 제자리에 맞춰요.',why:'찢어진 조각은 핀셋으로 결을 맞춰 제자리에 놓고 얇은 한지로 뒤에서 이어요.',rect:[.3,.48,.72,.7],off:[.15,.22]},
+  {t:7.6,k:'paint',title:'바랜 줄무늬 색 맞추기',how:'호랑이 줄무늬와 같은 색을 골라 칠해요.',why:'바랜 곳만 둘레 색에 맞춰 살짝 채워요.',rect:[.2,.4,.8,.9],sw:['#3a3a2a','#c8402e','#2d4fa0'],ok:0},
+  {t:19.6,k:'trace',title:'호랑이 털 한 올 그리기',how:'털 결을 따라 천천히 그어요.',why:'끊긴 털 결은 남은 붓질 방향을 따라 아주 가늘게 이어요.',path:[[.18,.62],[.33,.56],[.5,.5],[.65,.45],[.82,.4]]},
+  {t:22.6,k:'hold',title:'족자로 걸기',how:'꾹 누르고 있으면 족자를 걸어요.',why:'다 고친 그림은 새 족자에 꾸며 걸어요. 이것을 표구라고 해요.',at:[.5,.5]}]},
+ chaekga:{cat:'회화',n:'책가도',crew:'화공 무이',fact:'책장과 책, 문방구, 도자기를 그린 그림이에요. 정조가 임금 자리 뒤에 일월오봉도 대신 책가도를 두었다는 이야기가 전해요.',steps:[
+  {t:4.6,k:'drag',title:'찢어진 틈 맞붙이기',how:'떨어진 조각을 끌어 틈에 맞춰요.',why:'찢어진 곳은 결을 맞춰 붙이고 뒤에서 한지로 받쳐요.',rect:[.3,.38,.75,.6],off:[.12,.28]},
+  {t:7.6,k:'paint',title:'빨간 칸 색 맞추기',how:'둘레와 같은 색을 골라 칠해요.',why:'떨어진 물감 자리는 둘레 색에 맞춰 조금씩 채워요.',rect:[.3,.4,.8,.8],sw:['#b03a2e','#2d4fa0','#e8c84a'],ok:0},
+  {t:18.1,k:'trace',title:'풀로 틈 메우기',how:'틈을 따라 천천히 그어 풀을 넣어요.',why:'틈에 밀가루 풀을 넣어 붙이면 나중에 물로 다시 뗄 수 있어요.',path:[[.18,.62],[.34,.56],[.5,.5],[.6,.42],[.76,.34]]},
+  {t:19.6,k:'dab',title:'얼룩 콕콕 지우기',how:'얼룩을 하나씩 톡톡 눌러 지워요.',why:'곰팡이 얼룩은 하나씩 조심스럽게 닦아 내요.',rect:[.2,.3,.85,.8],n:7},
+  {t:22.6,k:'hold',title:'병풍 펼쳐 세우기',how:'꾹 누르고 있으면 병풍을 펼쳐 세워요.',why:'병풍은 여러 폭을 이어 접었다 펴는 그림이에요. 이음새도 함께 손봐요.',at:[.5,.5]}]},
+ inwang:{cat:'회화',n:'인왕제색도',crew:'화공 무이',fact:'정선이 1751년에 비 갠 뒤의 인왕산을 그린 그림이에요. 국보로, 지금은 국립중앙박물관에 있어요.',steps:[
+  {t:1.6,k:'hold',title:'두루마리 살살 펴기',how:'꾹 누르고 있으면 두루마리를 천천히 펴요.',why:'오래된 두루마리는 바짝 말라 있어서 습도를 맞춰 아주 천천히 펴요.',at:[.5,.6]},
+  {t:4.6,k:'apply',title:'배접 풀 바르기',how:'종이를 문질러 풀을 고루 발라요.',why:'그림 뒤에 새 한지를 덧대 튼튼하게 하는 것을 배접이라고 해요.',rect:[.08,.5,.92,.95],col:'rgba(255,248,225,.55)'},
+  {t:6.1,k:'trace',title:'갈라진 틈 메우기',how:'틈을 따라 천천히 그어 메워요.',why:'갈라진 곳은 뒤에서 가는 한지 띠로 이어 붙여요.',path:[[.08,.56],[.28,.6],[.45,.58],[.62,.65],[.86,.6]]},
+  {t:16.6,k:'drag',title:'빈 곳에 한지 덧대기',how:'한지 조각을 끌어 빈 곳에 대요.',why:'없어진 곳은 비슷한 한지를 골라 덧대고, 그림은 그려 넣지 않아요.',rect:[.05,.25,.42,.6],off:[.35,.28]},
+  {t:19.6,k:'paint',title:'먹빛 맞추기',how:'둘레 먹빛과 같은 색을 골라 칠해요.',why:'덧댄 한지는 둘레와 어울리도록 바탕 색만 은은하게 맞춰요.',rect:[.2,.4,.8,.8],sw:['#4a4a4a','#8a5a3a','#2d4fa0'],ok:0}]},
+ kimhd:{cat:'회화',n:'김홍도 풍속화',crew:'화공 무이',fact:'씨름, 서당, 빨래터처럼 조선 사람들의 하루를 그린 단원 김홍도의 그림이에요. 단원풍속도첩은 보물로 국립중앙박물관에 있어요.',steps:[
+  {t:4.6,k:'scrub',title:'종이 먼지 털기',how:'살살 문질러 먼지를 털어요.',why:'화첩은 장마다 먼지를 털고 곰팡이가 없는지 살펴요.',rect:[.08,.3,.92,.9],col:[140,125,100]},
+  {t:7.6,k:'paint',title:'바랜 옷 색 맞추기',how:'둘레와 같은 색을 골라 칠해요.',why:'바랜 곳만 살짝 채워 그림 전체가 고르게 보이게 해요.',rect:[.3,.3,.72,.62],sw:['#4f7f5a','#c8402e','#3a3a3a'],ok:0},
+  {t:18.1,k:'apply',title:'뒷면에 풀 바르기',how:'문질러 풀을 고루 발라요.',why:'약해진 장은 뒷면에 얇은 한지를 덧대 보강해요.',rect:[.08,.55,.92,.95],col:'rgba(255,248,225,.55)'},
+  {t:19.6,k:'trace',title:'꺾인 금 메우기',how:'금을 따라 천천히 그어 메워요.',why:'접혀 꺾인 자리는 펴서 뒤에서 띠를 대 붙여요.',path:[[.33,.48],[.48,.58],[.6,.72],[.74,.9]]},
+  {t:22.6,k:'drag',title:'화첩 장 맞추기',how:'떨어진 장을 끌어 제자리에 끼워요.',why:'화첩은 장 순서가 바뀌지 않게 번호를 매겨 두고 다시 엮어요.',rect:[.3,.45,.9,.75],off:[-.25,.2]}]},
+ sungnye:{cat:'건축',n:'숭례문',crew:'목수 무이',fact:'한양 도성의 남쪽 큰 문이에요. 2008년 불에 탄 뒤 5년 동안 전통 방식으로 다시 지어 2013년에 문을 열었어요. 국보예요.',steps:[
+  {t:4.6,k:'paint',title:'기둥 단청 칠하기',how:'단청 색을 골라 빈 무늬를 칠해요.',why:'단청은 나무를 벌레와 비바람에서 지키고 건물의 격을 보여 줘요.',rect:[.25,.3,.75,.8],sw:['#3f8f5a','#c8402e','#2d4fa0'],ok:0},
+  {t:9.1,k:'hold',title:'서까래 들어 올리기',how:'꾹 누르고 있으면 서까래를 올려요.',why:'지붕을 받치는 서까래는 하나하나 손질해 다시 걸어요.',at:[.5,.45]},
+  {t:12.1,k:'zoom',title:'상한 곳 찾기',how:'확대경으로 상한 곳 세 군데를 찾아요.',why:'비계를 세우고 지붕과 기둥을 하나하나 살펴 상한 부재를 찾아요.',spots:[[.3,.45],[.6,.5],[.45,.65]]},
+  {t:18.1,k:'rhythm',title:'기와 망치로 고정',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'기와는 아래에서 위로 겹쳐 얹고, 흙과 회로 단단히 고정해요.',at:[.5,.42],n:5},
+  {t:22.6,k:'paint',title:'처마 단청 이어 칠하기',how:'색을 골라 처마 무늬를 이어 칠해요.',why:'단청은 정해진 무늬와 색 순서를 따라 칠해요.',rect:[.2,.2,.9,.6],sw:['#2f6b55','#e8c84a','#7a3a26'],ok:0}]},
+ seokguram:{cat:'건축',n:'석굴암',crew:'목수 무이',fact:'8세기 통일신라 때 돌을 쌓아 만든 인공 석굴이에요. 1995년 불국사와 함께 유네스코 세계유산이 되었어요. 습기가 가장 큰 적이에요.',steps:[
+  {t:3.1,k:'rhythm',title:'정으로 돌 다듬기',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'새로 끼울 돌은 원래 돌과 같은 화강암으로 깎아 맞춰요.',at:[.45,.5],n:5},
+  {t:6.1,k:'scrub',title:'이끼 닦아 내기',how:'문질러 이끼와 때를 닦아요.',why:'석굴 안은 습기가 많아 이끼와 곰팡이가 잘 생겨요. 돌이 상하지 않게 닦아요.',rect:[.3,.05,.95,.6],col:[80,95,60]},
+  {t:9.1,k:'hold',title:'도르래로 돌 들어 올리기',how:'꾹 누르고 있으면 돌을 들어 올려요.',why:'무거운 돌은 도르래로 천천히 들어 제자리에 맞춰요.',at:[.5,.45]},
+  {t:18.1,k:'zoom',title:'둥근 천장 금 찾기',how:'확대경으로 천장의 금 세 군데를 찾아요.',why:'돌을 쌓은 둥근 천장은 금이 가면 무너질 수 있어 자주 살펴요.',spots:[[.5,.25],[.4,.45],[.6,.6]]},
+  {t:21.1,k:'apply',title:'돌에 보호제 바르기',how:'문질러 보호제를 고루 발라요.',why:'돌 표면이 부서지지 않게 강화제를 바르고, 습도를 늘 맞춰 둬요.',rect:[.15,.15,.85,.9],col:'rgba(220,235,240,.45)'}]},
+ gyeonghoe:{cat:'건축',n:'경복궁 경회루',crew:'목수 무이',fact:'연못 위에 세운 큰 누각으로, 나라의 잔치를 열던 곳이에요. 1867년에 다시 지었고 국보예요.',steps:[
+  {t:1.6,k:'drag',title:'기둥 나무 나르기',how:'나무를 끌어 제자리에 옮겨요.',why:'새 부재는 잘 마른 소나무를 골라 써요.',rect:[.05,.38,.95,.62],off:[-.2,.25]},
+  {t:4.6,k:'rhythm',title:'장부 맞춰 두드리기',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'못 없이 나무 끝을 깎아 끼워 맞추는 것을 장부 맞춤이라고 해요.',at:[.4,.45],n:5},
+  {t:6.1,k:'paint',title:'기둥 단청 칠하기',how:'단청 색을 골라 무늬를 칠해요.',why:'단청은 바탕색을 먼저 칠하고 무늬를 차례로 얹어요.',rect:[.1,.25,.75,.6],sw:['#3f8f5a','#2d4fa0','#e8c84a'],ok:0},
+  {t:18.1,k:'scrub',title:'대패로 결 다듬기',how:'문질러 나무 결을 매끈하게 다듬어요.',why:'대패로 나무 결을 따라 다듬어야 갈라지지 않아요.',rect:[.1,.4,.8,.9],col:[200,170,120]},
+  {t:22.6,k:'hold',title:'다 함께 대들보 메기',how:'꾹 누르고 있으면 다 함께 들보를 날라요.',why:'큰 들보는 여럿이 함께 들어 올려 기둥 위에 얹어요.',at:[.5,.45]}]},
+ jagyeok:{cat:'과학',n:'자격루',crew:'과학 무이',fact:'1434년 장영실이 만든, 스스로 시간을 알리는 물시계예요. 지금 남은 것은 1536년에 만든 자격루의 일부로 국보예요.',steps:[
+  {t:4.6,k:'zoom',title:'설계도에서 빠진 부품 찾기',how:'확대경으로 설계도의 부품 세 곳을 찾아요.',why:'옛 기록과 그림을 꼼꼼히 읽어 부품이 어떻게 이어지는지 알아내요.',spots:[[.35,.4],[.55,.5],[.7,.35]]},
+  {t:7.6,k:'scrub',title:'용무늬 기둥 먼지 털기',how:'문질러 먼지를 털어요.',why:'물 항아리를 받치는 기둥에는 용이 새겨져 있어요. 홈 사이 먼지까지 털어요.',rect:[.1,.05,.9,.95],col:[70,70,60]},
+  {t:16.6,k:'drag',title:'물 항아리 기둥 끼우기',how:'기둥을 끌어 제자리에 끼워요.',why:'물이 위 항아리에서 아래로 일정하게 흘러야 시간이 맞아요.',rect:[.35,.05,.66,.6],off:[.25,.3]},
+  {t:19.6,k:'scrub',title:'톱니바퀴 닦기',how:'문질러 톱니의 때를 닦아요.',why:'쇠구슬이 굴러 종과 북을 치는 장치는 걸림 없이 움직여야 해요.',rect:[.1,.2,.9,.8],col:[90,80,50]},
+  {t:21.1,k:'timing',title:'자로 눈금 재기',how:'움직이는 자가 금빛 칸에 들어올 때 눌러요. 세 번.',why:'잣대의 눈금이 시간을 나타내요. 길이가 정확해야 해요.',rect:[.15,.5,.92,.58]},
+  {t:22.6,k:'hold',title:'물 흘려 보내기',how:'꾹 누르고 있으면 물이 흐르기 시작해요.',why:'물이 차오르면 잣대가 떠오르고, 정해진 때마다 인형이 종을 쳐요.',at:[.5,.55]}]},
+ geobuk:{cat:'과학',n:'거북선',crew:'과학 무이',fact:'임진왜란 때 이순신 장군이 이끈 거북선은 등에 쇠못을 박고 용머리로 연기를 뿜었다고 전해요. 실물은 남아 있지 않아 기록과 그림으로 되살려요.',steps:[
+  {t:3.1,k:'drag',title:'용머리 끼우기',how:'용머리를 끌어 뱃머리에 맞춰요.',why:'용머리는 옛 그림과 기록을 비교해 모양을 정해요.',rect:[.25,.12,.75,.42],off:[.2,.35]},
+  {t:4.6,k:'trace',title:'거북 등 무늬 새기기',how:'무늬를 따라 천천히 그어 새겨요.',why:'등판 무늬와 쇠못 자리는 기록에 남은 대로 맞춰요.',path:[[.2,.55],[.35,.45],[.5,.5],[.62,.42],[.76,.48]]},
+  {t:7.6,k:'timing',title:'자로 톱니 재기',how:'움직이는 자가 금빛 칸에 들어올 때 눌러요. 세 번.',why:'노와 키를 움직이는 장치는 치수가 정확해야 해요.',rect:[.1,.25,.9,.33]},
+  {t:10.6,k:'rhythm',title:'판자 못 박기',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'배 판자는 겹쳐 대고 나무못으로 단단히 박아요.',at:[.5,.5],n:5},
+  {t:19.6,k:'zoom',title:'설계도와 다른 곳 찾기',how:'확대경으로 설계도와 다른 곳 세 군데를 찾아요.',why:'다 만든 뒤 설계도와 하나하나 맞춰 보며 고쳐요.',spots:[[.35,.5],[.5,.45],[.65,.6]]},
+  {t:22.6,k:'scrub',title:'용머리 닦기',how:'문질러 마무리해요.',why:'마지막으로 표면을 닦고 나무가 썩지 않게 기름을 먹여요.',rect:[.1,.2,.8,.8],col:[80,60,40]}]},
+ honcheon:{cat:'과학',n:'혼천의',crew:'과학 무이',fact:'해와 달, 별의 위치를 재던 천문 기구예요. 세종 때 만들었고, 송이영이 만든 혼천시계는 국보예요.',steps:[
+  {t:4.6,k:'zoom',title:'별자리 그림에서 빠진 별 찾기',how:'확대경으로 빠진 별 세 개를 찾아요.',why:'옛 천문도와 비교해 고리마다 어떤 눈금이 있었는지 확인해요.',spots:[[.4,.45],[.55,.55],[.65,.4]]},
+  {t:7.6,k:'scrub',title:'고리 먼지 털기',how:'문질러 먼지를 털어요.',why:'얇은 고리는 휘기 쉬워서 붓으로 살살 털어요.',rect:[.3,.1,.95,.8],col:[90,80,60]},
+  {t:12.1,k:'drag',title:'작은 고리 핀셋으로 끼우기',how:'고리를 끌어 제자리에 끼워요.',why:'여러 겹의 고리가 서로 다른 방향으로 돌도록 끼워 맞춰요.',rect:[.4,.3,.72,.56],off:[-.25,.3]},
+  {t:18.1,k:'scrub',title:'톱니 닦기',how:'문질러 톱니의 때를 닦아요.',why:'시계 장치와 이어지는 톱니는 깨끗해야 부드럽게 돌아요.',rect:[.1,.2,.9,.8],col:[90,80,50]},
+  {t:19.6,k:'timing',title:'고리 간격 재기',how:'움직이는 자가 금빛 칸에 들어올 때 눌러요. 세 번.',why:'고리 사이 간격이 맞아야 별의 위치를 바로 읽어요.',rect:[.15,.55,.9,.62]},
+  {t:22.6,k:'apply',title:'나무틀에 기름 먹이기',how:'문질러 기름을 고루 발라요.',why:'나무틀에 기름을 먹이면 습기에 덜 상해요.',rect:[.1,.2,.9,.9],col:'rgba(150,90,40,.45)'}]},
+ emille:{cat:'금속',n:'성덕대왕신종',crew:'금속 무이',fact:'771년에 완성한 큰 종으로, 에밀레종이라고도 불러요. 높이 3.66미터로 국보이고 국립경주박물관에 있어요.',steps:[
+  {t:1.6,k:'zoom',title:'종 표면 금 찾기',how:'확대경으로 금 세 군데를 찾아요.',why:'큰 종은 작은 금도 소리를 바꿔요. 두드려 보고 들어 보며 금을 찾아요.',spots:[[.6,.4],[.65,.6],[.7,.75]]},
+  {t:6.1,k:'apply',title:'세척제 바르기',how:'문질러 세척제를 고루 발라요.',why:'해로운 녹은 세척제를 발라 불린 뒤 걷어 내요.',rect:[.08,.15,.92,.9],col:'rgba(240,240,235,.55)'},
+  {t:7.6,k:'scrub',title:'솔로 녹 문지르기',how:'문질러 녹을 걷어 내요.',why:'무늬가 닳지 않게 솔로 결을 따라 살살 문질러요.',rect:[.08,.1,.92,.9],col:[60,90,70]},
+  {t:18.1,k:'hold',title:'청동 녹여 붓기',how:'꾹 누르고 있으면 녹인 청동을 부어요.',why:'떨어진 부분은 같은 성분의 청동으로 따로 만들어 맞춰요.',at:[.5,.55]},
+  {t:22.6,k:'trace',title:'금 간 곳 이어 붙이기',how:'금을 따라 천천히 그어 이어 붙여요.',why:'갈라진 금속은 금을 따라 조금씩 이어 붙여요.',path:[[.1,.4],[.25,.45],[.4,.5],[.55,.5],[.72,.56]]},
+  {t:24.1,k:'scrub',title:'광 내기',how:'문질러 마무리해요.',why:'마지막에 보호막을 얇게 입혀 녹이 다시 슬지 않게 해요.',rect:[.08,.2,.92,.9],col:[70,80,70]}]},
+ cheonma:{cat:'금속',n:'천마총 금관',crew:'금속 무이',fact:'1973년 경주 천마총에서 나온 신라 금관이에요. 금 달개와 곡옥이 달려 있고, 국보로 국립경주박물관에 있어요.',steps:[
+  {t:4.6,k:'scrub',title:'금관 먼지 털기',how:'문질러 먼지를 털어요.',why:'금은 녹슬지 않지만 얇아서 휘기 쉬워요. 붓으로만 살살 털어요.',rect:[.2,0,.95,.8],col:[90,80,50]},
+  {t:7.6,k:'drag',title:'달개 사슬 매달기',how:'떨어진 사슬을 끌어 제자리에 걸어요.',why:'떨어진 달개는 원래 달려 있던 구멍을 찾아 금실로 다시 매요.',rect:[.55,.4,.88,.75],off:[-.32,.12]},
+  {t:16.6,k:'zoom',title:'곡옥 빠진 자리 찾기',how:'확대경으로 곡옥 자리 세 곳을 찾아요.',why:'발굴 때 사진과 비교해 곡옥이 어디 달려 있었는지 확인해요.',spots:[[.3,.45],[.5,.5],[.7,.45]]},
+  {t:19.6,k:'dab',title:'곡옥 하나씩 닦기',how:'곡옥의 얼룩을 하나씩 톡톡 닦아요.',why:'곡옥은 옥이라 금과 닦는 방법이 달라요. 하나씩 따로 닦아요.',rect:[.1,.2,.9,.9],n:7},
+  {t:21.1,k:'scrub',title:'드리개 광 내기',how:'문질러 마무리해요.',why:'다 마치면 금관이 휘지 않게 받침 틀에 세워 보관해요.',rect:[.1,.3,.9,.95],col:[100,90,50]}]},
+ bangasayu:{cat:'금속',n:'금동 반가사유상',crew:'금속 무이',fact:'한쪽 다리를 올리고 생각에 잠긴 부처님 모습이에요. 국보 두 점이 국립중앙박물관 사유의 방에 나란히 있어요.',steps:[
+  {t:6.1,k:'scrub',title:'손가락 먼지 털기',how:'문질러 먼지를 털어요.',why:'얼굴 가까이 댄 손가락은 가늘어서 붓으로 아주 살살 털어요.',rect:[.08,.1,.92,.9],col:[60,70,50]},
+  {t:7.6,k:'dab',title:'초록 녹 떼어 내기',how:'초록 녹을 하나씩 톡톡 눌러 떼어요.',why:'번지는 초록 녹만 골라 하나씩 걷어 내요.',rect:[.15,.2,.85,.8],n:8},
+  {t:10.6,k:'trace',title:'보관 장식 다듬기',how:'장식 선을 따라 천천히 그어 다듬어요.',why:'머리에 쓴 보관은 아주 얇아서 휜 곳을 조금씩 펴요.',path:[[.28,.32],[.42,.25],[.56,.27],[.72,.3]]},
+  {t:18.1,k:'zoom',title:'금 간 곳 찾기',how:'확대경으로 금 세 군데를 찾아요.',why:'불상 안쪽까지 엑스선으로 찍어 보이지 않는 금도 찾아요.',spots:[[.45,.5],[.55,.6],[.6,.45]]},
+  {t:19.6,k:'trace',title:'금 메우기',how:'금을 따라 천천히 그어 메워요.',why:'금 속에 메움재를 채우고 둘레 금빛과 어울리게 맞춰요.',path:[[.34,.45],[.48,.55],[.6,.65],[.72,.76]]},
+  {t:22.6,k:'scrub',title:'솜으로 광 내기',how:'문질러 마무리해요.',why:'마지막으로 표면을 닦고 손자국이 남지 않게 장갑을 끼고 다뤄요.',rect:[.08,.3,.92,.9],col:[80,80,60]}]}});
+for(const k in FCAT)FOLD[k].cat=FCAT[k];
+function folDone(){try{return new Set(JSON.parse(localStorage.getItem('muui3d-follow')||'[]'))}catch(e){return new Set()}}
+let flCat='전체';function openFList(){const cats=['전체','도자','회화','건축','과학','금속'],C=$('#flcats');C.innerHTML='';const done=folDone();for(const c of cats){const b=document.createElement('button');b.type='button';const n=Object.values(FOLD).filter(d=>c==='전체'||d.cat===c).length;b.textContent=`${c} ${n}`;b.classList.toggle('on',c===flCat);b.addEventListener('click',()=>{flCat=c;openFList()});C.appendChild(b)}
+ const G=$('#flgrid');G.innerHTML='';for(const k in FOLD){const d=FOLD[k];if(flCat!=='전체'&&d.cat!==flCat)continue;const b=document.createElement('button');b.type='button';const im=document.createElement('img');im.alt='';im.src='media/fp_'+k+'.jpg';const t=document.createElement('b');t.textContent=d.n;const sp=document.createElement('span');sp.textContent=`${d.cat} · ${d.crew} · ${d.steps.length}단계`;b.append(im,t,sp);if(done.has(k)){const i=document.createElement('i');i.textContent='완료';b.appendChild(i)}b.addEventListener('click',()=>{$('#flist').hidden=true;openFollow(k)});G.appendChild(b)}
+ $('#flist').hidden=false}
+$('#flx').addEventListener('click',()=>$('#flist').hidden=true);$('#flb').addEventListener('click',()=>{closeFollow();openFList()});
 let FOL=null;const fv=$('#fv'),fc=$('#fc'),fx=fc.getContext('2d');const FW=496,FH=864;
 let FA=null;function fau(){if(!FA){const C=window.AudioContext||window.webkitAudioContext;if(C)FA=new C()}if(FA&&FA.state==='suspended')FA.resume();return FA}
 function ftone(f,d=.12,g=.15,type='triangle',at=0){const a=fau();if(!a)return;const t=a.currentTime+at,o=a.createOscillator(),G=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);G.gain.setValueAtTime(g,t);G.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(G).connect(a.destination);o.start(t);o.stop(t+d+.05)}
@@ -1152,7 +1278,7 @@ function fnoise(d=.08,f=2800,g=.12){const a=fau();if(!a)return;const n=a.sampleR
 const fvib=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 function fpop(t,col){const e=$('#fpop');e.textContent=t;e.style.color=col||'#fff';e.style.opacity=1;clearTimeout(fpop.t);fpop.t=setTimeout(()=>e.style.opacity=0,900)}
 function openFollow(k){const D=FOLD[k];if(!D)return;fau();FOL={k,D,i:0,S:null,mist:0,t0:performance.now(),before:null,after:null,log:[],parts:[],ended:false};fv.src='media/full_'+k+'.mp4';fv.muted=false;fv.currentTime=0;
- $('#fsteps').innerHTML=D.steps.map(()=>'<span></span>').join('');$('#ftag').textContent=`쇼츠 따라 복원 · ${D.n}`;$('#ft').textContent='영상을 보며 기다려요';$('#fhow').textContent=`${D.crew}가 복원을 시작해요. 영상이 멈추면 그 장면의 작업을 직접 해요.`;$('#fwhy').textContent='';$('#ftools').innerHTML='';$('#flog').innerHTML='';$('#fbar i').style.width='0';$('#fgo').hidden=true;$('#fre').hidden=true;fc.style.pointerEvents='none';fx.clearRect(0,0,FW,FH);
+ $('#fsteps').innerHTML=D.steps.map(()=>'<span></span>').join('');$('#fyt').hidden=!DOORS.some(x=>x.k===k);$('#ftag').textContent=`쇼츠 따라 복원 · ${D.n}`;$('#ft').textContent='영상을 보며 기다려요';$('#fhow').textContent=`${D.crew}가 복원을 시작해요. 영상이 멈추면 그 장면의 작업을 직접 해요.`;$('#fwhy').textContent='';$('#ftools').innerHTML='';$('#flog').innerHTML='';$('#fbar i').style.width='0';$('#fgo').hidden=true;$('#fre').hidden=true;fc.style.pointerEvents='none';fx.clearRect(0,0,FW,FH);
  $('#fol').hidden=false;fv.play().catch(()=>{fv.muted=true;fv.play().catch(()=>{})});requestAnimationFrame(folLoop)}
 function closeFollow(){FOL=null;fv.pause();fv.removeAttribute('src');fv.load();$('#fol').hidden=true}
 $('#fx').addEventListener('click',closeFollow);$('#fyt').addEventListener('click',()=>{const k=FOL&&FOL.k;closeFollow();const d=DOORS.find(x=>x.k===k);if(d)openYT(d)});$('#fre').addEventListener('click',()=>{const k=FOL.k;openFollow(k)});
@@ -1223,7 +1349,7 @@ function finale(){const F=FOL;F.fin={x:.5};fc.style.pointerEvents='auto';const s
  [523,659,784,1046].forEach((f,i)=>ftone(f,.6,.12,'triangle',i*.1));fvib([40,40,120]);try{const D=new Set(JSON.parse(localStorage.getItem('muui3d-follow')||'[]'));D.add(F.k);localStorage.setItem('muui3d-follow',JSON.stringify([...D]))}catch(e){}
  fc.onpointerdown=fc.onpointermove=null;const mv=e=>{if(!F.fin)return;if(e.type==='pointerdown'){F.fin.drag=true;fc.setPointerCapture(e.pointerId)}if(e.type==='pointerup'){F.fin.drag=false}if(F.fin.drag||e.type==='pointerdown'){const[x]=fpos(e);F.fin.x=Math.min(1,Math.max(0,x/FW))}};F.fin.mv=mv;fc.addEventListener('pointerdown',mv);fc.addEventListener('pointermove',mv);fc.addEventListener('pointerup',mv)}
 function drawFinale(){const F=FOL,X=F.fin.x*FW;if(F.after)fx.drawImage(F.after,0,0);if(F.before){fx.save();fx.beginPath();fx.rect(0,0,X,FH);fx.clip();fx.drawImage(F.before,0,0);fx.restore()}fx.fillStyle='#fff';fx.fillRect(X-2,0,4,FH);fx.beginPath();fx.arc(X,FH/2,22,0,7);fx.fill();fx.fillStyle='#3b2a1c';fx.font='16px "Do Hyeon",sans-serif';fx.textAlign='center';fx.fillText('◀ ▶',X,FH/2+5);fx.fillStyle='rgba(22,16,11,.8)';fx.fillRect(10,FH-50,96,34);fx.fillRect(FW-106,FH-50,96,34);fx.fillStyle='#fff';fx.font='20px "Do Hyeon",sans-serif';fx.fillText('복원 전',58,FH-27);fx.fillText('복원 후',FW-58,FH-27);fx.textAlign='left'}
-window.__FOL={openFollow,get FOL(){return FOL},stepDone,closeFollow};
+window.__FOL={openFList,FOLD,openFollow,get FOL(){return FOL},stepDone,closeFollow};
 window.__W3={openAtlas,SEATS3,sitAt,seatAct,get SEATED(){return SEATED},YUT,HOUSES,STAIR,TERR,inHouse,openWS,get ws(){return ws},BENCH3,SHOWC,get DOCENT(){return DOCENT},jPaint:(x,y)=>jPaint({px:x,py:y,point:null}),get SP(){return SP},stageOf,openJar,nearPatch,SJ,sJP,get SCREW(){return SCREW},openPot,potTap,get MYJAR(){return MYJAR},BOOTH,ywAct:(x,y,f)=>ywAct({x,y},f),ywHandles,openYw,get YW_DONE(){return YW_DONE},doJump,setFP,get jumpY(){return jumpY},groundY,BLOCK,get GREETER(){return GREETER},MG_TG,openRn,openDb,openMg,get WK(){return WK},wkClose,openStamps,STG,stampGet,startGame,endGame,gameTap,get game(){return game},GPOS,BAND,openWatch,get bw(){return bandWatch},stW,THREE,mk:makeMuui,R,scene,camO:cam,setF(f){dayOff+=((f-dayFrac()+1)%1)*DAYLEN;dayTick()},get f(){return dayFrac()},QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
 </script>
 </body>
