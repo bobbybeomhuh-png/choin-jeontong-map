@@ -7,7 +7,7 @@
 <title>무이 월드 3D</title>
 <meta name="description" content="무이 월드를 3D 무이로 다시 지은 시험판. 회랑의 쇼츠 문 옆에서 3D 무이 복원단이 유물을 실제로 작업한다">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&family=Do+Hyeon&display=swap" rel="stylesheet">
-<!-- ⏱ 2026-11-11 12:10 2차-1: 하루 22분 낮밤 순환(블록판과 같은 시계, 노을·별·달), 무이 악사 다섯(북·거문고·대금·배소·완함) 연주 동작과 굿거리 16마디, 공연 보기·북 같이 치기, 소리 켜기/끄기 / 2026-11-11 10:30 1차 채우기: 회랑 뒤 기와집 3채·뒷산, 네모 연못(섬·소나무·연꽃·원앙)·차일 마루, 장독대, 장승·솟대, 청사초롱 등불줄, 평상·지우산, 벽돌 가마(불·연기), 악사 무대(악기), 안내판, 장터, 큰 무이 동상, 꽃담, 디딤돌, 포털 2(발굴 터·팔복), 좌우 방향 고침 / 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
+<!-- ⏱ 2026-11-11 13:00 2차-2: 놀이 마당(투호·제기차기·널뛰기, 블록판 규칙, 최고 기록 저장, 효과음) / 2026-11-11 12:10 2차-1: 하루 22분 낮밤 순환(블록판과 같은 시계, 노을·별·달), 무이 악사 다섯(북·거문고·대금·배소·완함) 연주 동작과 굿거리 16마디, 공연 보기·북 같이 치기, 소리 켜기/끄기 / 2026-11-11 10:30 1차 채우기: 회랑 뒤 기와집 3채·뒷산, 네모 연못(섬·소나무·연꽃·원앙)·차일 마루, 장독대, 장승·솟대, 청사초롱 등불줄, 평상·지우산, 벽돌 가마(불·연기), 악사 무대(악기), 안내판, 장터, 큰 무이 동상, 꽃담, 디딤돌, 포털 2(발굴 터·팔복), 좌우 방향 고침 / 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
 <style>
 :root{--panel:rgba(22,16,11,.84);--line:rgba(255,236,210,.18);--ink:#f3eadb;--muted:#c8b9a2;--gold:#e7b75a}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#cfd8e0;color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;-webkit-tap-highlight-color:transparent}
@@ -30,6 +30,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #ph{position:fixed;inset:0;background:rgba(10,7,4,.82);z-index:30;display:grid;place-items:center;padding:14px}#ph .in{display:grid;gap:12px;justify-items:center;width:min(900px,100%)}#ph img{max-width:100%;max-height:72vh;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5)}#ph a{text-decoration:none;display:inline-grid;place-items:center}
 #bw{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);z-index:7;display:grid;gap:10px;justify-items:center;width:min(560px,calc(100vw - 20px))}#bwMsg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:14.5px;text-align:center;line-height:1.5}#bw .row{display:flex;gap:10px;align-items:center}
 #bwHit{position:relative;width:86px;height:86px;border-radius:50%;background:#b0402e;color:#fff3dc;border:4px solid var(--gold);font:28px "Do Hyeon",sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.4)}#bwRing{position:absolute;inset:-6px;border-radius:50%;border:3px solid #fff3dc;pointer-events:none;transition:transform .05s linear}
+#gm{position:fixed;z-index:7;left:50%;bottom:calc(env(safe-area-inset-bottom) + 14px);transform:translateX(-50%);width:min(500px,calc(100vw - 20px));background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:6px}#gm .hd{display:flex;gap:10px;align-items:center}#gmT{font:22px "Do Hyeon",sans-serif;color:var(--gold);flex:1}#gmB{font-size:13px;color:var(--muted)}#gmX{min-height:32px;padding:3px 10px;font-size:14px}#gmN{font:32px "Do Hyeon",sans-serif;text-align:center}#gmH{margin:0;font-size:14.5px;text-align:center}#gmBar{position:relative;height:16px;background:#231509;border:2px solid #3b2a1c;border-radius:8px}#gmZ{position:absolute;top:0;bottom:0;background:rgba(242,193,78,.5)}#gmM{position:absolute;top:-4px;bottom:-4px;width:5px;margin-left:-2px;background:#fff}#gmTap{font:20px "Do Hyeon",sans-serif;padding:10px;background:var(--gold);color:#2a1b0c;border:3px solid #3b2a1c;border-radius:10px;cursor:pointer}
 [hidden]{display:none!important}
 @media (pointer:fine){#stick{display:none}}
 #top .btn,#ttl{white-space:nowrap}
@@ -51,6 +52,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><span class="btn" id="qCnt" hidden style="pointer-events:none"></span><span class="btn" id="dchip" style="pointer-events:none"></span><button class="btn" id="bSnd" type="button">소리 켬</button><button class="btn" id="bPhoto" type="button">기념사진</button><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button">블록 세상</button></header>
 <div id="hint" hidden></div>
 <div id="cd" hidden></div>
+<section id="gm" hidden><div class="hd"><b id="gmT"></b><span id="gmB"></span><button class="btn" id="gmX" type="button">그만하기</button></div><div id="gmN"></div><p id="gmH"></p><div id="gmBar"><u id="gmZ"></u><i id="gmM"></i></div><button id="gmTap" type="button"></button></section>
 <section id="bw" hidden><div id="bwMsg"></div><div class="row"><button class="btn" id="bwDrum" type="button">북 같이 치기</button><button id="bwHit" type="button" hidden><i id="bwRing"></i>둥</button><button class="btn" id="bwX" type="button">그만 보기</button></div></section>
 <section id="ph" hidden><div class="in"><img id="phImg" alt="무이 월드 기념사진"><div><a class="btn main" id="phSave" download="muui-world-3d.png">사진 저장</a> <button class="btn" id="phX" type="button">닫기</button></div></div></section>
 <button id="act" type="button" hidden></button>
@@ -318,7 +320,7 @@ function fireTick(dt,now){const lit=night;for(const f of flames){f.visible=lit;i
   m.mx.update(dt)}for(const st of STATUE)st.mx.update(dt)}
 /* ---------------- 부탁: 유물마다 반장 무이가 먼저 부탁을 건다 ---------------- */
 const QUEST={ceramic:{item:'흙 바구니',at:[-20.5,12],ask:'달항아리 틈을 메울 고운 흙이 모자라요. 서쪽 장독대 옆에 둔 흙 바구니를 가져다 줄래요?',thx:'고마워요! 이 흙이면 허리 이음선 틈을 메울 수 있어요.'},
- science:{item:'빗물 기록지',at:[5.5,7],ask:'비 온 날 적은 기록지가 바람에 날아갔어요. 단풍나무 아래 어딘가 떨어졌을 거예요.',thx:'찾았네요! 이 날 비가 두 치 내렸다고 적혀 있어요.'},
+ science:{item:'빗물 기록지',at:[-4.5,6.5],ask:'비 온 날 적은 기록지가 바람에 날아갔어요. 단풍나무 아래 어딘가 떨어졌을 거예요.',thx:'찾았네요! 이 날 비가 두 치 내렸다고 적혀 있어요.'},
  carpenter:{item:'기와 조각',at:[7.5,26.5],ask:'다보탑 지붕돌에 맞춰 볼 기와 조각을 대문 옆에 두고 왔어요. 가져다 줄래요?',thx:'딱 맞아요! 이제 지붕돌 모서리를 다시 잡을 수 있어요.'},
  painter:{item:'붉은 물감 그릇',at:[21,10.5],ask:'일월오봉도의 해를 칠할 붉은 물감 그릇이 동쪽 나무 아래 있어요.',thx:'이 붉은색이면 해가 다시 또렷해져요. 고마워요!'},
  metal:{item:'광택 천',at:[-13,21.5],ask:'향로를 닦을 광택 천을 모닥불 근처에 두고 왔어요. 부탁해요!',thx:'반짝반짝! 봉황 날개 금빛이 살아났어요.'}};
@@ -432,6 +434,65 @@ function bwTick(){if(!bandWatch)return;const s=Date.now()/1000,C=night?CN_CYC:CN
  if(bandWatch.drum){if(bandWatch.cyc!==cyc){if(bandWatch.cyc>=0&&bandWatch.tot)$('#bwMsg').textContent=`${bandWatch.tot}박 중 ${Math.min(bandWatch.good,bandWatch.tot)}박 맞췄어요`;bandWatch.cyc=cyc;bandWatch.tot=0;bandWatch.good=0;bandWatch.seen.clear()}
   bandWatch.tot=SC.filter(n=>n.i===4&&n.v>=.5&&n.t<=ps).length;
   /* 다음 큰 북 박까지 남은 시간 → 원이 금빛 고리로 좁혀진다 */let nx=9;for(const n of SC)if(n.i===4&&n.v>=.5&&n.t>=ps-.05){nx=n.t-ps;break}const r=Math.max(0,Math.min(1,nx/1.2));$('#bwRing').style.transform=`scale(${1+r*1.6})`;$('#bwRing').style.opacity=nx<1.2?1:.25}}
+/* ---------------- 놀이 마당(단풍나무 동쪽): 투호, 제기차기, 널뛰기 — 블록판 규칙 그대로 ---------------- */
+const GV={tuho:{name:'투호',btn:'투호 던지기',aim:'좌우가 가운데 칸에 오면 누르세요',pow:'힘이 가운데 칸에 오면 눌러 던지세요',res:'{0}개 중 {1}개 넣었어요',unit:'개'},jegi:{name:'제기차기',btn:'제기차기',how:'제기가 발 앞 금빛 고리에 왔을 때 누르세요',res:'{0}번 연속으로 찼어요',unit:'번'},neol:{name:'널뛰기',btn:'널뛰기',how:'내가 널에 내려앉는 순간 누르면 더 높이 뛰어요',res:'최고 {0}m까지 뛰었어요',unit:'m'}};
+const GPOS={tuho:{x:5.5,z:9.6},jegi:{x:9.6,z:9.2},neol:{x:5.9,z:2.6}};const TPOT={x:5.5,z:5.7};const NC={x:8,z:2.6};
+const GBEST=(()=>{try{return JSON.parse(localStorage.getItem('muui3d-games'))||{}}catch(e){return{}}})();const gSave=()=>{try{localStorage.setItem('muui3d-games',JSON.stringify(GBEST))}catch(e){}};
+let game=null;const BRONZE=new THREE.MeshStandardMaterial({color:0x8a6a34,metalness:.6,roughness:.4});
+/* 투호병 */{const pts=[];for(let i=0;i<=20;i++){const v=i/20,r=v<.45?.18+.16*Math.sin(v/.45*Math.PI*.9):.1+.03*Math.cos((v-.45)*6);pts.push([Math.max(.06,r),v*.95])}pts.push([.13,.97],[.09,.97]);const b=lathe(pts,BRONZE,24);add(b,TPOT.x,0,TPOT.z);for(const sd of[-1,1]){const e=cyl(.045,.045,.22,BRONZE,12);add(e,TPOT.x+sd*.16,.82,TPOT.z)}
+ const mt=new THREE.Mesh(new THREE.CircleGeometry(.75,24).rotateX(-Math.PI/2),M(0x6b2e24));mt.position.set(TPOT.x,.02,TPOT.z);scene.add(mt);const ln=box(1.2,.02,.06,M(0xf2efe6));add(ln,GPOS.tuho.x,.015,GPOS.tuho.z-.45,0,false);BLOCK.push({c:[TPOT.x,TPOT.z,.5]})}
+const mkArrow=()=>{const g=new THREE.Group(),s=cyl(.015,.015,.85,M(0x9a7448),6);s.rotation.x=Math.PI/2;g.add(s);const f=box(.06,.01,.14,M(0xc0392b));f.position.z=.38;g.add(f);const f2=f.clone();f2.rotation.z=Math.PI/2;g.add(f2);scene.add(g);return g};
+const HELD=mkArrow();HELD.visible=false;
+/* 화살 꽂이(쉬는 때 보이는 소품) */{const q=cyl(.12,.1,.5,M(0x5a3a22),12);add(q,GPOS.tuho.x+.9,.25,GPOS.tuho.z+.2);for(let i=0;i<5;i++){const a=mkArrow();a.rotation.x=-Math.PI/2+(Math.random()-.5)*.2;a.position.set(GPOS.tuho.x+.9+(Math.random()-.5)*.08,.62,GPOS.tuho.z+.2+(Math.random()-.5)*.08)}}
+/* 제기 */const JEGI=(()=>{const g=new THREE.Group(),c=cyl(.07,.07,.025,new THREE.MeshStandardMaterial({color:0xb08d3c,metalness:.5,roughness:.4}),14);g.add(c);for(let i=0;i<10;i++){const a=i/10*6.283,p=new THREE.Mesh(new THREE.PlaneGeometry(.035,.2),new THREE.MeshStandardMaterial({color:i%3===0?0xc0392b:i%3===1?0x2d5fa8:0xf7f0e2,side:THREE.DoubleSide}));p.position.set(Math.sin(a)*.03,.11,Math.cos(a)*.03);p.rotation.set(Math.cos(a)*.35,a,-Math.sin(a)*.35);g.add(p)}g.scale.setScalar(1.6);g.position.set(GPOS.jegi.x+.3,.06,GPOS.jegi.z+.55);scene.add(g);return g})();
+const JRING=(()=>{const m=new THREE.Mesh(new THREE.TorusGeometry(.22,.025,8,32),new THREE.MeshBasicMaterial({color:0xf2c14e,transparent:true,opacity:0,toneMapped:false}));m.rotation.x=Math.PI/2;scene.add(m);return m})();
+/* 널: 짚단 위 긴 판, 맞은편엔 도공 무이 */const NEOL={g:new THREE.Group(),bd:new THREE.Group(),P:null};
+{const g=NEOL.g;g.position.set(NC.x,0,NC.z);const pv=cyl(.28,.28,.9,M(0xc9a85a,{roughness:1}),14);pv.rotation.x=Math.PI/2;pv.position.y=.28;g.add(pv);NEOL.bd.position.y=.56;const pl=box(4.6,.08,.55,M(0xa8784c));pl.castShadow=true;NEOL.bd.add(pl);g.add(NEOL.bd);scene.add(g);BLOCK.push({r:[NC.x-1.4,NC.x+2.4,NC.z-.5,NC.z+.5]})}
+/* 간판 */{const t=tex(640,120,(q,w,h)=>{q.fillStyle='#1d130b';q.fillRect(0,0,w,h);q.strokeStyle='#f2c14e';q.lineWidth=6;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#f2c14e';q.font='46px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText('놀이 마당 · 투호 · 제기차기 · 널뛰기',w/2,h/2+2)});
+ const g=new THREE.Group();const b=new THREE.Mesh(new THREE.PlaneGeometry(3.4,.64),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));b.position.y=2.4;g.add(b);for(const x of[-1.6,1.6]){const p=cyl(.05,.05,2.7,WOOD,6);p.position.set(x,1.35,0);g.add(p)}add(g,12.8,0,11.2,-.25);BLOCK.push({c:[11.25,10.8,.3]},{c:[14.35,11.6,.3]})}
+async function placeGames(){const P=await makeMuui('ceramic',.95);NEOL.P=P;P.play('idle',0);P.B={aL:P.root.getObjectByName('armL'),aR:P.root.getObjectByName('armR')}}
+function gUI(){const G0=game,v=GV[G0.k];$('#gmT').textContent=v.name;$('#gmB').textContent=GBEST[G0.k]!=null?'최고 기록 '+GBEST[G0.k]+(v.unit||''):'';$('#gmTap').textContent=G0.over?'한 번 더':'누르기 (스페이스)'}
+function startGame(k){if(game||!me)return;audio();joined=false;game={k,t:0,over:false,g:GPOS[k]};$('#gm').hidden=false;$('#act').hidden=true;
+ if(k==='tuho')Object.assign(game,{n:5,i:0,hits:0,ph:'aim',a:0,p:0,arrows:[],fly:null});
+ if(k==='jegi')Object.assign(game,{y:.9,vy:2.4,cnt:0,gv:6,wob:0,kickT:0});
+ if(k==='neol')Object.assign(game,{H:.8,up:'me',ph:0,T:0,lands:0,max:0,ok:false,tapped:false});
+ gUI();gStep()}
+function endGame(){if(!game)return;HELD.visible=false;if(game.arrows)game.arrows.forEach(a=>scene.remove(a));if(game.k==='neol'){pos.set(GPOS.neol.x-.8,0,GPOS.neol.z+1)}game=null;$('#gm').hidden=true;JRING.material.opacity=0;JEGI.position.set(GPOS.jegi.x+.3,.06,GPOS.jegi.z+.55);JEGI.rotation.z=0;NEOL.bd.rotation.z=0;me.root.position.y=0}
+function gFinish(score){game.over=true;if(GBEST[game.k]==null||score>GBEST[game.k]){GBEST[game.k]=score;gSave()}sfx('ding');gUI();$('#gmBar').hidden=true}
+function gStep(){const G0=game,v=GV[G0.k];$('#gmBar').hidden=!(G0.k==='tuho'&&!G0.over&&(G0.ph==='aim'||G0.ph==='power'));
+ if(G0.k==='tuho'){$('#gmN').textContent=G0.over?v.res.replace('{0}',G0.n).replace('{1}',G0.hits):(G0.hits+' / '+G0.n);$('#gmH').textContent=G0.over?'':(G0.ph==='aim'?v.aim:G0.ph==='power'?v.pow:'');$('#gmZ').style.left=(G0.ph==='aim'?40:42)+'%';$('#gmZ').style.width=(G0.ph==='aim'?20:16)+'%'}
+ if(G0.k==='jegi'){$('#gmN').textContent=G0.over?v.res.replace('{0}',G0.cnt):String(G0.cnt);$('#gmH').textContent=G0.over?'':v.how}
+ if(G0.k==='neol'){$('#gmN').textContent=G0.over?v.res.replace('{0}',G0.max.toFixed(1)):(G0.H.toFixed(1)+' m');$('#gmH').textContent=G0.over?'':v.how}}
+function gameTap(){const G0=game;if(!G0)return;audio();if(G0.over){const k=G0.k;endGame();startGame(k);return}
+ if(G0.k==='tuho'){if(G0.ph==='aim'){G0.ph='power';G0.t=0;sfx('tick')}else if(G0.ph==='power'){const ang=G0.a*.22,dist=2.6+G0.p*2.4,P=G0.g,lx=P.x+Math.tan(ang)*dist,lz=P.z-dist,hit=Math.hypot(lx-TPOT.x,lz-TPOT.z)<.27;const ar=mkArrow();G0.arrows.push(ar);G0.fly={ar,t:0,sx:P.x+.25,sy:.85,sz:P.z-.3,lx,lz,hit,ly:hit?.85:.05};G0.ph='fly';sfx('whoosh')}gStep();return}
+ if(G0.k==='jegi'){if(G0.vy<0&&G0.y>.04&&G0.y<.6){G0.vy=Math.sqrt(2*G0.gv*(1.15+Math.random()*.25));G0.cnt++;G0.gv=Math.min(13,6+G0.cnt*.3);G0.kickT=.3;G0.wob=(Math.random()-.5)*.1;sfx('tick')}else if(G0.kickT<=0){G0.kickT=.3}gStep();return}
+ if(G0.k==='neol'){G0.tapped=true;G0.tapAt=G0.ph}}
+const _gv=new THREE.Vector3();
+function gameFrame(dt,now){const t0=now/1000;
+ if(!game){JRING.material.opacity=0;JEGI.rotation.y+=dt*.6;NEOL.bd.rotation.z=Math.sin(t0*.6)*.05;if(NEOL.P){const P=NEOL.P;P.root.position.set(NC.x+2.05,.6+Math.sin(t0*.6)*.11,NC.z);P.root.rotation.y=-Math.PI/2;P.play('idle',.3);P.mx.update(dt)}return}
+ const G0=game,g=G0.g,B={aL:me.root.getObjectByName('armL'),aR:me.root.getObjectByName('armR'),lR:me.root.getObjectByName('legR'),lL:me.root.getObjectByName('legL'),sp:me.root.getObjectByName('spine')};G0.t+=dt;
+ if(G0.k==='tuho'){pos.set(g.x,0,g.z);yaw=Math.PI;
+  HELD.visible=G0.ph==='aim'||G0.ph==='power';const pb=G0.ph==='power'?G0.p:0;if(HELD.visible){HELD.position.set(g.x+.25+Math.tan(G0.a*.22)*.3,.75+pb*.15,g.z-.2+pb*.3);HELD.lookAt(TPOT.x+Math.tan(G0.a*.22)*4,1.4,TPOT.z);HELD.rotateY(Math.PI)}
+  if(G0.ph==='aim'){G0.a=Math.sin(G0.t*2.2);$('#gmM').style.left=((G0.a+1)/2*100)+'%';boneAdd(B.aR,'x',-.6)}
+  if(G0.ph==='power'){G0.p=(1-Math.cos(G0.t*2.6))/2;$('#gmM').style.left=(G0.p*100)+'%';boneAdd(B.aR,'x',-.6+G0.p*.5)}
+  if(G0.ph==='fly'){const F=G0.fly;F.t+=dt/.85;const u=Math.min(1,F.t),x=F.sx+(F.lx-F.sx)*u,z=F.sz+(F.lz-F.sz)*u,y=F.sy+(F.ly-F.sy)*u+Math.sin(u*Math.PI)*1.1;_gv.copy(F.ar.position);F.ar.position.set(x,y,z);if(u<1){F.ar.lookAt(_gv.lerp(F.ar.position,2));F.ar.rotateY(Math.PI)}boneAdd(B.aR,'x',-1.3+Math.min(1,F.t*1.6)*.9);
+   if(u>=1){if(F.hit){G0.hits++;F.ar.rotation.set(-Math.PI/2+.25,0,(Math.random()-.5)*.4);F.ar.position.set(TPOT.x+(Math.random()-.5)*.06,1.2,TPOT.z);sfx('ding');hint('좋아요! 쏙 들어갔어요.',1400)}else{F.ar.position.y=.03;F.ar.rotation.set(0,Math.random()*3,Math.PI/2);sfx('thud');hint('아깝다',1200)}
+    G0.i++;G0.fly=null;if(G0.i>=G0.n){G0.ph='done';gFinish(G0.hits)}else{G0.ph='wait';G0.t=0}gStep()}}
+  if(G0.ph==='wait'&&G0.t>.6){G0.ph='aim';G0.t=0;gStep()}}
+ if(G0.k==='jegi'){/* 정면(카메라 쪽)을 보고 서서 떨어지는 제기를 오른발로 차올린다 */pos.set(g.x,0,g.z);yaw=0;if(!G0.over){G0.vy-=G0.gv*dt;G0.y+=G0.vy*dt}const jx=g.x-.22+G0.wob*Math.max(0,G0.y),jz=g.z+.42;JEGI.position.set(jx,Math.max(.03,G0.y),jz);JEGI.rotation.y+=dt*(G0.vy>0?9:3);JEGI.rotation.z=G0.vy>0?Math.sin(now*.02)*.15:0;JRING.position.set(g.x-.22,.24,jz);const inz=G0.vy<0&&G0.y>.04&&G0.y<.6;JRING.material.opacity=G0.over?0:(inz?.95:.4);JRING.material.color.setHex(inz?0xfff3a0:0xf2c14e);
+  const kk=G0.kickT>0?Math.sin(Math.max(0,G0.kickT)/.3*Math.PI):0;if(G0.kickT>0)G0.kickT-=dt;boneAdd(B.lR,'x',-1.1*kk);boneAdd(B.lR,'z',.35*kk);boneAdd(B.sp,'x',.1*kk);me.root.position.y=.06*kk;if(!NOARM[me.k]){boneAdd(B.aL,'y',-.5);boneAdd(B.aR,'y',.5)}
+  if(!G0.over&&G0.y<=.03){G0.y=.03;sfx('thud');gFinish(G0.cnt);gStep()}}
+ if(G0.k==='neol'){const Gv=9.8;if(!G0.over){G0.T+=dt;const air=2*Math.sqrt(2*G0.H/Gv);G0.ph=G0.T/air;
+   if(G0.ph>=1){const mine=G0.up==='me';if(mine){const good=G0.tapped&&Math.abs(G0.tapAt-1)<.14;G0.lands++;G0.H=good?Math.min(4.2,G0.H*1.22+.12):Math.max(.5,G0.H*.82);if(good){hint('좋아요! 더 높이!',1000);sfx('ding')}else sfx('thud');G0.max=Math.max(G0.max,G0.H);gStep();if(G0.lands>=8)gFinish(+G0.max.toFixed(1))}else sfx('thud');G0.up=mine?'p':'me';G0.T=0;G0.ph=0;G0.tapped=false}
+   if(G0.tapped&&G0.up==='me'&&G0.ph<.6)G0.tapped=false}
+  const tt=G0.T,h=Math.max(0,Math.sqrt(2*Gv*G0.H)*tt-.5*Gv*tt*tt),meUp=G0.up==='me'&&!G0.over;const tilt=meUp?-.09:.09;NEOL.bd.rotation.z+=(tilt-NEOL.bd.rotation.z)*Math.min(1,dt*12);const rz=NEOL.bd.rotation.z,top=.6;
+  pos.set(NC.x-2.05,0,NC.z);yaw=Math.PI/2;me.root.position.y=top-2.05*Math.sin(rz)+(meUp?h:0);
+  const P=NEOL.P;if(P){P.root.position.set(NC.x+2.05,top+2.05*Math.sin(rz)+(!meUp&&!G0.over?h:0),NC.z);P.root.rotation.y=-Math.PI/2;P.mx.update(dt);const pu=!meUp&&!G0.over&&h>.05;boneAdd(P.B.aL,'x',pu?-2.2:-.3);boneAdd(P.B.aR,'x',pu?-2.2:-.3)}
+  const ar=NOARM[me.k]?-.9:-2.2;boneAdd(B.aL,'x',meUp&&h>.05?ar:-.3);boneAdd(B.aR,'x',meUp&&h>.05?ar:-.3);
+  JRING.position.set(NC.x-2.05,.62,NC.z);JRING.material.opacity=meUp&&G0.ph>.78?.95:(meUp?.25:0)}}
+function gameCam(){const G0=game,g=G0.g,nar=cam.aspect<.8;if(G0.k==='tuho'){/* 던지는 무이 어깨 너머로 투호병 */cam.position.set(g.x+(nar?2.2:1.8),nar?3.4:2.6,g.z+(nar?2.6:2.2));cam.lookAt(TPOT.x-.2,.5,TPOT.z+.5)}
+ else if(G0.k==='jegi'){cam.position.set(g.x,1.25+(nar?.5:0),g.z+(nar?4.6:3.6));cam.lookAt(g.x,.05,g.z)}
+ else{cam.position.set(NC.x-.6,2.4+G0.H*.55,NC.z+(nar?8.5:5.8));cam.lookAt(NC.x,-.2+G0.H*.45,NC.z)}}
 /* 내 무이 */
 let me=null,pos=new THREE.Vector3(0,0,24),yaw=Math.PI,camYaw=Math.PI,camPitch=.32,camDist=5.2,speed=0;const keys={};
 /* ---------------- 조작 ---------------- */
@@ -467,7 +528,7 @@ function dayTick(){const f=dayFrac(),k=sst(.54,.64,f)*(1-sst(.93,.995,f)),d=Math
 /* 밤으로/낮으로: 시계를 그 때로 옮긴다(이 탭에서만) */
 function setNight(n){const want=n?.6:.05,cur=dayFrac();dayOff+=((want-cur+1)%1)*DAYLEN;try{sessionStorage.setItem('muui3d-dayoff',dayOff)}catch(e){}dayTick()}
 $('#bNight').addEventListener('click',()=>setNight(!night));
-$('#bSnd').addEventListener('click',()=>setSound(!soundOn));$('#bwX').addEventListener('click',closeWatch);$('#bwHit').addEventListener('pointerdown',e=>{e.preventDefault();bwHit()});
+$('#bSnd').addEventListener('click',()=>setSound(!soundOn));$('#gmX').addEventListener('click',endGame);$('#gmTap').addEventListener('pointerdown',e=>{e.preventDefault();gameTap()});addEventListener('keydown',e=>{if(game&&(e.code==='Space'||e.code==='Enter')){e.preventDefault();gameTap()}});$('#bwX').addEventListener('click',closeWatch);$('#bwHit').addEventListener('pointerdown',e=>{e.preventDefault();bwHit()});
 $('#bwDrum').addEventListener('click',()=>{if(!bandWatch)return;bandWatch.drum=!bandWatch.drum;$('#bwDrum').textContent=bandWatch.drum?'북 내려놓기':'북 같이 치기';$('#bwHit').hidden=!bandWatch.drum;bandWatch.cyc=-1;$('#bwMsg').textContent=bandWatch.drum?'작은 원이 금빛 테두리에 닿을 때 누르세요 (스페이스)':'북을 내려놓았어요.'});
 addEventListener('keydown',e=>{if(e.code==='Space'&&bandWatch&&bandWatch.drum){e.preventDefault();bwHit()}});
 /* ---------------- 안내·버튼 ---------------- */
@@ -481,14 +542,14 @@ $('#bBlock').addEventListener('click',()=>{location.href='../world/?from=world3d
 let pickK=(()=>{try{return localStorage.getItem('muui3d-kind')}catch(e){}})()||'ceramic';
 {const box_=$('#kinds');for(const q of KINDS){const b=document.createElement('button');b.type='button';b.innerHTML=`<img alt="" src="media/pick_${q.k}.jpg" onerror="this.style.visibility='hidden'"><b>${q.n}</b><span>${q.d}</span>`;b.classList.toggle('on',q.k===pickK);b.addEventListener('click',()=>{pickK=q.k;box_.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});box_.appendChild(b)}}
 $('#go').addEventListener('click',async()=>{try{localStorage.setItem('muui3d-kind',pickK)}catch(e){}$('#pick').hidden=true;$('#load').hidden=false;$('#load').style.opacity=1;
- me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);setSound(soundOn);audio();await placeCrew();await placeDancers();await placeBand();{const st=await makeMuui('ceramic',4.7);const ped=cyl(1.5,1.7,.5,STONE,20);add(ped,-12.5,.25,7.5);st.root.position.set(-12.5,.5,7.5);st.root.rotation.y=Math.atan2(12.5,-5);st.play('idle',0);st.mx.timeScale=.5;STATUE.push(st);BLOCK.push({c:[-12.5,7.5,1.9]})}qUI();
+ me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);setSound(soundOn);audio();await placeCrew();await placeDancers();await placeBand();await placeGames();{const st=await makeMuui('ceramic',4.7);const ped=cyl(1.5,1.7,.5,STONE,20);add(ped,-12.5,.25,7.5);st.root.position.set(-12.5,.5,7.5);st.root.rotation.y=Math.atan2(12.5,-5);st.play('idle',0);st.mx.timeScale=.5;STATUE.push(st);BLOCK.push({c:[-12.5,7.5,1.9]})}qUI();
  $('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);$('#top').hidden=false;if(matchMedia('(pointer:coarse)').matches)$('#stick').hidden=false;
  DOORS.forEach(d=>d.vid.play().then(()=>{const t=new THREE.VideoTexture(d.vid);t.colorSpace=THREE.SRGBColorSpace;d.mat.map=t;d.mat.needsUpdate=true}).catch(()=>{}));
  hint(matchMedia('(pointer:coarse)').matches?'왼쪽 원으로 걷고, 화면을 밀어 둘러보세요. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.':'WASD로 걷고 Shift로 뛰어요. 끌어서 둘러보고 휠로 가까이. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.',8000)});
 /* ---------------- 프레임 ---------------- */
 let last=performance.now(),uiT=0;const tmp=new THREE.Vector3();
 R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
- if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}if(photo||bandWatch){fx=0;sx=0}
+ if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}if(photo||bandWatch||game){fx=0;sx=0}
   const mag=Math.min(1,Math.hypot(fx,sx)),run=keys.ShiftLeft||keys.ShiftRight||(stickId!==null&&mag>.85);const want=mag>.05?(run?4.2:1.8):0;speed+=(want-speed)*Math.min(1,dt*8);
   if(joined&&(mag>.05||!night)){joined=false;hint('춤에서 빠져나왔어요.',2500)}
   if(joined){joinA+=dt*.22;pos.set(FX+Math.cos(joinA)*FR,0,FZ+Math.sin(joinA)*FR);yaw=Math.atan2(-Math.sin(joinA),Math.cos(joinA));speed=0}
@@ -503,7 +564,7 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
  for(const c of CREW){c.mx.update(dt);c.t+=dt;
   if(c.job==='carry'){/* 돌을 들고 탑까지 왔다 갔다 */const a=Math.sin(c.t*.35);const p=c.home.clone();p.x+=Math.cos(c.root.rotation.y)*a*2.2;p.z-=Math.sin(c.root.rotation.y)*a*2.2;c.root.position.copy(p)}
   if(me){const d=c.root.position.distanceTo(pos);if(d<3&&!c.greet&&!c.busy){c.greet=1;c.prev=c.job;c.play(NOARM[c.k]?'nod':'wave',.3);setTimeout(()=>{if(!c.busy)c.play(c.prev,.4)},1700)}if(d>5)c.greet=0}}
- dayTick();fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);bandTick(dt);if(me)bwTick();
+ dayTick();fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);bandTick(dt);if(me)bwTick();gameFrame(dt,now);if(game)gameCam();
  uiT-=dt;if(uiT<=0&&me){uiT=.15;const a=$('#act');a.hidden=true;actFn=null;
   for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){a.textContent='쇼츠 보기';actFn=()=>openYT(d);a.hidden=false;break}}
   if(a.hidden&&qActive&&!qHeld){const q=QUEST[qActive];if(Math.hypot(pos.x-q.at[0],pos.z-q.at[1])<1.6){a.textContent=`${q.item} 줍기`;actFn=()=>{qHeld=qActive;hint(`${q.item}을(를) 들었어요. ${KINDS.find(x=>x.k===qHeld).d} 복원단에게 가져가요.`,4500);qUI()};a.hidden=false}}
@@ -511,6 +572,8 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
   if(a.hidden)for(const c of CREW){if(c.root.position.distanceTo(pos)<2.2){a.textContent=`${KINDS.find(q=>q.k===c.k).n}: ${JOBKO[c.job]||'일하는 중'}`;actFn=()=>{c.play('nod',.2);setTimeout(()=>c.play(c.job,.3),1100);hint(`${KINDS.find(q=>q.k===c.k).n}가 ${c.site?KINDS.find(q=>q.k===c.site.k).d:''} 복원을 하고 있어요. ${JOBKO[c.job]||''}.`,4000)};a.hidden=false;break}}
   if(a.hidden&&!joined&&Math.hypot(pos.x-FX,pos.z-FZ)<FR+3.4){if(night){a.textContent='같이 어깨춤 추기';actFn=()=>{joined=true;joinA=Math.atan2(pos.z-FZ,pos.x-FX);const j=DANCERS[(Math.random()*5)|0];if(j&&!NOARM[j.k]){j.busy=1;j.play('joy',.2);setTimeout(()=>{j.busy=0},1600)}hint('모닥불 둘레를 같이 돌아요. 움직이면 빠져나와요.',4000)}}else{a.textContent='모닥불 피우기 (해 질 녘으로)';actFn=()=>{setNight(true);hint('해가 졌어요. 무이들이 일어나 모닥불 둘레에서 어깨춤을 춰요.',5000)}}a.hidden=false}
   if(a.hidden)for(const P of PORT3){if(Math.hypot(pos.x-P.x,pos.z-P.z)<2.6){a.textContent=`${P.n}로 가기`;actFn=()=>{hint(P.d,3000);setTimeout(()=>{location.href=P.url},700)};a.hidden=false;break}}
+  if(a.hidden&&!game)for(const k in GPOS){const g=GPOS[k];if(Math.hypot(pos.x-g.x,pos.z-g.z)<1.9){a.textContent=GV[k].btn+(GBEST[k]!=null?` (최고 ${GBEST[k]}${GV[k].unit})`:'');actFn=()=>startGame(k);a.hidden=false;break}}
+  if(game)a.hidden=true;
   if(a.hidden&&!bandWatch){const[wx,wz]=stW(3.4,0);if(Math.hypot(pos.x-wx,pos.z-wz)<3.4){a.textContent=night?'무이 악사 밤 공연 보기':'악사 낮 연습 보기';actFn=openWatch;a.hidden=false}}
   if(a.hidden)for(const S of SPOTS){if(Math.hypot(pos.x-S.x,pos.z-S.z)<S.r){a.textContent=S.t;actFn=()=>hint(S.h,7000);a.hidden=false;break}}
   for(const d of DOORS){const near=Math.hypot(pos.x-d.fx,pos.z-d.fz)<16;if(near&&d.vid.paused)d.vid.play().catch(()=>{});else if(!near&&!d.vid.paused)d.vid.pause()}}
@@ -518,7 +581,7 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
 setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>{$('#load').hidden=true;$('#pick').hidden=false},500)},600);
 if(qs.has('night'))setNight(true);
-window.__W3={BAND,openWatch,get bw(){return bandWatch},stW,THREE,mk:makeMuui,R,scene,camO:cam,setF(f){dayOff+=((f-dayFrac()+1)%1)*DAYLEN;dayTick()},get f(){return dayFrac()},QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
+window.__W3={startGame,endGame,gameTap,get game(){return game},GPOS,BAND,openWatch,get bw(){return bandWatch},stW,THREE,mk:makeMuui,R,scene,camO:cam,setF(f){dayOff+=((f-dayFrac()+1)%1)*DAYLEN;dayTick()},get f(){return dayFrac()},QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
 </script>
 </body>
 </html>
