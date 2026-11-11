@@ -103,6 +103,17 @@ function drawMini(){const c=$('#mini'),g=c.getContext('2d'),MI=SITEB.mini,S=MI.S
 let intro=0;(async()=>{let k='base';try{k=localStorage.getItem('muui3d-kind')||'base'}catch(e){}try{me=await makeMuui(k,1.45)}catch(e){me=await makeMuui('base',1.45)}me.play('idle',0);placeNPC();
  intro=3.2;setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,800)},300);$('#top').hidden=false;$('#mini').hidden=false;if(TOUCH){$('#stick').hidden=false;$('#jumpB').hidden=false}
  setTimeout(()=>hint(SITEB.hint,8000),3300)})();
+/* ---------- 소리: 바람, 새소리, 발소리(돌·나무), 통로·석굴 안 울림. 배경음악 없음 ---------- */
+let AC=null,AM=null,AW=null,AT={bird:1,step:0},NB=null;
+function audioOn(){if(AC){if(AC.state==='suspended')AC.resume();return}const C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();AM=AC.createGain();AM.gain.value=1;AM.connect(AC.destination);const n=AC.sampleRate*4|0;NB=AC.createBuffer(1,n,AC.sampleRate);const c=NB.getChannelData(0);let b=0;for(let i=0;i<n;i++){const w=Math.random()*2-1;b=.97*b+.03*w;c[i]=w*.5+b*2.5}
+ const s=AC.createBufferSource();s.buffer=NB;s.loop=true;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=380;AW=AC.createGain();AW.gain.value=.04;s.connect(f).connect(AW).connect(AM);s.start();AW.f=f;
+ const rv=AC.createConvolver(),m=AC.sampleRate*2|0,ir=AC.createBuffer(2,m,AC.sampleRate);for(let k=0;k<2;k++){const d=ir.getChannelData(k);for(let i=0;i<m;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/m,2.5)}rv.buffer=ir;AC.rv=AC.createGain();AC.rv.gain.value=0;AC.rv.connect(rv).connect(AM)}
+addEventListener('pointerdown',audioOn);addEventListener('keydown',audioOn);
+function chirp(f0,f1,d,v,at=0){const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AM);o.start(t);o.stop(t+d+.02)}
+function stepSnd(wood,echo){const t=AC.currentTime,s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=NB;f.type='bandpass';f.frequency.value=wood?520:1500;f.Q.value=wood?2:1.2;g.gain.setValueAtTime(wood?.5:.35,t);g.gain.exponentialRampToValueAtTime(.0001,t+(wood?.09:.06));s.connect(f).connect(g).connect(AM);if(echo)g.connect(AC.rv);s.start(t,Math.random()*3,.12)}
+function audioTick(dt,moving,wood,inside){if(!AC)return;const t=AC.currentTime;AW.gain.setTargetAtTime(inside?.012:.04+.02*Math.sin(t*.23),t,.5);AW.f.frequency.setTargetAtTime(300+120*Math.sin(t*.31),t,.8);AC.rv.gain.setTargetAtTime(inside?.5:0,t,.2);
+ AT.bird-=dt;if(!inside&&AT.bird<=0){AT.bird=rnd(1.6,5);const b=rnd(2600,3900);for(let i=0;i<2+(Math.random()*4|0);i++)chirp(b*rnd(.9,1.1),b*rnd(1.2,1.5),rnd(.06,.12),.03,i*rnd(.1,.16))}
+ if(moving){AT.step-=dt*speed;if(AT.step<=0){AT.step=.62;stepSnd(wood,inside)}}else AT.step=0}
 /* ---------- 프레임 ---------- */
 const RC=new THREE.Raycaster(),tmp=new THREE.Vector3(),head=new THREE.Vector3();let last=performance.now(),uiT=0,mT=0,spotNow=null;
 R.setAnimationLoop(()=>{try{frame()}catch(e){console.error(e)}});
@@ -119,13 +130,14 @@ function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);la
   else if(FP){cam.position.copy(head);cam.position.y-=.05;cam.lookAt(head.x-Math.sin(camYaw)*Math.cos(camPitch),head.y-.05-Math.sin(camPitch),head.z-Math.cos(camYaw)*Math.cos(camPitch))}
   else{tmp.set(Math.sin(camYaw)*Math.cos(camPitch),Math.sin(camPitch),Math.cos(camYaw)*Math.cos(camPitch));const cd=Math.min(camDist,SITEB.camCap(P));RC.set(head,tmp);RC.far=cd;const h=RC.intersectObjects(CAMM,false)[0];const d=h?Math.max(.6,h.distance-.25):cd;const want=head.clone().addScaledVector(tmp,d);if(want.y<.25)want.y=.25;cam.position.lerp(want,Math.min(1,dt*(h?20:8)));cam.lookAt(head)}
   sun.position.set(P.x-40,70,P.z+45);sun.target.position.set(P.x,0,P.z)}
- npcTick(dt);if(SITEB.tick)SITEB.tick(P,dt);
+ npcTick(dt);if(SITEB.tick)SITEB.tick(P,dt);if(me){const lv=SITEB.level(P);audioTick(dt,speed>.4&&grounded,/누각/.test(lv),/통로|비도|주실|전실/.test(lv))}
  uiT-=dt;if(uiT<=0&&me){uiT=.15;$('#lvl').textContent=SITEB.level(P);
   spotNow=null;for(const s of SPOTS){if(Math.hypot(P.x-s.x,P.z-s.z)<s.r&&Math.abs(P.y-s.y)<2.5){spotNow=s;break}}const a=$('#act');if(spotNow&&$('#card').hidden){a.textContent=`${spotNow.t} 알아보기`;a.hidden=false;a.onclick=()=>{$('#cT').textContent=spotNow.t;$('#cP').textContent=spotNow.h;$('#card').hidden=false}}else a.hidden=true}
  mT-=dt;if(mT<=0){mT=.25;drawMini()}
+ if(window.__CAMFN){const k=window.__CAMFN(performance.now()/1000);if(k){cam.position.set(k[0],k[1],k[2]);cam.lookAt(k[3],k[4],k[5]);if(k[6]&&cam.fov!==k[6]){cam.fov=k[6];cam.updateProjectionMatrix()}}}
  R.render(scene,cam)}
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
-window.__H3={SITEB,collide,floorAt,get P(){return P},tp(x,z,y=0){P.set(x,y,z);vy=0},cam(y,p,d){camYaw=y;camPitch=p;camDist=d},setFP,SOL,SPOTS,get me(){return me}};
+window.__H3={SITEB,get AM(){audioOn();return AM},collide,floorAt,get P(){return P},tp(x,z,y=0){P.set(x,y,z);vy=0},cam(y,p,d){camYaw=y;camPitch=p;camDist=d},setFP,SOL,SPOTS,get me(){return me}};
 </script>
 </body>
 </html>
