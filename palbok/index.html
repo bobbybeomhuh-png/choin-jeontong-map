@@ -7,7 +7,7 @@
 <title>팔복 골목 상영관</title>
 <meta name="description" content="전주 팔복예술공장 골목을 걸어 매표소에서 티켓을 받고 D-CUBE 상영관에 들어가는 초인 실감 상영관 입구">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&family=Do+Hyeon&display=swap" rel="stylesheet">
-<!-- ⏱ 2026-11-10 21:00 초판: 허범 사진 2장(빨간 공장동 골목, D-CUBE 입구) 참고. 다른 프로그램 현수막·축제 포스터 그림은 쓰지 않고 우리 글자와 우리 작품 장면만 씀 -->
+<!-- ⏱ 2026-11-12 02:20 골목 축제: 손님 무이를 블렌더 리깅 모델로(표 파는 무이 손 인사, 오가는 무이, 현수막 보는 무이, 좌판 구경), 청사초롱 줄·삼각 깃발·좌판 둘 / ⏱ 2026-11-10 21:00 초판: 허범 사진 2장(빨간 공장동 골목, D-CUBE 입구) 참고. 다른 프로그램 현수막·축제 포스터 그림은 쓰지 않고 우리 글자와 우리 작품 장면만 씀 -->
 <style>
 :root{--panel:rgba(16,14,12,.86);--line:rgba(255,236,210,.18);--ink:#f3eadb;--muted:#b9ab96;--gold:#e7b75a}
 *{box-sizing:border-box}html,body{margin:0;height:100%;background:#9cc7ef;color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
@@ -141,15 +141,37 @@ for(const z of[-4.5,-8,-11.5,-15,-18.5,-22])parasol(-2.7,z);for(const z of[-13,-
 /* 먼 배경: 건너편 공장 지붕과 나무 */
 {box(30,6,4,M(0x8b8f93),0,3,-44);for(const x of[-12,-8,9,13]){const t=new THREE.Mesh(new THREE.SphereGeometry(2.2,10,8),M(0x5f7d45));t.position.set(x,6,-41);t.castShadow=true;scene.add(t)}}
 
-/* ---------------- 무이들(매쉬로 만든 정지 모델) ---------------- */
-const gl=new GLTFLoader();const NPCS=[];
-function npc(k,x,z,ry,h=.95,talk){gl.load('media/npc_'+k+'.glb',g=>{const m=g.scene;const b=new THREE.Box3().setFromObject(m);const sc=h/(b.max.y-b.min.y);m.scale.setScalar(sc);const c=b.getCenter(new THREE.Vector3());m.position.set(-c.x*sc,-b.min.y*sc,-c.z*sc);m.userData.y0=m.position.y;m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});const r=new THREE.Group();r.add(m);r.position.set(x,0,z);r.rotation.y=ry;scene.add(r);NPCS.push({r,ph:Math.random()*6,talk})})}
-npc('ceramic',BOOTH.x-1.15,BOOTH.z+.15,0,1.25,'booth');
-npc('science',-1.5,-10.4,.6,1.2);npc('painter',1.2,-14,-.9,1.2);npc('carpenter',-1.6,-19,2.6,1.2);npc('metal',3.0,-7.4,-1.6,1.2);
-
+/* ---------------- 무이들: 블렌더로 직접 리깅한 모델(상영관 관객과 같음). 표 파는 무이, 오가는 무이, 현수막 보는 무이, 좌판 구경 ---------------- */
+const gl=new GLTFLoader();const NPCS=[];const NOARM={science:1,painter:1};
+function npc(k,x,z,ry,mode,o={}){gl.load('../dcube/media/muui/muui_'+k+'.glb',g=>{const m=g.scene,r=new THREE.Group();r.add(m);m.traverse(q=>{if(q.isMesh){q.castShadow=true;q.receiveShadow=true;q.frustumCulled=false}});m.updateMatrixWorld(true);
+ const rb=m.getObjectByName('root'),hb=m.getObjectByName('head'),vr=new THREE.Vector3(),vh=new THREE.Vector3();rb.getWorldPosition(vr);hb.getWorldPosition(vh);m.scale.setScalar(1.1/Math.max(.2,2*(vh.y-vr.y)));m.updateMatrixWorld(true);rb.getWorldPosition(vr);m.position.y-=vr.y;
+ const mx=new THREE.AnimationMixer(m),A={};for(const c of g.animations)A[c.name]=mx.clipAction(c);r.position.set(x,0,z);r.rotation.y=ry;scene.add(r);
+ const n={k,r,mx,A,cur:null,mode,t:Math.random()*4,dir:1,...o,play(nm,f=.3){const a=A[nm]||A.idle;if(!a||n.cur===a)return;a.reset().fadeIn(f).play();if(n.cur)n.cur.fadeOut(f);n.cur=a}};n.play(mode==='walk'?'walk':mode==='look'?'look_up':'idle',0);NPCS.push(n)})}
+npc('ceramic',BOOTH.x-1.15,BOOTH.z+.15,0,'booth');
+npc('metal',2.4,3,Math.PI,'walk',{z0:3,z1:-27});npc('carpenter',-2.3,-25,0,'walk',{z0:-25,z1:2});
+npc('science',-.8,-29.6,Math.PI,'look');npc('painter',2.2,-19.4,Math.PI/2,'stall');
+function npcTick(dt){for(const n of NPCS){n.t+=dt;const r=n.r,d=Math.hypot(pos.x-r.position.x,pos.z-r.position.z);
+ if(n.mode==='walk'){const tz=n.dir>0?n.z1:n.z0,dz=tz-r.position.z;if(Math.abs(dz)<.2){n.dir*=-1}else{r.position.z+=Math.sign(dz)*Math.min(Math.abs(dz),dt*.9);r.rotation.y=dz<0?Math.PI:0;n.play('walk',.3);
+   /* 사람(카메라) 앞에서는 비켜 선다 */const off=d<1.4?Math.sign(r.position.x-pos.x||1)*.6:0;r.position.x+=((n.lane??(n.lane=r.position.x))+off-r.position.x)*Math.min(1,dt*3)}
+  if(d<2.4&&!n.waved&&!NOARM[n.k]){n.waved=1;n.play('wave',.2);setTimeout(()=>n.play('walk',.3),1600)}if(d>5)n.waved=0}
+ else if(n.mode==='booth'){const want=d<5?Math.atan2(pos.x-r.position.x,pos.z-r.position.z):0;let dd=want-r.rotation.y;dd=Math.atan2(Math.sin(dd),Math.cos(dd));r.rotation.y+=dd*Math.min(1,dt*3);if(d<3.2&&n.t>5){n.t=0;n.play('wave',.2);setTimeout(()=>n.play('idle',.4),1700)}}
+ else if(n.mode==='look'){if(n.t>6){n.t=0;n.play(n.cur===n.A.look_up?'idle':'look_up',.5)}}
+ else if(n.mode==='stall'){if(n.t>5){n.t=0;n.play(n.cur===n.A.idle?'look_up':'idle',.5)}}
+ n.mx.update(dt)}}
+/* ---------------- 축제 장식: 청사초롱 줄, 삼각 깃발, 좌판 둘 ---------------- */
+{const LC=[0xc8402e,0x2d4fa0,0xe2b23a,0x3f8f5a];for(const z of[-3.5,-9.5,-15.5,-21.5,-27.5]){const pts=[];for(let i=0;i<=20;i++){const t=i/20,x=-3.9+t*8.1;pts.push(new THREE.Vector3(x,4.3-Math.sin(t*Math.PI)*.5,z))}scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x3a2a1a})));
+  for(let i=2;i<=18;i+=4){const p=pts[i],l=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.34,10),new THREE.MeshStandardMaterial({color:LC[(i/4|0)%4],emissive:LC[(i/4|0)%4],emissiveIntensity:.5,roughness:.6}));l.position.set(p.x,p.y-.28,p.z);scene.add(l)}
+  for(let i=1;i<20;i+=2){const p=pts[i],f=new THREE.Mesh(new THREE.ConeGeometry(.12,.28,3),new THREE.MeshStandardMaterial({color:LC[i%4],roughness:.8,side:THREE.DoubleSide}));f.rotation.x=Math.PI;f.position.set(p.x,p.y-.16,p.z);f.scale.z=.15;scene.add(f)}}
+ const stall=(x,z,ry,col,label)=>{const g=new THREE.Group();const tb=new THREE.Mesh(new THREE.BoxGeometry(1.6,.75,.8),new THREE.MeshStandardMaterial({color:0xa8784c,roughness:.8}));tb.position.y=.375;g.add(tb);
+  const aw=new THREE.Mesh(new THREE.PlaneGeometry(1.9,1.1),new THREE.MeshStandardMaterial({side:THREE.DoubleSide,map:canvasTex(256,128,(q,w,h)=>{for(let i=0;i<w;i+=32){q.fillStyle=i/32%2?'#f3eee2':col;q.fillRect(i,0,32,h)}})}));aw.rotation.x=-1.15;aw.position.set(0,1.85,.15);g.add(aw);
+  for(const sx of[-.8,.8]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1.9,6),new THREE.MeshStandardMaterial({color:0x6b4a2c}));p.position.set(sx,.95,-.35);g.add(p)}
+  for(let i=0;i<5;i++){const j=new THREE.Mesh(new THREE.SphereGeometry(.09+Math.random()*.04,12,8),new THREE.MeshStandardMaterial({color:[0xefe7d6,0x3f6b5a,0xc8402e,0xe2b23a,0x2d4fa0][i],roughness:.4}));j.position.set(-.6+i*.3,.84,0);g.add(j)}
+  const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.32),new THREE.MeshBasicMaterial({map:canvasTex(448,100,(q,w,h)=>{q.fillStyle='#2b1d12';q.fillRect(0,0,w,h);q.fillStyle='#f3d27a';q.font='48px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText(label,w/2,h/2)})}));sg.position.set(0,1.15,.41);g.add(sg);
+  g.position.set(x,0,z);g.rotation.y=ry;g.traverse(o=>{if(o.isMesh)o.castShadow=true});scene.add(g)};
+ stall(3.1,-18.4,-Math.PI/2,'#c8402e','무이 굿즈');stall(-3,-12.2,Math.PI/2,'#2d4fa0','팔복 엽서')}
 /* ---------------- 걷기와 둘러보기 ---------------- */
 let yaw=0,pitch=.06,fov=cam.fov;const pos=new THREE.Vector3(0,0,7.5),goal=new THREE.Vector3();let gliding=false;const EYE=1.6;
-function clampPos(p){p.x=Math.max(-3.4,Math.min(3.6,p.x));if(Math.hypot(p.x-(BOOTH.x-1.15),p.z-(BOOTH.z+.15))<.6){p.x=BOOTH.x-1.15-.6}p.z=Math.max(-34,Math.min(12,p.z));const dz=p.z-BOOTH.z,dx=p.x-BOOTH.x;if(Math.abs(dx)<1.1&&Math.abs(dz)<.75){p.z=BOOTH.z+(dz>0?.75:-.75)}}
+function clampPos(p){p.x=Math.max(-3.4,Math.min(3.6,p.x));if(p.z<-17.5&&p.z>-19.3&&p.x>2.2)p.x=2.2;if(p.z<-11.3&&p.z>-13.1&&p.x<-2.1)p.x=-2.1;if(Math.hypot(p.x-(BOOTH.x-1.15),p.z-(BOOTH.z+.15))<.6){p.x=BOOTH.x-1.15-.6}p.z=Math.max(-34,Math.min(12,p.z));const dz=p.z-BOOTH.z,dx=p.x-BOOTH.x;if(Math.abs(dx)<1.1&&Math.abs(dz)<.75){p.z=BOOTH.z+(dz>0?.75:-.75)}}
 const cv=$('#c'),ptr=new Map();let downT=0,moved=0,lastTap=0;
 cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});downT=performance.now();moved=0;hideHint()});
 cv.addEventListener('pointermove',e=>{const p=ptr.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);if(ptr.size===1){const k=fov/70*.0042;yaw-=dx*k;pitch=Math.max(-1.1,Math.min(1.2,pitch-dy*k))}else if(ptr.size===2){const a=[...ptr.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(p.pd)fov=Math.max(35,Math.min(95,fov*(p.pd/d)));a.forEach(q=>q.pd=d)}});
@@ -192,7 +214,7 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
  if(f||s){gliding=false;pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*s)*2.6*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*s)*2.6*dt;clampPos(pos)}
  if(gliding){const d=goal.clone().sub(pos);d.y=0;const L=d.length();if(L<.03)gliding=false;else pos.addScaledVector(d,Math.min(1,dt*2.2))}
  curYaw+=(yaw-curYaw)*Math.min(1,dt*14);cam.position.set(pos.x,EYE,pos.z);cam.rotation.set(pitch,curYaw,0,'YXZ');cam.rotation.x=pitch;cam.fov+=(fov-cam.fov)*Math.min(1,dt*10);cam.updateProjectionMatrix();
- for(const n of NPCS){n.ph+=dt;n.r.children[0].position.y=n.r.children[0].userData.y0+Math.abs(Math.sin(n.ph*1.6))*.015;if(n.talk==='booth'){const d=Math.hypot(pos.x-n.r.position.x,pos.z-n.r.position.z);const want=d<5?Math.atan2(pos.x-n.r.position.x,pos.z-n.r.position.z):0;let dd=want-n.r.rotation.y;dd=Math.atan2(Math.sin(dd),Math.cos(dd));n.r.rotation.y+=dd*Math.min(1,dt*3)}}
+ npcTick(dt);
  if(window.__glow)window.__glow.intensity=3+Math.sin(now/700)*1.4+Math.sin(now/230)*.6;
  uiT-=dt;if(uiT<=0){uiT=.15;const a=$('#act'),dB=Math.hypot(pos.x-BOOTH.x,pos.z-(BOOTH.z+.9)),dD=Math.hypot(pos.x-DOOR.x,pos.z-DOOR.z);
   if(!$('#tk').hidden){a.hidden=true}else if(dB<2.3){a.textContent=ticket?'티켓 다시 보기':'티켓 받기';actFn=giveTicket;a.hidden=false}else if(dD<3.1){a.textContent=ticket?'D-CUBE 들어가기':'입장하기 (티켓 필요)';actFn=enterCube;a.hidden=false}else a.hidden=true}
