@@ -275,7 +275,7 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
   const mag=Math.min(1,Math.hypot(fx,sx)),run=keys.ShiftLeft||keys.ShiftRight||(stickId!==null&&mag>.85);const want=mag>.05?(run?4.2:1.8):0;speed+=(want-speed)*Math.min(1,dt*8);
   if(joined&&(mag>.05||!night)){joined=false;hint('춤에서 빠져나왔어요.',2500)}
   if(joined){joinA+=dt*.22;pos.set(FX+Math.cos(joinA)*FR,0,FZ+Math.sin(joinA)*FR);yaw=Math.atan2(-Math.sin(joinA),Math.cos(joinA));speed=0}
-  else{if(mag>.05){const a=camYaw+Math.atan2(sx,fx)+Math.PI;let d=a-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*10)}
+  else{if(mag>.05){const a=camYaw+Math.PI-Math.atan2(sx,fx);let d=a-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*10)}
   pos.x+=Math.sin(yaw)*speed*dt;pos.z+=Math.cos(yaw)*speed*dt;const r=Math.hypot(pos.x,pos.z);if(r>28.5){pos.x*=28.5/r;pos.z*=28.5/r}if(pos.z<0&&r>RC-2.6&&r<RC+2.4){/* 회랑 기둥 안쪽으로만 */}
   for(const s of SITES){const dx=pos.x-s.x,dz=pos.z-s.z,dd=Math.hypot(dx,dz),min=s.k==='carpenter'?2.1:1.2;if(dd<min){pos.x=s.x+dx/dd*min;pos.z=s.z+dz/dd*min}}
   {const dx=pos.x,dz=pos.z-2.5,dd=Math.hypot(dx,dz);if(dd<.9){pos.x=dx/dd*.9;pos.z=2.5+dz/dd*.9}}
