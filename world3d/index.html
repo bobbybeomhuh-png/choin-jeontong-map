@@ -49,6 +49,19 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #top .btn,#ttl{white-space:nowrap}
 @media (max-width:560px){#top{gap:5px;padding-left:8px;padding-right:8px}#ttl{font-size:14px;padding:6px 9px}#top .btn{padding:6px 8px;font-size:13px;min-height:34px}#qCnt{position:fixed;left:8px;top:calc(env(safe-area-inset-top) + 54px)}#dchip{position:fixed;right:8px;top:calc(env(safe-area-inset-top) + 54px)}#hint{top:calc(env(safe-area-inset-top) + 94px);font-size:13.5px}}
 @media (pointer:coarse){#act{left:auto;right:14px;transform:none;font-size:18px;padding:10px 16px;max-width:calc(100vw - 175px);white-space:normal}}
+#fol{position:fixed;inset:0;z-index:60;background:rgba(8,6,4,.94);display:flex;align-items:center;justify-content:center;gap:16px;padding:10px}
+#fstage{position:relative;height:min(94vh,calc((100vw - 380px)*1.742));aspect-ratio:496/864;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 10px 40px rgba(0,0,0,.6);flex:none}
+#fstage video,#fstage canvas{position:absolute;inset:0;width:100%;height:100%}#fc{touch-action:none;cursor:crosshair}
+#fsteps{position:absolute;left:8px;right:8px;top:8px;display:flex;gap:4px;pointer-events:none}#fsteps span{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.25)}#fsteps span.on{background:#ffd060}#fsteps span.ok{background:#7fd38a}
+#fpop{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font:30px "Do Hyeon",sans-serif;color:#fff;text-shadow:0 3px 0 #3b2a1c,0 0 18px rgba(255,200,80,.9);pointer-events:none;opacity:0;transition:opacity .3s;text-align:center;white-space:nowrap}
+#fside{width:340px;max-height:94vh;overflow:auto;background:#f6efe2;color:#2a1d12;border-radius:14px;padding:14px;display:grid;gap:9px;align-content:start}
+#fside .tag{font:13px "Do Hyeon",sans-serif;color:#8a4a12;letter-spacing:.05em}#ft{font:22px "Do Hyeon",sans-serif;margin:0}#fhow{margin:0;font-size:15.5px;line-height:1.55}#fwhy{margin:0;font-size:13.5px;line-height:1.6;color:#5a4430;border-left:4px solid #c0392b;padding-left:9px}
+#ftools{display:flex;gap:8px;flex-wrap:wrap}#ftools button{width:52px;height:52px;border-radius:50%;border:3px solid #3b2a1c;cursor:pointer}#ftools button.sel{outline:3px solid #ffd060;outline-offset:2px}
+#fbar{height:9px;background:#e2d6c0;border-radius:5px;overflow:hidden}#fbar i{display:block;height:100%;width:0;background:#e7b75a;transition:width .2s}
+#flog{display:grid;gap:5px;font-size:13px}#flog div{display:flex;gap:6px}#flog b{color:#3f8f5a}
+#fside .row{display:flex;gap:8px;flex-wrap:wrap}#fside .btn{background:#3b2a1c;color:#fff4dc;border-color:#3b2a1c}#fside .btn.main{background:#e7b75a;color:#1d1408;border-color:#e7b75a}
+@media (max-width:760px){#fol{flex-direction:column;justify-content:flex-start;gap:8px;padding:8px;overflow:auto}#fstage{height:min(62vh,calc((100vw - 16px)*1.742))}#fside{width:100%;max-height:none;padding:10px;gap:6px}#ft{font-size:19px}#fhow{font-size:14px}#fwhy{font-size:12.5px}}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
@@ -79,6 +92,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <button id="act" type="button" hidden></button>
 <div id="stick" hidden><i></i></div>
 <button id="bJump" type="button" hidden>점프</button>
+<section id="fol" hidden><div id="fstage"><video id="fv" playsinline preload="auto"></video><canvas id="fc" width="496" height="864"></canvas><div id="fsteps"></div><div id="fpop"></div></div><aside id="fside"><div class="tag" id="ftag">쇼츠 따라 복원</div><h3 id="ft"></h3><p id="fhow"></p><div id="ftools"></div><div id="fbar"><i></i></div><p id="fwhy"></p><div id="flog"></div><div class="row"><button class="btn main" id="fgo" type="button" hidden>이어서 보기</button><button class="btn" id="fre" type="button" hidden>다시 하기</button><button class="btn" id="fyt" type="button">유튜브로 보기</button><button class="btn" id="fx" type="button">닫기</button></div></aside></section>
 <section id="yt" hidden><div class="in"><iframe id="ytf" allow="autoplay; encrypted-media" allowfullscreen></iframe><button class="btn main" id="ytx" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
@@ -1072,7 +1086,7 @@ function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);la
   if(me){const d=c.root.position.distanceTo(pos);if(d<3&&!c.greet&&!c.busy){c.greet=1;c.prev=c.job;c.play(NOARM[c.k]?'nod':'wave',.3);setTimeout(()=>{if(!c.busy)c.play(c.prev,.4)},1700)}if(d>5)c.greet=0}}
  dayTick();fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);bandTick(dt);jarFrame(dt,now);seatTick(dt);wsFrame(dt);cinTick();if(me)bwTick();gameFrame(dt,now);if(game)gameCam();if(WK){WK.frame(dt);if(WK)WK.cam()}
  uiT-=dt;if(uiT<=0&&me){uiT=.15;const a=$('#act');a.hidden=true;actFn=null;
-  for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){a.textContent='쇼츠 보기';actFn=()=>openYT(d);a.hidden=false;break}}
+  for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){let done=[];try{done=JSON.parse(localStorage.getItem('muui3d-follow')||'[]')}catch(e){}a.textContent=(done.includes(d.k)?'✓ ':'')+'쇼츠 보며 따라 복원하기';actFn=()=>openFollow(d.k);a.hidden=false;break}}
   if(a.hidden&&qActive&&!qHeld){const q=QUEST[qActive];if(Math.hypot(pos.x-q.at[0],pos.z-q.at[1])<1.6){a.textContent=`${q.item} 줍기`;actFn=()=>{qHeld=qActive;hint(`${q.item}을(를) 들었어요. ${KINDS.find(x=>x.k===qHeld).d} 복원단에게 가져가요.`,4500);qUI()};a.hidden=false}}
   if(SEATED){a.textContent=SEATED.a;actFn=seatAct;a.hidden=false}
   if(a.hidden&&!WK&&!ws&&!SEATED)for(const S of SEATS3){if(Math.hypot(pos.x-S.ax,pos.z-S.az)<1.4){a.textContent=`${S.n}에 앉기`;actFn=()=>sitAt(S);a.hidden=false;break}}
@@ -1094,6 +1108,122 @@ function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);la
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
 setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>{$('#load').hidden=true;$('#pick').hidden=false},500)},600);
 if(qs.has('night'))setNight(true);
+
+/* ================= 쇼츠 따라 복원: 영상이 멈추는 순간, 같은 화면 위에서 그 작업을 내가 한다 ================= */
+const FOLD={
+ ceramic:{n:'백자 달항아리',crew:'도공 무이',fact:'달항아리는 너무 커서 위와 아래 반쪽을 따로 빚어 붙였어요. 그래서 허리에 이음선이 남아 있어요.',steps:[
+  {t:3.3,k:'zoom',title:'확대경으로 금 찾기',how:'확대경을 움직여 숨은 금 세 군데를 찾아요.',why:'복원은 진단부터 해요. 금, 떨어져 나간 곳, 오염을 사진과 도면에 먼저 기록해 둬요.',spots:[[.55,.32],[.78,.22],[.86,.5]]},
+  {t:7.6,k:'scrub',title:'붓으로 틈 먼지 털기',how:'틈 둘레를 문질러 먼지를 털어 내요.',why:'틈 속 먼지가 남으면 메움재가 붙지 않아요. 부드러운 붓과 정제수로 살살 닦아요.',rect:[.3,.1,.95,.9],col:[120,100,80]},
+  {t:10.6,k:'choose',title:'틈 메울 도구 고르기',how:'틈을 메우려면 어떤 도구가 맞을까요? 화면에서 골라요.',why:'틈은 주걱으로 메움재를 눌러 넣어요. 붓은 먼지 털기, 천은 마무리 닦기에 써요.',opts:[{x:.7,y:.68,l:'주걱',ok:1},{x:.62,y:.42,l:'붓'},{x:.25,y:.45,l:'천'}]},
+  {t:16.6,k:'trace',title:'주걱으로 틈 메우기',how:'금을 따라 천천히 그어 메움재를 채워요.',why:'석고나 퍼티를 틈에 눌러 넣고 둘레와 높이를 맞춰요. 넘친 것은 마른 뒤 사포로 다듬어요.',path:[[.57,.05],[.56,.2],[.59,.38],[.57,.55],[.5,.72],[.4,.9]]},
+  {t:21.2,k:'paint',title:'떨어져 나간 곳 색 맞추기',how:'둘레와 가장 비슷한 색을 고르고, 구멍을 문질러 채워요.',why:'없어진 곳은 둘레와 비슷하지만 가까이 보면 구별되는 색으로 채워요. 누가 봐도 복원한 자리를 알 수 있게 하는 원칙이에요.',circ:[.45,.49,.09],sw:['#efe9dc','#c9b48a','#9fb8c8'],ok:0},
+  {t:24.4,k:'dab',title:'마지막 얼룩 닦기',how:'남은 얼룩을 하나씩 톡톡 눌러 닦아요.',why:'마무리로 손자국과 메움재 가루를 닦아 내요.',rect:[.25,.25,.95,.6],n:7}]},
+ science:{n:'측우기',crew:'과학 무이',fact:'세종 때인 1441년에 만든 측우기는 비의 양을 잰 세계 첫 기구 가운데 하나예요. 지금 남은 것은 1837년에 만든 공주감영 측우기(국보)예요.',steps:[
+  {t:4.6,k:'zoom',title:'원통 살피기',how:'확대경으로 녹슨 곳 세 군데를 찾아요.',why:'청동에 번지는 초록 녹(청동병)이 가장 위험해요. 녹이 어디 있는지 먼저 찾아 기록해요.',spots:[[.42,.35],[.38,.55],[.47,.68]]},
+  {t:7.6,k:'scrub',title:'천으로 녹 닦기',how:'원통을 문질러 녹과 때를 닦아요.',why:'해로운 녹만 조심스럽게 걷어 내고, 오래되어 안정된 녹은 남겨 둬요.',rect:[.3,.05,.95,.95],col:[70,90,60]},
+  {t:10.6,k:'drag',title:'원통 마디 맞추기',how:'빠진 마디를 끌어 제자리에 끼워요.',why:'측우기 원통은 마디를 끼워 맞추는 구조예요. 고인 빗물을 쏟아 재기 쉽게 만든 거예요.',rect:[.34,.34,.58,.58],off:[.28,.3]},
+  {t:21.1,k:'scrub',title:'새긴 글자 닦기',how:'글자 둘레를 문질러 새긴 글을 드러내요.',why:'측우기에는 만든 때와 크기가 새겨져 있어요. 글자를 읽어야 언제 만든 것인지 알 수 있어요.',rect:[.05,.2,.55,.65],col:[60,55,45]},
+  {t:22.7,k:'timing',title:'자로 지름 재기',how:'움직이는 자가 금빛 칸에 들어올 때 눌러요. 세 번.',why:'지름과 높이를 재서 옛 기록과 맞는지 확인해요. 측우기는 높이 1자 5치, 지름 7치로 정해져 있었어요.',rect:[.15,.33,.92,.43]},
+  {t:25.6,k:'hold',title:'측우대에 단단히 올리기',how:'꾹 누르고 있으면 측우기를 측우대에 고정해요.',why:'측우기는 돌로 만든 측우대 위에 올려 빗물을 받았어요.',at:[.55,.5]}]},
+ carpenter:{n:'불국사 다보탑',crew:'목수 무이',fact:'다보탑은 8세기 중엽 불국사에 세워졌어요. 기단의 돌사자는 원래 네 마리였는데 일제강점기에 세 마리가 사라져 지금은 한 마리만 남았어요.',steps:[
+  {t:3.1,k:'rhythm',title:'정으로 돌 다듬기',how:'줄어드는 고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'깨진 곳을 메울 새 돌은 원래와 같은 화강암으로 깎아 맞춰요.',at:[.3,.5],n:5},
+  {t:4.6,k:'hold',title:'다 함께 돌 들어 올리기',how:'꾹 누르고 있으면 다 함께 돌을 들어 올려요.',why:'무거운 돌은 비계와 도르래로 천천히 들어 올려요. 탑이 다치지 않게 받침을 대요.',at:[.45,.5]},
+  {t:7.6,k:'paint',title:'떨어진 색 메우기',how:'둘레와 맞는 색을 골라 빈 곳을 칠해요.',why:'떨어져 나간 채색은 남은 색과 맞춰 조금씩 메워요.',rect:[.08,.3,.42,.78],sw:['#3f8f8a','#d24a2e','#e8c84a'],ok:0},
+  {t:10.6,k:'drag',title:'비계 발판 끼우기',how:'빠진 발판을 끌어 비계에 끼워요.',why:'탑 둘레에 나무 비계를 세워 층마다 작업할 발판을 만들어요. 탑에 직접 기대지 않게 따로 세워요.',rect:[.05,.45,.98,.62],off:[-.2,.28]},
+  {t:18.2,k:'zoom',title:'흔들리는 돌 찾기',how:'확대경으로 층마다 흔들리는 돌 세 군데를 찾아요.',why:'층마다 흔들리거나 금 간 돌이 없는지 하나하나 살펴요.',spots:[[.5,.28],[.42,.5],[.62,.62]]},
+  {t:22.6,k:'drag',title:'돌사자 제자리 놓기',how:'돌사자를 끌어 기단 위 제자리에 놓아요.',why:'남은 돌사자 한 마리는 지금도 다보탑 기단을 지키고 있어요.',rect:[.18,.38,.78,.7],off:[.22,.3]}]},
+ painter:{n:'일월오봉도',crew:'화공 무이',fact:'일월오봉도는 임금의 자리 뒤에 두던 병풍이에요. 해와 달, 다섯 봉우리, 소나무, 물결이 임금의 나라를 뜻해요.',steps:[
+  {t:5.2,k:'hold',title:'들뜬 물감 눌러 붙이기',how:'꾹 누르고 있으면 들뜬 물감을 살짝 눌러 붙여요.',why:'들떠 일어난 물감층 밑에 아교를 넣고 살짝 눌러 다시 붙여요.',at:[.45,.6]},
+  {t:7.6,k:'apply',title:'배접지에 풀 바르기',how:'종이를 문질러 풀을 고루 발라요.',why:'그림 뒤에 한지를 덧대는 배접에는 밀가루로 쑨 풀을 써요. 나중에 물로 떼어 낼 수 있어서예요.',rect:[.05,.45,.95,.95],col:'rgba(255,248,225,.55)'},
+  {t:9.2,k:'scrub',title:'그림 표면 먼지 털기',how:'그림을 살살 문질러 먼지를 털어요.',why:'오래된 채색은 약해서 부드러운 붓으로 먼지만 털어요.',rect:[.05,.5,.95,.95],col:[110,100,85]},
+  {t:19.6,k:'rhythm',title:'솔로 두드려 붙이기',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'배접지를 붙인 뒤 솔로 두드려 공기를 빼고 단단히 붙여요.',at:[.5,.55],n:5},
+  {t:24.1,k:'paint',title:'바랜 붉은 줄기 색 맞추기',how:'맞는 색을 골라 바랜 줄기를 칠해요.',why:'바랜 곳만 남은 색과 비슷하게 칠해요. 원래 그림 위에 덧칠하지 않는 게 원칙이에요.',rect:[.35,.1,.56,.95],sw:['#c8402e','#2d4fa0','#3f8f5a'],ok:0}]},
+ metal:{n:'백제 금동대향로',crew:'금속 무이',fact:'1993년 부여 능산리 절터의 진흙 구덩이에서 발견됐어요. 진흙에 덮여 있던 덕분에 1400년 동안 크게 상하지 않았어요. 국보로, 국립부여박물관에 있어요.',steps:[
+  {t:4.6,k:'zoom',title:'확대경으로 녹 찾기',how:'확대경을 움직여 녹슨 곳 세 군데를 찾아요.',why:'금동은 겉의 금이 벗겨진 곳부터 녹이 번져요. 먼저 찾아서 기록해요.',spots:[[.55,.35],[.7,.6],[.45,.78]]},
+  {t:6.1,k:'scrub',title:'붓으로 녹 털기',how:'향로를 문질러 들뜬 녹을 털어요.',why:'들뜬 녹과 흙만 털어 내고, 금도금이 벗겨지지 않게 아주 살살 해요.',rect:[.15,.05,.95,.95],col:[80,70,50]},
+  {t:7.6,k:'dab',title:'면봉으로 구석 닦기',how:'구석에 낀 때를 하나씩 톡톡 눌러 닦아요.',why:'무늬 사이 좁은 틈은 면봉에 약품을 묻혀 하나씩 닦아요.',rect:[.2,.15,.9,.85],n:8},
+  {t:10.6,k:'rhythm',title:'모루에서 휜 곳 펴기',how:'고리가 금빛 원에 겹칠 때 눌러요. 다섯 번.',why:'휜 받침은 조금씩 두드려 펴요. 한 번에 세게 하면 금이 가요.',at:[.6,.6],n:5},
+  {t:18.3,k:'trace',title:'금 간 곳 이어 붙이기',how:'금을 따라 천천히 그어 이어 붙여요.',why:'갈라진 금속은 금을 따라 조금씩 이어 붙이고, 이은 자리는 나중에 구별되게 남겨요.',path:[[.12,.52],[.26,.48],[.4,.45],[.55,.41],[.7,.38]]},
+  {t:24.1,k:'drag',title:'봉황 장식 맞추기',how:'봉황을 끌어 꼭대기에 맞춰요.',why:'꼭대기 봉황은 여의주를 물고 날개를 편 모습이에요. 향 연기가 봉황 가슴의 구멍으로 나와요.',rect:[.3,0,.72,.28],off:[.22,.42]}]}};
+let FOL=null;const fv=$('#fv'),fc=$('#fc'),fx=fc.getContext('2d');const FW=496,FH=864;
+let FA=null;function fau(){if(!FA){const C=window.AudioContext||window.webkitAudioContext;if(C)FA=new C()}if(FA&&FA.state==='suspended')FA.resume();return FA}
+function ftone(f,d=.12,g=.15,type='triangle',at=0){const a=fau();if(!a)return;const t=a.currentTime+at,o=a.createOscillator(),G=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);G.gain.setValueAtTime(g,t);G.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(G).connect(a.destination);o.start(t);o.stop(t+d+.05)}
+function fnoise(d=.08,f=2800,g=.12){const a=fau();if(!a)return;const n=a.sampleRate*d|0,b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=Math.random()*2-1;const s=a.createBufferSource();s.buffer=b;const fl=a.createBiquadFilter();fl.type='bandpass';fl.frequency.value=f;const G=a.createGain();G.gain.value=g;s.connect(fl).connect(G).connect(a.destination);s.start()}
+const fvib=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+function fpop(t,col){const e=$('#fpop');e.textContent=t;e.style.color=col||'#fff';e.style.opacity=1;clearTimeout(fpop.t);fpop.t=setTimeout(()=>e.style.opacity=0,900)}
+function openFollow(k){const D=FOLD[k];if(!D)return;fau();FOL={k,D,i:0,S:null,mist:0,t0:performance.now(),before:null,after:null,log:[],parts:[],ended:false};fv.src='media/full_'+k+'.mp4';fv.muted=false;fv.currentTime=0;
+ $('#fsteps').innerHTML=D.steps.map(()=>'<span></span>').join('');$('#ftag').textContent=`쇼츠 따라 복원 · ${D.n}`;$('#ft').textContent='영상을 보며 기다려요';$('#fhow').textContent=`${D.crew}가 복원을 시작해요. 영상이 멈추면 그 장면의 작업을 직접 해요.`;$('#fwhy').textContent='';$('#ftools').innerHTML='';$('#flog').innerHTML='';$('#fbar i').style.width='0';$('#fgo').hidden=true;$('#fre').hidden=true;fc.style.pointerEvents='none';fx.clearRect(0,0,FW,FH);
+ $('#fol').hidden=false;fv.play().catch(()=>{fv.muted=true;fv.play().catch(()=>{})});requestAnimationFrame(folLoop)}
+function closeFollow(){FOL=null;fv.pause();fv.removeAttribute('src');fv.load();$('#fol').hidden=true}
+$('#fx').addEventListener('click',closeFollow);$('#fyt').addEventListener('click',()=>{const k=FOL&&FOL.k;closeFollow();const d=DOORS.find(x=>x.k===k);if(d)openYT(d)});$('#fre').addEventListener('click',()=>{const k=FOL.k;openFollow(k)});
+$('#fgo').addEventListener('click',()=>{if(FOL&&FOL.S&&FOL.S.done)resumeFollow()});
+function grab(){const c=document.createElement('canvas');c.width=FW;c.height=FH;try{c.getContext('2d').drawImage(fv,0,0,FW,FH)}catch(e){}return c}
+const FPx=(a)=>[a[0]*FW,a[1]*FH];
+function startStep(st){const F=FOL;fv.pause();const S={st,base:grab(),prog:0,done:false,t:0,hits:0,miss:0,ptr:null,down:false};F.S=S;fc.style.pointerEvents='auto';
+ const sp=[...$('#fsteps').children];sp.forEach((e,i)=>{e.classList.toggle('on',i===F.i);e.classList.toggle('ok',i<F.i)});
+ $('#ft').textContent=`${F.i+1}. ${st.title}`;$('#fhow').textContent=st.how;$('#fwhy').textContent=st.why;$('#ftools').innerHTML='';$('#fbar i').style.width='0';$('#fgo').hidden=true;ftone(660,.12,.12);fpop('내 차례!','#ffd060');
+ if(st.k==='scrub'||st.k==='apply'||st.k==='paint'){S.layer=document.createElement('canvas');S.layer.width=FW;S.layer.height=FH;S.lq=S.layer.getContext('2d',{willReadFrequently:true})}
+ if(st.k==='scrub'){const[x0,y0,x1,y1]=st.rect,q=S.lq,[r,g,b]=st.col;for(let i=0;i<2600;i++){const v=(Math.random()*50-25)|0;q.fillStyle=`rgba(${r+v},${g+v},${b+v},${(.55+Math.random()*.45).toFixed(2)})`;q.beginPath();q.arc(x0*FW+Math.random()*(x1-x0)*FW,y0*FH+Math.random()*(y1-y0)*FH,3+Math.random()*10,0,7);q.fill()}S.base0=fcount(S,true)}
+ if(st.k==='paint'){S.chosen=-1;st.sw.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.style.background=c;b.title='색 '+(i+1);b.addEventListener('click',()=>{if(S.done)return;if(i!==st.ok){F.mist++;S.miss++;fpop('색이 둘레와 달라요','#ffb0a0');ftone(220,.25,.15);fvib(40);return}S.chosen=i;[...$('#ftools').children].forEach(x=>x.classList.toggle('sel',x===b));ftone(880,.1,.12);$('#fhow').textContent='맞는 색이에요! 이제 빈 곳을 문질러 칠해요.'});$('#ftools').appendChild(b)});$('#fhow').textContent=st.how+' (오른쪽 색 중 하나)'}
+ if(st.k==='dab'){const[x0,y0,x1,y1]=st.rect;S.dots=[];for(let i=0;i<st.n;i++)S.dots.push({x:(x0+Math.random()*(x1-x0))*FW,y:(y0+Math.random()*(y1-y0))*FH,r:14+Math.random()*10,a:1,gone:false})}
+ if(st.k==='zoom'){S.found=st.spots.map(()=>false)}
+ if(st.k==='drag'){const[x0,y0,x1,y1]=st.rect;S.rx=x0*FW;S.ry=y0*FH;S.rw=(x1-x0)*FW;S.rh=(y1-y0)*FH;S.px=S.rx+st.off[0]*FW;S.py=S.ry+st.off[1]*FH;S.rot=.35}
+ if(st.k==='trace'){S.pts=st.path.map(FPx);S.len=0;S.seg=[];for(let i=1;i<S.pts.length;i++){const l=Math.hypot(S.pts[i][0]-S.pts[i-1][0],S.pts[i][1]-S.pts[i-1][1]);S.seg.push(l);S.len+=l}S.d=0}
+ if(st.k==='timing'){S.x=0;S.dir=1}
+ if(st.k==='rhythm'){S.ring=0}
+ if(st.k==='hold'){S.p=0}}
+function fcount(S,init){const d=S.lq.getImageData(0,0,FW,FH).data;let n=0;for(let i=3;i<d.length;i+=4*7)if(d[i]>60)n++;return n}
+function pathAt(S,d){let acc=0;for(let i=0;i<S.seg.length;i++){if(acc+S.seg[i]>=d){const u=(d-acc)/S.seg[i];return[S.pts[i][0]+(S.pts[i+1][0]-S.pts[i][0])*u,S.pts[i][1]+(S.pts[i+1][1]-S.pts[i][1])*u]}acc+=S.seg[i]}return S.pts[S.pts.length-1]}
+function stepDone(){const F=FOL,S=F.S;if(S.done)return;S.done=true;S.prog=1;$('#fbar i').style.width='100%';[784,988,1175].forEach((f,i)=>ftone(f,.4,.12,'triangle',i*.08));fvib([30,40,60]);for(let i=0;i<30;i++)F.parts.push({x:FW/2+(Math.random()-.5)*160,y:FH*.5+(Math.random()-.5)*160,vx:(Math.random()-.5)*300,vy:-Math.random()*300,l:1});
+ const praise=['좋아요!','딱 맞아요!','잘했어요!','완벽해요!','멋져요!'];fpop(praise[(Math.random()*praise.length)|0],'#a8f0b0');F.log.push({t:S.st.title,why:S.st.why,miss:S.miss});
+ const lg=$('#flog');const d=document.createElement('div');const b=document.createElement('b');b.textContent='✓';const sp=document.createElement('span');sp.textContent=S.st.title+(S.miss?` (헛손질 ${S.miss})`:'');d.append(b,sp);lg.appendChild(d);
+ $('#fhow').textContent=`${F.D.crew}: ${praise[(Math.random()*praise.length)|0]} 영상으로 이어서 봐요.`;setTimeout(()=>{if(FOL===F&&F.S===S)resumeFollow()},1300)}
+function resumeFollow(){const F=FOL;if(!F)return;F.S=null;F.i++;fc.style.pointerEvents='none';$('#ftools').innerHTML='';$('#ft').textContent='영상을 보며 기다려요';if(F.i<F.D.steps.length)$('#fhow').textContent='다음 장면에서 다시 멈춰요.';fv.play().catch(()=>{})}
+function fpos(e){const r=fc.getBoundingClientRect();return[(e.clientX-r.left)*FW/r.width,(e.clientY-r.top)*FH/r.height]}
+fc.addEventListener('pointerdown',e=>{const F=FOL;if(!F||!F.S||F.S.done)return;fc.setPointerCapture(e.pointerId);fau();const S=F.S,st=S.st,[x,y]=fpos(e);S.down=true;S.ptr=[x,y];S.last=[x,y];
+ if(st.k==='choose'){for(const o of st.opts){if(Math.hypot(x-o.x*FW,y-o.y*FH)<55){if(o.ok){ftone(880,.15);stepDone()}else{F.mist++;S.miss++;fpop(`${o.l}은(는) 아니에요`,'#ffb0a0');ftone(220,.25,.15);fvib(40)}return}}}
+ if(st.k==='rhythm'){const r=110-70*S.ring;if(Math.abs(r-40)<16){S.hits++;S.ring=0;fnoise(.06,3000,.25);ftone(260,.12,.3,'square');fvib(25);S.shake=.25;fpop(['딱!','탁!','쾅!'][S.hits%3],'#ffe08a');S.prog=S.hits/st.n;if(S.hits>=st.n)stepDone()}else{S.miss++;F.mist++;ftone(200,.15,.1);fpop('박자를 맞춰요','#ffb0a0')}}
+ if(st.k==='timing'){const[x0,,x1]=st.rect,mid=(x0+x1)/2*FW,cx=x0*FW+S.x*(x1-x0)*FW;if(Math.abs(cx-mid)<18){S.hits++;ftone(1200,.08,.12,'square');fpop(`${S.hits}번째 눈금 맞음`,'#ffe08a');S.prog=S.hits/3;fvib(20);if(S.hits>=3)stepDone()}else{S.miss++;F.mist++;ftone(220,.15,.1);fpop('조금 빨라요','#ffb0a0')}}
+ if(st.k==='dab'){for(const d of S.dots){if(!d.gone&&Math.hypot(x-d.x,y-d.y)<d.r+14){d.gone=true;fnoise(.05,3500,.2);ftone(1400,.06,.08);fvib(12);break}}const g=S.dots.filter(d=>d.gone).length;S.prog=g/S.dots.length;if(g>=S.dots.length)stepDone()}
+ if(st.k==='drag'){const cx=S.px+S.rw/2,cy=S.py+S.rh/2;S.grab=Math.abs(x-cx)<S.rw/2+30&&Math.abs(y-cy)<S.rh/2+30;if(S.grab){S.gx=x-S.px;S.gy=y-S.py;ftone(500,.06,.08)}}});
+fc.addEventListener('pointermove',e=>{const F=FOL;if(!F||!F.S)return;const S=F.S,st=S.st,[x,y]=fpos(e);S.ptr=[x,y];if(S.done)return;
+ if(st.k==='zoom'){st.spots.forEach((p,i)=>{if(!S.found[i]&&Math.hypot(x-p[0]*FW,y-p[1]*FH)<38){S.found[i]=true;ftone(1046,.18,.12);ftone(1318,.25,.1,'sine',.08);fvib(20);fpop('찾았다!','#ffe08a')}});S.prog=S.found.filter(Boolean).length/S.found.length;if(S.prog>=1)stepDone()}
+ if(!S.down)return;const[lx,ly]=S.last||[x,y];S.last=[x,y];const dist=Math.hypot(x-lx,y-ly);
+ if(st.k==='scrub'){const q=S.lq;q.globalCompositeOperation='destination-out';q.lineCap='round';q.lineWidth=54;q.strokeStyle='rgba(0,0,0,.7)';q.beginPath();q.moveTo(lx,ly);q.lineTo(x,y);q.stroke();q.globalCompositeOperation='source-over';if(dist>4&&performance.now()-(S.snd||0)>110){S.snd=performance.now();fnoise(.08,3200,.12);fvib(5)}if(performance.now()-(S.ck||0)>220){S.ck=performance.now();S.prog=Math.min(1,(1-fcount(S)/S.base0)/.85);if(S.prog>=1)stepDone()}}
+ if(st.k==='apply'||(st.k==='paint'&&S.chosen>=0)){const q=S.lq;q.save();q.beginPath();if(st.circ){const[cx,cy,r]=st.circ;q.arc(cx*FW,cy*FH,r*FW,0,7)}else{const[x0,y0,x1,y1]=st.rect;q.rect(x0*FW,y0*FH,(x1-x0)*FW,(y1-y0)*FH)}q.clip();q.lineCap='round';q.lineWidth=st.circ?34:48;q.strokeStyle=st.k==='apply'?st.col:st.sw[st.ok];q.globalAlpha=st.k==='apply'?.5:.85;q.beginPath();q.moveTo(lx,ly);q.lineTo(x,y);q.stroke();q.restore();if(dist>4&&performance.now()-(S.snd||0)>130){S.snd=performance.now();fnoise(.07,1800,.08)}
+  if(performance.now()-(S.ck||0)>220){S.ck=performance.now();const area=st.circ?Math.PI*(st.circ[2]*FW)**2:(st.rect[2]-st.rect[0])*FW*(st.rect[3]-st.rect[1])*FH;S.prog=Math.min(1,fcount(S)*28/area/.8);if(S.prog>=1)stepDone()}}
+ else if(st.k==='paint'&&S.chosen<0&&dist>6&&!S.warned){S.warned=1;fpop('먼저 색을 골라요','#ffe08a')}
+ if(st.k==='trace'){const tgt=pathAt(S,Math.min(S.len,S.d+26));if(Math.hypot(x-tgt[0],y-tgt[1])<40){S.d=Math.min(S.len,S.d+dist*1.1);if(performance.now()-(S.snd||0)>90){S.snd=performance.now();fnoise(.06,1500,.1);fvib(6)}}S.prog=S.d/S.len;if(S.prog>=.98)stepDone()}
+ if(st.k==='drag'&&S.grab){S.px=x-S.gx;S.py=y-S.gy;S.rot*=.96}});
+const fup=e=>{const F=FOL;if(!F||!F.S)return;const S=F.S,st=S.st;S.down=false;if(S.done)return;if(st.k==='drag'&&S.grab){S.grab=false;if(Math.hypot(S.px-S.rx,S.py-S.ry)<34){S.px=S.rx;S.py=S.ry;S.rot=0;fnoise(.08,900,.3);ftone(330,.15,.25);fvib(30);stepDone()}else{ftone(300,.1,.08)}}};
+fc.addEventListener('pointerup',fup);fc.addEventListener('pointercancel',fup);
+function folLoop(){const F=FOL;if(!F)return;requestAnimationFrame(folLoop);const now=performance.now(),dt=Math.min(.05,(now-(F.lt||now))/1000);F.lt=now;
+ if(!F.before&&fv.currentTime>.5)F.before=grab();
+ if(!F.S&&F.i<F.D.steps.length&&fv.currentTime>=F.D.steps[F.i].t)startStep(F.D.steps[F.i]);
+ if(!F.S&&F.i>=F.D.steps.length&&!F.ended&&(fv.ended||fv.currentTime>=fv.duration-.25)){F.ended=true;F.after=grab();finale()}
+ fx.clearRect(0,0,FW,FH);const S=F.S;
+ if(F.fin){drawFinale();return}
+ if(S){const st=S.st;S.t+=dt;let sh=0;if(S.shake>0){S.shake-=dt;sh=(Math.random()-.5)*10*S.shake}fx.save();fx.translate(sh,sh*.6);fx.drawImage(S.base,0,0);
+  if(st.k==='scrub'||st.k==='apply'||st.k==='paint')fx.drawImage(S.layer,0,0);
+  if(st.k==='paint'){const q=fx;q.save();q.setLineDash([8,6]);q.strokeStyle='rgba(255,224,138,.9)';q.lineWidth=3;if(st.circ){const[cx,cy,r]=st.circ;if(!S.holeDone){q.fillStyle='rgba(60,45,30,.55)';q.beginPath();q.arc(cx*FW,cy*FH,r*FW,0,7);q.fill()}q.beginPath();q.arc(cx*FW,cy*FH,r*FW,0,7);q.stroke()}else{const[x0,y0,x1,y1]=st.rect;q.fillStyle='rgba(200,200,190,.35)';q.fillRect(x0*FW,y0*FH,(x1-x0)*FW,(y1-y0)*FH);q.strokeRect(x0*FW,y0*FH,(x1-x0)*FW,(y1-y0)*FH)}q.restore();if(!S.done&&S.chosen>=0)fx.drawImage(S.layer,0,0)}
+  if(st.k==='zoom'){fx.fillStyle='rgba(0,0,0,.45)';fx.fillRect(0,0,FW,FH);const[mx,my]=S.ptr||[FW/2,FH/2];fx.save();fx.beginPath();fx.arc(mx,my,78,0,7);fx.clip();fx.translate(mx,my);fx.scale(1.9,1.9);fx.translate(-mx,-my);fx.drawImage(S.base,0,0);fx.restore();fx.strokeStyle='#c9962e';fx.lineWidth=8;fx.beginPath();fx.arc(mx,my,80,0,7);fx.stroke();fx.lineWidth=12;fx.beginPath();fx.moveTo(mx+56,my+56);fx.lineTo(mx+110,my+110);fx.stroke();
+   st.spots.forEach((p,i)=>{const[x,y]=FPx(p);if(S.found[i]){fx.strokeStyle='#ffd060';fx.lineWidth=4;fx.beginPath();fx.arc(x,y,24+Math.sin(S.t*6)*3,0,7);fx.stroke();fx.fillStyle='#ffd060';fx.font='18px "Do Hyeon",sans-serif';fx.fillText('기록',x+26,y-18)}else if(S.t>7&&Math.sin(S.t*3+i)>.9){fx.fillStyle='rgba(255,240,180,.7)';fx.beginPath();fx.arc(x,y,5,0,7);fx.fill()}})}
+  if(st.k==='choose'){st.opts.forEach(o=>{const x=o.x*FW,y=o.y*FH;fx.fillStyle='rgba(22,16,11,.8)';fx.beginPath();fx.roundRect(x-44,y-22,88,44,22);fx.fill();fx.strokeStyle='#ffd060';fx.lineWidth=2+Math.sin(S.t*4);fx.stroke();fx.fillStyle='#fff';fx.font='22px "Do Hyeon",sans-serif';fx.textAlign='center';fx.textBaseline='middle';fx.fillText(o.l,x,y+1)});fx.textAlign='left';fx.textBaseline='alphabetic'}
+  if(st.k==='trace'){fx.lineCap='round';fx.lineJoin='round';fx.strokeStyle='rgba(30,20,10,.85)';fx.lineWidth=9;fx.beginPath();S.pts.forEach((p,i)=>i?fx.lineTo(...p):fx.moveTo(...p));fx.stroke();fx.strokeStyle='#f3ead6';fx.lineWidth=13;fx.beginPath();fx.moveTo(...S.pts[0]);let acc=0;for(let i=0;i<S.seg.length;i++){if(acc+S.seg[i]<=S.d){fx.lineTo(...S.pts[i+1]);acc+=S.seg[i]}else{fx.lineTo(...pathAt(S,S.d));break}}fx.stroke();if(!S.done){const t2=pathAt(S,Math.min(S.len,S.d+26));fx.fillStyle='#ffd060';fx.beginPath();fx.arc(t2[0],t2[1],10+Math.sin(S.t*8)*3,0,7);fx.fill()}}
+  if(st.k==='rhythm'){const[x,y]=FPx(st.at);S.ring=(S.ring+dt/.95)%1;const r=110-70*S.ring;fx.strokeStyle='rgba(255,208,96,.95)';fx.lineWidth=6;fx.beginPath();fx.arc(x,y,40,0,7);fx.stroke();fx.strokeStyle='rgba(255,255,255,.9)';fx.lineWidth=4;fx.beginPath();fx.arc(x,y,r,0,7);fx.stroke();fx.fillStyle='#fff';fx.font='20px "Do Hyeon",sans-serif';fx.textAlign='center';fx.fillText(`${S.hits}/${st.n}`,x,y+7);fx.textAlign='left'}
+  if(st.k==='hold'){const[x,y]=FPx(st.at);if(S.down&&S.ptr&&Math.hypot(S.ptr[0]-x,S.ptr[1]-y)<110){S.p+=dt/2.2;if(performance.now()-(S.snd||0)>260){S.snd=performance.now();fnoise(.1,500,.18);fvib(10)}S.shake=.08}else S.p=Math.max(0,S.p-dt*.2);S.prog=Math.min(1,S.p);fx.strokeStyle='rgba(0,0,0,.45)';fx.lineWidth=14;fx.beginPath();fx.arc(x,y,56,0,7);fx.stroke();fx.strokeStyle='#ffd060';fx.beginPath();fx.arc(x,y,56,-Math.PI/2,-Math.PI/2+S.prog*Math.PI*2);fx.stroke();fx.fillStyle='#fff';fx.font='20px "Do Hyeon",sans-serif';fx.textAlign='center';fx.fillText(S.prog>0?'꾹…':'꾹 누르기',x,y+7);fx.textAlign='left';if(S.prog>=1)stepDone()}
+  if(st.k==='dab'){for(const d of S.dots){if(d.gone)d.a=Math.max(0,d.a-dt*4);if(d.a<=0)continue;fx.fillStyle=`rgba(70,55,35,${.85*d.a})`;fx.beginPath();fx.arc(d.x,d.y,d.r*(d.gone?1+(1-d.a):1),0,7);fx.fill();if(!d.gone){fx.strokeStyle='rgba(255,224,138,.6)';fx.lineWidth=2;fx.stroke()}}}
+  if(st.k==='timing'){const[x0,y0,x1,y1]=st.rect;S.x+=S.dir*dt*.75;if(S.x>1){S.x=1;S.dir=-1}if(S.x<0){S.x=0;S.dir=1}const X0=x0*FW,X1=x1*FW,Y0=y0*FH,Y1=y1*FH,mid=(X0+X1)/2,cx=X0+S.x*(X1-X0);fx.fillStyle='rgba(20,20,20,.55)';fx.fillRect(X0,Y0,X1-X0,Y1-Y0);fx.fillStyle='rgba(255,208,96,.85)';fx.fillRect(mid-18,Y0,36,Y1-Y0);fx.strokeStyle='#fff';fx.lineWidth=1;for(let i=0;i<=20;i++){const x=X0+i*(X1-X0)/20;fx.beginPath();fx.moveTo(x,Y0);fx.lineTo(x,Y0+(i%5?8:16));fx.stroke()}fx.fillStyle='#e8eef2';fx.fillRect(cx-5,Y0-14,10,Y1-Y0+28);fx.fillStyle='#fff';fx.font='18px "Do Hyeon",sans-serif';fx.fillText(`${S.hits}/3`,X1-40,Y0-8)}
+  if(st.k==='drag'){fx.fillStyle='rgba(20,14,8,.75)';fx.fillRect(S.rx,S.ry,S.rw,S.rh);fx.setLineDash([9,6]);fx.strokeStyle='#ffd060';fx.lineWidth=3;fx.strokeRect(S.rx,S.ry,S.rw,S.rh);fx.setLineDash([]);fx.save();fx.translate(S.px+S.rw/2,S.py+S.rh/2);fx.rotate(S.rot);fx.shadowColor='rgba(0,0,0,.6)';fx.shadowBlur=18;fx.drawImage(S.base,S.rx,S.ry,S.rw,S.rh,-S.rw/2,-S.rh/2,S.rw,S.rh);fx.shadowBlur=0;fx.strokeStyle='#fff';fx.lineWidth=3;fx.strokeRect(-S.rw/2,-S.rh/2,S.rw,S.rh);fx.restore()}
+  fx.restore();$('#fbar i').style.width=Math.round(Math.min(1,S.prog)*100)+'%'}
+ for(const p of F.parts){if(p.l<=0)continue;p.l-=dt*1.2;p.vy+=500*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;fx.fillStyle=`rgba(255,230,140,${p.l})`;fx.fillRect(p.x,p.y,5,5)}F.parts=F.parts.filter(p=>p.l>0)}
+function finale(){const F=FOL;F.fin={x:.5};fc.style.pointerEvents='auto';const sec=Math.round((performance.now()-F.t0)/1000),stars=F.mist<=1?'★★★':F.mist<=4?'★★☆':'★☆☆';
+ $('#fsteps').querySelectorAll('span').forEach(e=>{e.classList.remove('on');e.classList.add('ok')});$('#ft').textContent=`${F.D.n} 복원 완료 ${stars}`;$('#fhow').textContent=`복원 전과 후를 끌어서 비교해 봐요. 걸린 시간 ${sec}초, 헛손질 ${F.mist}번.`;$('#fwhy').textContent=F.D.fact;$('#fre').hidden=false;$('#fbar i').style.width='100%';
+ const lg=$('#flog');const h=document.createElement('div');h.innerHTML='<b>📜</b><span></span>';h.lastChild.textContent=`${F.D.crew}와 함께 쓴 보존처리 기록부 · ${F.log.length}단계`;lg.prepend(h);
+ [523,659,784,1046].forEach((f,i)=>ftone(f,.6,.12,'triangle',i*.1));fvib([40,40,120]);try{const D=new Set(JSON.parse(localStorage.getItem('muui3d-follow')||'[]'));D.add(F.k);localStorage.setItem('muui3d-follow',JSON.stringify([...D]))}catch(e){}
+ fc.onpointerdown=fc.onpointermove=null;const mv=e=>{if(!F.fin)return;if(e.type==='pointerdown'){F.fin.drag=true;fc.setPointerCapture(e.pointerId)}if(e.type==='pointerup'){F.fin.drag=false}if(F.fin.drag||e.type==='pointerdown'){const[x]=fpos(e);F.fin.x=Math.min(1,Math.max(0,x/FW))}};F.fin.mv=mv;fc.addEventListener('pointerdown',mv);fc.addEventListener('pointermove',mv);fc.addEventListener('pointerup',mv)}
+function drawFinale(){const F=FOL,X=F.fin.x*FW;if(F.after)fx.drawImage(F.after,0,0);if(F.before){fx.save();fx.beginPath();fx.rect(0,0,X,FH);fx.clip();fx.drawImage(F.before,0,0);fx.restore()}fx.fillStyle='#fff';fx.fillRect(X-2,0,4,FH);fx.beginPath();fx.arc(X,FH/2,22,0,7);fx.fill();fx.fillStyle='#3b2a1c';fx.font='16px "Do Hyeon",sans-serif';fx.textAlign='center';fx.fillText('◀ ▶',X,FH/2+5);fx.fillStyle='rgba(22,16,11,.8)';fx.fillRect(10,FH-50,96,34);fx.fillRect(FW-106,FH-50,96,34);fx.fillStyle='#fff';fx.font='20px "Do Hyeon",sans-serif';fx.fillText('복원 전',58,FH-27);fx.fillText('복원 후',FW-58,FH-27);fx.textAlign='left'}
+window.__FOL={openFollow,get FOL(){return FOL},stepDone,closeFollow};
 window.__W3={openAtlas,SEATS3,sitAt,seatAct,get SEATED(){return SEATED},YUT,HOUSES,STAIR,TERR,inHouse,openWS,get ws(){return ws},BENCH3,SHOWC,get DOCENT(){return DOCENT},jPaint:(x,y)=>jPaint({px:x,py:y,point:null}),get SP(){return SP},stageOf,openJar,nearPatch,SJ,sJP,get SCREW(){return SCREW},openPot,potTap,get MYJAR(){return MYJAR},BOOTH,ywAct:(x,y,f)=>ywAct({x,y},f),ywHandles,openYw,get YW_DONE(){return YW_DONE},doJump,setFP,get jumpY(){return jumpY},groundY,BLOCK,get GREETER(){return GREETER},MG_TG,openRn,openDb,openMg,get WK(){return WK},wkClose,openStamps,STG,stampGet,startGame,endGame,gameTap,get game(){return game},GPOS,BAND,openWatch,get bw(){return bandWatch},stW,THREE,mk:makeMuui,R,scene,camO:cam,setF(f){dayOff+=((f-dayFrac()+1)%1)*DAYLEN;dayTick()},get f(){return dayFrac()},QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
 </script>
 </body>
