@@ -1,10 +1,10 @@
 /* 숭례문(서울 남대문) 실제 크기 모형. 단위 1 = 1m. 앞(성 밖, 남쪽)이 +z, 홍예 통로는 z축을 따라 뚫려 있다.
    ⏱ 2026-11-12 만듦. 치수는 공개 자료의 대략값(육축 폭 약 30m·깊이 약 12m·높이 약 6.5m, 누각 정면 5칸·측면 2칸 중층, 전체 높이 약 20m)을 따름. */
 import * as THREE from 'three';
-const tex=(w,h,fn,rep)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;t.wrapS=t.wrapT=THREE.RepeatWrapping;if(rep)t.repeat.set(rep[0],rep[1]);return t};
-const noise=(q,w,h,n,cols,sz=2)=>{for(let i=0;i<n;i++){q.fillStyle=cols[(Math.random()*cols.length)|0];q.fillRect(Math.random()*w,Math.random()*h,sz,sz)}};
+export const tex=(w,h,fn,rep)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;t.wrapS=t.wrapT=THREE.RepeatWrapping;if(rep)t.repeat.set(rep[0],rep[1]);return t};
+export const noise=(q,w,h,n,cols,sz=2)=>{for(let i=0;i<n;i++){q.fillStyle=cols[(Math.random()*cols.length)|0];q.fillRect(Math.random()*w,Math.random()*h,sz,sz)}};
 const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
-function mulb(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+export function mulb(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
 /* ---------- 재질 ---------- */
 export function materials(){
  const r=mulb(11);
@@ -45,9 +45,9 @@ export function materials(){
  const sign=new THREE.MeshStandardMaterial({map:SIGN,roughness:.6});
  return{granite,pave,floor,pillar,wood,dan,dan2,bracket,tile,raft,PLASTER,lattice,board,door,dragon,sign,ridge:M(0x2e3136,{roughness:.6}),white:M(0xeee8dc)}}
 /* ---------- 처마 곡선 지붕 ---------- */
-function roofSurf(g,mat,a,b,d,c,curve,nu,nv,under){const pos=[],uv=[],idx=[];const ew=a.distanceTo(b),sl=a.distanceTo(d);for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){const u=i/nu,v=j/nv;const p=a.clone().lerp(b,u).lerp(d.clone().lerp(c,u),v);curve(p);pos.push(p.x,p.y,p.z);uv.push(u*ew/2,v*sl/2)}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const k=j*(nu+1)+i;idx.push(k,k+1,k+nu+2,k,k+nu+2,k+nu+1)}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;g.add(m);if(under){const u=new THREE.Mesh(geo,under);u.position.y=-.22;u.receiveShadow=true;g.add(u)}return m}
+export function roofSurf(g,mat,a,b,d,c,curve,nu,nv,under){const pos=[],uv=[],idx=[];const ew=a.distanceTo(b),sl=a.distanceTo(d);for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){const u=i/nu,v=j/nv;const p=a.clone().lerp(b,u).lerp(d.clone().lerp(c,u),v);curve(p);pos.push(p.x,p.y,p.z);uv.push(u*ew/2,v*sl/2)}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const k=j*(nu+1)+i;idx.push(k,k+1,k+nu+2,k,k+nu+2,k+nu+1)}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;g.add(m);if(under){const u=new THREE.Mesh(geo,under);u.position.y=-.22;u.receiveShadow=true;g.add(u)}return m}
 /* 우진각 지붕(숭례문 2층): 네 면이 모두 경사, 처마 네 귀가 들린다 */
-function hipRoof(MT,X,Z,L,h0,h1,lift,sag){const g=new THREE.Group();const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+export function hipRoof(MT,X,Z,L,h0,h1,lift,sag){const g=new THREE.Group();const V=(x,y,z)=>new THREE.Vector3(x,y,z);
  const curve=p=>{const s=Math.max(0,Math.min(1,(p.y-h0)/(h1-h0)));const fx=Math.min(1,Math.abs(p.x)/X),fz=Math.min(1,Math.abs(p.z)/Z);const cor=Math.pow(fx,6)*Math.pow(fz,6);p.y+=lift*cor*(1-s)+lift*.25*(Math.pow(fx,8)+Math.pow(fz,8))*(1-s)*.5;p.y-=sag*Math.sin(s*Math.PI);const o=cor*(1-s)*.9;p.x*=1+o/X;p.z*=1+o/Z};
  roofSurf(g,MT.tile,V(-X,h0,Z),V(X,h0,Z),V(-L,h1,0),V(L,h1,0),curve,40,12,MT.raft);roofSurf(g,MT.tile,V(X,h0,-Z),V(-X,h0,-Z),V(L,h1,0),V(-L,h1,0),curve,40,12,MT.raft);
  roofSurf(g,MT.tile,V(X,h0,Z),V(X,h0,-Z),V(L,h1,0),V(L,h1,0),curve,24,12,MT.raft);roofSurf(g,MT.tile,V(-X,h0,-Z),V(-X,h0,Z),V(-L,h1,0),V(-L,h1,0),curve,24,12,MT.raft);
@@ -62,11 +62,11 @@ function skirtRoof(MT,X0,Z0,X1,Z1,h0,h1,lift){const g=new THREE.Group();const V=
  roofSurf(g,MT.tile,V(X0,h0,Z0),V(X0,h0,-Z0),V(X1,h1,Z1),V(X1,h1,-Z1),curve,20,6,MT.raft);roofSurf(g,MT.tile,V(-X0,h0,-Z0),V(-X0,h0,Z0),V(-X1,h1,-Z1),V(-X1,h1,Z1),curve,20,6,MT.raft);
  for(const sx of[-1,1])for(const sz of[-1,1]){const a=V(sx*X0,h0,sz*Z0);curve(a);const b=V(sx*X1,h1,sz*Z1);const len=a.distanceTo(b);const r=new THREE.Mesh(new THREE.BoxGeometry(.42,.38,len),MT.ridge);r.position.copy(a).add(b).multiplyScalar(.5);r.position.y+=.2;r.lookAt(b.x,b.y+.2,b.z);g.add(r)}return g}
 /* 서까래 끝(둥근 서까래 + 네모 부연)을 처마 선을 따라 한 줄로 */
-function rafters(MT,X,Z,y,step=.42){const pts=[];for(let x=-X+.3;x<=X-.3;x+=step){pts.push([x,Z,0]);pts.push([x,-Z,Math.PI])}for(let z=-Z+.3;z<=Z-.3;z+=step){pts.push([X,z,Math.PI/2]);pts.push([-X,z,-Math.PI/2])}
+export function rafters(MT,X,Z,y,step=.42){const pts=[];for(let x=-X+.3;x<=X-.3;x+=step){pts.push([x,Z,0]);pts.push([x,-Z,Math.PI])}for(let z=-Z+.3;z<=Z-.3;z+=step){pts.push([X,z,Math.PI/2]);pts.push([-X,z,-Math.PI/2])}
  const geo=new THREE.CylinderGeometry(.11,.11,1.3,8);geo.rotateX(Math.PI/2);const im=new THREE.InstancedMesh(geo,MT.raft,pts.length);const geo2=new THREE.BoxGeometry(.18,.18,.9);const im2=new THREE.InstancedMesh(geo2,MT.dan2,pts.length);const o=new THREE.Object3D();
  pts.forEach(([x,z,ry],i)=>{const f=Math.pow(Math.min(1,Math.abs(x)/X),6)*Math.pow(Math.min(1,Math.abs(z)/Z),6);o.position.set(x,y+f*.9,z);o.rotation.set(0,ry,0);o.translateZ(-.25);o.updateMatrix();im.setMatrixAt(i,o.matrix);o.position.set(x,y+.26+f*.9,z);o.rotation.set(0,ry,0);o.translateZ(.15);o.updateMatrix();im2.setMatrixAt(i,o.matrix)});im.castShadow=true;return[im,im2]}
 /* 공포(처마를 받치는 짜임)를 기둥 위 둘레에 */
-function brackets(MT,X,Z,y,step=1.1){const pts=[];for(let x=-X;x<=X+.01;x+=step){pts.push([x,Z,0]);pts.push([x,-Z,0])}for(let z=-Z+step;z<=Z-step+.01;z+=step){pts.push([X,z,Math.PI/2]);pts.push([-X,z,Math.PI/2])}const g=new THREE.Group();
+export function brackets(MT,X,Z,y,step=1.1){const pts=[];for(let x=-X;x<=X+.01;x+=step){pts.push([x,Z,0]);pts.push([x,-Z,0])}for(let z=-Z+step;z<=Z-step+.01;z+=step){pts.push([X,z,Math.PI/2]);pts.push([-X,z,Math.PI/2])}const g=new THREE.Group();
  const parts=[[.5,.28,.5,0,0],[1.1,.22,.32,.28,0],[.4,.22,.4,.5,0],[1.6,.22,.32,.72,0],[.4,.22,.4,.94,0]];for(const[w,h,d,yy]of parts){const geo=new THREE.BoxGeometry(w,h,d);const im=new THREE.InstancedMesh(geo,MT.bracket,pts.length);const o=new THREE.Object3D();pts.forEach(([x,z,ry],i)=>{o.position.set(x,y+yy+h/2,z);o.rotation.set(0,ry,0);o.updateMatrix();im.setMatrixAt(i,o.matrix)});im.castShadow=true;g.add(im)}
  /* 앞뒤로 내민 쇠서 */const geo=new THREE.BoxGeometry(.3,.26,1.6);const im=new THREE.InstancedMesh(geo,MT.bracket,pts.length);const o=new THREE.Object3D();pts.forEach(([x,z,ry],i)=>{o.position.set(x,y+.6,z);o.rotation.set(0,ry,0);o.updateMatrix();im.setMatrixAt(i,o.matrix)});g.add(im);return g}
 /* ---------- 짓기 ---------- */
@@ -122,4 +122,11 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
    for(let i=0;i<Math.floor(L/2.2);i++){const x=sx*(W/2+1+i*2.2);for(const z of[-3.2,3.2]){const b=box(1.9,1,.6,MT.granite);add(b,x,h+.5,z)}}}
   spots.push({x:-20,y:0,z:6.2,r:3,t:'한양도성 성벽',h:'숭례문은 한양도성의 남쪽 정문이에요. 조선 태조 때인 1398년에 처음 세웠어요. 옛 성벽은 대부분 헐렸고, 지금은 문 양쪽에 일부만 다시 쌓아 두었어요.'})}
  spots.push({x:0,y:0,z:14,r:3.2,t:'숭례문 실제 크기',h:'지금 보는 숭례문은 실제 크기로 지었어요. 석축(육축) 폭 약 30m, 높이 약 6.5m, 지붕 꼭대기까지 약 20m예요. 무이 키가 1.5m쯤이니 얼마나 큰지 느껴 보세요. 국보예요.'});
- return{group:G,solids,cam,spots,spawn:{x:0,z:26,yaw:Math.PI},size:{W,D,H,top:F2+C2+5.6}}}
+ /* 탐방 페이지가 쓰는 유산별 설정 */
+ const meta={title:'숭례문 · 실제 크기',hint:'실제 크기 숭례문이에요. 홍예 통로를 지나 성 안쪽 돌계단으로 육축 위에 오르고, 누각 안 계단으로 2층까지 올라가 봐요.',
+  env:{plaza:{w:96,d:80,x:0,z:0},beds:true,sign:{x:4.5,z:16.5,lines:['숭례문 崇禮門','국보 · 1398년 처음 세움','육축 폭 약 30m · 높이 약 20m','실제 크기로 지었어요']},treeAvoid:(x,z)=>Math.abs(x)<52&&Math.abs(z)<44},
+  npc:[['science',[[-8,22],[8,22],[8,12],[-8,12]]],['ceramic',[[-3,6],[3,6],[3,-6],[-3,-6]]],['painter',[[-12,H+.45,-5.6],[12,H+.45,-5.6]]],['metal',[[20,-12],[-20,-12]]],['carpenter',[[-6,1.4],[6,-1.4]]]],
+  level:P=>P.y>H+.3+5.5?'누각 2층':P.y>H+.3?'누각 1층':P.y>H-.3?'육축 위':Math.abs(P.x)<2.4&&Math.abs(P.z)<6?'홍예 통로':P.y>.6?'돌계단':'광장',
+  camCap:P=>(P.y>H+.3&&Math.abs(P.x)<12.5&&Math.abs(P.z)<5.5)?(P.y>H+5?3.2:4.2):Infinity,
+  mini:{S:4.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#b9b2a6';g.fillRect(X(-48),Z(-40),96*S,80*S);g.fillStyle='#8e877c';g.fillRect(X(-15),Z(-6),30*S,12*S);g.fillStyle='#7a7468';g.fillRect(X(-41),Z(-3.5),26*S,7*S);g.fillRect(X(15),Z(-3.5),26*S,7*S);g.fillStyle='#4a4e54';g.fillRect(X(-12.8),Z(-6.8),25.6*S,13.6*S);g.fillStyle='#d8c8a0';g.fillRect(X(-2.3),Z(-6),4.6*S,12*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:26,yaw:Math.PI},size:{W,D,H,top:F2+C2+5.6}},meta)}
