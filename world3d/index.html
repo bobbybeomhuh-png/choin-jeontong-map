@@ -7,7 +7,7 @@
 <title>무이 월드 3D</title>
 <meta name="description" content="무이 월드를 3D 무이로 다시 지은 시험판. 회랑의 쇼츠 문 옆에서 3D 무이 복원단이 유물을 실제로 작업한다">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&family=Do+Hyeon&display=swap" rel="stylesheet">
-<!-- ⏱ 2026-11-11 10:30 1차 채우기: 회랑 뒤 기와집 3채·뒷산, 네모 연못(섬·소나무·연꽃·원앙)·차일 마루, 장독대, 장승·솟대, 청사초롱 등불줄, 평상·지우산, 벽돌 가마(불·연기), 악사 무대(악기), 안내판, 장터, 큰 무이 동상, 꽃담, 디딤돌, 포털 2(발굴 터·팔복), 좌우 방향 고침 / 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
+<!-- ⏱ 2026-11-11 12:10 2차-1: 하루 22분 낮밤 순환(블록판과 같은 시계, 노을·별·달), 무이 악사 다섯(북·거문고·대금·배소·완함) 연주 동작과 굿거리 16마디, 공연 보기·북 같이 치기, 소리 켜기/끄기 / 2026-11-11 10:30 1차 채우기: 회랑 뒤 기와집 3채·뒷산, 네모 연못(섬·소나무·연꽃·원앙)·차일 마루, 장독대, 장승·솟대, 청사초롱 등불줄, 평상·지우산, 벽돌 가마(불·연기), 악사 무대(악기), 안내판, 장터, 큰 무이 동상, 꽃담, 디딤돌, 포털 2(발굴 터·팔복), 좌우 방향 고침 / 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
 <style>
 :root{--panel:rgba(22,16,11,.84);--line:rgba(255,236,210,.18);--ink:#f3eadb;--muted:#c8b9a2;--gold:#e7b75a}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#cfd8e0;color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;-webkit-tap-highlight-color:transparent}
@@ -28,10 +28,12 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #yt{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:30;display:grid;place-items:center;padding:14px}#yt .in{display:grid;gap:10px;justify-items:center;width:min(420px,100%)}#yt iframe{width:min(380px,90vw);aspect-ratio:9/16;border:0;border-radius:12px}
 #cd{position:fixed;inset:0;display:grid;place-items:center;font:700 120px "Do Hyeon",sans-serif;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,.5);pointer-events:none;z-index:6}
 #ph{position:fixed;inset:0;background:rgba(10,7,4,.82);z-index:30;display:grid;place-items:center;padding:14px}#ph .in{display:grid;gap:12px;justify-items:center;width:min(900px,100%)}#ph img{max-width:100%;max-height:72vh;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5)}#ph a{text-decoration:none;display:inline-grid;place-items:center}
+#bw{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);z-index:7;display:grid;gap:10px;justify-items:center;width:min(560px,calc(100vw - 20px))}#bwMsg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:14.5px;text-align:center;line-height:1.5}#bw .row{display:flex;gap:10px;align-items:center}
+#bwHit{position:relative;width:86px;height:86px;border-radius:50%;background:#b0402e;color:#fff3dc;border:4px solid var(--gold);font:28px "Do Hyeon",sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.4)}#bwRing{position:absolute;inset:-6px;border-radius:50%;border:3px solid #fff3dc;pointer-events:none;transition:transform .05s linear}
 [hidden]{display:none!important}
 @media (pointer:fine){#stick{display:none}}
 #top .btn,#ttl{white-space:nowrap}
-@media (max-width:560px){#top{gap:5px;padding-left:8px;padding-right:8px}#ttl{font-size:14px;padding:6px 9px}#top .btn{padding:6px 8px;font-size:13px;min-height:34px}#qCnt{position:fixed;left:8px;top:calc(env(safe-area-inset-top) + 54px)}#hint{top:calc(env(safe-area-inset-top) + 94px);font-size:13.5px}}
+@media (max-width:560px){#top{gap:5px;padding-left:8px;padding-right:8px}#ttl{font-size:14px;padding:6px 9px}#top .btn{padding:6px 8px;font-size:13px;min-height:34px}#qCnt{position:fixed;left:8px;top:calc(env(safe-area-inset-top) + 54px)}#dchip{position:fixed;right:8px;top:calc(env(safe-area-inset-top) + 54px)}#hint{top:calc(env(safe-area-inset-top) + 94px);font-size:13.5px}}
 @media (pointer:coarse){#act{left:auto;right:14px;transform:none;font-size:18px;padding:10px 16px;max-width:calc(100vw - 175px);white-space:normal}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
@@ -46,9 +48,10 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
  <div id="kinds"></div>
  <div><button class="btn main" id="go" type="button" style="font-size:18px;padding:11px 30px">들어가기</button> <button class="btn" id="toBlock" type="button">블록 세상으로</button></div>
 </div></section>
-<header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><span class="btn" id="qCnt" hidden style="pointer-events:none"></span><button class="btn" id="bPhoto" type="button">기념사진</button><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button">블록 세상</button></header>
+<header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><span class="btn" id="qCnt" hidden style="pointer-events:none"></span><span class="btn" id="dchip" style="pointer-events:none"></span><button class="btn" id="bSnd" type="button">소리 켬</button><button class="btn" id="bPhoto" type="button">기념사진</button><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button">블록 세상</button></header>
 <div id="hint" hidden></div>
 <div id="cd" hidden></div>
+<section id="bw" hidden><div id="bwMsg"></div><div class="row"><button class="btn" id="bwDrum" type="button">북 같이 치기</button><button id="bwHit" type="button" hidden><i id="bwRing"></i>둥</button><button class="btn" id="bwX" type="button">그만 보기</button></div></section>
 <section id="ph" hidden><div class="in"><img id="phImg" alt="무이 월드 기념사진"><div><a class="btn main" id="phSave" download="muui-world-3d.png">사진 저장</a> <button class="btn" id="phX" type="button">닫기</button></div></div></section>
 <button id="act" type="button" hidden></button>
 <div id="stick" hidden><i></i></div>
@@ -228,7 +231,7 @@ const fireBoxM=new THREE.MeshBasicMaterial({color:0xff7a2a});
  ENVT.push((dt,now)=>{for(let i=0;i<SN;i++){sa[i]+=dt;const t=sa[i]%4;sp[i*3]=cw.x+t*.5+Math.sin(i+t)*.25;sp[i*3+1]=cw.y+t*1.1;sp[i*3+2]=cw.z+Math.cos(i*1.3+t)*.25}sg.attributes.position.needsUpdate=true;kl.intensity=(night?16:4)+Math.sin(now*.02)*1.5;fireBoxM.color.setHSL(.06,1,.5+Math.sin(now*.013)*.06)});
  const wood=M(0x6e4a2a,{roughness:.9});for(let r=0;r<3;r++)for(let i=0;i<5-r;i++){const l=cyl(.13,.13,1.4,wood,8);l.rotation.x=Math.PI/2;l.position.set(20.6+i*.28+r*.14,.14+r*.25,9.4);l.castShadow=true;scene.add(l)}BLOCK.push({r:[20.3,22.3,8.6,10.2]})}
 /* --- 공연 무대(서쪽): 무대, 봉우리 병풍, 등롱, 방석, 악기 --- */
-const STX=-24,STZ=3;
+const STX=-24,STZ=3,STP={};
 {const g=new THREE.Group();const pf=box(3.8,.7,8.6,WOODL);pf.position.y=.35;g.add(pf);const st=box(4.1,.18,8.9,WOOD);st.position.y=.09;g.add(st);
  const scr=tex(1024,320,(q,w,h)=>{q.fillStyle='#2a4c78';q.fillRect(0,0,w,h);const pk=(cx,top,ww,c)=>{q.fillStyle=c;q.beginPath();q.moveTo(cx-ww,h);q.quadraticCurveTo(cx-ww*.3,top+30,cx,top);q.quadraticCurveTo(cx+ww*.3,top+30,cx+ww,h);q.fill()};pk(w*.5,h*.15,w*.18,'#2f6f4f');pk(w*.27,h*.3,w*.14,'#3a7c57');pk(w*.73,h*.3,w*.14,'#3a7c57');pk(w*.08,h*.5,w*.1,'#45885c');pk(w*.92,h*.5,w*.1,'#45885c');
   q.fillStyle='#d9362a';q.beginPath();q.arc(w*.18,h*.2,26,0,7);q.fill();q.fillStyle='#f4efe2';q.beginPath();q.arc(w*.82,h*.2,24,0,7);q.fill();q.fillStyle='#d9a93a';q.font='bold 40px "Noto Serif KR",serif';q.textAlign='center';q.fillText('무이 악사 무대',w/2,h*.93)});
@@ -236,11 +239,11 @@ const STX=-24,STZ=3;
  for(const z of[-4,4]){const p=cyl(.1,.12,4.4,RED,8);p.position.set(-1.8,2.2,z);g.add(p)}
  for(const z of[-3.6,-1.2,1.2,3.6]){const lp=cyl(.05,.05,2,WOOD,6);lp.position.set(1.7,1.7,z);g.add(lp);const l1=cyl(.16,.18,.28,LANM[0],10);l1.position.set(1.7,2.75,z);g.add(l1);const l2=cyl(.18,.14,.24,LANM[1],10);l2.position.set(1.7,2.5,z);g.add(l2)}
  const cu=[0x9c3b2c,0x2f5f8a,0xc59b3a,0x2f6b55,0x9c3b2c];for(let i=0;i<5;i++){const c=cyl(.36,.38,.08,M(cu[i],{roughness:.9}),18);c.position.set(-.3,.74,-3.2+i*1.6);g.add(c)}
- /* 북 */const dr=cyl(.42,.42,.6,M(0xb0402e,{roughness:.5}),20);dr.rotation.x=Math.PI/2;dr.position.set(.55,1.25,-3.2);g.add(dr);for(const s of[-1,1]){const hd=cyl(.43,.43,.02,M(0xe8dcc0),20);hd.rotation.x=Math.PI/2;hd.position.set(.55,1.25,-3.2+s*.31);g.add(hd)}const ds=box(.1,.5,.1,WOOD);ds.position.set(.55,.95,-3.2);g.add(ds);
- /* 거문고 */const gm=box(.32,.1,1.6,M(0x6b3a22,{roughness:.5}));gm.position.set(.45,.84,-1.2);gm.rotation.y=.25;g.add(gm);for(let i=0;i<6;i++){const s=box(.006,.006,1.5,M(0xf2e6c8));s.position.set(.45-.12+i*.048,.9,-1.2);s.rotation.y=.25;g.add(s)}
- /* 대금 */const dg=cyl(.03,.03,1.1,M(0x9a7a4a),8);dg.rotation.z=Math.PI/2;dg.position.set(.4,.8,1.2);g.add(dg);
- /* 배소: 대나무 관 묶음 */for(let i=0;i<8;i++){const p=cyl(.025,.025,.3+i*.04,M(0xb89a5a),6);p.position.set(.45,.78+(.3+i*.04)/2,2.95+i*.06);g.add(p)}
- /* 완함: 둥근 몸에 긴 목 */const wh=cyl(.3,.3,.08,M(0x8a4a2a,{roughness:.4}),20);wh.rotation.z=Math.PI/2;wh.position.set(.45,1.0,3.9);g.add(wh);const nk=box(.06,.9,.06,M(0x6b3a22));nk.position.set(.45,1.45,3.9);g.add(nk);
+ /* 북 */const dr=cyl(.3,.3,.34,M(0xb0402e,{roughness:.5}),20);dr.position.set(.3,.93,-3.2);g.add(dr);const hd=cyl(.31,.31,.02,M(0xe8dcc0),20);hd.position.set(.3,1.11,-3.2);g.add(hd);for(const a of[0,2.1,4.2]){const lg=cyl(.025,.025,.42,WOOD,6);lg.position.set(.3+Math.cos(a)*.22,.88,-3.2+Math.sin(a)*.22);lg.rotation.set(Math.sin(a)*.25,0,-Math.cos(a)*.25);g.add(lg)}
+ /* 거문고 */const gm=box(.32,.1,1.6,M(0x6b3a22,{roughness:.5}));gm.position.set(.12,.84,-1.6);gm.rotation.y=.25;g.add(gm);for(let i=0;i<6;i++){const s=box(.006,.006,1.5,M(0xf2e6c8));s.position.set(.12-.12+i*.048,.9,-1.6);s.rotation.y=.25;g.add(s)}
+ /* 대금 */const dg=cyl(.03,.03,1.1,M(0x9a7a4a),8);dg.rotation.z=Math.PI/2;dg.position.set(.35,.76,.2);g.add(dg);STP.dg=dg;
+ /* 배소: 대나무 관 묶음 */{const pg=new THREE.Group();for(let i=0;i<8;i++){const p=cyl(.025,.025,.3+i*.04,M(0xb89a5a),6);p.rotation.x=Math.PI/2;p.position.set(.35,.75,1.4+i*.06);pg.add(p)}g.add(pg);STP.pipes=pg}
+ /* 완함: 둥근 몸에 긴 목 */const wh=cyl(.3,.3,.08,M(0x8a4a2a,{roughness:.4}),20);wh.rotation.z=Math.PI/2;wh.rotation.z=0;wh.rotation.x=Math.PI/2;wh.position.set(.35,.74,3.0);g.add(wh);const nk=box(.06,.06,.9,M(0x6b3a22));nk.position.set(.35,.74,3.6);g.add(nk);STP.wh=[wh,nk];
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.position.set(STX,0,STZ);g.rotation.y=Math.atan2(0-STX,2.5-STZ)-Math.PI/2;scene.add(g);BLOCK.push({c:[STX,STZ,2.3]},{c:[STX+.3,STZ+3,2.1]},{c:[STX+.3,STZ-3,2.1]})}
 /* --- 안내판, 장터 좌판 --- */
 {const bd=tex(640,420,(q,w,h)=>{q.fillStyle='#f3ead6';q.fillRect(0,0,w,h);q.strokeStyle='#5b3a22';q.lineWidth=16;q.strokeRect(8,8,w-16,h-16);q.fillStyle='#2a1d12';q.font='bold 46px "Noto Serif KR",serif';q.textAlign='center';q.fillText('무이 월드 안내도',w/2,72);
@@ -258,7 +261,7 @@ const PORT3=[{k:'dig',th:-76.7,n:'발굴 터',d:'무이 발굴단: 땅속 유물
   const lb=new THREE.Mesh(new THREE.PlaneGeometry(2.6,.5),new THREE.MeshBasicMaterial({map:tex(512,100,(q,w,h)=>{q.fillStyle='#2b1d12';q.fillRect(0,0,w,h);q.fillStyle='#f3d27a';q.font='bold 50px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText(P.n,w/2,h/2)})}));lb.position.set(0,4.0,.11);g.add(lb);add(g,x,.3,z,0,false);g.lookAt(0,.3,0);
   const[rx,rz]=rP(RC-.6,P.th);const ring=new THREE.Mesh(new THREE.TorusGeometry(1.25,.1,8,32),new THREE.MeshStandardMaterial({color:0x6fe08a,emissive:0x2fbf5a,emissiveIntensity:1.2}));ring.position.set(rx,2.3,rz);ring.lookAt(0,2.3,2.5);scene.add(ring);
   const disc=new THREE.Mesh(new THREE.CircleGeometry(1.2,32),new THREE.MeshBasicMaterial({map:sw,transparent:true,opacity:.45,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending}));disc.position.copy(ring.position);disc.quaternion.copy(ring.quaternion);scene.add(disc);ENVT.push(dt=>{disc.rotateZ(dt*1.4)});P.x=rx;P.z=rz}}
-function envNight(n){for(const[m,v]of ENVN)m.emissiveIntensity=n?v:0;}
+function envNight(k){for(const[m,v]of ENVN)m.emissiveIntensity=v*(+k);}
 function envTick(dt,now){for(const f of ENVT)f(dt,now)}
 function envCollide(){for(const b of BLOCK){if(b.c){const[x,z,r]=b.c,dx=pos.x-x,dz=pos.z-z,d=Math.hypot(dx,dz);if(d<r&&d>1e-4){pos.x=x+dx/d*r;pos.z=z+dz/d*r}}else{const[x0,x1,z0,z1]=b.r;if(pos.x>x0&&pos.x<x1&&pos.z>z0&&pos.z<z1){const l=pos.x-x0,r=x1-pos.x,t=pos.z-z0,bt=z1-pos.z,m=Math.min(l,r,t,bt);if(m===l)pos.x=x0;else if(m===r)pos.x=x1;else if(m===t)pos.z=z0;else pos.z=z1}}}}
 /* 장소 안내(가까이 가면 버튼) */
@@ -268,7 +271,6 @@ const SPOTS=[{x:5.6,z:13.6,r:2.6,t:'연못 이야기',h:'네모난 못에 둥근
  {x:5.2,z:23.4,r:2.2,t:'솟대 이야기',h:'솟대: 장대 끝의 새가 하늘과 마을을 잇는다고 믿었어요. 풍년과 안녕을 빌었지요.'},
  {x:-17,z:17.6,r:2.4,t:'평상에서 쉬기',h:'평상에 앉아 쉬어 가요. 지우산 그늘이 시원해요.',sit:[-17,19.5]},
  {x:KX-4.2,z:KZ+1.6,r:2.8,t:'가마 불멍',h:'가마 아궁이에 불이 타요. 장작 타는 소리를 들으며 잠깐 쉬어 가요.'},
- {x:STX+3.4,z:STZ,r:3.2,t:'악사 무대',h:'무이 악사 무대: 금동대향로의 다섯 악사를 닮은 무이들이 북·거문고·대금·배소·완함을 연주할 자리예요.'},
  {x:4.2,z:20.3,r:2,t:'안내도 보기',h:'뒤 회랑엔 쇼츠 문과 유물 복원 현장, 왼쪽엔 모닥불·무대·장독대, 오른쪽엔 연못과 가마, 회랑 양끝엔 발굴 터와 팔복 상영관 문이 있어요.'}];
 /* ---------------- 무이 ---------------- */
 const gl=new GLTFLoader();const CACHE={};
@@ -354,6 +356,82 @@ $('#phX').addEventListener('click',()=>{$('#ph').hidden=true});
 function photoTick(dt){if(!photo)return;photo.t-=dt;const n=Math.ceil(photo.t-.2);$('#cd').textContent=n>0?n:'';
  yaw=photo.yaw;speed=0;const ex=pos.x+Math.sin(yaw)*3.3,ez=pos.z+Math.cos(yaw)*3.3;cam.position.set(ex,1.35,ez);cam.lookAt(pos.x,.72,pos.z);
  if(photo.t<=0){$('#cd').hidden=true;shoot();photo=null}}
+/* ---------------- 소리: 공연(굿거리)과 효과음 ---------------- */
+let ac0=null,mus=null,sfxG=null,soundOn=(()=>{try{return localStorage.getItem('muui3d-sound')!=='0'}catch(e){return true}})();const pC={};const rnd=(a,b)=>a+Math.random()*(b-a);
+const GK=[220,261.63,293.66,329.63,392,440,523.25,587.33,659.25];
+function audio(){if(ac0){if(ac0.state==='suspended')ac0.resume();return}const Cx=window.AudioContext||window.webkitAudioContext;if(!Cx)return;ac0=new Cx();
+ const master=ac0.createGain();master.gain.value=soundOn?1:0;master.connect(ac0.destination);audio.master=master;
+ mus=ac0.createGain();mus.gain.value=.7;const rev=ac0.createConvolver(),n=ac0.sampleRate*2.4|0,ir=ac0.createBuffer(2,n,ac0.sampleRate);for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3)}rev.buffer=ir;const wet=ac0.createGain();wet.gain.value=.22;mus.connect(master);mus.connect(rev).connect(wet).connect(master);
+ sfxG=ac0.createGain();sfxG.gain.value=.8;sfxG.connect(master)}
+function setSound(on){soundOn=on;try{localStorage.setItem('muui3d-sound',on?'1':'0')}catch(e){}if(on)audio();if(audio.master)audio.master.gain.value=on?1:0;$('#bSnd').textContent=on?'소리 켬':'소리 끔'}
+function pluckB(f){const sr=ac0.sampleRate,N=Math.round(sr/f),len=sr*3|0,b=ac0.createBuffer(1,len,sr),c=b.getChannelData(0),d=new Float32Array(N);for(let i=0;i<N;i++)d[i]=(Math.random()*2-1)*(i<N*.55?1:.35);let p=0,last=0;for(let i=0;i<len;i++){const v=d[p];d[p]=(v+last)*.4985;last=v;c[i]=v;p=(p+1)%N}return b}
+/* 짧은 효과음: 톡(줍기·맞춤), 딩(성공), 퉁(던짐) */
+function sfx(kind){if(!ac0||!soundOn)return;const t0=ac0.currentTime,o=ac0.createOscillator(),g=ac0.createGain();const P={tick:[880,.12,.18],ding:[1320,.5,.22],thud:[140,.25,.4],whoosh:[420,.3,.12],fail:[200,.35,.18]}[kind]||[600,.2,.2];
+ o.type=kind==='thud'?'sine':'triangle';o.frequency.setValueAtTime(P[0],t0);if(kind==='whoosh')o.frequency.exponentialRampToValueAtTime(900,t0+P[1]);if(kind==='fail')o.frequency.exponentialRampToValueAtTime(120,t0+P[1]);if(kind==='thud')o.frequency.exponentialRampToValueAtTime(60,t0+P[1]);
+ g.gain.setValueAtTime(P[2],t0);g.gain.exponentialRampToValueAtTime(.0001,t0+P[1]);o.connect(g).connect(sfxG);o.start(t0);o.stop(t0+P[1]+.05);
+ if(kind==='ding'){const o2=ac0.createOscillator(),g2=ac0.createGain();o2.type='sine';o2.frequency.value=1980;g2.gain.setValueAtTime(.08,t0+.08);g2.gain.exponentialRampToValueAtTime(.0001,t0+.7);o2.connect(g2).connect(sfxG);o2.start(t0+.08);o2.stop(t0+.75)}}
+/* 악보: 굿거리 12/8, 16마디. 직접 지은 곡 */
+const CN_E=.28,CN_BAR=CN_E*12,CN_CYC=16*CN_BAR+8,CN_RCYC=4*CN_BAR+2.4;
+const CN_SCORE=(()=>{const N=[],P={A1:[[0,5,3],[3,6,2],[5,5,1],[6,4,3],[9,3,3]],A2:[[0,4,2],[2,3,1],[3,2,3],[6,3,2],[8,4,1],[9,5,3]],B1:[[0,6,3],[3,7,3],[6,8,2],[8,7,1],[9,6,3]],B2:[[0,5,2],[2,6,1],[3,5,2],[5,4,1],[6,3,3],[9,2,3]],C1:[[0,4,6],[6,5,3],[9,6,3]],C2:[[0,7,6],[6,6,3],[9,5,3]],C3:[[0,6,3],[3,5,3],[6,4,6]],C4:[[0,3,3],[3,2,3],[6,4,6]]};
+ const add=(bar,q,i,f,d,v)=>N.push({t:bar*CN_BAR+q*CN_E,i,f,d:d*CN_E,v});
+ const mel=(bar,ph,i,mul,v,long)=>P[ph].forEach(([q,n,d])=>add(bar,q,i,GK[n]*mul,long?d+1:d,v));
+ const drum=(bar,full)=>{add(bar,0,4,1,1,1);if(full){add(bar,3,4,0,1,.55);add(bar,6,4,1,1,.75);add(bar,8,4,0,1,.35);add(bar,9,4,0,1,.55)}else add(bar,6,4,0,1,.4)};
+ ['A1','A2','A1','A2'].forEach((p,b)=>{mel(b,p,3,.5,.36);drum(b,false)});
+ ['B1','B2','A1','A2'].forEach((p,k)=>{const b=4+k;mel(b,p,0,1,.26);add(b,0,3,GK[0]/2,6,.3);add(b,6,3,GK[4]/2,6,.24);drum(b,true)});
+ ['C1','C2','C3','C4'].forEach((p,k)=>{const b=8+k;mel(b,p,1,1,.05,true);const last=P[p][P[p].length-1][1];[9,10,11].forEach((q,j)=>add(b,q,2,GK[Math.min(8,last+j)]*2,1,.04));add(b,0,0,GK[P[p][0][1]],3,.18);add(b,6,0,GK[P[p][0][1]],3,.14);add(b,0,3,GK[0]/2,6,.28);add(b,6,3,GK[2]/2,6,.22);drum(b,true)});
+ ['A1','B1','B2'].forEach((p,k)=>{const b=12+k;mel(b,p,0,1,.26);P[p].forEach(([q,n,d])=>{if(q===0||q===6)add(b,q,1,GK[n],d+2,.04)});add(b,6,2,GK[7]*2,1,.04);add(b,9,2,GK[8]*2,1,.04);add(b,0,3,GK[0]/2,6,.3);add(b,6,3,GK[4]/2,6,.24);drum(b,true);if(k===2){add(b,10,4,0,1,.4);add(b,10.5,4,0,1,.45);add(b,11,4,0,1,.5);add(b,11.5,4,0,1,.6)}});
+ add(15,0,0,GK[5],6,.32);add(15,0,1,GK[5],10,.06);add(15,0,2,GK[8]*2,2,.05);add(15,0,3,GK[5]/2,10,.4);add(15,0,4,1,1,1.2);add(15,6,4,1,1,.9);
+ return N.sort((a,b)=>a.t-b.t)})();
+const CN_REH=CN_SCORE.filter(n=>n.t<4*CN_BAR-.01&&(n.i===3||n.i===4));
+/* 소리: 공연 전용 음량(거리에 따라)으로 mus에 보낸다 */
+let CG=null;const cgOut=()=>{if(!ac0)return null;if(!CG){CG=ac0.createGain();CG.gain.value=0;CG.connect(mus)}return CG};
+function cPl(f,v,at,soft){const o=cgOut();if(!o)return;const t0=ac0.currentTime+Math.max(0,at),s=ac0.createBufferSource(),g=ac0.createGain(),lp=ac0.createBiquadFilter();s.buffer=pC[f]||(pC[f]=pluckB(f));lp.type='lowpass';lp.frequency.value=soft?1100:2400;g.gain.value=v;s.connect(lp).connect(g).connect(o);s.start(t0);s.stop(t0+2.6)}
+function cFl(f,at,dur,v){const o0=cgOut();if(!o0)return;const t0=ac0.currentTime+Math.max(0,at),o=ac0.createOscillator(),g=ac0.createGain(),lf=ac0.createOscillator(),lg=ac0.createGain();o.type='triangle';o.frequency.value=f;lf.frequency.value=5;lg.gain.setValueAtTime(0,t0);lg.gain.linearRampToValueAtTime(f*.012,t0+dur*.6);lf.connect(lg).connect(o.frequency);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+.12);g.gain.setValueAtTime(v,t0+Math.max(.15,dur-.2));g.gain.exponentialRampToValueAtTime(.0001,t0+dur+.1);o.connect(g).connect(o0);const n=ac0.sampleRate*(dur+.15)|0,b=ac0.createBuffer(1,n,ac0.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=Math.random()*2-1;const q=ac0.createBufferSource(),bf=ac0.createBiquadFilter(),ng=ac0.createGain();q.buffer=b;bf.type='bandpass';bf.frequency.value=f*2;bf.Q.value=4;ng.gain.setValueAtTime(.0001,t0);ng.gain.exponentialRampToValueAtTime(v*.5,t0+.06);ng.gain.exponentialRampToValueAtTime(.0001,t0+dur);q.connect(bf).connect(ng).connect(o0);[o,lf].forEach(x=>{x.start(t0);x.stop(t0+dur+.15)});q.start(t0)}
+function cDr(v,at){const o0=cgOut();if(!o0)return;const t0=ac0.currentTime+Math.max(0,at),o=ac0.createOscillator(),g=ac0.createGain();o.frequency.setValueAtTime(v>.8?96:120,t0);o.frequency.exponentialRampToValueAtTime(48,t0+.3);g.gain.setValueAtTime(.42*v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.55);o.connect(g).connect(o0);o.start(t0);o.stop(t0+.6);const n=ac0.sampleRate*.05|0,b=ac0.createBuffer(1,n,ac0.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=(Math.random()*2-1)*(1-i/n);const s=ac0.createBufferSource(),f=ac0.createBiquadFilter(),g2=ac0.createGain();s.buffer=b;f.type='lowpass';f.frequency.value=900;g2.gain.value=.25*v;s.connect(f).connect(g2).connect(o0);s.start(t0)}
+function cClap(at,v){const o0=cgOut();if(!o0)return;const t0=ac0.currentTime+at,n=ac0.sampleRate*.04|0,b=ac0.createBuffer(1,n,ac0.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);const s=ac0.createBufferSource(),f=ac0.createBiquadFilter(),g=ac0.createGain();s.buffer=b;f.type='bandpass';f.frequency.value=rnd(1100,2000);g.gain.value=v;s.connect(f).connect(g).connect(o0);s.start(t0)}
+function cPlay(n,at){if(n.i===0)cPl(n.f,n.v,at,false);else if(n.i===1)cFl(n.f,at,n.d,n.v);else if(n.i===2)cFl(n.f,at,Math.min(.3,n.d),n.v);else if(n.i===3)cPl(n.f,n.v,at,true);else cDr(n.v,at)}
+/* ---------------- 무이 악사: 금동대향로 뚜껑의 다섯 악사 ---------------- */
+const STRY=Math.atan2(0-STX,2.5-STZ)-Math.PI/2,stW=(lx,lz)=>[STX+lx*Math.cos(STRY)+lz*Math.sin(STRY),STZ-lx*Math.sin(STRY)+lz*Math.cos(STRY)];
+const BAND_DEF=[{k:'carpenter',ins:'buk',n:'북',lz:-3.2,day:1},{k:'science',ins:'geo',n:'거문고',lz:-1.6,day:1},{k:'metal',ins:'daegeum',n:'종적(대금)',lz:0},{k:'ceramic',ins:'baeso',n:'배소',lz:1.6},{k:'painter',ins:'wanham',n:'완함',lz:3.2}];
+const BAND=[];const stageL=[];for(const lz of[-2.4,0,2.4]){const[x,z]=stW(2.2,lz);const l=new THREE.PointLight(0xffd29a,0,7,1.4);l.position.set(x,3.2,z);scene.add(l);stageL.push(l)}const _v=new THREE.Vector3(),_q=new THREE.Quaternion(),AX={x:new THREE.Vector3(1,0,0),y:new THREE.Vector3(0,1,0),z:new THREE.Vector3(0,0,1)};
+function boneAdd(b,ax,ang){if(!b||!ang)return;_q.setFromAxisAngle(AX[ax],ang);b.quaternion.multiply(_q)}
+async function placeBand(){for(const d of BAND_DEF){const m=await makeMuui(d.k,.95);const[x,z]=stW(-.35,d.lz);m.root.position.set(x,.74,z);m.root.rotation.y=Math.atan2(Math.cos(STRY),-Math.sin(STRY));m.play('sit_idle',0);
+  m.def=d;m.bones={aL:m.root.getObjectByName('armL'),aR:m.root.getObjectByName('armR'),hd:m.root.getObjectByName('head'),sp:m.root.getObjectByName('spine')};
+  /* 입에 대는 악기와 안고 타는 악기는 무이가 든다 */
+  if(d.ins==='daegeum'){const f=cyl(.022,.022,.62,M(0x9a7a4a,{roughness:.6}),8);f.rotation.z=Math.PI/2;m.hold=f;m.holdOff=new THREE.Vector3(.12,-.16,.2)}
+  if(d.ins==='baeso'){const g=new THREE.Group();for(let i=0;i<8;i++){const p=cyl(.018,.018,.14+i*.022,M(0xb89a5a),6);p.position.set(-.09+i*.026,-(.14+i*.022)/2,0);g.add(p)}const bd=box(.24,.03,.04,M(0x8a3a2a));bd.position.y=-.04;g.add(bd);m.hold=g;m.holdOff=new THREE.Vector3(0,-.1,.2)}
+  if(d.ins==='wanham'){const g=new THREE.Group();const bo=cyl(.2,.2,.06,M(0x8a4a2a,{roughness:.4}),20);bo.rotation.x=Math.PI/2;g.add(bo);const nk=box(.05,.5,.04,M(0x6b3a22));nk.position.set(-.12,.3,0);nk.rotation.z=.45;g.add(nk);g.rotation.z=-.5;m.hold=g;m.holdOff=new THREE.Vector3(0,-.5,.22)}
+  if(m.hold){m.hold.traverse(o=>{if(o.isMesh)o.castShadow=true});m.root.add(m.hold)}BAND.push(m)}}
+/* 악보 시계: 모두 같은 박자. 밤 = 다섯이 16마디, 낮 = 북과 거문고만 4마디 연습 */
+const bandSched=new Set();let bandWatch=null;
+function bandTick(dt){const s=Date.now()/1000,nt=night,C=nt?CN_CYC:CN_RCYC,cyc=Math.floor(s/C),ps=s-cyc*C,SC=nt?CN_SCORE:CN_REH;
+ const d=Math.hypot(pos.x-STX,pos.z-STZ),vol=Math.max(0,Math.min(1,1-(d-7)/38));if(CG)CG.gain.value=vol*(bandWatch?1.15:1);
+ if(ac0&&soundOn&&vol>0&&!document.hidden){for(let i=0;i<SC.length;i++){const n=SC[i];if(n.t>=ps&&n.t<ps+.6){const key=(nt?'N':'D')+cyc+'_'+i;if(!bandSched.has(key)){bandSched.add(key);cPlay(n,n.t-ps)}}}if(bandSched.size>3000)bandSched.clear()}
+ /* 악기마다 최근 소리로부터의 시간 → 팔 움직임 */
+ const since=ins=>{let best=9;for(const n of SC){if(n.i===ins&&n.t<=ps){best=Math.min(best,ps-n.t)}}return best};
+ const on=ins=>SC.some(n=>n.i===ins&&n.t<=ps&&ps<n.t+n.d);
+ const hitD=since(4),hitP=since(0),hitG=since(3),flute=on(1),pipe=on(2)||since(2)<.25;
+ for(const m of BAND){const show=!!(nt||m.def.day);m.root.visible=show;if(m.hold)m.hold.visible=show;if(!show)continue;m.mx.update(dt);const B=m.bones,t=s;
+  if(m.hold){B.hd.getWorldPosition(_v);m.root.worldToLocal(_v);m.hold.position.copy(_v).add(m.holdOff)}
+  if(m.def.ins==='buk'){const e=Math.exp(-hitD*9),alt=(Math.floor((ps/CN_E))%2);boneAdd(B.aR,'x',-1.0-(alt?e*.55:0)+.25);boneAdd(B.aL,'x',-1.0-(alt?0:e*.55)+.25);boneAdd(B.sp,'x',e*.08)}
+  else if(m.def.ins==='geo'){const e=Math.exp(-hitG*10);boneAdd(B.aR,'x',-.45-e*.18);boneAdd(B.aR,'z',.15);boneAdd(B.aL,'x',-.35);boneAdd(B.hd,'x',.12+Math.sin(t*1.4)*.04)}
+  else if(m.def.ins==='daegeum'){const a=flute?1:.35;boneAdd(B.aR,'x',-.75*a-.1);boneAdd(B.aL,'x',-.75*a-.1);boneAdd(B.aR,'z',.55*a);boneAdd(B.aL,'z',-.55*a);boneAdd(B.hd,'z',.18*a+Math.sin(t*2.2)*.03*a);if(m.hold){m.hold.rotation.z=Math.PI/2;m.hold.rotation.y=.35;m.hold.visible=true;m.holdOff.set(.1,.11,.24+(1-a)*.08)}}
+  else if(m.def.ins==='baeso'){const a=pipe?1:.4;boneAdd(B.aR,'x',-.7*a-.1);boneAdd(B.aL,'x',-.7*a-.1);boneAdd(B.aR,'z',.6*a);boneAdd(B.aL,'z',-.6*a);boneAdd(B.hd,'y',Math.sin(t*3.1)*.12*a);if(m.hold)m.holdOff.set(0,.15,.25+(1-a)*.08)}
+  else if(m.def.ins==='wanham'){const e=Math.exp(-hitP*8);boneAdd(B.aR,'x',-.4-e*.22);boneAdd(B.aL,'x',-.55);boneAdd(B.aL,'z',-.1);boneAdd(B.hd,'z',Math.sin(t*1.6)*.06)}}
+ for(const l of stageL)l.intensity=9*nightK;
+ /* 낮엔 입악기·완함이 무대 바닥에 놓여 있다 */
+ if(STP.dg)STP.dg.visible=!nt;if(STP.pipes)STP.pipes.visible=!nt;if(STP.wh)STP.wh.forEach(o=>o.visible=!nt)}
+/* 공연 보기: 무대 앞 방석에 앉아 보고, 북을 같이 칠 수 있다 */
+function openWatch(){audio();if(!soundOn)setSound(true);joined=false;const[x,z]=stW(3.6,0);bandWatch={x,z,drum:false,tot:0,good:0,seen:new Set(),cyc:-1};pos.set(x,0,z);yaw=Math.atan2(STX-x,STZ-z);me.play('sit',.3);setTimeout(()=>{if(bandWatch)me.play('sit_idle',.4)},900);
+ $('#bw').hidden=false;$('#bwDrum').textContent='북 같이 치기';$('#bwHit').hidden=true;$('#bwMsg').textContent=night?'무이 악사 밤 공연: 굿거리 16마디. 금동대향로 뚜껑의 다섯 악사(완함·종적·배소·거문고·북)를 닮았어요.':'지금은 낮 연습이라 북과 거문고만 나와요. 해가 지면 다섯이 모두 공연해요.'}
+function closeWatch(){bandWatch=null;$('#bw').hidden=true;me.play('idle',.3)}
+function bwHit(){if(!bandWatch||!bandWatch.drum)return;audio();cDr(.8,0);bandWatch.arm=1;const s=Date.now()/1000,C=night?CN_CYC:CN_RCYC,cyc=Math.floor(s/C),ps=s-cyc*C,SC=night?CN_SCORE:CN_REH;let best=9,bi=-1;
+ SC.forEach((n,i)=>{if(n.i===4&&n.v>=.5){const d=Math.abs(n.t-ps);if(d<best){best=d;bi=i}}});if(best<.14&&!bandWatch.seen.has(cyc+'_'+bi)){bandWatch.seen.add(cyc+'_'+bi);bandWatch.good++;$('#bwMsg').textContent=best<.07?'딱!':'좋아요';sfx('tick')}else $('#bwMsg').textContent='조금 '+(bi>=0&&SC[bi].t>ps?'빨라요':'늦어요')}
+function bwTick(){if(!bandWatch)return;const s=Date.now()/1000,C=night?CN_CYC:CN_RCYC,cyc=Math.floor(s/C),ps=s-cyc*C,SC=night?CN_SCORE:CN_REH;
+ const cx=bandWatch.x+(Math.sin(yaw+Math.PI)*-1)*0,camP=new THREE.Vector3(bandWatch.x-Math.sin(yaw)*2.6,1.7,bandWatch.z-Math.cos(yaw)*2.6);cam.position.lerp(camP,.1);cam.lookAt(STX,1.2,STZ);
+ if(bandWatch.drum){if(bandWatch.cyc!==cyc){if(bandWatch.cyc>=0&&bandWatch.tot)$('#bwMsg').textContent=`${bandWatch.tot}박 중 ${Math.min(bandWatch.good,bandWatch.tot)}박 맞췄어요`;bandWatch.cyc=cyc;bandWatch.tot=0;bandWatch.good=0;bandWatch.seen.clear()}
+  bandWatch.tot=SC.filter(n=>n.i===4&&n.v>=.5&&n.t<=ps).length;
+  /* 다음 큰 북 박까지 남은 시간 → 원이 금빛 고리로 좁혀진다 */let nx=9;for(const n of SC)if(n.i===4&&n.v>=.5&&n.t>=ps-.05){nx=n.t-ps;break}const r=Math.max(0,Math.min(1,nx/1.2));$('#bwRing').style.transform=`scale(${1+r*1.6})`;$('#bwRing').style.opacity=nx<1.2?1:.25}}
 /* 내 무이 */
 let me=null,pos=new THREE.Vector3(0,0,24),yaw=Math.PI,camYaw=Math.PI,camPitch=.32,camDist=5.2,speed=0;const keys={};
 /* ---------------- 조작 ---------------- */
@@ -370,9 +448,28 @@ addEventListener('keydown',e=>{keys[e.code]=true;if((e.code==='KeyE'||e.code==='
 let night=false;const lanterns=[];
 {const lm=new THREE.MeshStandardMaterial({color:0xd9462f,emissive:0xff8a3a,emissiveIntensity:0});for(let i=0;i<12;i++){const th=-75+i*13.6,[x,z]=rP(RC-1.6,th);const l=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.42,10),lm);l.position.set(x,3.6,z);scene.add(l)}lanterns.push(lm);
  for(const s of SITES){const pl=new THREE.PointLight(0xffb070,0,9,1.6);pl.position.set(s.x*.9,3,s.z*.9);scene.add(pl);lanterns.push(pl)}}
-function setNight(n){night=n;$('#bNight').textContent=n?'낮으로':'밤으로';hemi.intensity=n?.28:1.15;sun.intensity=n?.25:2.6;sun.color.set(n?0x9fb4ff:0xffe7c4);skyU.top.value.set(n?0x0b1430:0x4f86cf);skyU.bot.value.set(n?0x24304d:0xf3dcb8);scene.fog.color.set(n?0x141b2e:0xd9d2c3);
- lanterns[0].emissiveIntensity=n?2.2:0;envNight(n);for(const l of lanterns.slice(1))l.intensity=n?14:0}
+/* 하루 22분, 블록판과 같은 시계(모두 같은 시각). 노을→밤(별·달)→새벽 */
+const DAYLEN=1320;let dayOff=(()=>{try{return +sessionStorage.getItem('muui3d-dayoff')||0}catch(e){return 0}})();
+const dayFrac=()=>(((Date.now()/1000+dayOff)%DAYLEN)+DAYLEN)%DAYLEN/DAYLEN,sst=(a,b,x)=>{const u=Math.min(1,Math.max(0,(x-a)/(b-a)));return u*u*(3-2*u)};
+const C={skyT:[new THREE.Color(0x4f86cf),new THREE.Color(0x5d6fa8),new THREE.Color(0x0b1430)],skyB:[new THREE.Color(0xf3dcb8),new THREE.Color(0xff9a5c),new THREE.Color(0x24304d)],fog:[new THREE.Color(0xd9d2c3),new THREE.Color(0xd99a78),new THREE.Color(0x141b2e)],sun:[new THREE.Color(0xffe7c4),new THREE.Color(0xff8a48),new THREE.Color(0x9fb4ff)]};
+const mix3=(arr,d,k,out)=>out.copy(arr[0]).lerp(arr[1],d).lerp(arr[2],k);
+/* 별과 달 */const stars=(()=>{const n=900,g=new THREE.BufferGeometry(),p=new Float32Array(n*3);for(let i=0;i<n;i++){const a=Math.random()*6.28,e=Math.asin(Math.random()*.95+.05),r=280;p[i*3]=Math.cos(a)*Math.cos(e)*r;p[i*3+1]=Math.sin(e)*r;p[i*3+2]=Math.sin(a)*Math.cos(e)*r}g.setAttribute('position',new THREE.BufferAttribute(p,3));const m=new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.4,sizeAttenuation:false,transparent:true,opacity:0,fog:false,depthWrite:false}));scene.add(m);return m})();
+const moon=new THREE.Mesh(new THREE.SphereGeometry(9,24,16),new THREE.MeshBasicMaterial({color:0xf4efd8,fog:false,transparent:true,opacity:0}));scene.add(moon);
+let nightK=0,duskK=0;
+function dayTick(){const f=dayFrac(),k=sst(.54,.64,f)*(1-sst(.93,.995,f)),d=Math.max(sst(.44,.56,f)*(1-sst(.58,.68,f)),sst(.9,.965,f)*(1-sst(.975,1,f))*.8);nightK=k;duskK=d;
+ const mo=f>=.6&&f<.97,a=mo?(f-.6)/.37*Math.PI:((f>=.97?f-1:f)+.03)/.63*Math.PI,se=Math.sin(a);sun.position.set(Math.cos(a)*30,Math.max(4,se*34),14);
+ const amp=mo?.1:sst(0,.22,se);sun.intensity=2.6*amp+.15;mix3(C.sun,d,k,sun.color);hemi.intensity=1.15*(1-.76*k)*(1-.12*d);
+ mix3(C.skyT,d,k,skyU.top.value);mix3(C.skyB,d,k,skyU.bot.value);mix3(C.fog,d,k,scene.fog.color);
+ stars.material.opacity=k*.9;moon.material.opacity=k;moon.position.set(-Math.cos(a)*200,Math.max(30,se*190),-120);
+ lanterns[0].emissiveIntensity=2.2*k;for(const l of lanterns.slice(1))l.intensity=14*k;envNight(k);
+ const n=k>.5;if(n!==night){night=n;$('#bNight').textContent=n?'낮으로':'밤으로';if(me&&dayTick.ready)hint(n?'해가 졌어요. 등불이 켜지고 악사 무대와 모닥불 잔치가 시작돼요.':'날이 밝았어요.',5000)}dayTick.ready=1;
+ const c=$('#dchip');if(c){const nt=f>=.56&&f<.97,sec=Math.round(nt?(.97-f)*DAYLEN:((f>=.97?1.56:.56)-f)*DAYLEN);c.textContent=(nt?'밤 · 해 뜰 때까지 ':'해 질 때까지 ')+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')}}
+/* 밤으로/낮으로: 시계를 그 때로 옮긴다(이 탭에서만) */
+function setNight(n){const want=n?.6:.05,cur=dayFrac();dayOff+=((want-cur+1)%1)*DAYLEN;try{sessionStorage.setItem('muui3d-dayoff',dayOff)}catch(e){}dayTick()}
 $('#bNight').addEventListener('click',()=>setNight(!night));
+$('#bSnd').addEventListener('click',()=>setSound(!soundOn));$('#bwX').addEventListener('click',closeWatch);$('#bwHit').addEventListener('pointerdown',e=>{e.preventDefault();bwHit()});
+$('#bwDrum').addEventListener('click',()=>{if(!bandWatch)return;bandWatch.drum=!bandWatch.drum;$('#bwDrum').textContent=bandWatch.drum?'북 내려놓기':'북 같이 치기';$('#bwHit').hidden=!bandWatch.drum;bandWatch.cyc=-1;$('#bwMsg').textContent=bandWatch.drum?'작은 원이 금빛 테두리에 닿을 때 누르세요 (스페이스)':'북을 내려놓았어요.'});
+addEventListener('keydown',e=>{if(e.code==='Space'&&bandWatch&&bandWatch.drum){e.preventDefault();bwHit()}});
 /* ---------------- 안내·버튼 ---------------- */
 function hint(t,ms=6000){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
 let actFn=null;$('#act').addEventListener('click',()=>actFn&&actFn());
@@ -384,14 +481,14 @@ $('#bBlock').addEventListener('click',()=>{location.href='../world/?from=world3d
 let pickK=(()=>{try{return localStorage.getItem('muui3d-kind')}catch(e){}})()||'ceramic';
 {const box_=$('#kinds');for(const q of KINDS){const b=document.createElement('button');b.type='button';b.innerHTML=`<img alt="" src="media/pick_${q.k}.jpg" onerror="this.style.visibility='hidden'"><b>${q.n}</b><span>${q.d}</span>`;b.classList.toggle('on',q.k===pickK);b.addEventListener('click',()=>{pickK=q.k;box_.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});box_.appendChild(b)}}
 $('#go').addEventListener('click',async()=>{try{localStorage.setItem('muui3d-kind',pickK)}catch(e){}$('#pick').hidden=true;$('#load').hidden=false;$('#load').style.opacity=1;
- me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);await placeCrew();await placeDancers();{const st=await makeMuui('ceramic',4.7);const ped=cyl(1.5,1.7,.5,STONE,20);add(ped,-12.5,.25,7.5);st.root.position.set(-12.5,.5,7.5);st.root.rotation.y=Math.atan2(12.5,-5);st.play('idle',0);st.mx.timeScale=.5;STATUE.push(st);BLOCK.push({c:[-12.5,7.5,1.9]})}qUI();
+ me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);setSound(soundOn);audio();await placeCrew();await placeDancers();await placeBand();{const st=await makeMuui('ceramic',4.7);const ped=cyl(1.5,1.7,.5,STONE,20);add(ped,-12.5,.25,7.5);st.root.position.set(-12.5,.5,7.5);st.root.rotation.y=Math.atan2(12.5,-5);st.play('idle',0);st.mx.timeScale=.5;STATUE.push(st);BLOCK.push({c:[-12.5,7.5,1.9]})}qUI();
  $('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);$('#top').hidden=false;if(matchMedia('(pointer:coarse)').matches)$('#stick').hidden=false;
  DOORS.forEach(d=>d.vid.play().then(()=>{const t=new THREE.VideoTexture(d.vid);t.colorSpace=THREE.SRGBColorSpace;d.mat.map=t;d.mat.needsUpdate=true}).catch(()=>{}));
  hint(matchMedia('(pointer:coarse)').matches?'왼쪽 원으로 걷고, 화면을 밀어 둘러보세요. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.':'WASD로 걷고 Shift로 뛰어요. 끌어서 둘러보고 휠로 가까이. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.',8000)});
 /* ---------------- 프레임 ---------------- */
 let last=performance.now(),uiT=0;const tmp=new THREE.Vector3();
 R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
- if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}if(photo){fx=0;sx=0}
+ if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}if(photo||bandWatch){fx=0;sx=0}
   const mag=Math.min(1,Math.hypot(fx,sx)),run=keys.ShiftLeft||keys.ShiftRight||(stickId!==null&&mag>.85);const want=mag>.05?(run?4.2:1.8):0;speed+=(want-speed)*Math.min(1,dt*8);
   if(joined&&(mag>.05||!night)){joined=false;hint('춤에서 빠져나왔어요.',2500)}
   if(joined){joinA+=dt*.22;pos.set(FX+Math.cos(joinA)*FR,0,FZ+Math.sin(joinA)*FR);yaw=Math.atan2(-Math.sin(joinA),Math.cos(joinA));speed=0}
@@ -400,13 +497,13 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
   for(const s of SITES){const dx=pos.x-s.x,dz=pos.z-s.z,dd=Math.hypot(dx,dz),min=s.k==='carpenter'?2.1:1.2;if(dd<min){pos.x=s.x+dx/dd*min;pos.z=s.z+dz/dd*min}}
   {const dx=pos.x,dz=pos.z-2.5,dd=Math.hypot(dx,dz);if(dd<.9){pos.x=dx/dd*.9;pos.z=2.5+dz/dd*.9}}
   envCollide();{const dx=pos.x-FX,dz=pos.z-FZ,dd=Math.hypot(dx,dz);if(dd<1.2){pos.x=FX+dx/dd*1.2;pos.z=FZ+dz/dd*1.2}}}
-  me.root.position.copy(pos);me.root.rotation.y=yaw;me.play(photo?photo.pose:joined?(NOARM[me.k]?'clap':'dance'):speed>3?'run':speed>.25?'walk':'idle',.25);if(me.cur&&me.cur===me.A.walk)me.cur.timeScale=Math.max(.6,speed/1.8);me.mx.update(dt);
+  me.root.position.copy(pos);me.root.rotation.y=yaw;if(!bandWatch)me.play(photo?photo.pose:joined?(NOARM[me.k]?'clap':'dance'):speed>3?'run':speed>.25?'walk':'idle',.25);if(me.cur&&me.cur===me.A.walk)me.cur.timeScale=Math.max(.6,speed/1.8);me.mx.update(dt);
   const ty=1.0;tmp.set(pos.x+Math.sin(camYaw)*Math.cos(camPitch)*camDist,ty+Math.sin(camPitch)*camDist,pos.z+Math.cos(camYaw)*Math.cos(camPitch)*camDist);cam.position.lerp(tmp,Math.min(1,dt*8));cam.lookAt(pos.x,ty,pos.z)}
  else{const t=now/1000*.06;cam.position.set(Math.sin(t)*30,9,Math.cos(t)*30);cam.lookAt(0,2,0)}
  for(const c of CREW){c.mx.update(dt);c.t+=dt;
   if(c.job==='carry'){/* 돌을 들고 탑까지 왔다 갔다 */const a=Math.sin(c.t*.35);const p=c.home.clone();p.x+=Math.cos(c.root.rotation.y)*a*2.2;p.z-=Math.sin(c.root.rotation.y)*a*2.2;c.root.position.copy(p)}
   if(me){const d=c.root.position.distanceTo(pos);if(d<3&&!c.greet&&!c.busy){c.greet=1;c.prev=c.job;c.play(NOARM[c.k]?'nod':'wave',.3);setTimeout(()=>{if(!c.busy)c.play(c.prev,.4)},1700)}if(d>5)c.greet=0}}
- fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);
+ dayTick();fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);bandTick(dt);if(me)bwTick();
  uiT-=dt;if(uiT<=0&&me){uiT=.15;const a=$('#act');a.hidden=true;actFn=null;
   for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){a.textContent='쇼츠 보기';actFn=()=>openYT(d);a.hidden=false;break}}
   if(a.hidden&&qActive&&!qHeld){const q=QUEST[qActive];if(Math.hypot(pos.x-q.at[0],pos.z-q.at[1])<1.6){a.textContent=`${q.item} 줍기`;actFn=()=>{qHeld=qActive;hint(`${q.item}을(를) 들었어요. ${KINDS.find(x=>x.k===qHeld).d} 복원단에게 가져가요.`,4500);qUI()};a.hidden=false}}
@@ -414,13 +511,14 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
   if(a.hidden)for(const c of CREW){if(c.root.position.distanceTo(pos)<2.2){a.textContent=`${KINDS.find(q=>q.k===c.k).n}: ${JOBKO[c.job]||'일하는 중'}`;actFn=()=>{c.play('nod',.2);setTimeout(()=>c.play(c.job,.3),1100);hint(`${KINDS.find(q=>q.k===c.k).n}가 ${c.site?KINDS.find(q=>q.k===c.site.k).d:''} 복원을 하고 있어요. ${JOBKO[c.job]||''}.`,4000)};a.hidden=false;break}}
   if(a.hidden&&!joined&&Math.hypot(pos.x-FX,pos.z-FZ)<FR+3.4){if(night){a.textContent='같이 어깨춤 추기';actFn=()=>{joined=true;joinA=Math.atan2(pos.z-FZ,pos.x-FX);const j=DANCERS[(Math.random()*5)|0];if(j&&!NOARM[j.k]){j.busy=1;j.play('joy',.2);setTimeout(()=>{j.busy=0},1600)}hint('모닥불 둘레를 같이 돌아요. 움직이면 빠져나와요.',4000)}}else{a.textContent='모닥불 피우기 (해 질 녘으로)';actFn=()=>{setNight(true);hint('해가 졌어요. 무이들이 일어나 모닥불 둘레에서 어깨춤을 춰요.',5000)}}a.hidden=false}
   if(a.hidden)for(const P of PORT3){if(Math.hypot(pos.x-P.x,pos.z-P.z)<2.6){a.textContent=`${P.n}로 가기`;actFn=()=>{hint(P.d,3000);setTimeout(()=>{location.href=P.url},700)};a.hidden=false;break}}
+  if(a.hidden&&!bandWatch){const[wx,wz]=stW(3.4,0);if(Math.hypot(pos.x-wx,pos.z-wz)<3.4){a.textContent=night?'무이 악사 밤 공연 보기':'악사 낮 연습 보기';actFn=openWatch;a.hidden=false}}
   if(a.hidden)for(const S of SPOTS){if(Math.hypot(pos.x-S.x,pos.z-S.z)<S.r){a.textContent=S.t;actFn=()=>hint(S.h,7000);a.hidden=false;break}}
   for(const d of DOORS){const near=Math.hypot(pos.x-d.fx,pos.z-d.fz)<16;if(near&&d.vid.paused)d.vid.play().catch(()=>{});else if(!near&&!d.vid.paused)d.vid.pause()}}
  R.render(scene,cam)});
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
 setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>{$('#load').hidden=true;$('#pick').hidden=false},500)},600);
 if(qs.has('night'))setNight(true);
-window.__W3={QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
+window.__W3={BAND,openWatch,get bw(){return bandWatch},stW,THREE,mk:makeMuui,R,scene,camO:cam,setF(f){dayOff+=((f-dayFrac()+1)%1)*DAYLEN;dayTick()},get f(){return dayFrac()},QUEST,get q(){return[qActive,qHeld,[...qDone]]},DANCERS,get joined(){return joined},fire:[FX,FZ],get me(){return me},get pos(){return pos},CREW,DOORS,SITES,setNight,tp(x,z,y){pos.set(x,0,z);if(y!=null){yaw=y;camYaw=y+Math.PI}},cam(y,p,d){camYaw=y;camPitch=p;camDist=d}};
 </script>
 </body>
 </html>
