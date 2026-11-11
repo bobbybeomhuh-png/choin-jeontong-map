@@ -7,7 +7,7 @@
 <title>무이 월드 3D</title>
 <meta name="description" content="무이 월드를 3D 무이로 다시 지은 시험판. 회랑의 쇼츠 문 옆에서 3D 무이 복원단이 유물을 실제로 작업한다">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@500;700&family=Do+Hyeon&display=swap" rel="stylesheet">
-<!-- ⏱ 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
+<!-- ⏱ 2026-11-11 10:30 1차 채우기: 회랑 뒤 기와집 3채·뒷산, 네모 연못(섬·소나무·연꽃·원앙)·차일 마루, 장독대, 장승·솟대, 청사초롱 등불줄, 평상·지우산, 벽돌 가마(불·연기), 악사 무대(악기), 안내판, 장터, 큰 무이 동상, 꽃담, 디딤돌, 포털 2(발굴 터·팔복), 좌우 방향 고침 / 2026-11-11 00:20 모닥불 어깨춤(밤·같이 추기), 반장 무이 부탁 5개, 기념사진(3·2·1, 플래시, 저장), 폰 배치 정리 / 2026-11-10 23:00 초판(시험): 블록판과 따로, 같은 공간을 3D로. 유물은 직접 모델링(공개 3D 자료는 이용 조건 미확인이라 안 씀), 무이는 매쉬 모델+블렌더 직접 리깅 -->
 <style>
 :root{--panel:rgba(22,16,11,.84);--line:rgba(255,236,210,.18);--ink:#f3eadb;--muted:#c8b9a2;--gold:#e7b75a}
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#cfd8e0;color:var(--ink);font-family:"Gowun Dodum","Malgun Gothic",sans-serif;-webkit-tap-highlight-color:transparent}
@@ -102,8 +102,12 @@ for(const d of DOORS){const[x,z]=rP(RC+1.45,d.th),g=new THREE.Group();const fr=b
  const sc=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.8),mt);sc.position.set(0,2.05,.1);g.add(sc);const lt=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.8),new THREE.MeshBasicMaterial({map:LAT,transparent:true,toneMapped:false}));lt.position.set(0,2.05,.11);g.add(lt);
  add(g,x,.3,z,-d.th*Math.PI/180+Math.PI*0,false);g.lookAt(0,.3,0);const[fx,fz]=rP(RC-1.2,d.th);d.fx=fx;d.fz=fz}
 
+/* --- 꽃담: 담장 판에 꽃무늬 --- */
+const FLOWERW=tex(256,256,(q,w,h)=>{q.fillStyle='#e8dfcf';q.fillRect(0,0,w,h);q.fillStyle='#9a5a3c';q.fillRect(0,h*.78,w,h*.22);for(let x=0;x<w;x+=32){q.fillStyle='#b06a48';q.fillRect(x+2,h*.8,28,h*.18)}
+ const fl=(cx,cy,r,c)=>{q.fillStyle=c;for(let i=0;i<6;i++){const a=i/6*6.28;q.beginPath();q.arc(cx+Math.cos(a)*r*.6,cy+Math.sin(a)*r*.6,r*.42,0,7);q.fill()}q.fillStyle='#f2c14e';q.beginPath();q.arc(cx,cy,r*.3,0,7);q.fill()};
+ q.strokeStyle='#5b8a4a';q.lineWidth=4;q.beginPath();q.moveTo(20,h*.7);q.bezierCurveTo(80,h*.3,170,h*.6,236,h*.25);q.stroke();fl(70,h*.4,26,'#c8463a');fl(150,h*.5,22,'#d9739a');fl(215,h*.3,24,'#c8463a');q.fillStyle='#5b8a4a';q.beginPath();q.ellipse(110,h*.55,14,7,.6,0,7);q.fill();q.beginPath();q.ellipse(190,h*.42,14,7,-.5,0,7);q.fill()});
 /* 담장과 대문(앞쪽) */
-{const WALL=M(0xe8dfcf,{roughness:.9});for(let i=0;i<40;i++){const th=100+i*4;if(Math.abs(th-180)<8)continue;const[x,z]=rP(30,th);add(box(2.2,2.2,.5,WALL),x,1.1,z,-th*Math.PI/180,false);add(box(2.4,.35,.9,TILE),x,2.35,z,-th*Math.PI/180)}
+{const WALL=new THREE.MeshStandardMaterial({map:FLOWERW,roughness:.9});for(let i=0;i<40;i++){const th=100+i*4;if(Math.abs(th-180)<8)continue;const[x,z]=rP(30,th);add(box(2.2,2.2,.5,WALL),x,1.1,z,-th*Math.PI/180,false);add(box(2.4,.35,.9,TILE),x,2.35,z,-th*Math.PI/180)}
  const gate=new THREE.Group();for(const sx of[-2.2,2.2]){const p=cyl(.3,.32,5,RED,12);p.position.set(sx,2.5,0);gate.add(p)}const lin=box(5.4,.5,.7,GREEN);lin.position.y=5;gate.add(lin);const rf=box(6.6,.35,2.4,TILE);rf.position.y=5.5;gate.add(rf);
  const sign=tex(512,160,(q,w,h)=>{q.fillStyle='#2b1d12';q.fillRect(0,0,w,h);q.strokeStyle='#d9a93a';q.lineWidth=8;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#f3d27a';q.font='92px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText('무이 월드',w/2,h/2+6)});
  const sp=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.75),new THREE.MeshBasicMaterial({map:sign}));sp.position.set(0,4.4,.37);gate.add(sp);add(gate,0,0,29.6)}
@@ -150,6 +154,122 @@ const RELIC={ceramic:moonJar,science:rainGauge,carpenter:dabotap,painter:folding
 const SCALE={ceramic:1.15,science:1,carpenter:1,painter:1,metal:1};
 for(const s of SITES){const r=RELIC[s.k]();r.scale.setScalar(SCALE[s.k]);add(r,s.x,0,s.z,0);r.lookAt(0,0,2.5);if(s.k!=='painter')r.rotateY(Math.PI);/* 작업대 둘레 낮은 멍석 */const mat=new THREE.Mesh(new THREE.CircleGeometry(2.4,40).rotateX(-Math.PI/2),M(0xc8a46a,{roughness:1}));mat.position.set(s.x,.015,s.z);mat.receiveShadow=true;scene.add(mat)}
 
+/* ================= 1차 채우기(11/11): 블록판에 있던 풍경·건물·길목을 3D로 ================= */
+const ENVT=[];/* 매 프레임 할 일 */const BLOCK=[];/* 못 지나가는 곳: {r:[x0,x1,z0,z1]} 또는 {c:[x,z,r]} */
+const ENVN=[];/* 밤에 켜지는 재질 */
+const BRICK=tex(256,256,(q,w,h)=>{q.fillStyle='#7a3b2a';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=16)for(let x=-(y/16%2)*16;x<w;x+=32){q.fillStyle=['#8c4430','#7e3a28','#954a33','#70352a'][(Math.random()*4)|0];q.fillRect(x+1,y+1,30,14)}},2);
+const PLASTER=tex(256,256,(q,w,h)=>{q.fillStyle='#ece5d6';q.fillRect(0,0,w,h);noise(q,w,h,1500,['#e4dccb','#f2ece0'],2);q.strokeStyle='#5b3a22';q.lineWidth=10;q.strokeRect(0,0,w,h);q.lineWidth=5;q.beginPath();q.moveTo(w/2,0);q.lineTo(w/2,h);q.moveTo(0,h*.62);q.lineTo(w,h*.62);q.stroke();
+ q.strokeStyle='#6b4428';q.lineWidth=3;for(let x=w*.56;x<w*.94;x+=16){q.beginPath();q.moveTo(x,h*.12);q.lineTo(x,h*.56);q.stroke()}for(let y=h*.12;y<h*.56;y+=16){q.beginPath();q.moveTo(w*.56,y);q.lineTo(w*.94,y);q.stroke()}});
+/* --- 회랑 뒤 높은 터와 기와집 세 채, 그 뒤 산 --- */
+function hanok(w,d){const g=new THREE.Group();const base=box(w+.8,.7,d+.8,STONE);base.position.y=.35;g.add(base);
+ const wallM=new THREE.MeshStandardMaterial({map:PLASTER,roughness:.9});const n=Math.max(2,Math.round(w/2.4));const body=new THREE.Group();
+ for(let i=0;i<n;i++){const p=new THREE.Mesh(new THREE.PlaneGeometry(w/n,2.8),wallM);p.position.set(-w/2+w/n*(i+.5),.7+1.4,d/2);body.add(p);const p2=p.clone();p2.position.z=-d/2;p2.rotation.y=Math.PI;body.add(p2)}
+ for(const sx of[-1,1]){const s=box(.05,2.8,d,wallM);s.position.set(sx*w/2,.7+1.4,0);body.add(s)}
+ for(let i=0;i<=n;i++)for(const sz of[-1,1]){const c=cyl(.16,.18,3.1,RED,10);c.position.set(-w/2+w/n*i,.7+1.55,sz*(d/2+.05));body.add(c)}g.add(body);
+ const bm=box(w+.4,.3,.3,DAN);bm.position.set(0,3.85,d/2+.1);g.add(bm);const bm2=bm.clone();bm2.position.z=-d/2-.1;g.add(bm2);
+ for(const sd of[-1,1]){const rf=new THREE.Mesh(new THREE.BoxGeometry(w+2.2,.22,d*.62+1.2),TILE2);rf.position.set(0,4.75,sd*(d*.27+.35));rf.rotation.x=sd*.52;rf.castShadow=true;g.add(rf);
+  const ev=new THREE.Mesh(new THREE.BoxGeometry(w+2.6,.16,1.1),TILE2);ev.position.set(0,4.05,sd*(d/2+1.15));ev.rotation.x=sd*.2;g.add(ev);const tip=cyl(.1,.1,w+2.6,M(0xe8e2d6),8);tip.rotation.z=Math.PI/2;tip.position.set(0,4.0,sd*(d/2+1.7));g.add(tip)}
+ const rg=box(w+1.6,.5,.6,M(0x2f3135,{roughness:.5}));rg.position.y=5.75;g.add(rg);for(const sx of[-1,1]){const e=box(.6,.9,.7,M(0x2f3135));e.position.set(sx*(w/2+.7),5.9,0);e.rotation.z=sx*-.35;g.add(e)}
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});return g}
+{const terr=box(58,3.8,13,M(0xa59c8c,{roughness:.95,map:tex(256,128,(q,w,h)=>{q.fillStyle='#a59c8c';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=22)for(let x=-(y/22%2)*20;x<w;x+=40){q.fillStyle=['#9b9282','#b0a796','#958c7c'][(Math.random()*3)|0];q.fillRect(x+2,y+2,36,18)}},1)}));terr.material.map.repeat.set(6,1);add(terr,0,1.9,-35.5,0,false);
+ const tg=box(58,.05,13,M(0x7f9a52,{roughness:1}));add(tg,0,3.82,-35.5,0,false);
+ add(hanok(15,6.6),0,3.8,-36);add(hanok(9,5.6),-19,3.8,-35.5,.06);add(hanok(9,5.6),19,3.8,-35.5,-.06);
+ /* 뒷산: 겹겹 봉우리 */const mt=[[0,-62,26,16,0x3d5a35],[-30,-58,22,13,0x48663d],[30,-58,22,12,0x48663d],[-52,-40,20,10,0x557347],[52,-40,20,10,0x557347],[-14,-70,24,19,0x2f4a2c],[18,-72,26,21,0x2f4a2c]];
+ for(const[x,z,r,h,c]of mt){const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,12,0,Math.PI*2,0,Math.PI/2),M(c,{roughness:1,flatShading:true}));m.scale.y=h/r;m.position.set(x,-.5,z);scene.add(m)}
+ /* 뒷터 소나무 몇 그루 */for(const[x,z,s]of[[-27,-31,1],[27,-31,.9],[-10,-41,1.1],[10,-41,1],[-26,-40,1.2],[26,-40,1.1]]){const t=tree(x,z,s*.8,[0x2f5a2c,0x3b6b34,0x2a4f27]);t.position.y=3.8}}
+/* --- 디딤돌 길 --- */
+{const sm=M(0x8f8a82,{roughness:.95});for(let z=13.2;z<27.5;z+=1.15){const s=new THREE.Mesh(new THREE.CylinderGeometry(.62+Math.random()*.12,.66,.12,7),sm);s.position.set((Math.random()-.5)*.5,.07,z);s.rotation.y=Math.random()*3;s.receiveShadow=true;scene.add(s)}}
+/* --- 장승 한 쌍, 솟대 --- */
+function jangseung(txt,col){const g=new THREE.Group();const t=tex(128,512,(q,w,h)=>{q.fillStyle='#a07b52';q.fillRect(0,0,w,h);noise(q,w,h,800,['#8f6c46','#b08a5e'],2);q.fillStyle=col;q.fillRect(0,0,w,h*.36);
+  q.fillStyle='#fff';q.beginPath();q.arc(w*.3,h*.2,12,0,7);q.arc(w*.7,h*.2,12,0,7);q.fill();q.fillStyle='#111';q.beginPath();q.arc(w*.3,h*.2,6,0,7);q.arc(w*.7,h*.2,6,0,7);q.fill();q.strokeStyle='#111';q.lineWidth=5;q.beginPath();q.arc(w/2,h*.29,18,.2,2.9);q.stroke();
+  q.fillStyle='#1a1410';q.font='bold 44px "Noto Serif KR",serif';q.textAlign='center';[...txt].forEach((c,i)=>q.fillText(c,w/2,h*.45+i*46))});
+ const p=new THREE.Mesh(new THREE.CylinderGeometry(.32,.38,3,14),[new THREE.MeshStandardMaterial({map:t,roughness:.9}),M(0x8a6a44),M(0x8a6a44)]);p.position.y=1.5;p.rotation.y=Math.PI;g.add(p);
+ const hat=cyl(.42,.5,.42,M(0x1d1a17),14);hat.position.y=3.1;g.add(hat);const hb=cyl(.62,.62,.05,M(0x1d1a17),18);hb.position.y=2.92;g.add(hb);return g}
+{const a=jangseung('천하대장군','#c23a2a');add(a,-2.6,0,21.5,0);const b=jangseung('지하여장군','#2f5f8a');add(b,2.6,0,21.5,0);BLOCK.push({c:[-2.6,21.5,.55]},{c:[2.6,21.5,.55]})
+ const wd=M(0x6b4a2c);for(const[x,z,h]of[[5.2,24.6,6],[6.1,25.9,7],[4.6,26.4,5]]){const p=cyl(.07,.09,h,wd,6);add(p,x,h/2,z);const bd=new THREE.Group();const bb=box(.5,.14,.16,wd);bd.add(bb);const nk=box(.14,.2,.12,wd);nk.position.set(.22,.12,0);bd.add(nk);const bk=new THREE.Mesh(new THREE.ConeGeometry(.04,.14,5),M(0x3a2a1a));bk.rotation.z=-Math.PI/2;bk.position.set(.34,.14,0);bd.add(bk);add(bd,x,h+.05,z,Math.random()*6)}}
+/* --- 청사초롱 등불줄: 단풍나무에서 일곱 갈래 --- */
+const LANM=[new THREE.MeshStandardMaterial({color:0x2d4fa0,emissive:0x5a88ff,emissiveIntensity:0,roughness:.7}),new THREE.MeshStandardMaterial({color:0xc23a2a,emissive:0xff6a3a,emissiveIntensity:0,roughness:.7})];ENVN.push(...LANM.map(m=>[m,1.0]));
+{const wd=M(0x6b4a2c);for(const deg of[20,70,110,150,200,250,330]){const a=deg*Math.PI/180,ex=Math.sin(a)*14.5,ez=2.5+Math.cos(a)*14.5;  const pole=cyl(.08,.1,3.8,wd,6);add(pole,ex,1.9,ez);const pts=[];for(let i=0;i<=24;i++){const t=i/24;pts.push(new THREE.Vector3(Math.sin(a)*(1.2+t*13.3),5.4-t*1.7-Math.sin(t*Math.PI)*.55,2.5+Math.cos(a)*(1.2+t*13.3)))}
+  scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x3a2a1a})));
+  for(let i=1;i<9;i++){const p=pts[i*3];const l=new THREE.Group();const top=cyl(.13,.15,.22,LANM[0],10);top.position.y=-.2;l.add(top);const bot=cyl(.15,.12,.2,LANM[1],10);bot.position.y=-.4;l.add(bot);const tas=cyl(.02,.02,.16,M(0xd9a93a),4);tas.position.y=-.58;l.add(tas);l.position.copy(p);scene.add(l)}}}
+/* --- 네모 연못과 둥근 섬, 연못가 차일 마루, 원앙 --- */
+const PX0=8,PX1=18,PZ0=13.5,PZ1=20.5;BLOCK.push({r:[PX0-.1,PX1+.1,PZ0-.1,PZ1+.1]});
+const waterT=tex(256,256,(q,w,h)=>{q.fillStyle='#3f7d86';q.fillRect(0,0,w,h);for(let i=0;i<70;i++){q.strokeStyle='rgba(220,240,240,'+(.06+Math.random()*.12)+')';q.lineWidth=2;q.beginPath();const x=Math.random()*w,y=Math.random()*h;q.ellipse(x,y,10+Math.random()*24,3+Math.random()*4,0,0,7);q.stroke()}},3);
+{const wm=new THREE.MeshStandardMaterial({map:waterT,roughness:.12,metalness:.25,transparent:true,opacity:.92});const wtr=new THREE.Mesh(new THREE.PlaneGeometry(PX1-PX0,PZ1-PZ0).rotateX(-Math.PI/2),wm);wtr.position.set((PX0+PX1)/2,.06,(PZ0+PZ1)/2);scene.add(wtr);ENVT.push(dt=>{waterT.offset.x+=dt*.01;waterT.offset.y+=dt*.006});
+ const st=M(0x9a948a,{roughness:.95});const W=PX1-PX0,D=PZ1-PZ0;for(const[w,d,x,z]of[[W+1,.5,(PX0+PX1)/2,PZ0-.25],[W+1,.5,(PX0+PX1)/2,PZ1+.25],[.5,D,PX0-.25,(PZ0+PZ1)/2],[.5,D,PX1+.25,(PZ0+PZ1)/2]]){add(box(w,.32,d,st),x,.16,z,0,false)}
+ const isl=cyl(1.6,1.75,.3,M(0x7f9a52,{roughness:1}),24);add(isl,14,.12,17);const ir=new THREE.Mesh(new THREE.TorusGeometry(1.68,.14,6,24),st);ir.rotation.x=Math.PI/2;ir.position.set(14,.14,17);scene.add(ir);
+ /* 섬 소나무: 굽은 줄기, 납작한 잎층 */{const g=new THREE.Group();const tk=cyl(.14,.22,2.6,M(0x5a3a22),8);tk.position.y=1.3;tk.rotation.z=.25;g.add(tk);for(const[x,y,z,r]of[[.3,2.6,0,1.1],[-.4,2.1,.3,.8],[.6,2.0,-.3,.7],[.2,3.0,.1,.7]]){const l=new THREE.Mesh(new THREE.SphereGeometry(r,10,6),M(0x2f5a2c,{roughness:.9,flatShading:true}));l.scale.y=.38;l.position.set(x,y,z);g.add(l)}add(g,14,.25,17)}
+ /* 연잎·연꽃 */for(let i=0;i<14;i++){const x=PX0+.7+Math.random()*(W-1.4),z=PZ0+.6+Math.random()*(D-1.2);if(Math.hypot(x-14,z-17)<2.1)continue;const lp=new THREE.Mesh(new THREE.CircleGeometry(.28+Math.random()*.15,12,.3,5.9).rotateX(-Math.PI/2),M(0x4f7d3a,{roughness:.8}));lp.position.set(x,.075,z);scene.add(lp);
+  if(i%3===0){const f=new THREE.Mesh(new THREE.SphereGeometry(.11,8,6),M(0xf0a0b8,{roughness:.6}));f.scale.y=.8;f.position.set(x+.08,.16,z);scene.add(f)}}
+ /* 원앙 두 마리가 섬을 돈다 */const duck=(c1,c2)=>{const g=new THREE.Group();const b=new THREE.Mesh(new THREE.SphereGeometry(.2,12,8),M(c1));b.scale.set(1.3,.75,.85);g.add(b);const h=new THREE.Mesh(new THREE.SphereGeometry(.11,10,8),M(c2));h.position.set(.2,.15,0);g.add(h);const bk=new THREE.Mesh(new THREE.ConeGeometry(.04,.1,6),M(0xd8462a));bk.rotation.z=-Math.PI/2;bk.position.set(.33,.14,0);g.add(bk);scene.add(g);return g};
+ const dk=[duck(0xb8743a,0x2f6b55),duck(0x8c7a64,0x9a8a74)];ENVT.push((dt,now)=>{const t=now*.00016;dk.forEach((d,i)=>{const a=t+i*.45;d.position.set(14+Math.cos(a)*2.9,.1+Math.sin(now*.003+i)*.015,17+Math.sin(a)*2.6);d.rotation.y=-a})});
+ /* 차일 마루 */const mr=box(3,.5,4.2,WOODL);add(mr,5.6,.25,17);BLOCK.push({r:[4.1,7.1,14.9,19.1]});for(const[x,z]of[[4.3,15.1],[6.9,15.1],[4.3,18.9],[6.9,18.9]]){add(cyl(.07,.07,2.6,WOOD,6),x,1.8,z)}
+ const cha=new THREE.Mesh(new THREE.PlaneGeometry(3.4,4.6,6,6),new THREE.MeshStandardMaterial({color:0xf3eee2,roughness:.9,side:THREE.DoubleSide}));cha.rotation.x=-Math.PI/2;cha.position.set(5.6,3.1,17);const cp=cha.geometry.attributes.position;for(let i=0;i<cp.count;i++){const x=cp.getX(i),y=cp.getY(i);cp.setZ(i,-(1-(x/1.7)**2)*.12-(1-(y/2.3)**2)*.08)}cha.geometry.computeVertexNormals();cha.castShadow=true;scene.add(cha)}
+/* --- 장독대 --- */
+{const pl=box(3.6,.42,2.7,STONE);add(pl,-20,.21,8.5);BLOCK.push({r:[-21.9,-18.1,7.05,9.95]});const og=M(0x4a2c1c,{roughness:.25,metalness:.05});
+ for(let i=0;i<9;i++){const s=[1,.85,.7][i%3]*(.9+Math.random()*.15),x=-21.2+(i%3)*1.2,z=7.7+Math.floor(i/3)*.8;const j=lathe([[0,0],[.22*s,0],[.36*s,.2*s],[.4*s,.42*s],[.33*s,.66*s],[.2*s,.76*s],[.2*s,.8*s],[0,.8*s]],og,20);j.position.set(x,.42,z);j.castShadow=true;scene.add(j);
+  const lid=cyl(.24*s,.24*s,.05,og,16);lid.position.set(x,.42+.82*s,z);scene.add(lid)}}
+/* --- 평상과 지우산 --- */
+function parasol(x,z,c){const g=new THREE.Group();const p=cyl(.04,.04,2.5,M(0x6b4a2c),6);p.position.y=1.25;g.add(p);const cn=new THREE.Mesh(new THREE.ConeGeometry(1.5,.55,16,1,true),new THREE.MeshStandardMaterial({color:c,roughness:.8,side:THREE.DoubleSide}));cn.position.y=2.55;g.add(cn);
+ for(let i=0;i<16;i++){const r=box(.02,.02,1.38,M(0x6b4a2c));const a=i/16*6.28;r.position.set(Math.sin(a)*.69,2.52,Math.cos(a)*.69);r.rotation.order='YXZ';r.rotation.y=a;r.rotation.x=.35;g.add(r)}return add(g,x,0,z)}
+{const pp=box(3,.45,2,WOODL);add(pp,-17,.225,19.5);BLOCK.push({r:[-18.5,-15.5,18.5,20.5]});for(const[x,z]of[[-18.3,18.6],[-15.7,18.6],[-18.3,20.4],[-15.7,20.4]])add(cyl(.07,.07,.45,WOOD,6),x,.2,z);
+ const mt=box(2.4,.04,1.5,M(0xc8a46a,{roughness:1}));add(mt,-17,.47,19.5);parasol(-18.6,21,0xc8463a);
+ const pp2=box(3,.45,2,WOODL);add(pp2,15.5,.225,6.5);BLOCK.push({r:[14,17,5.5,7.5]});parasol(17.2,7.8,0xd9a93a)}
+/* --- 야외 가마(벽돌 돔, 아궁이 불, 굴뚝 연기, 장작더미) --- */
+const KX=25,KZ=5;BLOCK.push({c:[KX,KZ,2.9]});
+const fireBoxM=new THREE.MeshBasicMaterial({color:0xff7a2a});
+{const g=new THREE.Group();const dm=new THREE.Mesh(new THREE.SphereGeometry(1,28,14,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({map:BRICK,roughness:.9}));dm.scale.set(3.4,2.3,2.4);g.add(dm);
+ const mo=box(1.1,.9,.6,fireBoxM);mo.position.set(-3.1,.45,0);g.add(mo);const arch=new THREE.Mesh(new THREE.TorusGeometry(.62,.16,6,12,Math.PI),new THREE.MeshStandardMaterial({map:BRICK}));arch.rotation.y=Math.PI/2;arch.position.set(-3.25,.45,0);g.add(arch);
+ const ch=box(.9,4.2,.9,new THREE.MeshStandardMaterial({map:BRICK,roughness:.9}));ch.position.set(3.0,2.1,0);g.add(ch);g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.position.set(KX,0,KZ);g.rotation.y=Math.atan2(-KZ+2.5,-KX)+Math.PI/2+Math.PI/2*0;g.lookAt(0,0,2.5);g.rotateY(Math.PI/2);scene.add(g);
+ const kl=new THREE.PointLight(0xff8a3a,3,7,1.6);const mw=new THREE.Vector3(-3.6,.6,0).applyMatrix4(g.matrixWorld.clone().compose(g.position,g.quaternion,g.scale));kl.position.copy(mw);scene.add(kl);
+ const cw=new THREE.Vector3(3.0,4.3,0).applyMatrix4(g.matrixWorld.clone().compose(g.position,g.quaternion,g.scale));
+ /* 연기 */const SN=40,sg=new THREE.BufferGeometry(),sp=new Float32Array(SN*3),sa=[];for(let i=0;i<SN;i++){sa.push(Math.random()*4);sp[i*3+1]=-9}sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+ const smoke=new THREE.Points(sg,new THREE.PointsMaterial({color:0xd8d4cc,size:.9,transparent:true,opacity:.28,depthWrite:false,map:tex(64,64,(q,w,h)=>{const r=q.createRadialGradient(32,32,2,32,32,30);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=r;q.fillRect(0,0,w,h)})}));scene.add(smoke);
+ ENVT.push((dt,now)=>{for(let i=0;i<SN;i++){sa[i]+=dt;const t=sa[i]%4;sp[i*3]=cw.x+t*.5+Math.sin(i+t)*.25;sp[i*3+1]=cw.y+t*1.1;sp[i*3+2]=cw.z+Math.cos(i*1.3+t)*.25}sg.attributes.position.needsUpdate=true;kl.intensity=(night?16:4)+Math.sin(now*.02)*1.5;fireBoxM.color.setHSL(.06,1,.5+Math.sin(now*.013)*.06)});
+ const wood=M(0x6e4a2a,{roughness:.9});for(let r=0;r<3;r++)for(let i=0;i<5-r;i++){const l=cyl(.13,.13,1.4,wood,8);l.rotation.x=Math.PI/2;l.position.set(20.6+i*.28+r*.14,.14+r*.25,9.4);l.castShadow=true;scene.add(l)}BLOCK.push({r:[20.3,22.3,8.6,10.2]})}
+/* --- 공연 무대(서쪽): 무대, 봉우리 병풍, 등롱, 방석, 악기 --- */
+const STX=-24,STZ=3;
+{const g=new THREE.Group();const pf=box(3.8,.7,8.6,WOODL);pf.position.y=.35;g.add(pf);const st=box(4.1,.18,8.9,WOOD);st.position.y=.09;g.add(st);
+ const scr=tex(1024,320,(q,w,h)=>{q.fillStyle='#2a4c78';q.fillRect(0,0,w,h);const pk=(cx,top,ww,c)=>{q.fillStyle=c;q.beginPath();q.moveTo(cx-ww,h);q.quadraticCurveTo(cx-ww*.3,top+30,cx,top);q.quadraticCurveTo(cx+ww*.3,top+30,cx+ww,h);q.fill()};pk(w*.5,h*.15,w*.18,'#2f6f4f');pk(w*.27,h*.3,w*.14,'#3a7c57');pk(w*.73,h*.3,w*.14,'#3a7c57');pk(w*.08,h*.5,w*.1,'#45885c');pk(w*.92,h*.5,w*.1,'#45885c');
+  q.fillStyle='#d9362a';q.beginPath();q.arc(w*.18,h*.2,26,0,7);q.fill();q.fillStyle='#f4efe2';q.beginPath();q.arc(w*.82,h*.2,24,0,7);q.fill();q.fillStyle='#d9a93a';q.font='bold 40px "Noto Serif KR",serif';q.textAlign='center';q.fillText('무이 악사 무대',w/2,h*.93)});
+ const sc=new THREE.Mesh(new THREE.BoxGeometry(.12,3.2,8.2),[new THREE.MeshStandardMaterial({map:scr,roughness:.8}),M(0x5a3420),M(0x5a3420),M(0x5a3420),M(0x5a3420),M(0x5a3420)]);sc.position.set(-1.8,2.3,0);g.add(sc);
+ for(const z of[-4,4]){const p=cyl(.1,.12,4.4,RED,8);p.position.set(-1.8,2.2,z);g.add(p)}
+ for(const z of[-3.6,-1.2,1.2,3.6]){const lp=cyl(.05,.05,2,WOOD,6);lp.position.set(1.7,1.7,z);g.add(lp);const l1=cyl(.16,.18,.28,LANM[0],10);l1.position.set(1.7,2.75,z);g.add(l1);const l2=cyl(.18,.14,.24,LANM[1],10);l2.position.set(1.7,2.5,z);g.add(l2)}
+ const cu=[0x9c3b2c,0x2f5f8a,0xc59b3a,0x2f6b55,0x9c3b2c];for(let i=0;i<5;i++){const c=cyl(.36,.38,.08,M(cu[i],{roughness:.9}),18);c.position.set(-.3,.74,-3.2+i*1.6);g.add(c)}
+ /* 북 */const dr=cyl(.42,.42,.6,M(0xb0402e,{roughness:.5}),20);dr.rotation.x=Math.PI/2;dr.position.set(.55,1.25,-3.2);g.add(dr);for(const s of[-1,1]){const hd=cyl(.43,.43,.02,M(0xe8dcc0),20);hd.rotation.x=Math.PI/2;hd.position.set(.55,1.25,-3.2+s*.31);g.add(hd)}const ds=box(.1,.5,.1,WOOD);ds.position.set(.55,.95,-3.2);g.add(ds);
+ /* 거문고 */const gm=box(.32,.1,1.6,M(0x6b3a22,{roughness:.5}));gm.position.set(.45,.84,-1.2);gm.rotation.y=.25;g.add(gm);for(let i=0;i<6;i++){const s=box(.006,.006,1.5,M(0xf2e6c8));s.position.set(.45-.12+i*.048,.9,-1.2);s.rotation.y=.25;g.add(s)}
+ /* 대금 */const dg=cyl(.03,.03,1.1,M(0x9a7a4a),8);dg.rotation.z=Math.PI/2;dg.position.set(.4,.8,1.2);g.add(dg);
+ /* 배소: 대나무 관 묶음 */for(let i=0;i<8;i++){const p=cyl(.025,.025,.3+i*.04,M(0xb89a5a),6);p.position.set(.45,.78+(.3+i*.04)/2,2.95+i*.06);g.add(p)}
+ /* 완함: 둥근 몸에 긴 목 */const wh=cyl(.3,.3,.08,M(0x8a4a2a,{roughness:.4}),20);wh.rotation.z=Math.PI/2;wh.position.set(.45,1.0,3.9);g.add(wh);const nk=box(.06,.9,.06,M(0x6b3a22));nk.position.set(.45,1.45,3.9);g.add(nk);
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.position.set(STX,0,STZ);g.rotation.y=Math.atan2(0-STX,2.5-STZ)-Math.PI/2;scene.add(g);BLOCK.push({c:[STX,STZ,2.3]},{c:[STX+.3,STZ+3,2.1]},{c:[STX+.3,STZ-3,2.1]})}
+/* --- 안내판, 장터 좌판 --- */
+{const bd=tex(640,420,(q,w,h)=>{q.fillStyle='#f3ead6';q.fillRect(0,0,w,h);q.strokeStyle='#5b3a22';q.lineWidth=16;q.strokeRect(8,8,w-16,h-16);q.fillStyle='#2a1d12';q.font='bold 46px "Noto Serif KR",serif';q.textAlign='center';q.fillText('무이 월드 안내도',w/2,72);
+  q.font='28px "Gowun Dodum",sans-serif';q.textAlign='left';['뒤 회랑: 쇼츠 문 다섯, 유물 복원 현장','왼쪽: 모닥불, 악사 무대, 장독대, 평상','오른쪽: 네모 연못과 차일 마루, 가마','회랑 양끝: 발굴 터 · 팔복 상영관 가는 문','반장 무이 부탁 다섯 · 기념사진'].forEach((t,i)=>q.fillText('· '+t,40,132+i*56))});
+ const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(2.6,1.7,.1),[M(0x5b3a22),M(0x5b3a22),M(0x5b3a22),M(0x5b3a22),new THREE.MeshStandardMaterial({map:bd,roughness:.8}),M(0x5b3a22)]);b.position.y=1.6;g.add(b);for(const x of[-1.1,1.1]){const p=cyl(.06,.06,1.6,WOOD,6);p.position.set(x,.8,0);g.add(p)}add(g,4.2,0,21.5,-.5);BLOCK.push({c:[4.2,21.5,.6]});
+ const s=new THREE.Group();const tb=box(2.6,.8,1.2,WOODL);tb.position.y=.4;s.add(tb);const aw=new THREE.Mesh(new THREE.PlaneGeometry(3,1.6),new THREE.MeshStandardMaterial({side:THREE.DoubleSide,map:tex(256,128,(q,w,h)=>{for(let x=0;x<w;x+=32){q.fillStyle=x/32%2?'#f3eee2':'#c8463a';q.fillRect(x,0,32,h)}})}));aw.rotation.x=-1.2;aw.position.set(0,2.1,.2);s.add(aw);
+ for(const x of[-1.25,1.25]){const p=cyl(.05,.05,2.2,WOOD,6);p.position.set(x,1.1,-.5);s.add(p)}for(let i=0;i<5;i++){const j=lathe([[0,0],[.1,0],[.16,.1],[.12,.22],[.06,.26],[0,.26]],M([0xefe7d6,0x3f6b5a,0x8a4a2a,0xefe7d6,0x2f5f8a][i],{roughness:.3}),14);j.position.set(-1+i*.5,.8,.1);s.add(j)}
+ const sg=new THREE.Mesh(new THREE.PlaneGeometry(1.8,.42),new THREE.MeshBasicMaterial({map:tex(512,120,(q,w,h)=>{q.fillStyle='#2b1d12';q.fillRect(0,0,w,h);q.fillStyle='#f3d27a';q.font='bold 52px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText('무이 장터 · 곧 열려요',w/2,h/2)})}));sg.position.set(0,1.15,.61);s.add(sg);
+ s.traverse(o=>{if(o.isMesh)o.castShadow=true});add(s,-4.6,0,20,.45);BLOCK.push({c:[-4.6,20,1.4]})}
+/* --- 포털 둘: 회랑 양끝, 금테 사진 + 소용돌이 고리 --- */
+const PORT3=[{k:'dig',th:-76.7,n:'발굴 터',d:'무이 발굴단: 땅속 유물을 캐서 복원해요',img:'media/portal_dig.jpg',url:'../dig/?from=world3d'},{k:'palbok',th:76.7,n:'전주 팔복 상영관',d:'팔복예술공장 골목에서 티켓을 받아 D-CUBE에서 「뺄불통가마」를 봐요',img:'media/portal_palbok.jpg',url:'../palbok/?from=world3d'}];
+{const sw=tex(256,256,(q,w,h)=>{const g=q.createRadialGradient(w/2,h/2,4,w/2,h/2,w/2);g.addColorStop(0,'rgba(220,255,200,1)');g.addColorStop(.5,'rgba(90,200,120,.8)');g.addColorStop(1,'rgba(20,80,50,0)');q.fillStyle=g;q.fillRect(0,0,w,h);q.strokeStyle='rgba(255,255,255,.6)';q.lineWidth=5;for(let k=0;k<4;k++){q.beginPath();for(let t=0;t<9;t+=.1){const r=t*12;q.lineTo(w/2+Math.cos(t+k*1.57)*r,h/2+Math.sin(t+k*1.57)*r)}q.stroke()}});
+ const gold=new THREE.MeshStandardMaterial({color:0xc9a24a,metalness:.8,roughness:.3});
+ for(const P of PORT3){const[x,z]=rP(RC+1.45,P.th),g=new THREE.Group();const fr=box(2.9,3.4,.2,gold);fr.position.y=2.0;g.add(fr);const ph=new THREE.Mesh(new THREE.PlaneGeometry(2.5,3.0),new THREE.MeshBasicMaterial({map:new THREE.TextureLoader().load(P.img,t=>{t.colorSpace=THREE.SRGBColorSpace}),toneMapped:false}));ph.position.set(0,2.0,.11);g.add(ph);
+  const lb=new THREE.Mesh(new THREE.PlaneGeometry(2.6,.5),new THREE.MeshBasicMaterial({map:tex(512,100,(q,w,h)=>{q.fillStyle='#2b1d12';q.fillRect(0,0,w,h);q.fillStyle='#f3d27a';q.font='bold 50px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText(P.n,w/2,h/2)})}));lb.position.set(0,4.0,.11);g.add(lb);add(g,x,.3,z,0,false);g.lookAt(0,.3,0);
+  const[rx,rz]=rP(RC-.6,P.th);const ring=new THREE.Mesh(new THREE.TorusGeometry(1.25,.1,8,32),new THREE.MeshStandardMaterial({color:0x6fe08a,emissive:0x2fbf5a,emissiveIntensity:1.2}));ring.position.set(rx,2.3,rz);ring.lookAt(0,2.3,2.5);scene.add(ring);
+  const disc=new THREE.Mesh(new THREE.CircleGeometry(1.2,32),new THREE.MeshBasicMaterial({map:sw,transparent:true,opacity:.45,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending}));disc.position.copy(ring.position);disc.quaternion.copy(ring.quaternion);scene.add(disc);ENVT.push(dt=>{disc.rotateZ(dt*1.4)});P.x=rx;P.z=rz}}
+function envNight(n){for(const[m,v]of ENVN)m.emissiveIntensity=n?v:0;}
+function envTick(dt,now){for(const f of ENVT)f(dt,now)}
+function envCollide(){for(const b of BLOCK){if(b.c){const[x,z,r]=b.c,dx=pos.x-x,dz=pos.z-z,d=Math.hypot(dx,dz);if(d<r&&d>1e-4){pos.x=x+dx/d*r;pos.z=z+dz/d*r}}else{const[x0,x1,z0,z1]=b.r;if(pos.x>x0&&pos.x<x1&&pos.z>z0&&pos.z<z1){const l=pos.x-x0,r=x1-pos.x,t=pos.z-z0,bt=z1-pos.z,m=Math.min(l,r,t,bt);if(m===l)pos.x=x0;else if(m===r)pos.x=x1;else if(m===t)pos.z=z0;else pos.z=z1}}}}
+/* 장소 안내(가까이 가면 버튼) */
+const SPOTS=[{x:5.6,z:13.6,r:2.6,t:'연못 이야기',h:'네모난 못에 둥근 섬. 하늘은 둥글고 땅은 네모나다는 옛 생각을 담은 연못이에요. 원앙 둘이 섬을 돌아요.'},
+ {x:-20,z:10.8,r:2.6,t:'장독대 구경',h:'장독대: 간장·된장·고추장을 담그는 옹기를 볕 잘 드는 곳에 모아 둔 자리예요. 옹기는 숨을 쉬어서 장이 잘 익어요.'},
+ {x:0,z:20.4,r:2.4,t:'장승 이야기',h:'장승: 마을 어귀를 지키는 수호신이에요. 천하대장군과 지하여장군이 한 쌍으로 서요.'},
+ {x:5.2,z:23.4,r:2.2,t:'솟대 이야기',h:'솟대: 장대 끝의 새가 하늘과 마을을 잇는다고 믿었어요. 풍년과 안녕을 빌었지요.'},
+ {x:-17,z:17.6,r:2.4,t:'평상에서 쉬기',h:'평상에 앉아 쉬어 가요. 지우산 그늘이 시원해요.',sit:[-17,19.5]},
+ {x:KX-4.2,z:KZ+1.6,r:2.8,t:'가마 불멍',h:'가마 아궁이에 불이 타요. 장작 타는 소리를 들으며 잠깐 쉬어 가요.'},
+ {x:STX+3.4,z:STZ,r:3.2,t:'악사 무대',h:'무이 악사 무대: 금동대향로의 다섯 악사를 닮은 무이들이 북·거문고·대금·배소·완함을 연주할 자리예요.'},
+ {x:4.2,z:20.3,r:2,t:'안내도 보기',h:'뒤 회랑엔 쇼츠 문과 유물 복원 현장, 왼쪽엔 모닥불·무대·장독대, 오른쪽엔 연못과 가마, 회랑 양끝엔 발굴 터와 팔복 상영관 문이 있어요.'}];
 /* ---------------- 무이 ---------------- */
 const gl=new GLTFLoader();const CACHE={};
 function loadKind(k){return CACHE[k]||(CACHE[k]=new Promise((res,rej)=>gl.load('media/muui_'+k+'.glb',res,undefined,rej)))}
@@ -180,7 +300,7 @@ const flames=[];for(let i=0;i<7;i++){const k=i<4?0:i<6?1:2,f=new THREE.Mesh(new 
 const fireL=new THREE.PointLight(0xff9040,0,16,1.5);fireL.position.set(0,1.3,0);fireL.castShadow=false;fireG.add(fireL);
 const EMB=60,embG=new THREE.BufferGeometry(),embP=new Float32Array(EMB*3),embV=[];for(let i=0;i<EMB;i++){embV.push(Math.random());embP[i*3+1]=-9}embG.setAttribute('position',new THREE.BufferAttribute(embP,3));
 const embers=new THREE.Points(embG,new THREE.PointsMaterial({color:0xffa050,size:.07,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));embers.visible=false;fireG.add(embers);
-const DANCERS=[];let joined=false,joinA=0;
+const DANCERS=[],STATUE=[];let joined=false,joinA=0;
 async function placeDancers(){const sit=['sit_idle','sit_look','sit_clap','sit_doze','sit_idle'];for(let i=0;i<5;i++){const k=KINDS[(i+1)%5].k,m=await makeMuui(k,.95);m.a=i/5*6.28;m.seat=i/6*6.28+.3;m.sitAct=sit[i];m.danceAct=NOARM[k]?'clap':'dance';m.state='';
  m.root.position.set(FX+Math.cos(m.seat)*FR,0,FZ+Math.sin(m.seat)*FR);DANCERS.push(m)}}
 function fireTick(dt,now){const lit=night;for(const f of flames){f.visible=lit;if(lit){const u=f.userData,s=.8+.3*Math.sin(now*.011+u.p)+.15*Math.sin(now*.027+u.p*2);f.scale.set(1,s,1);f.position.y=u.b+(s-1)*u.h*.5}}
@@ -193,9 +313,9 @@ function fireTick(dt,now){const lit=night;for(const f of flames){f.visible=lit;i
    /* 춤은 도는 쪽을 보고, 앉으면 불을 본다 */const ry=lit?Math.atan2(-Math.sin(m.a),Math.cos(m.a)):Math.atan2(FX-p.x,FZ-p.z);let r=ry-m.root.rotation.y;r=Math.atan2(Math.sin(r),Math.cos(r));m.root.rotation.y+=r*Math.min(1,dt*6);
    if(!m.busy)m.play(want==='sit_idle'||want.startsWith('sit_')?(m.state==='sat'?want:(m.state='sitting','sit')):want,.35);
    if(!lit&&m.state==='sitting'&&m.cur===m.A.sit&&m.cur.time>=m.cur.getClip().duration*.95){m.state='sat'}if(lit)m.state=''}
-  m.mx.update(dt)}}
+  m.mx.update(dt)}for(const st of STATUE)st.mx.update(dt)}
 /* ---------------- 부탁: 유물마다 반장 무이가 먼저 부탁을 건다 ---------------- */
-const QUEST={ceramic:{item:'흙 바구니',at:[-22,4],ask:'달항아리 틈을 메울 고운 흙이 모자라요. 서쪽 담장 아래 흙 바구니를 가져다 줄래요?',thx:'고마워요! 이 흙이면 허리 이음선 틈을 메울 수 있어요.'},
+const QUEST={ceramic:{item:'흙 바구니',at:[-20.5,12],ask:'달항아리 틈을 메울 고운 흙이 모자라요. 서쪽 장독대 옆에 둔 흙 바구니를 가져다 줄래요?',thx:'고마워요! 이 흙이면 허리 이음선 틈을 메울 수 있어요.'},
  science:{item:'빗물 기록지',at:[5.5,7],ask:'비 온 날 적은 기록지가 바람에 날아갔어요. 단풍나무 아래 어딘가 떨어졌을 거예요.',thx:'찾았네요! 이 날 비가 두 치 내렸다고 적혀 있어요.'},
  carpenter:{item:'기와 조각',at:[7.5,26.5],ask:'다보탑 지붕돌에 맞춰 볼 기와 조각을 대문 옆에 두고 왔어요. 가져다 줄래요?',thx:'딱 맞아요! 이제 지붕돌 모서리를 다시 잡을 수 있어요.'},
  painter:{item:'붉은 물감 그릇',at:[21,10.5],ask:'일월오봉도의 해를 칠할 붉은 물감 그릇이 동쪽 나무 아래 있어요.',thx:'이 붉은색이면 해가 다시 또렷해져요. 고마워요!'},
@@ -251,7 +371,7 @@ let night=false;const lanterns=[];
 {const lm=new THREE.MeshStandardMaterial({color:0xd9462f,emissive:0xff8a3a,emissiveIntensity:0});for(let i=0;i<12;i++){const th=-75+i*13.6,[x,z]=rP(RC-1.6,th);const l=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.42,10),lm);l.position.set(x,3.6,z);scene.add(l)}lanterns.push(lm);
  for(const s of SITES){const pl=new THREE.PointLight(0xffb070,0,9,1.6);pl.position.set(s.x*.9,3,s.z*.9);scene.add(pl);lanterns.push(pl)}}
 function setNight(n){night=n;$('#bNight').textContent=n?'낮으로':'밤으로';hemi.intensity=n?.28:1.15;sun.intensity=n?.25:2.6;sun.color.set(n?0x9fb4ff:0xffe7c4);skyU.top.value.set(n?0x0b1430:0x4f86cf);skyU.bot.value.set(n?0x24304d:0xf3dcb8);scene.fog.color.set(n?0x141b2e:0xd9d2c3);
- lanterns[0].emissiveIntensity=n?2.2:0;for(const l of lanterns.slice(1))l.intensity=n?14:0}
+ lanterns[0].emissiveIntensity=n?2.2:0;envNight(n);for(const l of lanterns.slice(1))l.intensity=n?14:0}
 $('#bNight').addEventListener('click',()=>setNight(!night));
 /* ---------------- 안내·버튼 ---------------- */
 function hint(t,ms=6000){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
@@ -264,7 +384,7 @@ $('#bBlock').addEventListener('click',()=>{location.href='../world/?from=world3d
 let pickK=(()=>{try{return localStorage.getItem('muui3d-kind')}catch(e){}})()||'ceramic';
 {const box_=$('#kinds');for(const q of KINDS){const b=document.createElement('button');b.type='button';b.innerHTML=`<img alt="" src="media/pick_${q.k}.jpg" onerror="this.style.visibility='hidden'"><b>${q.n}</b><span>${q.d}</span>`;b.classList.toggle('on',q.k===pickK);b.addEventListener('click',()=>{pickK=q.k;box_.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});box_.appendChild(b)}}
 $('#go').addEventListener('click',async()=>{try{localStorage.setItem('muui3d-kind',pickK)}catch(e){}$('#pick').hidden=true;$('#load').hidden=false;$('#load').style.opacity=1;
- me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);await placeCrew();await placeDancers();qUI();
+ me=await makeMuui(pickK,1.0);me.root.position.copy(pos);me.play('idle',0);await placeCrew();await placeDancers();{const st=await makeMuui('ceramic',4.7);const ped=cyl(1.5,1.7,.5,STONE,20);add(ped,-12.5,.25,7.5);st.root.position.set(-12.5,.5,7.5);st.root.rotation.y=Math.atan2(12.5,-5);st.play('idle',0);st.mx.timeScale=.5;STATUE.push(st);BLOCK.push({c:[-12.5,7.5,1.9]})}qUI();
  $('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);$('#top').hidden=false;if(matchMedia('(pointer:coarse)').matches)$('#stick').hidden=false;
  DOORS.forEach(d=>d.vid.play().then(()=>{const t=new THREE.VideoTexture(d.vid);t.colorSpace=THREE.SRGBColorSpace;d.mat.map=t;d.mat.needsUpdate=true}).catch(()=>{}));
  hint(matchMedia('(pointer:coarse)').matches?'왼쪽 원으로 걷고, 화면을 밀어 둘러보세요. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.':'WASD로 걷고 Shift로 뛰어요. 끌어서 둘러보고 휠로 가까이. 회랑의 쇼츠 문 앞에서 복원단이 일하고 있어요.',8000)});
@@ -279,20 +399,22 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
   pos.x+=Math.sin(yaw)*speed*dt;pos.z+=Math.cos(yaw)*speed*dt;const r=Math.hypot(pos.x,pos.z);if(r>28.5){pos.x*=28.5/r;pos.z*=28.5/r}if(pos.z<0&&r>RC-2.6&&r<RC+2.4){/* 회랑 기둥 안쪽으로만 */}
   for(const s of SITES){const dx=pos.x-s.x,dz=pos.z-s.z,dd=Math.hypot(dx,dz),min=s.k==='carpenter'?2.1:1.2;if(dd<min){pos.x=s.x+dx/dd*min;pos.z=s.z+dz/dd*min}}
   {const dx=pos.x,dz=pos.z-2.5,dd=Math.hypot(dx,dz);if(dd<.9){pos.x=dx/dd*.9;pos.z=2.5+dz/dd*.9}}
-  {const dx=pos.x-FX,dz=pos.z-FZ,dd=Math.hypot(dx,dz);if(dd<1.2){pos.x=FX+dx/dd*1.2;pos.z=FZ+dz/dd*1.2}}}
+  envCollide();{const dx=pos.x-FX,dz=pos.z-FZ,dd=Math.hypot(dx,dz);if(dd<1.2){pos.x=FX+dx/dd*1.2;pos.z=FZ+dz/dd*1.2}}}
   me.root.position.copy(pos);me.root.rotation.y=yaw;me.play(photo?photo.pose:joined?(NOARM[me.k]?'clap':'dance'):speed>3?'run':speed>.25?'walk':'idle',.25);if(me.cur&&me.cur===me.A.walk)me.cur.timeScale=Math.max(.6,speed/1.8);me.mx.update(dt);
   const ty=1.0;tmp.set(pos.x+Math.sin(camYaw)*Math.cos(camPitch)*camDist,ty+Math.sin(camPitch)*camDist,pos.z+Math.cos(camYaw)*Math.cos(camPitch)*camDist);cam.position.lerp(tmp,Math.min(1,dt*8));cam.lookAt(pos.x,ty,pos.z)}
  else{const t=now/1000*.06;cam.position.set(Math.sin(t)*30,9,Math.cos(t)*30);cam.lookAt(0,2,0)}
  for(const c of CREW){c.mx.update(dt);c.t+=dt;
   if(c.job==='carry'){/* 돌을 들고 탑까지 왔다 갔다 */const a=Math.sin(c.t*.35);const p=c.home.clone();p.x+=Math.cos(c.root.rotation.y)*a*2.2;p.z-=Math.sin(c.root.rotation.y)*a*2.2;c.root.position.copy(p)}
   if(me){const d=c.root.position.distanceTo(pos);if(d<3&&!c.greet&&!c.busy){c.greet=1;c.prev=c.job;c.play(NOARM[c.k]?'nod':'wave',.3);setTimeout(()=>{if(!c.busy)c.play(c.prev,.4)},1700)}if(d>5)c.greet=0}}
- fireTick(dt,now);qTick(now);if(me)photoTick(dt);
+ fireTick(dt,now);qTick(now);envTick(dt,now);if(me)photoTick(dt);
  uiT-=dt;if(uiT<=0&&me){uiT=.15;const a=$('#act');a.hidden=true;actFn=null;
   for(const d of DOORS){if(Math.hypot(pos.x-d.fx,pos.z-d.fz)<2.6){a.textContent='쇼츠 보기';actFn=()=>openYT(d);a.hidden=false;break}}
   if(a.hidden&&qActive&&!qHeld){const q=QUEST[qActive];if(Math.hypot(pos.x-q.at[0],pos.z-q.at[1])<1.6){a.textContent=`${q.item} 줍기`;actFn=()=>{qHeld=qActive;hint(`${q.item}을(를) 들었어요. ${KINDS.find(x=>x.k===qHeld).d} 복원단에게 가져가요.`,4500);qUI()};a.hidden=false}}
   if(a.hidden)for(const c of CREW){if(c.lead&&c.root.position.distanceTo(pos)<2.6&&leadAct(c,a)){a.hidden=false;break}}
   if(a.hidden)for(const c of CREW){if(c.root.position.distanceTo(pos)<2.2){a.textContent=`${KINDS.find(q=>q.k===c.k).n}: ${JOBKO[c.job]||'일하는 중'}`;actFn=()=>{c.play('nod',.2);setTimeout(()=>c.play(c.job,.3),1100);hint(`${KINDS.find(q=>q.k===c.k).n}가 ${c.site?KINDS.find(q=>q.k===c.site.k).d:''} 복원을 하고 있어요. ${JOBKO[c.job]||''}.`,4000)};a.hidden=false;break}}
   if(a.hidden&&!joined&&Math.hypot(pos.x-FX,pos.z-FZ)<FR+3.4){if(night){a.textContent='같이 어깨춤 추기';actFn=()=>{joined=true;joinA=Math.atan2(pos.z-FZ,pos.x-FX);const j=DANCERS[(Math.random()*5)|0];if(j&&!NOARM[j.k]){j.busy=1;j.play('joy',.2);setTimeout(()=>{j.busy=0},1600)}hint('모닥불 둘레를 같이 돌아요. 움직이면 빠져나와요.',4000)}}else{a.textContent='모닥불 피우기 (해 질 녘으로)';actFn=()=>{setNight(true);hint('해가 졌어요. 무이들이 일어나 모닥불 둘레에서 어깨춤을 춰요.',5000)}}a.hidden=false}
+  if(a.hidden)for(const P of PORT3){if(Math.hypot(pos.x-P.x,pos.z-P.z)<2.6){a.textContent=`${P.n}로 가기`;actFn=()=>{hint(P.d,3000);setTimeout(()=>{location.href=P.url},700)};a.hidden=false;break}}
+  if(a.hidden)for(const S of SPOTS){if(Math.hypot(pos.x-S.x,pos.z-S.z)<S.r){a.textContent=S.t;actFn=()=>hint(S.h,7000);a.hidden=false;break}}
   for(const d of DOORS){const near=Math.hypot(pos.x-d.fx,pos.z-d.fz)<16;if(near&&d.vid.paused)d.vid.play().catch(()=>{});else if(!near&&!d.vid.paused)d.vid.pause()}}
  R.render(scene,cam)});
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
