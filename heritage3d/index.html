@@ -56,7 +56,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <section id="card" hidden><div class="in"><h2 id="cT"></h2><p id="cP"></p><button class="btn" id="cV" type="button" hidden>쇼츠 속 이 장면 보기</button> <button class="btn" id="cX" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
-const VSRC=()=>SITEB&&SITEB.video?'../world3d/media/full_'+SITEB.video+'.mp4':null;let pipS=null,VBLOB=null;
+const VSRC=()=>SITEB&&SITEB.video?'../world3d/media/full_'+SITEB.video+'.mp4':SITEB&&SITEB.short?'media/shorts/'+SITEB.short+'.mp4':null;let pipS=null,VBLOB=null;
 /* 서버가 구간 요청을 안 받아 중간으로 못 넘기므로, 영상을 한 번 통째로 받아 메모리에서 재생 */function vblob(){if(!VBLOB)VBLOB=fetch(VSRC()).then(r=>r.blob()).then(b=>URL.createObjectURL(b)).catch(()=>VSRC());return VBLOB}
 function vset(v,t0,play){vblob().then(u=>{if(v.src!==u){v.src=u}const go=()=>{try{v.currentTime=t0}catch(e){}if(play())v.play().catch(()=>{})};if(v.readyState>=1)go();else v.addEventListener('loadedmetadata',go,{once:true})})}
 function fmtT(a){return Math.floor(a)+'초'}
@@ -157,7 +157,7 @@ $('#bStamp').addEventListener('click',sbOpen);$('#sbX').addEventListener('click'
 $('#cX').addEventListener('click',()=>$('#card').hidden=true);$('#qdX').addEventListener('click',()=>$('#qdone').hidden=true);questInit();
 $('#vfX').addEventListener('click',()=>{$('#vfull').hidden=true;$('#vfV').pause()});$('#pip').addEventListener('click',()=>{if(pipS)openFull(pipS.vt[0],'쇼츠 '+fmtT(pipS.vt[0])+' 장면: '+(pipS.vn||pipS.t))});
 if(SITEB.horse){$('#bRide').hidden=false;$('#bRide').addEventListener('click',()=>setRide(!RIDE))}
-if(SITEB.video){setTimeout(vblob,4000);$('#bShorts').hidden=false;$('#bShorts').addEventListener('click',()=>openFull(0,(SITEB.title||'').split(' ·')[0]+' 복원 쇼츠 전체'))}
+if(SITEB.video||SITEB.short){setTimeout(vblob,4000);$('#bShorts').hidden=false;$('#bShorts').addEventListener('click',()=>openFull(0,(SITEB.title||'').split(' ·')[0]+' 복원 쇼츠 전체'))}
 $('#cV').addEventListener('click',()=>{const sp=$('#cV')._sp;$('#card').hidden=true;if(sp)openFull(sp.vt[0],'쇼츠 '+fmtT(sp.vt[0])+' 장면: '+(sp.vn||sp.t))});
 /* ---------- 함께 둘러보는 무이들 ---------- */
 const NPC=[];async function placeNPC(){const L=SITEB.npc;

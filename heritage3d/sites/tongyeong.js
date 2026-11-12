@@ -54,7 +54,7 @@ export function buildTongyeong(opts={}){const mini=!!opts.mini;const MT=material
  spots.push({x:0,y:0,z:SZ+2.4,r:3,t:'통영 바다',h:'통영(統營)이라는 이름은 삼도수군통제영에서 왔어요. 1604년 이 바닷가로 통제영을 옮긴 뒤, 수군에 필요한 물건을 만드는 공방이 모여 나전칠기, 통영갓, 소반 같은 공예가 꽃피었어요.'});
  const tick=(P,dt)=>{const t=performance.now()/1000;for(const b of G.userData.boats||[]){b.position.y=-1.5+Math.sin(t*1.2+b.userData.p)*.12;b.rotation.z=Math.sin(t*.9+b.userData.p)*.05;b.position.x+=dt*.6;if(b.position.x>80)b.position.x=-80}const w=G.userData.water;if(w)w.offset.x=t*.01};
  const meta={quest:{t:'통영 나전 순례',d:'통제영과 나전칠기의 고장 통영에서 여섯 곳을 찾아 보세요.',steps:[['세병관','세병관'],['나전칠함','나전칠함'],['두루마리 상자','두루마리 상자'],['자개 작업대','자개 작업대'],['전복 껍데기','전복 껍데기'],['통영 바다','통영 바다']],done:'통영 나전 순례를 마쳤어요. 바다를 지키던 수군의 도시가 어떻게 공예의 도시가 되었는지 기억해 두세요.'},
-  title:'통영 나전칠기 공방',hint:'삼도수군통제영의 세병관(본떠 지음)과 나전칠기 공방이에요. 세병관 안 진열장에서 나전칠함과 용봉무늬 두루마리 상자를 보고, 동쪽 공방에서 자개 작업대와 전복 껍데기를 찾아 보세요. (3D: KCDF CC BY · 클리블랜드 미술관 CC0)',
+  title:'통영 나전칠기 공방',short:'s063',hint:'삼도수군통제영의 세병관(본떠 지음)과 나전칠기 공방이에요. 세병관 안 진열장에서 나전칠함과 용봉무늬 두루마리 상자를 보고, 동쪽 공방에서 자개 작업대와 전복 껍데기를 찾아 보세요. (3D: KCDF CC BY · 클리블랜드 미술관 CC0)',
   env:{plaza:null,beds:false,trees:true,groundY:-1.6,sign:{x:5,z:22,lines:['통영 나전칠기 공방','세병관 · 통영 바다','나전칠함 · 두루마리 상자','자개 작업대 · 전복 껍데기']},treeAvoid:(x,z)=>z<28&&Math.abs(x)<34||z<SZ+2},
   npc:[['painter',[[WX-3,.3,WZ+2.6],[WX+3,.3,WZ+2.6]]],['carpenter',[[-8,FY,HZ+3],[8,FY,HZ+3]]]],
   level:P=>Math.abs(P.x-HX)<W/2&&Math.abs(P.z-HZ)<D/2&&P.y>FY-.2?'세병관':Math.abs(P.x-WX)<5&&Math.abs(P.z-WZ)<3.5?'나전 공방':P.z<SZ+6?'통영 바닷가':'통제영 마당',

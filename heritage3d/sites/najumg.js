@@ -35,7 +35,7 @@ export function buildNaju(opts={}){const mini=!!opts.mini;const K=kit(43,mini);c
  spots.push({x:PX,y:.4,z:PZ+.6,r:2.4,t:'금동관',h:'신촌리 9호분 독널에서 나온 금동관이에요(국보). 둥근 띠 위에 풀꽃 모양 세움 장식 셋을 세우고, 안에 고깔 모양 모자를 썼어요. 신라 금관과 달리 풀꽃 무늬가 특징이라, 마한·백제 사람들의 솜씨로 봐요.'});
  photo('ongwan',2.4,1.6,-17,2.2,4,.5,'실물: 독널(Leedkmn, CC BY-SA 3.0)');spots.push({x:-15.5,y:0,z:6.4,r:2.2,t:'독널 사진',h:'박물관에 놓인 실제 독널 사진이에요. 발굴장의 독널과 비교해 보세요.'});
  const meta={quest:{t:'반남 고분 발굴 견학',d:'영산강 마한의 큰 무덤에서 다섯 곳을 찾아 보세요.',steps:[['반남 고분','반남 고분'],['봉분 단면','봉분 단면'],['독널','독널'],['금동관','금동관'],['독널 사진','독널 사진']],done:'발굴 견학을 마쳤어요. 거대한 독널과 풀꽃 금동관, 영산강 마한의 이야기를 기억해 두세요.'},
-  title:'나주 반남 고분 발굴장',hint:'나주 반남 고분을 본떠 지은 발굴장이에요. 반을 갈라 낸 네모난 봉분 속 독널(옹관), 봉분 단면, 정자의 금동관 사진을 찾아 보세요.',
+  title:'나주 반남 고분 발굴장',short:'s047',hint:'나주 반남 고분을 본떠 지은 발굴장이에요. 반을 갈라 낸 네모난 봉분 속 독널(옹관), 봉분 단면, 정자의 금동관 사진을 찾아 보세요.',
   env:{plaza:null,beds:false,trees:true,sign:{x:5,z:20,lines:['나주 반남 고분 발굴장','네모난 큰 봉분 · 독널','신촌리 금동관(국보)','영산강 마한의 무덤']},treeAvoid:(x,z)=>Math.abs(x)<32&&z<24&&z>-36},
   npc:[['carpenter',[[-5,MZ+5],[5,MZ+5]]],['painter',[[PX-3,.4,PZ+2],[PX+3,.4,PZ+2]]]],
   level:P=>P.z<MZ+8&&Math.abs(P.x-MX)<9?'발굴 구덩이':Math.abs(P.x-PX)<4&&Math.abs(P.z-PZ)<2.5?'금동관 정자':'고분 마당',camCap:()=>Infinity,
@@ -61,7 +61,7 @@ export function buildMungyeong(opts={}){const mini=!!opts.mini;const K=kit(59,mi
  spots.push({x:-14.5,y:0,z:10,r:2.2,t:'문경새재',h:'영남에서 한양으로 가던 큰 고개예요. 과거 보러 가던 선비들이 넘던 길에 관문 셋이 있어요. 문경 사발은 이 길을 따라 팔려 나갔어요.'});
  const tick=(P,dt)=>{const w=G.userData.wheel;if(w)w.rotation.y+=dt*4;const f=G.userData.fire;if(f)f.intensity=10+Math.sin(performance.now()/110)*2};
  const meta={quest:{t:'문경 사발 마을 탐방',d:'막사발이 태어나는 길을 따라 여섯 곳을 찾아 보세요.',steps:[['발물레','발물레'],['사발','사발'],['망댕이가마','망댕이가마'],['불 보는 구멍','불 보는 구멍'],['이도 다완','이도 다완'],['문경새재','문경새재']],done:'문경 사발 마을 탐방을 마쳤어요. 소박한 사발 하나가 바다 건너 국보가 된 이야기를 기억해 두세요.'},
-  title:'문경 망댕이가마 사발 마을',hint:'문경의 전통 장작가마 망댕이가마와 사발 공방을 본떠 지은 마을이에요. 발물레, 사발 선반, 칸칸이 이어진 가마, 이도 다완 사진, 문경새재 사진을 찾아 보세요.',
+  title:'문경 망댕이가마 사발 마을',short:'s065',hint:'문경의 전통 장작가마 망댕이가마와 사발 공방을 본떠 지은 마을이에요. 발물레, 사발 선반, 칸칸이 이어진 가마, 이도 다완 사진, 문경새재 사진을 찾아 보세요.',
   env:{plaza:null,beds:false,trees:true,sign:{x:4,z:18,lines:['문경 망댕이가마 사발 마을','망댕이가마 · 발물레','막사발 · 이도 다완','문경새재 길']},treeAvoid:(x,z)=>Math.abs(x)<30&&z<22&&z>-24},
   npc:[['ceramic',[[5,.3,8.4],[11,.3,8.4]]],['carpenter',[[-6,0,2],[-6,0,-10]]]],
   level:P=>Math.abs(P.x-KX)<2.5&&P.z<KZ+2?'망댕이가마':'사발 마을',camCap:()=>Infinity,tick,
