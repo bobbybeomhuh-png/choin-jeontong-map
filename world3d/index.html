@@ -79,7 +79,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
  <div id="kinds"></div>
  <div><button class="btn main" id="go" type="button" style="font-size:18px;padding:11px 30px">들어가기</button> <button class="btn" id="toBlock" type="button">블록 세상으로</button></div>
 </div></section>
-<header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><span class="btn" id="qCnt" hidden style="pointer-events:none"></span><span class="btn" id="dchip" style="pointer-events:none"></span><button class="btn" id="bMenu" type="button">메뉴</button><button class="btn" id="bFP" type="button">1인칭 (V)</button><button class="btn" id="bMap" type="button">지도</button><button class="btn" id="bStamp" type="button">도장</button><button class="btn" id="bSnd" type="button">소리 켬</button><button class="btn" id="bPhoto" type="button">기념사진</button><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button">블록 세상</button></header>
+<header id="top" hidden><span id="ttl">무이 월드 · 3D</span><span class="sp"></span><span class="btn" id="qCnt" hidden style="pointer-events:none"></span><span class="btn" id="dchip" style="pointer-events:none"></span><button class="btn" id="bMenu" type="button">메뉴</button><button class="btn" id="bFP" type="button">1인칭 (V)</button><button class="btn" id="bMap" type="button">지도</button><button class="btn" id="bStamp" type="button">도장</button><button class="btn" id="bSnd" type="button">소리 켬</button><button class="btn" id="bPhoto" type="button">기념사진</button><button class="btn" id="bNight" type="button">밤으로</button><button class="btn" id="bBlock" type="button" title="초인 · 전국 전통 이야기 지도(이야기·영상·공모)">전통 이야기 지도</button></header>
 <div id="hint" hidden></div>
 <section id="jh" hidden><b id="jhT"></b><span id="jhN"></span><div id="jhS"></div><p id="jhD"></p></section>
 <div id="cd" hidden></div>
@@ -1116,7 +1116,7 @@ let actFn=null;$('#act').addEventListener('click',()=>actFn&&actFn());
 const JOBKO={brush:'붓으로 먼지를 털어요',knead:'흙을 반죽해 틈을 메워요',magnify:'돋보기로 살펴요',read:'기록을 읽어요',hammer:'망치로 두드려요',carry:'돌을 날라요',paint:'색을 칠해요'};
 function openYT(d){$('#ytf').src='https://www.youtube.com/embed/'+d.yt+'?autoplay=1&playsinline=1';$('#yt').hidden=false}
 $('#ytx').addEventListener('click',()=>{$('#yt').hidden=true;$('#ytf').src='about:blank'});
-$('#bBlock').addEventListener('click',()=>{location.href='../world/?from=world3d'});$('#toBlock').addEventListener('click',()=>{location.href='../world/?from=world3d'});
+$('#bBlock').addEventListener('click',()=>{location.href='../'});$('#toBlock').addEventListener('click',()=>{location.href='../world/?from=world3d'});
 /* ---------------- 시작: 무이 고르기 ---------------- */
 let pickK=(()=>{try{return localStorage.getItem('muui3d-kind')}catch(e){}})()||'base';
 const ALLK=[...ALLK0,...KINDS];
