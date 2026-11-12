@@ -15,9 +15,10 @@ export function buildGangneung(opts={}){const mini=!!opts.mini;const MT=material
  const PATH=tex(256,256,(q,w,h)=>{q.fillStyle='#cdb98f';q.fillRect(0,0,w,h);noise(q,w,h,4000,['rgba(0,0,0,.06)','rgba(255,255,255,.08)'],2)});PATH.wrapS=PATH.wrapT=THREE.RepeatWrapping;PATH.repeat.set(1,8);
  {const p=new THREE.Mesh(new THREE.PlaneGeometry(3,30),new THREE.MeshStandardMaterial({map:PATH,roughness:1}));p.rotation.x=-Math.PI/2;p.position.set(0,.03,6);p.receiveShadow=true;G.add(p)}
  /* ---------- 오죽 숲: 검은 대나무(뒤편과 서쪽) ---------- */
- if(!mini){const stem=M(0x26221e,{roughness:.5}),leaf=M(0x4f7d3a,{side:THREE.DoubleSide});const N=150;const sg=new THREE.CylinderGeometry(.045,.055,1,6);const st=new THREE.InstancedMesh(sg,stem,N);const lg=new THREE.PlaneGeometry(.9,.22);const lv=new THREE.InstancedMesh(lg,leaf,N*6);const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler();let li=0;
-  for(let i=0;i<N;i++){let x,z;if(i<100){x=-20+r()*40;z=-24-r()*7}else{x=-24-r()*6;z=-20+r()*30}const h=5+r()*3;m4.compose(new THREE.Vector3(x,h/2,z),q.setFromEuler(e.set((r()-.5)*.06,0,(r()-.5)*.06)),new THREE.Vector3(1,h,1));st.setMatrixAt(i,m4);
-   for(let k=0;k<6;k++){m4.compose(new THREE.Vector3(x+(r()-.5)*.8,h*.55+r()*h*.45,z+(r()-.5)*.8),q.setFromEuler(e.set(r()*.6,r()*6.28,-.4-r()*.4)),new THREE.Vector3(1,1,1));lv.setMatrixAt(li++,m4)}}
+ if(!mini){const stem=M(0x26221e,{roughness:.5});const LT=tex(64,16,(q,w,h)=>{q.clearRect(0,0,w,h);q.fillStyle='#5a8a3c';q.beginPath();q.moveTo(0,h/2);q.quadraticCurveTo(w*.35,0,w,h/2);q.quadraticCurveTo(w*.35,h,0,h/2);q.fill();q.strokeStyle='#3f6a2a';q.lineWidth=1;q.beginPath();q.moveTo(2,h/2);q.lineTo(w-4,h/2);q.stroke()});const leaf=new THREE.MeshStandardMaterial({map:LT,transparent:true,alphaTest:.4,side:THREE.DoubleSide,roughness:.8});
+  const N=170,CL=5,LP=6;const sg=new THREE.CylinderGeometry(.04,.05,1,6);const st=new THREE.InstancedMesh(sg,stem,N);const lg=new THREE.PlaneGeometry(.5,.12);lg.translate(.25,0,0);const lv=new THREE.InstancedMesh(lg,leaf,N*CL*LP);const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler();let li=0;
+  for(let i=0;i<N;i++){let x,z;if(i<110){x=-20+r()*40;z=-24-r()*7}else{x=-24-r()*6;z=-20+r()*30}const h=5+r()*3.5;m4.compose(new THREE.Vector3(x,h/2,z),q.setFromEuler(e.set((r()-.5)*.06,0,(r()-.5)*.06)),new THREE.Vector3(1,h,1));st.setMatrixAt(i,m4);
+   for(let c=0;c<CL;c++){const y=h*(.5+c*.1)+r()*.2,a0=r()*6.28;for(let k=0;k<LP;k++){m4.compose(new THREE.Vector3(x,y,z),q.setFromEuler(e.set(0,a0+k*1.05+(r()-.5)*.4,-.5-r()*.5,'YXZ')),new THREE.Vector3(.8+r()*.5,1,1));lv.setMatrixAt(li++,m4)}}}
   st.castShadow=true;lv.castShadow=true;G.add(st,lv);S(-20,20,0,9,-31,-24);S(-30,-24,0,9,-20,10)}
  spots.push({x:-6,y:0,z:-21,r:2.6,t:'오죽',h:'줄기가 까마귀처럼 검은 대나무예요. 신사임당이 태어나고 율곡 이이가 태어난 강릉 집 둘레에 오죽이 많아 집 이름이 오죽헌(烏竹軒)이 되었어요.'});
  /* ---------- 별당(몽룡실을 본뜸) ---------- */
@@ -59,7 +60,7 @@ export function buildGangneung(opts={}){const mini=!!opts.mini;const MT=material
  const meta={quest:{t:'오죽헌 초충도 산책',d:'신사임당의 초충도와 오죽헌을 따라 다섯 곳을 찾아 보세요.',steps:[['초충도','초충도'],['초충 화단','초충 화단'],['몽룡실','몽룡실'],['오죽','오죽'],['발문','발문']],done:'오죽헌 산책을 마쳤어요. 작은 풀벌레까지 다정하게 바라본 눈이 초충도의 힘이에요.'},
   title:'강릉 오죽헌 초충도 정원',video:'chochung',hint:'신사임당이 태어난 강릉 오죽헌을 본떠 지은 마당이에요. 전시 정자에서 초충도 8폭을, 화단에서 그림 속 텃밭을, 별당 대청에서 발문을, 뒤편에서 검은 대나무 오죽을 찾아 보세요. (그림 사진: 국립중앙박물관 소장품, 공공누리 제1유형)',
   env:{plaza:null,beds:false,trees:true,sign:{x:4,z:18,lines:['강릉 오죽헌 초충도 정원','초충도 8폭 · 발문','몽룡실 · 오죽 숲','그림 속 텃밭과 나비']},treeAvoid:(x,z)=>Math.abs(x)<32&&z<24&&z>-34},
-  npc:[['painter',[[PX-3,PFY,PZ+2],[PX+3,PFY,PZ+2]]],['carpenter',[[BX-4,BZ+3.4],[BX+4,BZ+3.4]]]],
+  npc:[['painter',[[PX-3,PFY,PZ+2],[PX+3,PFY,PZ+2]]],['carpenter',[[HX-4,0,HZ+D/2+3],[HX+3,0,HZ+D/2+3]]]],
   level:P=>Math.abs(P.x-PX)<PW/2&&Math.abs(P.z-PZ)<PD/2?'초충도 정자':Math.abs(P.x-HX)<W/2&&Math.abs(P.z-HZ)<D/2?'오죽헌 별당':P.z<-20?'오죽 숲':'오죽헌 마당',
   camCap:P=>Math.abs(P.x-HX)<W/2&&Math.abs(P.z-HZ)<D/2?3:Infinity,tick,
   mini:{S:5,ox:0,oz:-6,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.fillStyle='#2f3a28';g.fillRect(X(-20),Z(-31),40*S,7*S);g.fillRect(X(-30),Z(-20),6*S,30*S);g.fillStyle='#cdb98f';g.fillRect(X(-1.5),Z(-9),3*S,30*S);g.fillStyle='#8a6a44';g.fillRect(X(HX-W/2),Z(HZ-D/2),W*S,D*S);g.fillStyle='#8a3a2a';g.fillRect(X(PX-PW/2),Z(PZ-PD/2),PW*S,PD*S);g.fillStyle='#6b4f35';g.fillRect(X(BX-4.5),Z(BZ-2.5),9*S,5*S)}}};
