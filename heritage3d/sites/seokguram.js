@@ -2,6 +2,9 @@
    ⏱ 2026-11-12 만듦. 구성: 앞 목조 전각 → 전실(팔부신중) → 비도(금강역사·사천왕) → 둥근 주실(본존불·십일면관음·나한·보살·감실·돔 천장·연꽃 덮개돌) + 흙 봉분.
    치수는 공개 자료의 대략값(주실 지름 약 6.8m, 본존불 약 3.3m·대좌까지 약 5m)을 따름. */
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+/* 본존불 몸: 국가유산청(KOREA HERITAGE SERVICE) 「Stone Seated Vairocana Buddha Statue」(CC BY 4.0) 3D 스캔에서 불상 몸만 떼어 씀. 광배·팔각 대좌는 빼고 석굴암식 연꽃 대좌·뒷벽 광배 위에 올림. 손 모양은 원본(지권인) 그대로라 석굴암 항마촉지인과 다름. */
+const BUDDHA_URL=new URL('../models/vairocana.glb',import.meta.url).href;
 import {tex,noise,mulb,materials,roofSurf,rafters,brackets} from './sungnyemun.js';
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 /* ---------- 돋을새김(부조) 판: 색 지도 + 높이(범프) 지도 ---------- */
@@ -137,6 +140,10 @@ export function buildSeokguram(opts={}){const MT=materials();const G=new THREE.G
   /* 팔: 왼손은 무릎 위 손바닥 위로, 오른손은 오른 무릎 아래로 땅을 가리킴 */limb(V(.86,1.82,0),V(.98,1.05,.2),.19);limb(V(.98,1.05,.2),V(.32,.78,.62),.15);mesh(new THREE.SphereGeometry(.17,16,10),.2,.76,.66,1.3,.45,1.1);
   limb(V(-.86,1.82,0),V(-1.05,1.08,.25),.19);limb(V(-1.05,1.08,.25),V(-1.06,.62,.92),.15);mesh(new THREE.SphereGeometry(.13,16,12),-1.06,.5,1.0,1.0,1.45,.55);for(let i=0;i<4;i++){const fx=-1.14+i*.055;limb(V(fx,.4,1.02),V(fx-.005,.18+Math.abs(i-1.5)*.025,1.05+i*.004),.028)}limb(V(-.96,.5,1.0),V(-.95,.36,1.06),.032);
   /* 소매 자락(왼팔을 덮은 가사) */const sl=new THREE.CatmullRomCurve3([V(.9,1.9,-.05),V(1.08,1.3,.05),V(1.08,1.0,.28),V(.7,.88,.52)]);mesh(new THREE.TubeGeometry(sl,20,.06,8,false),0,0,0);
+  /* 스캔 불상으로 바꿔 끼우기(실패하면 위에서 지은 모양 그대로) */new GLTFLoader().load(BUDDHA_URL,gl=>{const o=gl.scene;o.updateMatrixWorld(true);const v=new THREE.Vector3(),bb=new THREE.Box3();
+   o.traverse(m=>{if(!m.isMesh)return;const g=m.geometry,pa=g.attributes.position,idx=g.index?g.index.array:null,n=idx?idx.length:pa.count,keep=[];for(let i=0;i<n;i+=3){let x=0,y=0,z=0;for(let k=0;k<3;k++){v.fromBufferAttribute(pa,idx?idx[i+k]:i+k).applyMatrix4(m.matrixWorld);x+=v.x/3;y+=v.y/3;z+=v.z/3}if(y<1.22||z<-.3)continue;for(let k=0;k<3;k++){const j=idx?idx[i+k]:i+k;keep.push(j);v.fromBufferAttribute(pa,j).applyMatrix4(m.matrixWorld);bb.expandByPoint(v)}}g.setIndex(keep);m.castShadow=true;m.receiveShadow=true;
+    const mt=m.material;if(mt.map&&mt.map.image){const im=mt.map.image,c=document.createElement('canvas');c.width=im.width;c.height=im.height;const q=c.getContext('2d');q.drawImage(im,0,0);const d=q.getImageData(0,0,c.width,c.height),a=d.data;for(let i=0;i<a.length;i+=4){const l=(a[i]*.3+a[i+1]*.59+a[i+2]*.11)/255,k=.55+l*.75;a[i]=Math.min(255,206*k);a[i+1]=Math.min(255,200*k);a[i+2]=Math.min(255,188*k)}q.putImageData(d,0,0);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.flipY=mt.map.flipY;t.wrapS=mt.map.wrapS;t.wrapT=mt.map.wrapT;mt.map=t}mt.roughness=.85;mt.metalness=0;mt.needsUpdate=true});
+   const sc=3.26/(bb.max.y-bb.min.y);const W=new THREE.Group();W.add(o);o.position.set(-(bb.min.x+bb.max.x)/2,-bb.min.y,-(bb.min.z+bb.max.z)/2);W.scale.setScalar(sc);W.position.y=1.55;B.add(W);Bd.visible=false;G.userData.buddha=W},undefined,e=>console.warn('본존불 스캔을 못 불러와 단순 모양으로 보여요',e));
   spots.push({x:0,y:T,z:-2.3,r:1.6,t:'본존불',h:'주실 한가운데 연꽃 대좌 위에 앉은 본존불이에요. 불상 높이 약 3.3m, 대좌까지 합치면 약 5m예요. 오른손을 무릎 아래로 내려 땅을 가리키는 항마촉지인을 하고, 동쪽 바다를 바라보고 있어요.'});
   spots.push({x:0,y:T,z:CZ-R+1.0,r:1.2,t:'십일면관음보살',h:'본존불 바로 뒤 벽의 십일면관음보살이에요. 머리 위에 작은 얼굴들이 둘러 있어 사방을 두루 살펴요. 석굴암 조각 가운데 가장 아름답다는 평을 들어요. 본존불 머리 뒤 높은 벽에는 연꽃 광배가 새겨져 있어요.'});
   spots.push({x:2.4,y:T,z:CZ+.4,r:1.2,t:'둥근 돔 천장과 감실',h:'주실 천장은 다듬은 돌을 둥글게 쌓아 올린 돔이에요. 중간중간 튀어나온 동틀돌이 돌을 꽉 물어 잡아 주고, 꼭대기에는 연꽃을 새긴 덮개돌이 있어요. 벽 위쪽 감실 열 곳에는 작은 보살상들이 앉아 있는데, 두 곳은 비어 있어요.'});
@@ -155,7 +162,7 @@ export function buildSeokguram(opts={}){const MT=materials();const G=new THREE.G
   /* 봉분 둘레 낮은 돌 테 */const rim=new THREE.Mesh(new THREE.TorusGeometry(1,.035,6,72,Math.PI*1.32),MT.granite);rim.scale.set(MR[0]+.05,MR[2]+.05,1);rim.rotation.x=Math.PI/2;rim.rotation.z=Math.PI*.84;rim.position.set(0,.06,CZ);G.add(rim)}
  /* 실내 조명은 건물 가까이 있을 때만 켠다(바깥에서는 계산을 아낀다) */const IL=G.userData.inLights||[];let lon=null;const tick=P=>{const on=P.z<12&&Math.abs(P.x)<9;if(on!==lon){lon=on;for(const l of IL)l.visible=on}};
  return{tick,group:G,solids,cam,spots,spawn:{x:0,z:24,yaw:Math.PI},size:{T,R,CZ},
-  title:'석굴암 · 실제 크기',hint:'실제 크기 석굴암이에요. 전각 안 앞방(전실)에서 팔부신중을 보고, 좁은 통로(비도)를 지나 둥근 주실로 들어가 본존불 둘레를 한 바퀴 돌아봐요.',
+  title:'석굴암 · 실제 크기',hint:'실제 크기 석굴암이에요. 전각 안 앞방(전실)에서 팔부신중을 보고, 좁은 통로(비도)를 지나 둥근 주실로 들어가 본존불 둘레를 한 바퀴 돌아봐요. (본존불 3D 스캔: 국가유산청 KHS, CC BY)',
   env:{plaza:{w:30,d:24,x:0,z:21},beds:false,sea:true,sign:{x:5.6,z:13.2,lines:['석굴암 石窟庵','국보 · 세계유산 · 751년','주실 지름 약 6.8m · 본존불 약 3.3m','실제 크기로 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<22&&z>-3&&z<50)||((x/12)**2+((z+5)/11)**2<1),hill:true},
   npc:[['science',[[-6,20],[6,20],[6,14],[-6,14]]],['ceramic',[[0,6.8],[0,2.4]]],['painter',[[0,-2.6],[2.3,-3.3],[2.6,-5.6],[1.8,-7.6],[0,-8.1],[-1.8,-7.6],[-2.6,-5.6],[-2.3,-3.3]].map(([x,z])=>[x,T,z])],['metal',[[-10,26],[10,26]]]],
   level:P=>{if(P.z>7.4)return'앞마당';if(Math.abs(P.x)>4.7||(P.z<-2.1&&Math.hypot(P.x,P.z-CZ)>R+.3))return P.z>8?'앞마당':'봉분 둘레';return P.z>1.6?'전실':P.z>-2.1?'비도(통로)':'주실'},
