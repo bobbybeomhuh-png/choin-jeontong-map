@@ -24,7 +24,7 @@ export function plantBroad(parent,list,{shadow=true}={}){const G=broadGeo(),N=li
 let PPT=null;
 function paintedPineTex(){if(PPT)return PPT;const W=128,H=256,c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d'),r=rng(23);
  q.strokeStyle='#4a3020';q.lineWidth=7;q.lineCap='round';q.beginPath();q.moveTo(64,H-2);q.bezierCurveTo(58,H-70,72,H-120,62,60);q.stroke();
- const tiers=5;for(let t=0;t<tiers;t++){const y=H-90-t*30,wd=56-t*6+(r()-.5)*8,cx=64+(r()-.5)*10;for(let i=0;i<160;i++){const a=r()*6.28,rr=Math.sqrt(r()),x=cx+Math.cos(a)*wd*rr,yy=y+Math.sin(a)*12*rr-(1-rr)*6;const g=60+(r()*60|0);q.strokeStyle=`rgb(${g*.45|0},${g+20},${g*.5|0})`;q.lineWidth=1.6;q.beginPath();q.moveTo(x,yy);q.lineTo(x+(r()-.5)*7,yy-3-r()*3);q.stroke()}}
+ const tiers=5;for(let t=0;t<tiers;t++){const y=H-90-t*30,wd=56-t*6+(r()-.5)*8,cx=64+(r()-.5)*10;q.fillStyle='rgba(40,80,40,.55)';q.beginPath();q.ellipse(cx,y-2,wd*.92,11,0,0,7);q.fill();for(let i=0;i<300;i++){const a=r()*6.28,rr=Math.sqrt(r()),x=cx+Math.cos(a)*wd*rr,yy=y+Math.sin(a)*12*rr-(1-rr)*7;const g=80+(r()*80|0);q.strokeStyle=`rgb(${g*.45|0},${g+28},${g*.5|0})`;q.lineWidth=2.2;q.beginPath();q.moveTo(x,yy);q.lineTo(x+(r()-.5)*8,yy-3-r()*4);q.stroke()}}
  PPT=new THREE.CanvasTexture(c);PPT.colorSpace=THREE.SRGBColorSpace;return PPT}
 export function paintedPines(N){const a=new THREE.PlaneGeometry(1,2).translate(0,1,0),b=a.clone().rotateY(Math.PI/2);const geo=mergeGeometries([a,b]);
  const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.4,side:THREE.DoubleSide,roughness:1});return new THREE.InstancedMesh(geo,m,N)}
