@@ -21,6 +21,13 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #vfull{position:fixed;inset:0;z-index:22;background:rgba(10,7,4,.85);display:grid;place-items:center;padding:12px}#vfull .in{display:flex;flex-direction:column;align-items:center;gap:8px;max-height:100%}#vfull video{max-height:78vh;max-width:92vw;aspect-ratio:9/16;background:#000;border-radius:10px}#vfull p{color:#f3ead6;font:15px "Gowun Dodum",sans-serif;margin:0;text-align:center}
 #quest{position:fixed;left:10px;top:calc(env(safe-area-inset-top) + 58px);z-index:7;width:230px;background:rgba(36,24,14,.9);border:2px solid #d8a838;border-radius:12px;padding:9px 11px;color:#f3ead6;font:13.5px "Gowun Dodum",sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}#quest b{display:block;color:#f2d27a;font:17px "Do Hyeon",sans-serif;margin-bottom:4px}#quest ol{margin:4px 0 0;padding-left:18px;line-height:1.55}#quest li.ok{color:#9fd08a;text-decoration:line-through}#quest.min ol,#quest.min p{display:none}
 @media (max-width:640px){#quest{width:auto;max-width:62vw;top:calc(env(safe-area-inset-top) + 104px);padding:6px 9px}#quest b{font-size:15px;margin:0}}#quest p{margin:3px 0 0;font-size:12.5px;color:#d8cbb0}
+#sbook{position:fixed;inset:0;z-index:22;background:rgba(10,7,4,.72);display:grid;place-items:center}
+#sbook .in{background:#f3ead6;border:4px solid #d8a838;border-radius:18px;padding:16px 18px;width:min(720px,94vw);box-sizing:border-box;max-height:88vh;overflow:auto;color:#2b1d12;text-align:center}
+#sbG{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+#sbG a{display:block;text-decoration:none;color:#2b1d12;background:#fffaf0;border:1px solid #d8c8a0;border-radius:10px;padding:8px 6px;font:13px "Gowun Dodum",sans-serif}
+#sbG .sc{width:58px;height:58px;margin:0 auto 5px;border-radius:50%;border:4px double #c9bda4;color:#c9bda4;display:grid;place-items:center;font:15px "Do Hyeon",sans-serif}
+#sbG .ok .sc{border-color:#a8352a;color:#a8352a;transform:rotate(-12deg)}
+#sbG .pr{font-size:11.5px;color:#8a7a5a}
 #qdone{position:fixed;inset:0;z-index:21;background:rgba(10,7,4,.7);display:grid;place-items:center}#qdone .in{background:#f3ead6;border:4px solid #d8a838;border-radius:18px;padding:22px 26px;text-align:center;max-width:min(420px,90vw);color:#2b1d12}#qdone .st{width:120px;height:120px;margin:0 auto 10px;border-radius:50%;border:6px double #a8352a;color:#a8352a;display:grid;place-items:center;font:28px "Do Hyeon",sans-serif;transform:rotate(-12deg)}
 @media (max-width:640px){#quest{top:auto;bottom:calc(env(safe-area-inset-bottom) + 300px);width:190px;font-size:12.5px}}
 #card{position:fixed;inset:0;z-index:20;background:rgba(10,7,4,.7);display:grid;place-items:center;padding:14px}#card .in{width:min(520px,100%);background:#f6efe2;color:#2a1d12;border-radius:14px;padding:18px;display:grid;gap:10px}#card h2{margin:0;font:700 22px "Noto Serif KR",serif}#card p{margin:0;line-height:1.7;font-size:15.5px}#card .btn{justify-self:end;background:#3b2a1c;color:#fff4dc}
@@ -38,14 +45,14 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <body>
 <canvas id="c"></canvas>
 <div id="load"><div><b id="lt">미니어처 속으로 들어가는 중…</b><span id="ls">작은 모형이 실제 크기로 커져요</span></div></div>
-<header id="top" hidden><span id="ttl">숭례문 · 실제 크기</span><span class="chip" id="lvl">광장</span><span class="sp"></span><button class="btn" id="bRide" type="button" hidden>말 타기 (H)</button><button class="btn" id="bShorts" type="button" hidden>쇼츠 보기</button><button class="btn" id="bView" type="button">1인칭 (V)</button><button class="btn" id="bBack" type="button">미니어처로 돌아가기</button></header>
+<header id="top" hidden><span id="ttl">숭례문 · 실제 크기</span><span class="chip" id="lvl">광장</span><span class="sp"></span><button class="btn" id="bRide" type="button" hidden>말 타기 (H)</button><button class="btn" id="bShorts" type="button" hidden>쇼츠 보기</button><button class="btn" id="bStamp" type="button">도장첩</button><button class="btn" id="bView" type="button">1인칭 (V)</button><button class="btn" id="bBack" type="button">미니어처로 돌아가기</button></header>
 <div id="hint" hidden></div>
 <button id="act" type="button" hidden></button>
 <canvas id="mini" width="300" height="300" hidden></canvas>
 <div id="stick" hidden><i></i></div><button id="jumpB" type="button" hidden>점프</button>
 <div id="pip" hidden><video id="pipV" muted playsinline loop preload="none"></video><b>쇼츠 속 이 장면</b><span id="pipT"></span></div>
 <section id="vfull" hidden><div class="in"><video id="vfV" controls playsinline preload="none"></video><p id="vfT"></p><button class="btn" id="vfX" type="button">닫기</button></div></section>
-<div id="quest" hidden></div><section id="qdone" hidden><div class="in"><div class="st">복원<br>완료</div><h2 id="qdT" style="margin:4px 0"></h2><p id="qdP"></p><button class="btn" id="qdX" type="button">좋아요</button></div></section>
+<div id="quest" hidden></div><section id="sbook" hidden><div class="in"><h2 style="margin:2px 0 4px">무이 복원단 도장첩</h2><p id="sbN" style="margin:0 0 10px;font-size:14px"></p><div id="sbG"></div><button class="btn" id="sbX" type="button" style="margin-top:12px">닫기</button></div></section><section id="qdone" hidden><div class="in"><div class="st">복원<br>완료</div><h2 id="qdT" style="margin:4px 0"></h2><p id="qdP"></p><button class="btn" id="qdX" type="button">좋아요</button></div></section>
 <section id="card" hidden><div class="in"><h2 id="cT"></h2><p id="cP"></p><button class="btn" id="cV" type="button" hidden>쇼츠 속 이 장면 보기</button> <button class="btn" id="cX" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
@@ -142,6 +149,11 @@ function setFP(v){FP=v;$('#bView').textContent=FP?'3인칭 (V)':'1인칭 (V)';ca
 $('#bView').addEventListener('click',()=>setFP(!FP));
 $('#bBack').addEventListener('click',()=>{$('#load').hidden=false;$('#load').style.opacity=1;$('#lt').textContent='미니어처로 돌아가는 중…';$('#ls').textContent='무이 월드로 작아져요';setTimeout(()=>{location.href=qs.get('from')==='worldmap'?'?site=worldmap&city='+SITE:'../world3d/?from=heritage&site='+SITE},500)});if(qs.get('from')==='worldmap')$('#bBack').textContent='지도로 돌아가기';else if(SITE==='worldmap'||SITE==='village')$('#bBack').textContent='무이 월드로 돌아가기';
 function hint(t,ms=5000){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
+
+/* 도장첩: 모든 유산 마당의 복원 의뢰서 진행을 한눈에 */const SB=[['sungnyemun','숭례문','서울'],['hanyang','한양 궁궐 마당','서울'],['seokguram','석굴암','경주'],['gyeongju','신라 유산 마당','경주'],['geobukseon','거북선','여수'],['suwon','화성 장안문','수원'],['icheon','백자 가마 마을','이천'],['gangneung','오죽헌 초충도 정원','강릉'],['minhwa','민화 사랑방','영월'],['yeongju','부석사 무량수전','영주'],['mungyeong','망댕이가마 사발 마을','문경'],['yesan','수덕사 대웅전','예산'],['buyeo','백제 궁남지','부여'],['hapcheon','해인사 장경판전','합천'],['jinju','진주성 촉석루','진주'],['tongyeong','나전칠기 공방','통영'],['gangjin','고려청자 가마','강진'],['naju','반남 고분 발굴장','나주'],['worldmap','무이 세계 지도','전국']];
+function sbOpen(){let st=[];try{st=JSON.parse(localStorage.getItem('muui-h3-stamps')||'[]')}catch(e){}const n=SB.filter(x=>st.includes(x[0])).length;$('#sbN').textContent=`도장 ${n} / ${SB.length}. 칸을 누르면 그 유산 마당으로 가요.`;
+ $('#sbG').innerHTML=SB.map(([k,nm,c])=>{let d=0;try{d=JSON.parse(localStorage.getItem('muui-h3-quest-'+k)||'[]').length}catch(e){}const ok=st.includes(k);return `<a href="?site=${k}&from=worldmap" class="${ok?'ok':''}"><div class="sc">${ok?'복원<br>완료':c.length>3?c.slice(0,2):c}</div>${nm}<div class="pr">${ok?'도장 받음':d?d+'곳 찾음':c}</div></a>`}).join('');$('#sbook').hidden=false}
+$('#bStamp').addEventListener('click',sbOpen);$('#sbX').addEventListener('click',()=>$('#sbook').hidden=true);
 $('#cX').addEventListener('click',()=>$('#card').hidden=true);$('#qdX').addEventListener('click',()=>$('#qdone').hidden=true);questInit();
 $('#vfX').addEventListener('click',()=>{$('#vfull').hidden=true;$('#vfV').pause()});$('#pip').addEventListener('click',()=>{if(pipS)openFull(pipS.vt[0],'쇼츠 '+fmtT(pipS.vt[0])+' 장면: '+(pipS.vn||pipS.t))});
 if(SITEB.horse){$('#bRide').hidden=false;$('#bRide').addEventListener('click',()=>setRide(!RIDE))}
