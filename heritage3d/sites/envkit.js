@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 /* 담장 종류: earth 토담(기와 얹음), stone 돌담, fort 성벽, low 낮은 돌 석축, none 담 없음 */
 export const COURTS={
- gyeongju:{x0:-50,x1:50,z0:-96,z1:30,wall:'low',gate:8},
+ gyeongju:{x0:-50,x1:50,z0:-96,z1:30,wall:'low',gate:8,noGround:true},
  minhwa:{x0:-20,x1:20,z0:-19,z1:21,wall:'earth',gate:4},
  gangjin:{x0:-26,x1:24,z0:-26,z1:25,wall:'earth',gate:5},
  icheon:{x0:-26,x1:24,z0:-26,z1:25,wall:'earth',gate:5},
