@@ -3,6 +3,7 @@
    김유신 묘, 천마총 금관, 금동반가사유상, 얼굴무늬 수막새. 첨성대는 공개 실측값(높이 9.17m, 몸통 27단, 밑지름 약 4.9m)으로 쌓음.
    크기: 신종 3.66m, 금관 32.5cm(드리개 포함 약 44cm), 반가사유상 93.5cm, 수막새 지름 11.5cm(유리장 안은 6배 확대). */
 import * as THREE from 'three';
+import {plantBroad} from './treekit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const MURL=k=>new URL('../models/gyeongju/'+k+'.glb',import.meta.url).href;
@@ -67,8 +68,8 @@ export function buildGyeongju(opts={}){const mini=!!opts.mini;const MT=materials
   spots.push({x:hx-4.4,y:.45,z:hz+.9,r:1.2,t:'감은사 사리장엄',h:'경주 감은사 터 서쪽 삼층석탑 안에서 나온 사리 그릇이에요(통일신라, 682년 무렵). 사천왕을 두드려 새긴 금동 바깥 함 안에, 난간과 악사·승려 조각을 두른 집 모양 안쪽 함이 들어 있었어요. 두 배로 키워 보여 드려요. (3D: 국가유산청, CC BY)'});
   spots.push({x:hx+4.4,y:.45,z:hz+.9,r:1.1,t:'수정 사리병',h:'안쪽 함 가운데 모셨던 손가락만 한 수정 병이에요(높이 약 3.7cm). 금으로 짠 뚜껑을 덮었어요. 너무 작아서 열네 배로 키워 보여 드려요. (3D: 국가유산청, CC BY)'})}
  /* ---------- 나무와 꽃: 신라 고분 정원 느낌 ---------- */
- if(!mini){const tr=new THREE.InstancedMesh(new THREE.CylinderGeometry(.2,.3,1,6).translate(0,.5,0),M(0x6b4a2e),60),cr=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshStandardMaterial({roughness:.85,flatShading:true}),60);const o=new THREE.Object3D(),col=new THREE.Color();const PAL=[0xe0482e,0xf07a28,0xf4b42a,0x7dbb4a,0xc8352a];let k=0;
-  for(let t=0;t<400&&k<60;t++){const x=-46+r()*92,z=-70+r()*96;if(Math.abs(x)<5||Math.hypot(x+26,z+40)<8||Math.hypot(x-26,z+38)<8||Math.abs(x-14)<9&&Math.abs(z-6)<7||Math.abs(x)<4&&z<-20||Math.abs(z+6)<3||Math.hypot(x,z+30)<5||Math.hypot(x,z+82)<18||MOUNDS.some(([mx,mz,mr])=>Math.hypot(x-mx,z-mz)<mr+3)||Math.hypot(x+26,z+40)<13)continue;const s=1+r()*.8;o.position.set(x,0,z);o.rotation.set(0,r()*6,0);o.scale.set(s,2.2*s,s);o.updateMatrix();tr.setMatrixAt(k,o.matrix);o.position.y=2.6*s;o.scale.set(2*s,1.7*s,2*s);o.updateMatrix();cr.setMatrixAt(k,o.matrix);cr.setColorAt(k,col.setHex(PAL[(r()*PAL.length)|0]));solids.push({cx:x,cz:z,r:.4,y0:0,y1:6});k++}tr.count=cr.count=k;tr.castShadow=cr.castShadow=true;G.add(tr,cr)}
+ if(!mini){const tr=new THREE.InstancedMesh(new THREE.CylinderGeometry(.2,.3,1,6).translate(0,.5,0),M(0x6b4a2e),60),cr=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshStandardMaterial({roughness:.85,flatShading:true}),60);const o=new THREE.Object3D(),col=new THREE.Color();const PAL=[0xe8603c,0xf08c3a,0xf6c04a,0x9cc05a,0xd8503a,0xf7d25a];let k=0;const TL=[];
+  for(let t=0;t<400&&k<60;t++){const x=-46+r()*92,z=-70+r()*96;if(Math.abs(x)<5||Math.hypot(x+26,z+40)<8||Math.hypot(x-26,z+38)<8||Math.abs(x-14)<9&&Math.abs(z-6)<7||Math.abs(x)<4&&z<-20||Math.abs(z+6)<3||Math.hypot(x,z+30)<5||Math.hypot(x,z+82)<18||MOUNDS.some(([mx,mz,mr])=>Math.hypot(x-mx,z-mz)<mr+3)||Math.hypot(x+26,z+40)<13)continue;const s=.8+r()*.45;TL.push([x,0,z,r()*6,s,PAL[(r()*PAL.length)|0]]);solids.push({cx:x,cz:z,r:.4,y0:0,y1:6});k++}plantBroad(G,TL)}
  /* ---------- 대릉원처럼 둥근 고분들(잔디 봉분) ---------- */
  if(!mini){const MG=tex(256,256,(q,w,h)=>{q.fillStyle='#6f9a48';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=16){q.fillStyle=y/16%2?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';q.fillRect(0,y,w,16)}noise(q,w,h,6000,['#7aa452','#628a3e','#86ae5a'],2)});MG.wrapS=MG.wrapT=THREE.RepeatWrapping;MG.repeat.set(6,3);const mm=new THREE.MeshStandardMaterial({map:MG,roughness:1});
   for(const [x,z,rr,h] of MOUNDS){const m=new THREE.Mesh(new THREE.SphereGeometry(rr,40,16,0,Math.PI*2,0,Math.PI/2),mm);m.scale.y=h/rr;m.position.set(x,-.05,z);m.castShadow=m.receiveShadow=true;G.add(m);solids.push({cx:x,cz:z,r:rr*.92,y0:0,y1:99});

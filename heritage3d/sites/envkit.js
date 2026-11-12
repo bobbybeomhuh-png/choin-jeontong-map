@@ -26,7 +26,7 @@ export function buildEnvKit(scene,SITE,EV,SOL,TOUCH){const C=COURTS[SITE];if(!C|
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
  const hit=(x,z,rr)=>SOL.some(s=>s.r?Math.hypot(x-s.cx,z-s.cz)<s.r+rr:(x>s.x0-rr&&x<s.x1+rr&&z>s.z0-rr&&z<s.z1+rr));
  const inC=(x,z,m=0)=>x>C.x0-m&&x<C.x1+m&&z>C.z0-m&&z<C.z1+m;
- const gx=C.gx||0,GW=C.gate||0;
+ const gx=C.gx||0,GW=C.gate||0;G.userData.gate=GW>0?{x:gx,z:C.z1,w:GW}:null;
  /* ---------- 담장 ---------- */
  if(C.wall!=='none'){const H=C.h||(C.wall==='low'?1.1:C.wall==='fort'?4:2.1),T=C.wall==='fort'?2.2:.6;
   const EW=tex(256,128,(q,w,h)=>{q.fillStyle='#b8a07c';q.fillRect(0,0,w,h);for(let i=0;i<90;i++){const g=120+(r()*60|0);q.fillStyle=`rgb(${g},${g-8},${g-24})`;q.beginPath();q.ellipse(r()*w,r()*h,6+r()*10,4+r()*6,r()*3,0,7);q.fill()}noise(q,w,h,3000,['rgba(0,0,0,.08)','rgba(255,240,210,.08)'],2)});EW.wrapS=EW.wrapT=THREE.RepeatWrapping;
