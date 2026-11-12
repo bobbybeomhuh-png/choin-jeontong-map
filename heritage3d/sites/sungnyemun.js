@@ -7,14 +7,16 @@ export const noise=(q,w,h,n,cols,sz=2)=>{for(let i=0;i<n;i++){q.fillStyle=cols[(
 const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
 export function mulb(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
 /* ---------- 재질 ---------- */
-export function materials(){
+function nmapFrom(t,str=2){try{const src=t.image,W=src.width,H=src.height,c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d'),sd=src.getContext?src.getContext('2d').getImageData(0,0,W,H).data:null;if(!sd)return null;const L=new Float32Array(W*H);for(let i=0;i<W*H;i++)L[i]=(sd[i*4]*.3+sd[i*4+1]*.59+sd[i*4+2]*.11)/255;const im=q.createImageData(W,H),g=(x,y)=>L[((y+H)%H)*W+((x+W)%W)];for(let y=0;y<H;y++)for(let x=0;x<W;x++){const nx=(g(x-1,y)-g(x+1,y))*str,ny=(g(x,y+1)-g(x,y-1))*str,l=Math.hypot(nx,ny,1),k=(y*W+x)*4;im.data[k]=(nx/l*.5+.5)*255;im.data[k+1]=(ny/l*.5+.5)*255;im.data[k+2]=(1/l*.5+.5)*255;im.data[k+3]=255}q.putImageData(im,0,0);const n=new THREE.CanvasTexture(c);n.wrapS=t.wrapS;n.wrapT=t.wrapT;n.repeat.copy(t.repeat);return n}catch(e){return null}}
+let _MT=null;
+export function materials(){if(_MT)return _MT;
  const r=mulb(11);
  /* 화강암 마름돌: 4m×4m 한 장, 돌 하나 약 1.1m×0.55m */
  const GRANITE=tex(512,512,(q,w,h)=>{q.fillStyle='#8e877c';q.fillRect(0,0,w,h);const rowH=70;for(let y=0,row=0;y<h;y+=rowH,row++){let x=-(row%2)*70;while(x<w){const bw=110+r()*60;const g=150+(r()*40|0);q.fillStyle=`rgb(${g},${g-6},${g-14})`;q.fillRect(x+3,y+3,bw-6,rowH-6);noise(q,0,0,0,['#000']);for(let k=0;k<60;k++){{const gv=r()<.5?60:220;q.fillStyle=`rgba(${gv},${gv-4},${gv-10},${.08+r()*.12})`}q.fillRect(x+3+r()*(bw-8),y+3+r()*(rowH-8),2+r()*4,2+r()*3)}q.fillStyle='rgba(255,255,255,.07)';q.fillRect(x+3,y+3,bw-6,4);q.fillStyle='rgba(0,0,0,.12)';q.fillRect(x+3,y+rowH-7,bw-6,4);x+=bw}}});
  GRANITE.repeat.set(.25,.25);
- const granite=new THREE.MeshStandardMaterial({map:GRANITE,roughness:.95,color:0xffffff});
+ const granite=new THREE.MeshStandardMaterial({map:GRANITE,normalMap:nmapFrom(GRANITE,3),roughness:.95,color:0xffffff});
  const PAVE=tex(512,512,(q,w,h)=>{q.fillStyle='#a8a296';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=64)for(let x=-(y/64%2)*48;x<w;x+=96){const g=165+(r()*30|0);q.fillStyle=`rgb(${g},${g-4},${g-12})`;q.fillRect(x+2,y+2,92,60)}noise(q,w,h,4000,['rgba(0,0,0,.08)','rgba(255,255,255,.07)'],2)});PAVE.repeat.set(.125,.125);
- const pave=new THREE.MeshStandardMaterial({map:PAVE,roughness:.95});
+ const pave=new THREE.MeshStandardMaterial({map:PAVE,normalMap:nmapFrom(PAVE,2.5),roughness:.95});
  const WOODT=tex(256,256,(q,w,h)=>{q.fillStyle='#9a6a40';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=32){q.fillStyle=['#93633a','#a2724a','#8c5c34'][(x/32)%3];q.fillRect(x,0,32,h);q.fillStyle='rgba(50,25,10,.35)';q.fillRect(x,0,2,h)}for(let i=0;i<120;i++){q.strokeStyle='rgba(60,30,10,.18)';q.beginPath();const x=r()*w;q.moveTo(x,0);q.bezierCurveTo(x+r()*8-4,h*.3,x+r()*8-4,h*.6,x+r()*6-3,h);q.stroke()}});WOODT.repeat.set(.5,.5);
  const floor=new THREE.MeshStandardMaterial({map:WOODT,roughness:.8});
  const pillar=M(0xb4452e,{roughness:.55,emissive:0x2a0804});/* 석간주(붉은 기둥) */
@@ -48,7 +50,7 @@ export function materials(){
  const dragon=new THREE.MeshStandardMaterial({map:DRAGON,roughness:.9,side:THREE.BackSide});
  const SIGN=tex(256,640,(q,w,h)=>{q.fillStyle='#2a1a10';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=16;q.strokeRect(10,10,w-20,h-20);q.strokeStyle='#2f7a64';q.lineWidth=8;q.strokeRect(28,28,w-56,h-56);q.fillStyle='#f2e6c0';q.font='bold 150px "Noto Serif KR","Batang",serif';q.textAlign='center';q.textBaseline='middle';['崇','禮','門'].forEach((c,i)=>q.fillText(c,w/2,130+i*190))});SIGN.wrapS=SIGN.wrapT=THREE.ClampToEdgeWrapping;
  const sign=new THREE.MeshStandardMaterial({map:SIGN,roughness:.6});
- return{granite,pave,floor,pillar,wood,dan,dan2,bracket,tile,raft,PLASTER,lattice,board,door,dragon,sign,ridge:M(0xdcd8cf,{roughness:.85}),ridgeDk:M(0x4a4c50,{roughness:.6}),white:M(0xeee8dc)}}
+ return _MT={granite,pave,floor,pillar,wood,dan,dan2,bracket,tile,raft,PLASTER,lattice,board,door,dragon,sign,ridge:M(0xdcd8cf,{roughness:.85}),ridgeDk:M(0x4a4c50,{roughness:.6}),white:M(0xeee8dc)}}
 /* ---------- 처마 곡선 지붕 ---------- */
 export function roofSurf(g,mat,a,b,d,c,curve,nu,nv,under){const pos=[],uv=[],idx=[];const ew=a.distanceTo(b),sl=a.distanceTo(d);for(let j=0;j<=nv;j++)for(let i=0;i<=nu;i++){const u=i/nu,v=j/nv;const p=a.clone().lerp(b,u).lerp(d.clone().lerp(c,u),v);curve(p);pos.push(p.x,p.y,p.z);uv.push(u*ew/2,v*sl/2)}for(let j=0;j<nv;j++)for(let i=0;i<nu;i++){const k=j*(nu+1)+i;idx.push(k,k+1,k+nu+2,k,k+nu+2,k+nu+1)}const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();const m=new THREE.Mesh(geo,mat);m.castShadow=true;m.receiveShadow=true;g.add(m);if(under){const u=new THREE.Mesh(geo,under);u.position.y=-.22;u.receiveShadow=true;g.add(u)}return m}
 /* 우진각 지붕(숭례문 2층): 네 면이 모두 경사, 처마 네 귀가 들린다 */
