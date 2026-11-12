@@ -20,3 +20,15 @@ export function plantBroad(parent,list,{shadow=true}={}){const G=broadGeo(),N=li
  const b=new THREE.InstancedMesh(G.bark,bm,N),l=new THREE.InstancedMesh(G.leaf,lm,N),o=new THREE.Object3D(),c=new THREE.Color();
  list.forEach(([x,y,z,ry,s,hex],i)=>{o.position.set(x,y,z);o.rotation.set(0,ry,0);o.scale.setScalar(s);o.updateMatrix();b.setMatrixAt(i,o.matrix);l.setMatrixAt(i,o.matrix);l.setColorAt(i,c.set(hex==null?0x4f7f3a:hex))});
  b.castShadow=l.castShadow=shadow;b.receiveShadow=l.receiveShadow=true;parent.add(b,l);return [b,l]}
+/* 먼 산 소나무: 그린 소나무 판 두 장을 십자로(멀리서 보는 용, 아주 가벼움) */
+let PPT=null;
+function paintedPineTex(){if(PPT)return PPT;const W=128,H=256,c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d'),r=rng(23);
+ q.strokeStyle='#4a3020';q.lineWidth=7;q.lineCap='round';q.beginPath();q.moveTo(64,H-2);q.bezierCurveTo(58,H-70,72,H-120,62,60);q.stroke();
+ const tiers=5;for(let t=0;t<tiers;t++){const y=H-90-t*30,wd=56-t*6+(r()-.5)*8,cx=64+(r()-.5)*10;for(let i=0;i<160;i++){const a=r()*6.28,rr=Math.sqrt(r()),x=cx+Math.cos(a)*wd*rr,yy=y+Math.sin(a)*12*rr-(1-rr)*6;const g=60+(r()*60|0);q.strokeStyle=`rgb(${g*.45|0},${g+20},${g*.5|0})`;q.lineWidth=1.6;q.beginPath();q.moveTo(x,yy);q.lineTo(x+(r()-.5)*7,yy-3-r()*3);q.stroke()}}
+ PPT=new THREE.CanvasTexture(c);PPT.colorSpace=THREE.SRGBColorSpace;return PPT}
+export function paintedPines(N){const a=new THREE.PlaneGeometry(1,2).translate(0,1,0),b=a.clone().rotateY(Math.PI/2);const geo=mergeGeometries([a,b]);
+ const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.4,side:THREE.DoubleSide,roughness:1});return new THREE.InstancedMesh(geo,m,N)}
+/* 울퉁불퉁한 산: 반구에 잔물결 능선과 아래 어둡고 위 밝은 색 */
+export function lumpyHill(rr,h,col,seed=1){const r=rng(seed*7+3),g=new THREE.SphereGeometry(rr,40,12,0,Math.PI*2,0,Math.PI/2),p=g.attributes.position,c=new Float32Array(p.count*3),base=new THREE.Color(col),hi=base.clone().offsetHSL(.02,-.05,.08),lo=base.clone().offsetHSL(-.02,0,-.1),k1=r()*6,k2=r()*6,tmp=new THREE.Color();
+ for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),t=y/rr;const n=1+.07*Math.sin(a*5+k1)*Math.sin(t*4+k2)+.04*Math.sin(a*11+k2*2)*(1-t);p.setXYZ(i,x*n,y*(1+.12*Math.sin(a*3+k1))*h/rr,z*n);tmp.copy(lo).lerp(hi,Math.min(1,t*1.3));c[i*3]=tmp.r;c[i*3+1]=tmp.g;c[i*3+2]=tmp.b}
+ g.setAttribute('color',new THREE.BufferAttribute(c,3));g.computeVertexNormals();return new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,flatShading:true}))}

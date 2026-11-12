@@ -1,6 +1,7 @@
 /* 공통 바탕(모든 유산 마당): 담장·대문으로 마당 닫기, 흙마당, 석등·장독대·평상·바위, 풀포기·들꽃, 가까운 뒷산.
    갱신 2026-11-12. 마당 범위는 COURTS(유산마다 [x0,x1,z0,z1, 담장 종류, 대문 너비, 담 높이]). 대문은 늘 +z 쪽 가운데(gx로 옮김). */
 import * as THREE from 'three';
+import {paintedPines,lumpyHill} from './treekit.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 /* 담장 종류: earth 토담(기와 얹음), stone 돌담, fort 성벽, low 낮은 돌 석축, none 담 없음 */
 export const COURTS={
@@ -65,8 +66,8 @@ export function buildEnvKit(scene,SITE,EV,SOL,TOUCH){const C=COURTS[SITE];if(!C|
   const FC=[0xf2d03a,0xf6f2e8,0xe86a8a,0xb88ad8,0xf08a3a];const fm=new THREE.MeshStandardMaterial({roughness:.8});const NF=TOUCH?300:600;const fl=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.09,0),fm,NF);let kf=0;const col=new THREE.Color();
   for(let t=0;t<NF*4&&kf<NF;t++){const x=(C.x0+C.x1)/2+(r()-.5)*(C.x1-C.x0+60),z=(C.z0+C.z1)/2+(r()-.5)*(C.z1-C.z0+60);if(inC(x,z,.5)||hit(x,z,.3)||EV.sea&&z>130)continue;const cx=x,cz=z;const n=3+((r()*4)|0);for(let j=0;j<n&&kf<NF;j++){o.position.set(cx+(r()-.5)*1.2,gy+.35+r()*.2,cz+(r()-.5)*1.2);o.scale.setScalar(1);o.rotation.set(0,0,0);o.updateMatrix();fl.setMatrixAt(kf,o.matrix);fl.setColorAt(kf++,col.setHex(FC[(r()*FC.length)|0]))}}fl.count=kf;G.add(fl)}
  /* ---------- 가까운 뒷산: 마당 뒤를 감싸는 숲 언덕 ---------- */
- if(!EV.noHills&&!C.noHills){const hz=C.z0-28,W=C.x1-C.x0;const hm=[0x4f7a44,0x5a8450,0x456d3c];const tr=new THREE.InstancedMesh(new THREE.ConeGeometry(1,1,6).translate(0,.5,0),M(0x2f5a32,{flatShading:true}),500);const o=new THREE.Object3D();let k=0;
-  for(let i=0;i<7;i++){const x=C.x0-40+i*(W+80)/6+(r()-.5)*10,z=hz-r()*25,rr=26+r()*16,h=12+r()*12;const m=new THREE.Mesh(new THREE.SphereGeometry(rr,28,10,0,Math.PI*2,0,Math.PI/2),M(hm[i%3],{flatShading:true,roughness:1}));m.scale.y=h/rr;m.position.set(x,gy-1,z);m.receiveShadow=true;G.add(m);
-   for(let j=0;j<70&&k<500;j++){const a=r()*Math.PI*2,d=Math.sqrt(r())*rr*.92;const tx=x+Math.cos(a)*d,tz=z+Math.sin(a)*d;const ty=gy-1+h*Math.sqrt(Math.max(0,1-(d/rr)**2));const s=1.4+r()*1.6;o.position.set(tx,ty-.3,tz);o.rotation.set(0,r()*6,0);o.scale.set(s,s*3,s);o.updateMatrix();tr.setMatrixAt(k++,o.matrix)}}
+ if(!EV.noHills&&!C.noHills){const hz=C.z0-28,W=C.x1-C.x0;const hm=[0x4f7a44,0x5a8450,0x456d3c];const tr=paintedPines(500),pc=new THREE.Color();const o=new THREE.Object3D();let k=0;
+  for(let i=0;i<7;i++){const x=C.x0-40+i*(W+80)/6+(r()-.5)*10,z=hz-r()*25,rr=26+r()*16,h=12+r()*12;const m=lumpyHill(rr,h,hm[i%3],i+1);m.position.set(x,gy-1,z);m.receiveShadow=true;G.add(m);
+   for(let j=0;j<70&&k<500;j++){const a=r()*Math.PI*2,d=Math.sqrt(r())*rr*.92;const tx=x+Math.cos(a)*d,tz=z+Math.sin(a)*d;const ty=gy-1+h*Math.sqrt(Math.max(0,1-(d/rr)**2));const s=2.2+r()*1.8;o.position.set(tx,ty-.5,tz);o.rotation.set(0,r()*6,0);o.scale.set(s*2.1,s*1.5,s*2.1);o.updateMatrix();tr.setColorAt(k,pc.setHSL(.27+r()*.06,.35+r()*.15,.55+r()*.25));tr.setMatrixAt(k++,o.matrix)}}
   tr.count=k;tr.castShadow=false;G.add(tr)}
  return G}
