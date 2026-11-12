@@ -1,0 +1,69 @@
+/* 나주 반남 고분 발굴장 / 문경 망댕이가마 사발 마을. 단위 1 = 1m, 입구 +z.
+   갱신 2026-11-12. 공개 3D가 없어 본떠 지음. 나주: 신촌리 9호분 같은 네모난 큰 봉분(방대형)과 그 안의 독널(옹관). 문경: 칸이 이어진 망댕이가마, 사발.
+   실물 사진(위키미디어 공용): 나주 신촌리 금동관 국립중앙박물관(공공누리 1유형)·Gihoon81(CC BY-SA 3.0), 독널 Leedkmn(CC BY-SA 3.0),
+   이도 사발 두 점(퍼블릭 도메인, 도쿄국립박물관·기자에몬), 문경새재 제2관문 hyolee2(CC BY-SA 4.0). */
+import * as THREE from 'three';
+import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
+const T=k=>new URL('../textures/najumg/'+k+'.jpg',import.meta.url).href;
+function kit(seed,mini){const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(seed);
+ const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
+ const TL=new THREE.TextureLoader();
+ function photo(k,w,h,x,y,z,ry,cap){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;G.add(g);g.add(box(w+.16,h+.16,.06,M(0x2a1a10)));const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.8});if(!mini)TL.load(T(k),t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;m.map=t;m.needsUpdate=true});const p=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m);p.position.z=.035;g.add(p);
+  if(cap){const cv=document.createElement('canvas');cv.width=512;cv.height=64;const q=cv.getContext('2d');q.fillStyle='#f3ead6';q.fillRect(0,0,512,64);q.fillStyle='#2b1d12';q.font='bold 26px "Gowun Dodum",sans-serif';q.textAlign='center';q.fillText(cap,256,42,496);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const lb=new THREE.Mesh(new THREE.PlaneGeometry(Math.min(w,2.6),.32),new THREE.MeshBasicMaterial({map:t}));lb.position.set(0,-h/2-.3,.04);g.add(lb)}
+  for(const dx of[-w/2+.1,w/2-.1]){const p2=box(.1,y-h/2,.1,M(0x3b2414));p2.position.set(dx,-h/2-(y-h/2)/2,-.05);g.add(p2)}return g}
+ function pavilion(x,z,W,D,PH,FY=.4){const g=new THREE.Group();g.position.set(x,0,z);G.add(g);const base=box(W+1,FY,D+1,M(0xb3aa98));base.position.y=FY/2;g.add(base);S(x-(W+1)/2,x+(W+1)/2,0,FY,z-(D+1)/2,z+(D+1)/2);const fl=box(W,.06,D,M(0x9a7350));fl.position.y=FY+.03;g.add(fl);
+  for(const cx of[-W/2,W/2])for(const cz of[-D/2,D/2]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,PH,10),M(0x8a3a2a));c.position.set(cx,FY+PH/2,cz);c.castShadow=true;g.add(c);solids.push({cx:x+cx,cz:z+cz,r:.22,y0:0,y1:9})}
+  const bk=box(W,PH,.18,M(0xf2ede2));bk.position.set(0,FY+PH/2,-D/2);g.add(bk);S(x-W/2,x+W/2,0,9,z-D/2-.15,z-D/2+.15);
+  if(!mini){const rf=hipRoof(MT,W/2+1.2,D/2+1.2,W/2-1.6,FY+PH+.1,FY+PH+2.3,.45,.2,{plain:true,rs:.5});rf.traverse(o=>{if(o.isMesh)o.castShadow=true});g.add(rf)}return g}
+ function ground(col,w=60,d=50,z=0){const PT=tex(256,256,(q,W,H)=>{q.fillStyle=col;q.fillRect(0,0,W,H);noise(q,W,H,6000,['rgba(0,0,0,.07)','rgba(255,255,255,.08)'],2)});PT.wrapS=PT.wrapT=THREE.RepeatWrapping;PT.repeat.set(w/6,d/6);const yd=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshStandardMaterial({map:PT,roughness:1}));yd.rotation.x=-Math.PI/2;yd.position.set(0,.02,z);yd.receiveShadow=true;G.add(yd)}
+ return {MT,G,solids,cam,spots,r,S,M,box,photo,pavilion,ground}}
+/* ---------------- 나주 반남 고분 발굴장 ---------------- */
+export function buildNaju(opts={}){const mini=!!opts.mini;const K=kit(43,mini);const {G,solids,cam,spots,r,S,M,box,photo}=K;K.ground('#b89a72',64,56,-4);
+ /* 네모난 큰 봉분(방대형): 앞쪽 4분의 1을 파서 속이 보이게 */const MX=0,MZ=-14,MW=30,MH=5.5;const soil=M(0x8f6e4a,{flatShading:true}),grass=M(0x6f9a48,{flatShading:true});
+ {const geo=new THREE.CylinderGeometry(MW/2*.62,MW/2,MH,4,1);geo.rotateY(Math.PI/4);const mound=new THREE.Mesh(geo,grass);mound.position.set(MX,MH/2,MZ-16);mound.castShadow=mound.receiveShadow=true;G.add(mound);S(MX-MW/2,MX+MW/2,0,MH,MZ-31,MZ-1.2);
+  /* 발굴 구덩이(앞쪽 잘라 낸 단면) */const pit=box(16,.2,9,soil);pit.position.set(MX,-.05,MZ+3.4);G.add(pit);const wall=new THREE.Mesh(new THREE.PlaneGeometry(20,MH-.3),new THREE.MeshStandardMaterial({map:tex(256,128,(q,w,h)=>{const L=['#7a5a3a','#9a7a52','#6e5034','#a68660','#80603e'];for(let i=0;i<10;i++){q.fillStyle=L[i%5];q.fillRect(0,i*h/10,w,h/10+1)}noise(q,w,h,3000,['rgba(0,0,0,.12)','rgba(255,255,255,.06)'],2)}),roughness:1}));wall.position.set(MX,(MH-.3)/2,MZ-1.1);G.add(wall);
+  /* 줄과 말뚝(발굴 구획) */for(let i=0;i<=4;i++){const p=box(.06,.6,.06,M(0xd8c8a0));p.position.set(MX-8+i*4,.3,MZ+8);G.add(p)}const rope=box(16,.02,.02,M(0xe8d8b0));rope.position.set(MX,.5,MZ+8);G.add(rope)}
+ /* 독널(옹관): 큰 독 두 개를 입을 맞대어 눕힘 */function ongwan(x,z,ry,L=2.6){const g=new THREE.Group();g.position.set(x,.55,z);g.rotation.y=ry;G.add(g);const pm=M(0x9a7a5c,{roughness:.85});const prof=(Rm,len)=>[[.05,0],[Rm*.35,0],[Rm*.8,len*.18],[Rm,len*.5],[Rm*.92,len*.82],[Rm*.7,len*.97],[Rm*.72,len]].map(([a,b])=>new THREE.Vector2(a,b));
+  const a=new THREE.Mesh(new THREE.LatheGeometry(prof(.55,L*.58),18),pm);a.rotation.z=-Math.PI/2;a.position.x=-L*.58;a.castShadow=true;g.add(a);const b=new THREE.Mesh(new THREE.LatheGeometry(prof(.5,L*.42),18),pm);b.rotation.z=Math.PI/2;b.position.x=L*.42;b.castShadow=true;g.add(b);const band=new THREE.Mesh(new THREE.TorusGeometry(.4,.07,6,18),M(0x6e5034));band.rotation.y=Math.PI/2;g.add(band);solids.push({cx:x,cz:z,r:L*.5,y0:0,y1:1.2});return g}
+ ongwan(MX-4.5,MZ+1.5,.1);ongwan(MX,MZ+2.4,-.05,2.9);ongwan(MX+4.6,MZ+1.2,.2,2.4);
+ spots.push({x:MX,y:0,z:MZ+6.4,r:3,t:'독널',h:'큰 항아리 두 개를 입을 맞대어 이은 관(독널, 옹관)이에요. 길이가 2~3m나 돼요. 영산강 둘레의 마한 사람들은 이렇게 큰 독널을 만들어 한 봉분 안에 여러 개를 묻었어요. 이렇게 큰 독을 굽는 솜씨가 대단했어요. (본떠 빚음)'});
+ spots.push({x:MX-7,y:0,z:MZ+5,r:2.4,t:'봉분 단면',h:'봉분을 반으로 잘라 보면 흙을 켜켜이 다져 쌓은 띠가 보여요. 신촌리 9호분은 네모난 큰 봉분(방대형) 안에 독널 열한 기가 층층이 묻혀 있었어요. 1917년 맨 위층 독널에서 금동관이 나왔어요.'});
+ spots.push({x:MX+11,y:0,z:MZ+4,r:2.8,t:'반남 고분',h:'나주 반남면에는 이런 큰 무덤 40여 기가 모여 있어요(사적). 백제가 이 지역을 다스리기 전, 영산강 마한 세력의 힘을 보여 줘요.'});
+ /* 금동관 전시 정자 */const PX=18,PZ=8;K.pavilion(PX,PZ,8,5,3);photo('crown1',1.6,1.83,PX-1.6,2.2,PZ-2.2,0,'실물: 나주 신촌리 금동관(국립중앙박물관, 공공누리 1유형)');photo('crown2',2,1.33,PX+1.7,2,PZ-2.2,0,'전시 모습(Gihoon81, CC BY-SA 3.0)');
+ spots.push({x:PX,y:.4,z:PZ+.6,r:2.4,t:'금동관',h:'신촌리 9호분 독널에서 나온 금동관이에요(국보). 둥근 띠 위에 풀꽃 모양 세움 장식 셋을 세우고, 안에 고깔 모양 모자를 썼어요. 신라 금관과 달리 풀꽃 무늬가 특징이라, 마한·백제 사람들의 솜씨로 봐요.'});
+ photo('ongwan',2.4,1.6,-17,2.2,4,.5,'실물: 독널(Leedkmn, CC BY-SA 3.0)');spots.push({x:-15.5,y:0,z:6.4,r:2.2,t:'독널 사진',h:'박물관에 놓인 실제 독널 사진이에요. 발굴장의 독널과 비교해 보세요.'});
+ const meta={quest:{t:'반남 고분 발굴 견학',d:'영산강 마한의 큰 무덤에서 다섯 곳을 찾아 보세요.',steps:[['반남 고분','반남 고분'],['봉분 단면','봉분 단면'],['독널','독널'],['금동관','금동관'],['독널 사진','독널 사진']],done:'발굴 견학을 마쳤어요. 거대한 독널과 풀꽃 금동관, 영산강 마한의 이야기를 기억해 두세요.'},
+  title:'나주 반남 고분 발굴장',hint:'나주 반남 고분을 본떠 지은 발굴장이에요. 반을 갈라 낸 네모난 봉분 속 독널(옹관), 봉분 단면, 정자의 금동관 사진을 찾아 보세요.',
+  env:{plaza:null,beds:false,trees:true,sign:{x:5,z:20,lines:['나주 반남 고분 발굴장','네모난 큰 봉분 · 독널','신촌리 금동관(국보)','영산강 마한의 무덤']},treeAvoid:(x,z)=>Math.abs(x)<32&&z<24&&z>-36},
+  npc:[['carpenter',[[-5,MZ+5],[5,MZ+5]]],['painter',[[PX-3,.4,PZ+2],[PX+3,.4,PZ+2]]]],
+  level:P=>P.z<MZ+8&&Math.abs(P.x-MX)<9?'발굴 구덩이':Math.abs(P.x-PX)<4&&Math.abs(P.z-PZ)<2.5?'금동관 정자':'고분 마당',camCap:()=>Infinity,
+  mini:{S:4,ox:0,oz:-6,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.fillStyle='#b89a72';g.fillRect(X(-32),Z(-32),64*S,56*S);g.fillStyle='#6f9a48';g.fillRect(X(-15),Z(MZ-31),30*S,30*S);g.fillStyle='#8f6e4a';g.fillRect(X(-8),Z(MZ-1),16*S,9*S);g.fillStyle='#8a3a2a';g.fillRect(X(PX-4),Z(PZ-2.5),8*S,5*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:18,yaw:Math.PI},size:{}},meta)}
+/* ---------------- 문경 망댕이가마 사발 마을 ---------------- */
+export function buildMungyeong(opts={}){const mini=!!opts.mini;const K=kit(59,mini);const {G,solids,cam,spots,r,S,M,box,photo}=K;K.ground('#b8a48a',60,50,-4);
+ /* 망댕이가마: 둥근 칸 다섯이 비탈을 따라 이어진 가마 */const KX=-10,KZ=-4;const clay=M(0x9a7e62,{roughness:1});
+ {for(let i=0;i<5;i++){const y=i*.5,z=KZ-i*3.4;const d=new THREE.Mesh(new THREE.SphereGeometry(1.9,20,12,0,Math.PI*2,0,Math.PI/2),clay);d.scale.set(1.15,1,1);d.position.set(KX,y,z);d.castShadow=d.receiveShadow=true;G.add(d);const st=box(2.6,y+.01,3.4,M(0xa8957a));st.position.set(KX,y/2,z);G.add(st);
+   for(const sx of[-1,1]){const h=new THREE.Mesh(new THREE.CircleGeometry(.2,10),M(0x1d120c));h.position.set(KX+sx*2.15,y+.7,z);h.rotation.y=sx*Math.PI/2;G.add(h)}}
+  S(KX-2.3,KX+2.3,0,4,KZ-15.5,KZ+1.9);const mouth=new THREE.Mesh(new THREE.CircleGeometry(.6,16,0,Math.PI),M(0x140b06));mouth.position.set(KX,.01,KZ+1.92);G.add(mouth);const fire=new THREE.PointLight(0xff8a30,12,8,1.6);fire.position.set(KX,.6,KZ+2.6);G.add(fire);G.userData.fire=fire;
+  const ch=new THREE.Mesh(new THREE.CylinderGeometry(.45,.6,2.6,12),clay);ch.position.set(KX,3.3,KZ-16.4);G.add(ch);
+  /* 장작 */const wd=M(0x6b4a2e);for(let i=0;i<24;i++){const l=new THREE.Mesh(new THREE.CylinderGeometry(.09,.1,1.4,6),wd);l.rotation.z=Math.PI/2;l.position.set(KX+3.4+(i%4)*.2,.1+Math.floor(i/4)*.19,KZ+1);G.add(l)}S(KX+3,KX+4.4,0,1.3,KZ+.4,KZ+1.6)}
+ spots.push({x:KX+1.6,y:0,z:KZ+3.4,r:2.4,t:'망댕이가마',h:'흙덩이(망댕이)를 손으로 빚어 쌓은 둥근 칸이 비탈을 따라 이어진 문경의 전통 장작가마예요. 아래 칸에 불을 지피면 열이 칸칸이 올라가요. 문경에는 지금도 이런 가마로 사발을 굽는 도공이 있어요. (본떠 지음)'});
+ spots.push({x:KX+2.6,y:0,z:KZ-8,r:2.4,t:'불 보는 구멍',h:'칸마다 옆에 난 구멍으로 장작을 넣고 불빛을 보며 온도를 가늠해요. 1,300도에 가깝게 오르면 유약이 녹아 사발 겉에 흘러내린 자국(매화피)이 생기기도 해요.'});
+ /* 사발 진열 선반(사발을 물레로 빚은 모양) */{const SX=8,SZ=-4;const sh=M(0x6b4a2e);for(let lv=0;lv<4;lv++){const p=box(6,.07,.8,sh);p.position.set(SX,.5+lv*.6,SZ);G.add(p)}for(const sx of[-3,0,3]){const l=box(.1,2.6,.8,sh);l.position.set(SX+sx,1.3,SZ);G.add(l)}S(SX-3.1,SX+3.1,0,2.8,SZ-.45,SZ+.45);
+  const glz=[0xc9b28a,0xb79a72,0xd4c4a4,0xa88a66,0xc4ae8c];for(let lv=0;lv<4;lv++)for(let i=0;i<9;i++){const rr=.14+r()*.03,hh=.11+r()*.03;const prof=[[.001,0],[rr*.38,0],[rr*.4,.025],[rr*.62,.035],[rr*.9,hh*.55],[rr,hh],[rr*.96,hh],[rr*.86,hh*.6],[.001,.04]].map(([a,b])=>new THREE.Vector2(a,b));const bw=new THREE.Mesh(new THREE.LatheGeometry(prof,18),M(glz[(r()*5)|0],{roughness:.55,side:THREE.DoubleSide}));bw.position.set(SX-2.7+i*.66,.54+lv*.6,SZ);bw.castShadow=true;G.add(bw)}
+  spots.push({x:SX,y:0,z:SZ+2,r:2.2,t:'사발',h:'밥, 국, 막걸리를 담던 소박한 그릇이 막사발이에요. 일본에서는 조선 사발을 "이도 다완"이라 부르며 국보로 아꼈어요. 모양이 조금 비뚤고 유약이 고르지 않은 자연스러움이 멋이에요. (본떠 빚음)'})}
+ /* 물레 작업장 */{const WX=8,WZ=6;K.pavilion(WX,WZ,7,4.4,2.8,.3);const wh=new THREE.Group();wh.position.set(WX-1,.3,WZ+.4);G.add(wh);{const bs=new THREE.Mesh(new THREE.CylinderGeometry(.5,.6,.35,20),M(0x6b4a2e));bs.position.y=.17;wh.add(bs)}const top=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.06,24),M(0x5a3a22));top.position.y=.38;wh.add(top);const bw=new THREE.Mesh(new THREE.LatheGeometry([[.001,0],[.08,0],[.16,.06],[.19,.13],[.18,.14],[.001,.05]].map(([a,b])=>new THREE.Vector2(a,b)),20),M(0xa88a66,{side:THREE.DoubleSide}));bw.position.y=.41;wh.add(bw);G.userData.wheel=wh;solids.push({cx:WX-1,cz:WZ+.4,r:.6,y0:0,y1:1});
+  spots.push({x:WX-1,y:.3,z:WZ+2,r:1.8,t:'발물레',h:'발로 차서 돌리는 물레 위에서 흙을 끌어올려 사발을 빚어요. 굽(바닥 받침)을 깎을 때 남은 칼자국도 사발의 얼굴이 돼요.'})}
+ /* 이도 사발 사진 두 장, 문경새재 사진 */photo('ido',2,1.67,-3,2.1,10,.3,'실물: 조선 사발 사노이도(도쿄국립박물관, 퍼블릭 도메인)');photo('kizaemon',2,1.39,0,2.1,10.6,0,'실물: 기자에몬 이도(일본 국보, 퍼블릭 도메인)');photo('saejae2',2.2,1.65,-16,2.1,8,.6,'실물: 문경새재 제2관문 조곡관(hyolee2, CC BY-SA 4.0)');
+ spots.push({x:-1.5,y:0,z:12.4,r:2.4,t:'이도 다완',h:'조선에서 막 쓰던 사발이 일본으로 건너가 최고의 찻그릇이 되었어요. 왼쪽은 도쿄국립박물관의 사노이도, 오른쪽은 일본 국보 기자에몬 이도예요. 문경 도공들은 이 사발을 다시 살려 내려 애써 왔어요.'});
+ spots.push({x:-14.5,y:0,z:10,r:2.2,t:'문경새재',h:'영남에서 한양으로 가던 큰 고개예요. 과거 보러 가던 선비들이 넘던 길에 관문 셋이 있어요. 문경 사발은 이 길을 따라 팔려 나갔어요.'});
+ const tick=(P,dt)=>{const w=G.userData.wheel;if(w)w.rotation.y+=dt*4;const f=G.userData.fire;if(f)f.intensity=10+Math.sin(performance.now()/110)*2};
+ const meta={quest:{t:'문경 사발 마을 탐방',d:'막사발이 태어나는 길을 따라 여섯 곳을 찾아 보세요.',steps:[['발물레','발물레'],['사발','사발'],['망댕이가마','망댕이가마'],['불 보는 구멍','불 보는 구멍'],['이도 다완','이도 다완'],['문경새재','문경새재']],done:'문경 사발 마을 탐방을 마쳤어요. 소박한 사발 하나가 바다 건너 국보가 된 이야기를 기억해 두세요.'},
+  title:'문경 망댕이가마 사발 마을',hint:'문경의 전통 장작가마 망댕이가마와 사발 공방을 본떠 지은 마을이에요. 발물레, 사발 선반, 칸칸이 이어진 가마, 이도 다완 사진, 문경새재 사진을 찾아 보세요.',
+  env:{plaza:null,beds:false,trees:true,sign:{x:4,z:18,lines:['문경 망댕이가마 사발 마을','망댕이가마 · 발물레','막사발 · 이도 다완','문경새재 길']},treeAvoid:(x,z)=>Math.abs(x)<30&&z<22&&z>-24},
+  npc:[['ceramic',[[5,.3,8.4],[11,.3,8.4]]],['carpenter',[[-6,0,2],[-6,0,-10]]]],
+  level:P=>Math.abs(P.x-KX)<2.5&&P.z<KZ+2?'망댕이가마':'사발 마을',camCap:()=>Infinity,tick,
+  mini:{S:4.4,ox:0,oz:-4,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.fillStyle='#b8a48a';g.fillRect(X(-30),Z(-29),60*S,50*S);g.fillStyle='#9a7e62';g.fillRect(X(KX-2),Z(KZ-15.5),4*S,17.4*S);g.fillStyle='#6b4a2e';g.fillRect(X(5),Z(-4.5),6*S,1*S);g.fillStyle='#8a3a2a';g.fillRect(X(4.5),Z(3.8),7*S,4.4*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:18,yaw:Math.PI},size:{}},meta)}
