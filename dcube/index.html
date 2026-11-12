@@ -286,6 +286,12 @@ function loadCrowd(list){clearCrowd();if(!room)return;const g0=room.g;
  },undefined,()=>{}))}
 function setAct(me,n,fade=.35){const a=me.A[n];if(!a||me.cur===a)return;a.reset().setEffectiveTimeScale(1).fadeIn(fade).play();if(me.cur)me.cur.fadeOut(fade);me.cur=a}
 /* 상영 예절: 끝나면 다 같이 박수 */
+/* 관람권: 작품을 80% 넘게 보면 무이 마당 진열장에 관람권이 꽂힌다 */
+let WATCH=0,WLAST=0,TICKET=false;try{TICKET=JSON.parse(localStorage.getItem('muui-films')||'[]').includes('pambok')}catch(e){}
+function giveTicket(){TICKET=true;try{const a=JSON.parse(localStorage.getItem('muui-films')||'[]');if(!a.includes('pambok')){a.push('pambok');localStorage.setItem('muui-films',JSON.stringify(a))}}catch(e){}
+ let t=document.getElementById('tkt');if(!t){t=document.createElement('div');t.id='tkt';t.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 64px);transform:translateX(-50%);z-index:40;background:#f3ead6;color:#2b1d12;border:3px solid #d8a838;border-radius:14px;padding:10px 14px;font:14px "Gowun Dodum",sans-serif;display:flex;gap:10px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:calc(100vw - 24px)';
+  t.innerHTML='<b style="font:18px \'Do Hyeon\',sans-serif;color:#a8352a">관람권</b><span>「뺄불통가마」 관람권이 무이 마당 진열장에 꽂혔어요.</span><a href="../world3d/?go=hall" style="white-space:nowrap;text-decoration:none;background:#d8a838;color:#1d1408;border-radius:9px;padding:6px 10px;font-weight:700">진열장 보기</a><button type="button" style="border:0;background:none;font-size:18px;cursor:pointer;color:#6b4a26">×</button>';
+  t.querySelector('button').onclick=()=>t.remove();document.body.append(t)}}
 let ac0=null,lastCT=0;function clapSnd(n,dur){try{if(!ac0)ac0=new(window.AudioContext||window.webkitAudioContext)();if(ac0.state==='suspended')ac0.resume();const t0=ac0.currentTime;for(let i=0;i<n;i++){const at=t0+Math.random()*dur,len=ac0.sampleRate*.05|0,b=ac0.createBuffer(1,len,ac0.sampleRate),c=b.getChannelData(0);for(let k=0;k<len;k++)c[k]=(Math.random()*2-1)*Math.pow(1-k/len,2.2);const s0=ac0.createBufferSource(),f=ac0.createBiquadFilter(),g=ac0.createGain();s0.buffer=b;f.type='bandpass';f.frequency.value=1100+Math.random()*900;g.gain.value=.18+Math.random()*.12;s0.connect(f).connect(g).connect(ac0.destination);s0.start(at)}}catch(e){}}
 function applause(all){for(const me of crowd){if(!me.root)continue;if(!all&&Math.random()<.5)continue;if(me.st==='sit')setAct(me,'sit_clap',.2);else if(me.st==='stand'&&!NOARMUP[me.k])setAct(me,'cheer',.2)}clapSnd(all?60:18,all?3.2:1.6)}
 function etiquetteTick(){if(!master||curWork&&curWork.local)return;const ct=master.currentTime||0;if(lastCT>8&&ct<lastCT-3){applause(true);hint('상영이 끝났어요. 무이들이 박수를 쳐요. 곧 처음부터 다시 이어져요.',5200)}lastCT=ct}
@@ -404,7 +410,7 @@ R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1
  if(sampler)sampler(dt);crowdTick(dt);
  /* 여러 파일일 때 맞춰 돌린다 */
  if(vids.length>1&&master&&!master.paused){for(const v of vids)if(v!==master&&Math.abs(v.currentTime-master.currentTime)>.15)v.currentTime=master.currentTime}
- uiT-=dt;if(uiT<=0&&master){uiT=.25;const d=master.duration||0;$('#tm').textContent=fmt(master.currentTime)+' / '+fmt(d);if(!seeking&&d)$('#seek').value=master.currentTime/d*1000;$('#bPlay').textContent=master.paused?'재생':'멈춤';drawMini()}
+ if(master&&!seeking){const ct=master.currentTime,dl=ct-WLAST;WLAST=ct;if(!master.paused&&dl>0&&dl<3*Math.max(1,master.playbackRate||1))WATCH+=dl;const d=master.duration||0;if(d&&!TICKET&&WATCH>=d*.8)giveTicket()}uiT-=dt;if(uiT<=0&&master){uiT=.25;const d=master.duration||0;$('#tm').textContent=fmt(master.currentTime)+' / '+fmt(d);if(!seeking&&d)$('#seek').value=master.currentTime/d*1000;$('#bPlay').textContent=master.paused?'재생':'멈춤';drawMini()}
  R.render(scene,cam)});
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
 
