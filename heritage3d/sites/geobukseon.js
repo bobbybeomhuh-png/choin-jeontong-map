@@ -144,7 +144,7 @@ export function buildGeobukseon(opts={}){const MT=materials();const G=new THREE.
   const on=Math.abs(P.x)<20&&P.z<9.5;if(on!==lon){lon=on;for(const l of IL)l.visible=on}};
  const inHull=P=>Math.abs(P.x)<L-.2&&Math.abs(P.z)<B(P.x)+.1&&P.y>-1;
  return{group:G,solids,cam,spots,tick,baseAt:(x,z)=>Math.abs(x)<L&&Math.abs(z)<B(x)?-1.6:0,spawn:{x:-2,z:20,y:QY,yaw:Math.PI},size:{L,D,QY},
-  title:'거북선 · 실제 크기',video:'geobuk',hint:'실제 크기 거북선이에요. 널다리를 건너 옆문으로 들어가 노와 화포가 있는 포판을 둘러보고, 가운데 사다리 계단으로 아래 선실까지 내려가 봐요. (바깥 3D 모델: Heat Of Fusion, CC BY)',
+  quest:{t:'거북선 복원 의뢰',d:'과학 무이가 거북선 점검을 맡겼어요. 아래 자리를 차례로 찾아가 보세요.',steps:[['선착장에서 거북선 보기','거북선 실제 크기'],['뱃머리 용머리','용머리'],['거북 등의 쇠못','거북 등의 쇠못'],['포판의 노','노'],['포판의 화포','화포'],['아래 선실','아래 선실']]},title:'거북선 · 실제 크기',video:'geobuk',hint:'실제 크기 거북선이에요. 널다리를 건너 옆문으로 들어가 노와 화포가 있는 포판을 둘러보고, 가운데 사다리 계단으로 아래 선실까지 내려가 봐요. (바깥 3D 모델: Heat Of Fusion, CC BY)',
   env:{plaza:null,beds:false,sea:false,trees:false,groundY:-1.6,sign:{x:3,z:13,y:QY,lines:['거북선 龜船','임진왜란 · 1592년','길이 약 34m · 폭 약 10m','실제 크기로 지었어요']},treeAvoid:(x,z)=>z<80&&Math.abs(x)<80,islands:true},
   npc:[['science',[[-6,QY,12],[8,QY,12],[8,QY,15],[-6,QY,15]]],['carpenter',[[-9,D,0],[9,D,0]]],['ceramic',[[-2,-.6,1.2],[9,-.6,1.2]]],['metal',[[-12.2,D,1.4],[-12.2,D,-1.4]]]],
   level:P=>{if(inHull(P))return P.y<.8?'아래 선실':'포판(노·화포 갑판)';if(P.z<QZ&&P.z>B(DX))return'널다리';return'선착장'},
