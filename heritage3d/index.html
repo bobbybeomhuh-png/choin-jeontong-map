@@ -84,6 +84,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import {buildSungnyemun} from './sites/sungnyemun.js';
 import {lumpyHill} from './sites/treekit.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {buildSeokguram} from './sites/seokguram.js';
 import {buildGeobukseon} from './sites/geobukseon.js';
 import {buildVillage} from './sites/village.js';
@@ -130,8 +131,18 @@ const CITYOF={sungnyemun:'서울',hanyang:'서울',seokguram:'경주',gyeongju:'
  if(EV.sea){/* 멀리 동해 */const sea=new THREE.Mesh(new THREE.PlaneGeometry(800,240).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x3f6f98,roughness:.25,metalness:.15}));sea.position.set(0,.06,262);scene.add(sea)}
  try{const EK=buildEnvKit(scene,SITE,EV,SOL,TOUCH);const GT=EK&&EK.userData&&EK.userData.gate,sp=SITEB.spawn;/* 시작 위치가 대문 바로 아래면 카메라가 대문 지붕에 가린다: 대문 안쪽으로 옮김 */if(GT&&sp&&Math.abs(sp.x-GT.x)<GT.w/2+2&&sp.z>GT.z-8.5&&sp.z<GT.z+8)sp.z=GT.z-9}catch(e){console.warn('공통 바탕 실패',e)}
  try{buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS)}catch(e){console.warn('덧붙이기 실패',e)}
+/* 움직이지 않는 물체 묶어 그리기(전국 지도): 3초 지켜본 뒤 안 움직인 것만 같은 재질끼리 합친다 */
+function staticBatch(root,done){const snap=new Map();root.updateMatrixWorld(true);root.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||!o.visible||!o.geometry||Array.isArray(o.material))return;let v=true,p=o;while(p){if(!p.visible){v=false;break}p=p.parent}if(v)snap.set(o,o.matrixWorld.clone())});
+ setTimeout(()=>{try{root.updateMatrixWorld(true);const groups=new Map();let n=0;
+  for(const[o,m0]of snap){if(!o.parent||!o.matrixWorld.equals(m0)||!o.visible)continue;const m=o.material;if(m.isShaderMaterial||m.userData&&m.userData.wing)continue;const g=o.geometry;if(!g.attributes.position||g.morphAttributes&&Object.keys(g.morphAttributes).length)continue;
+   const key=[m.type,m.color&&m.color.getHex(),m.emissive&&m.emissive.getHex(),m.emissiveIntensity,m.map&&m.map.uuid,m.transparent,m.opacity,m.side,m.flatShading,m.vertexColors,m.roughness,m.metalness,m.alphaTest,m.depthWrite,o.castShadow,o.receiveShadow,m.polygonOffset].join('|');
+   if(!groups.has(key))groups.set(key,{mat:m,cast:o.castShadow,recv:o.receiveShadow,list:[]});groups.get(key).list.push(o)}
+  for(const G of groups.values()){if(G.list.length<3)continue;const geos=[];for(const o of G.list){let g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();for(const k of Object.keys(g.attributes))if(!['position','normal','uv'].concat(G.mat.vertexColors?['color']:[]).includes(k))g.deleteAttribute(k);if(!g.attributes.normal)g.computeVertexNormals();if(!g.attributes.uv)g.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count*2),2));if(G.mat.vertexColors&&!g.attributes.color)g.setAttribute('color',new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count*3).fill(1),3));g.applyMatrix4(o.matrixWorld);geos.push(g)}
+   const mg=mergeGeometries(geos);if(!mg)continue;const mm=new THREE.Mesh(mg,G.mat);mm.castShadow=G.cast;mm.receiveShadow=G.recv;mm.name='batched';scene.add(mm);for(const o of G.list)o.parent.remove(o);n+=G.list.length}
+  done&&done(n)}catch(e){console.warn('batch',e)}},3000)}
 /* 깜빡임 방지: 얇은 바닥면(길·마당·바닥)을 높이 순으로 줄 세워 위의 면이 앞에 그려지게 */
 try{scene.updateMatrixWorld(true);const bb=new THREE.Box3(),sz=new THREE.Vector3(),L=[];scene.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSprite)return;const m=o.material;if(!m||Array.isArray(m)||m.transparent)return;bb.setFromObject(o);bb.getSize(sz);if(sz.y<.03&&sz.x*sz.z>.8)L.push([(bb.min.y+bb.max.y)/2,o])});L.sort((a,b)=>a[0]-b[0]);let rk=0;for(const[y,o]of L){rk++;const m=o.material.clone();m.polygonOffset=true;m.polygonOffsetFactor=-Math.min(rk,40)*.15;m.polygonOffsetUnits=-Math.min(rk,40);o.material=m}}catch(e){console.warn('zfix',e)}
+if(SITE==='worldmap')setTimeout(()=>staticBatch(SITEB.group||scene,n=>{window.__BATCHED=n}),2500);
  /* 안내판 */const sg=document.createElement('canvas');sg.width=512;sg.height=256;const q=sg.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,512,256);q.strokeStyle='#d8a838';q.lineWidth=8;q.strokeRect(6,6,500,244);q.fillStyle='#f2d27a';q.font='bold 54px "Noto Serif KR",serif';q.textAlign='center';const SL=EV.sign.lines;q.fillText(SL[0],256,82,470);q.fillStyle='#f3ead6';q.font='28px "Gowun Dodum",sans-serif';q.fillText(SL[1],256,138,470);q.fillText(SL[2],256,180,470);q.fillText(SL[3],256,222,470);const st=new THREE.CanvasTexture(sg);st.colorSpace=THREE.SRGBColorSpace;const board=new THREE.Mesh(new THREE.PlaneGeometry(3.2,1.6),new THREE.MeshBasicMaterial({map:st}));const SX=EV.sign.x,SZ=EV.sign.z,SY=EV.sign.y||0;board.position.set(SX,SY+1.6,SZ);scene.add(board);for(const sx of[-1.45,1.45]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,2.4,6),fm);p.position.set(SX+sx,SY+1.2,SZ-.02);scene.add(p)}SOL.push({x0:SX-1.6,x1:SX+1.6,y0:SY,y1:SY+2.4,z0:SZ-.2,z1:SZ+.2})}
 /* ---------- 바닥 높이와 충돌 ---------- */
 const STEP=.55,PR=.34,PH=1.35;
