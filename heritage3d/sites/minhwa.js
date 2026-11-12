@@ -30,6 +30,10 @@ export function buildMinhwa(opts={}){const mini=!!opts.mini;const MT=materials()
  const Y=FY+2.25;
  /* 뒷벽: 십장생도 병풍(사진 한 장) */art('sipjang',7.2,3.83,HX,FY+2.25,HZ-D/2+.14,0,.15);
  spots.push({x:HX,y:FY,z:HZ-2.6,r:2.4,t:'십장생도',h:'해, 구름, 산, 물, 바위, 소나무, 거북, 학, 사슴, 불로초처럼 오래 사는 열 가지를 한 화면에 그린 그림이에요. 오래 살고 복 받기를 바라는 마음을 담았어요. 궁궐에서는 큰 병풍으로 썼어요. (사진: 퍼블릭 도메인)'});
+ /* 뒷벽 양옆: 모란도, 화조도, 문자도(효, 제), 연화백로도, 백자도 */{const BZ=HZ-D/2+.14;art('moran',1.09,2.3,HX-9.7,Y,BZ,0,.1);art('hwajo2',1.17,2.1,HX-7.8,Y,BZ,0,.1);art('mun1',1.16,2.1,HX-5.7,Y,BZ,0,.08);art('mun2',1.3,2.08,HX+4.8,Y,BZ,0,.08);art('yeonhwa',2.2,1.21,HX+7.5,Y+.3,BZ,0,.1);art('baekja',1.5,1,HX+9.9,Y+.3,BZ,0,.08);
+  spots.push({x:HX-9.2,y:FY,z:HZ-3,r:1.6,t:'모란도',h:'꽃 중의 왕이라 불린 모란을 바위와 함께 가득 그린 그림이에요. 부귀영화를 바라는 뜻이라 혼례나 잔치 때 병풍으로 세웠어요. (사진: 퍼블릭 도메인)'});
+  spots.push({x:HX+7.5,y:FY,z:HZ-3,r:1.6,t:'연화백로도',h:'연꽃 핀 연못에 백로 두 마리를 그린 그림이에요. 백로 한 마리와 연밥은 과거에 한 번에 붙기를(일로연과) 바라는 뜻이 담겨 있어요. (사진: 퍼블릭 도메인)'});
+  spots.push({x:HX+9.9,y:FY,z:HZ-3,r:1.4,t:'백자도',h:'석류와 국화, 바위 사이에 새를 그린 그림이에요. 알이 많은 석류는 자손이 많기를 바라는 뜻이에요. (사진: 퍼블릭 도메인)'})}
  /* 왼쪽 벽: 까치호랑이 둘, 쌍학반도도, 어해도 */
  art('tiger1',1.6,2.65,HX-W/2+.16,Y,HZ-2.6,Math.PI/2);art('tiger2',1.4,2.2,HX-W/2+.16,Y,HZ+.4,Math.PI/2);art('ssanghak',1.7,2.15,HX-W/2+.16,Y,HZ+3.2,Math.PI/2);art('eohae',1.6,2.15,HX-W/2+.16,Y,HZ-4.6+.2,Math.PI/2,.1);
  spots.push({x:HX-W/2+2,y:FY,z:HZ-1.1,r:2,t:'까치호랑이',h:'소나무 아래 호랑이와 나뭇가지 위 까치를 함께 그린 그림이에요. 까치는 좋은 소식을, 호랑이는 나쁜 기운을 막는 힘을 뜻해요. 무서운 호랑이를 익살스럽게 그린 것이 민화의 멋이에요. (사진: 퍼블릭 도메인)'});
@@ -43,7 +47,7 @@ export function buildMinhwa(opts={}){const mini=!!opts.mini;const MT=materials()
    for(const sd of[1,-1]){const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.85});if(!mini)TL.load(T(k),t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;m.map=t;m.needsUpdate=true});const p=new THREE.Mesh(new THREE.PlaneGeometry(PW,PHh),m);p.position.z=sd*.03;if(sd<0)p.rotation.y=Math.PI;pg.add(p)}});
   S(HX-2.4,HX+2.4,0,4,HZ-.9,HZ-.1);
   spots.push({x:HX,y:FY,z:HZ+1.6,r:2,t:'책가도',h:'책장에 책과 문방구, 도자기, 꽃을 쌓아 그린 그림이에요. 정조 임금이 학문을 아끼는 마음으로 즐겼다고 해서 양반집과 민간으로 퍼졌어요. 이 4폭은 보스턴 미술관 소장품 사진이에요(퍼블릭 도메인).'})}
- const meta={quest:{t:'민화 감상 순례',d:'사랑방에 걸린 민화 여섯 가지를 찾아 보세요.',steps:[['까치호랑이','까치호랑이'],['책가도','책가도'],['문자도','문자도'],['십장생도','십장생도'],['화조도','화조도'],['어해도','어해도']],done:'민화 여섯 가지를 다 봤어요. 그림마다 담긴 바람(복, 장수, 출세, 화목)을 기억해 두세요.'},
+ const meta={quest:{t:'민화 감상 순례',d:'사랑방에 걸린 민화 여덟 가지를 찾아 보세요.',steps:[['까치호랑이','까치호랑이'],['책가도','책가도'],['문자도','문자도'],['십장생도','십장생도'],['화조도','화조도'],['어해도','어해도'],['모란도','모란도'],['연화백로도','연화백로도']],done:'민화 여덟 가지를 다 봤어요. 그림마다 담긴 바람(복, 장수, 출세, 화목)을 기억해 두세요.'},
   title:'영월 민화 사랑방',video:'hojak',hint:'조선 민화를 한옥 전시실에 걸어 둔 사랑방이에요. 까치호랑이, 책가도 병풍, 문자도, 십장생도, 화조도, 어해도를 찾아 보세요. (그림 사진: 위키미디어 공용 퍼블릭 도메인 · 책가도: 보스턴 미술관)',
   env:{plaza:null,beds:false,trees:true,sign:{x:4,z:16,lines:['영월 민화 사랑방','까치호랑이 · 책가도 · 문자도','십장생도 · 화조도 · 어해도','조선 민화 사진을 걸었어요']},treeAvoid:(x,z)=>Math.abs(x)<18&&z<22&&z>-20},
   npc:[['painter',[[-6,FY,HZ+2],[6,FY,HZ+2]]],['carpenter',[[-2,12],[2,12]]]],
