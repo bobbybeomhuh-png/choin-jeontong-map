@@ -8,7 +8,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 const RELTEX=k=>new URL('../textures/seokguram/'+k+'.jpg',import.meta.url).href;const RTL=new THREE.TextureLoader();
 function REL(k,mat){RTL.load(RELTEX(k),t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;mat.map=t;mat.bumpMap=t;mat.bumpScale=1.6;mat.color&&mat.color.set(0xffffff);mat.transparent=false;mat.alphaTest=0;mat.needsUpdate=true});return mat}
 const BUDDHA_URL=new URL('../models/vairocana.glb',import.meta.url).href;
-import {tex,noise,mulb,materials,roofSurf,rafters,brackets} from './sungnyemun.js';
+import {tex,noise,mulb,materials,roofSurf,rafters,brackets,hipRoof} from './sungnyemun.js';
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 /* ---------- 돋을새김(부조) 판: 색 지도 + 높이(범프) 지도 ---------- */
 const ROLE={body:['#d6cebe',170],hi:['#e8e1d2',225],line:['#a29886',85],halo:['#c6bdab',125],dark:['#857b6a',45]};
@@ -163,6 +163,17 @@ export function buildSeokguram(opts={}){const MT=materials();const G=new THREE.G
   /* 전각 양옆 돌 축대: 잘라 낸 봉분 단면을 막는다 */for(const sx of[-1,1]){const sh=new THREE.Shape();const zs=[];for(let z=rp.z0-.1;z<=2.9;z+=.25)zs.push(z);sh.moveTo(zs[0],0);for(const z of zs)sh.lineTo(z,Math.max(.3,Math.min(hAt(5.75,z),plY(z))+.12));sh.lineTo(zs[zs.length-1],0);sh.closePath();const g=new THREE.ExtrudeGeometry(sh,{depth:1.3,bevelEnabled:false});g.rotateY(-Math.PI/2);const m=new THREE.Mesh(g,MT.granite);m.position.x=sx>0?5.95:-4.65;m.castShadow=m.receiveShadow=true;G.add(m);cam.push(m)}
   /* 봉분 충돌(바깥에서 못 올라가게) */for(let z=-14;z<=2.8;z+=.5){const u=1-((z-CZ)/MR[2])**2;if(u<=0)continue;const xw=MR[0]*Math.sqrt(u)*.97;if(z>rp.z0-.2){if(xw>4.7){S(4.7,xw,0,12,z-.25,z+.25);S(-xw,-4.7,0,12,z-.25,z+.25)}}else if(z>CZ-R-.6){if(xw>R+.6){S(R+.6,xw,0,12,z-.25,z+.25);S(-xw,-R-.6,0,12,z-.25,z+.25)}}else S(-xw,xw,0,12,z-.25,z+.25)}
   /* 봉분 둘레 낮은 돌 테 */const rim=new THREE.Mesh(new THREE.TorusGeometry(1,.035,6,72,Math.PI*1.32),MT.granite);rim.scale.set(MR[0]+.05,MR[2]+.05,1);rim.rotation.x=Math.PI/2;rim.rotation.z=Math.PI*.84;rim.position.set(0,.06,CZ);G.add(rim)}
+ /* ===== 석굴암 자료실: 앞마당 왼쪽 작은 전각. 쇼츠 속 상상 대 실제, 실측 수치, 쓴 자료 ===== */
+ if(!mini){const AX=-15,AZ=18,AW=10,AD=6;const wallM=new THREE.MeshStandardMaterial({color:0xf2ede2,roughness:.9}),pil=new THREE.MeshStandardMaterial({color:0x8a3a2a,roughness:.7});
+  const bx=(w,h,d,m)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);const fl=bx(AD+1,.4,AW+1,new THREE.MeshStandardMaterial({color:0xb3aa98,roughness:1}));add(fl,AX,.2,AZ);S(AX-(AD+1)/2,AX+(AD+1)/2,0,.4,AZ-(AW+1)/2,AZ+(AW+1)/2);
+  const back=bx(.2,3.2,AW,wallM);add(back,AX-AD/2,2,AZ);S(AX-AD/2-.15,AX-AD/2+.15,0,4,AZ-AW/2,AZ+AW/2);for(const sz of[-1,1]){const w=bx(AD,3.2,.2,wallM);add(w,AX,2,AZ+sz*AW/2);S(AX-AD/2,AX+AD/2,0,4,AZ+sz*AW/2-.15,AZ+sz*AW/2+.15)}
+  for(const[a,b]of[[-AD/2,-AW/2],[-AD/2,AW/2],[AD/2,-AW/2],[AD/2,AW/2],[AD/2,-AW/6],[AD/2,AW/6]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,3.4,10),pil);add(p,AX+a,2.1,AZ+b);solids.push({cx:AX+a,cz:AZ+b,r:.2,y0:0,y1:4})}
+  const rf=hipRoof(MT,AD/2+1.3,AW/2+1.3,AW/2-1.5,3.65,5.9,.45,.18,{plain:true,rs:.55});rf.rotation.y=Math.PI/2;rf.position.set(AX,0,AZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf);const cl=bx(AD,.1,AW,new THREE.MeshStandardMaterial({color:0x5a3a22}));add(cl,AX,3.62,AZ,false);
+  const TL=new THREE.TextureLoader();const pan=(k,x,z,ry,w=2.7)=>{const m=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.9});TL.load(RELTEX(k),t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;m.map=t;m.needsUpdate=true});const p=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.75),m);p.position.set(x,2.05,z);p.rotation.y=ry;G.add(p);const fr=bx(w+.16,w*.75+.16,.06,new THREE.MeshStandardMaterial({color:0x3b2414}));fr.position.set(x-Math.sin(ry)*.04,2.05,z-Math.cos(ry)*.04);fr.rotation.y=ry;G.add(fr)};
+  pan('arch_1',AX-AD/2+.13,AZ+3.1,Math.PI/2);pan('arch_2',AX-AD/2+.13,AZ,Math.PI/2);pan('arch_3',AX-AD/2+.13,AZ-3.1,Math.PI/2);pan('arch_4',AX,AZ-AW/2+.13,0,2.9);pan('arch_5',AX,AZ+AW/2-.13,Math.PI,2.9);
+  /* 현판 */{const cv=document.createElement('canvas');cv.width=512;cv.height=140;const q=cv.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,512,140);q.strokeStyle='#d8a838';q.lineWidth=8;q.strokeRect(6,6,500,128);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 64px "Noto Serif KR",serif';q.fillText('석굴암 자료실',256,92);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.66),new THREE.MeshBasicMaterial({map:t}));pl.position.set(AX+AD/2+.12,3.2,AZ);pl.rotation.y=Math.PI/2;G.add(pl)}
+  const lamp=new THREE.PointLight(0xfff0d8,8,8,1.6);lamp.position.set(AX,3,AZ);G.add(lamp);
+  spots.push({x:AX+1.2,y:.4,z:AZ,r:2.6,t:'석굴암 자료실',h:'이 3D 석굴암을 지을 때 쓴 자료를 모은 방이에요. 무이 쇼츠 속 장면(상상을 더한 장면)과 실제 석굴암 사진(국가유산청)을 나란히 걸었어요. 실측 수치와 출처, 아직 실제와 다른 점도 적어 두었어요.'})}
  /* 실내 조명은 건물 가까이 있을 때만 켠다(바깥에서는 계산을 아낀다) */const IL=G.userData.inLights||[];let lon=null;const tick=P=>{const on=P.z<12&&Math.abs(P.x)<9;if(on!==lon){lon=on;for(const l of IL)l.visible=on}};
  return{tick,group:G,solids,cam,spots,spawn:{x:0,z:24,yaw:Math.PI},size:{T,R,CZ},
   title:'석굴암 · 실제 크기',video:'seokguram',hint:'실제 크기 석굴암이에요. 전각 안 앞방(전실)에서 팔부신중을 보고, 좁은 통로(비도)를 지나 둥근 주실로 들어가 본존불 둘레를 한 바퀴 돌아봐요. (본존불 3D 스캔: 국가유산청 KHS, CC BY · 부조 사진: 국가유산청, 공공누리 1유형)',
