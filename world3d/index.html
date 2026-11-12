@@ -106,6 +106,7 @@ import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import {buildSungnyemun} from '../heritage3d/sites/sungnyemun.js';
 import {buildSeokguram} from '../heritage3d/sites/seokguram.js';
 import {buildGeobukseon} from '../heritage3d/sites/geobukseon.js';
+import {buildVillage} from '../heritage3d/sites/village.js';
 const $=s=>document.querySelector(s);const qs=new URLSearchParams(location.search);const lang='ko';
 const ALLK0=[{k:'base',n:'무이',d:'상모 쓴 원형'}];const KINDS=[{k:'ceramic',n:'도공 무이',d:'달항아리'},{k:'science',n:'과학 무이',d:'측우기'},{k:'carpenter',n:'목수 무이',d:'다보탑'},{k:'painter',n:'화공 무이',d:'일월오봉도'},{k:'metal',n:'금속 무이',d:'금동대향로'}];
 /* ---------------- 장면 ---------------- */
@@ -170,6 +171,10 @@ const MINIS=[];{const STN=new THREE.MeshStandardMaterial({color:0xb8b1a4,roughne
   for(const k of[-.55,0,.55])COLL0.push({c:[MX+Math.cos(ROT)*k-Math.sin(ROT)*1.95,MZ-Math.sin(ROT)*k-Math.cos(ROT)*1.95,.3]});
   vid=document.createElement('video');vid.muted=true;vid.loop=true;vid.playsInline=true;vid.setAttribute('playsinline','');vid.preload='none';vid.src='media/full_'+C.vk+'.mp4'}
  MINIS.push({x:MX+fx*2.2,z:MZ+fz*2.2,cx:MX,cz:MZ,fx,fz,ring,label:C.label,site:C.site,vid,vmat})}}
+/* 대문 밖 무이 마을: 대문 너머로 작은 마을이 보이고, 대문 앞에 서면 마을로 나간다 */
+{try{const VB=buildVillage({mini:true});VB.group.scale.setScalar(.32);VB.group.rotation.y=Math.PI;VB.group.position.set(0,0,35.5);VB.group.traverse(o=>{if(o.isMesh){o.castShadow=true}});scene.add(VB.group)}catch(e){console.error(e)}
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(1.1,.04,8,40),new THREE.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:.85}));ring.rotation.order='YXZ';ring.rotation.x=Math.PI/2;ring.position.set(0,.08,29.6);scene.add(ring);
+ MINIS.push({x:0,z:27.2,cx:0,cz:29.2,fx:0,fz:-1,ring,label:'대문 밖 무이 마을로 (쓰레드 이웃의 집)',site:'village',flat:true})}
 function enterMini(m){if(enterMini.busy)return;enterMini.busy=true;try{audio&&audio()}catch(e){}const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:60;background:radial-gradient(circle at 50% 55%,rgba(255,236,190,0) 0%,rgba(255,240,210,.0) 30%,#fff6e6 75%);opacity:0;transition:opacity 1.3s ease-in;display:grid;place-items:center;pointer-events:none';ov.innerHTML='<b style="font:700 26px \'Noto Serif KR\',serif;color:#3b2a1c;text-shadow:0 1px 0 #fff">미니어처 속으로 들어가는 중…</b>';document.body.appendChild(ov);
  const c=$('canvas');if(c){c.style.transition='transform 1.4s cubic-bezier(.6,0,.9,.4)';c.style.transformOrigin='50% 55%'}requestAnimationFrame(()=>{ov.style.opacity=1;if(c)c.style.transform='scale(3.2)'});setTimeout(()=>{location.href='../heritage3d/?site='+m.site},1450)}
 const SHELVES=[];{const keys=['ceramic','science','carpenter','painter','metal','unhak','duck','maejuk','hojak','chaekga','inwang','kimhd','sungnye','seokguram','gyeonghoe','jagyeok','geobuk','honcheon','emille','cheonma','bangasayu','saja','monkey','yongjar','buncheong','unryong','chochung','hwaseong','geumgang','shinyb','geunjeong','janggyeong','buseok','seokdeung','angbu','geojung','cheonsang','mirror','gukse','samjon','pungtak'];
