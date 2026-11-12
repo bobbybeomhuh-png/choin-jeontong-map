@@ -81,7 +81,7 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
   /* 홍예 천장 쌍룡 */const ceil=new THREE.Mesh(new THREE.CylinderGeometry(AR-.02,AR-.02,D-.1,32,1,true,Math.PI/2,Math.PI),MT.dragon);ceil.rotation.x=Math.PI/2;ceil.position.set(0,AS,0);G.add(ceil);
   /* 육축 충돌: 홍예 양옆 덩어리와 홍예 위 */S(-W/2,-AR,0,H,-D/2,D/2);S(AR,W/2,0,H,-D/2,D/2);S(-AR,AR,AS+1.2,H,-D/2,D/2);
   /* 문짝 두 짝: 안쪽으로 활짝 */for(const sx of[-1,1]){const dr=box(2.3,AS+1.6,.25,MT.door);const pv=new THREE.Group();dr.position.set(sx*1.15,(AS+1.6)/2,0);pv.add(dr);pv.position.set(sx*-AR,0,-1.5);pv.rotation.y=sx*1.35;G.add(pv);dr.castShadow=true}
-  spots.push({x:0,y:0,z:0,r:2.2,t:'홍예 천장의 쌍룡',h:'홍예 통로 천장을 올려다보세요. 구름 속에서 여의주를 두고 노니는 두 마리 용이 그려져 있어요. 성문을 지키는 뜻이 담겨 있어요.'})}
+  spots.push({x:0,y:0,z:0,r:2.2,t:'홍예 천장의 쌍룡',vt:[17, 22],vn:'홍예문 앞 비계',vc:'쇼츠에서 홍예문 앞에 비계를 세우던 장면이에요. 지금 그 홍예 안에 서 있어요.',h:'홍예 통로 천장을 올려다보세요. 구름 속에서 여의주를 두고 노니는 두 마리 용이 그려져 있어요. 성문을 지키는 뜻이 담겨 있어요.'})}
  /* 여장(성가퀴): 육축 위 가장자리 */
  {const crenel=(x0,z0,x1,z1,gaps=[])=>{const L=Math.hypot(x1-x0,z1-z0),n=Math.floor(L/2.2),ry=Math.atan2(x1-x0,z1-z0);for(let i=0;i<n;i++){const t=(i+.5)/n,x=x0+(x1-x0)*t,z=z0+(z1-z0)*t;if(gaps.some(([a,b])=>x>a&&x<b))continue;const b=box(.6,1.1,1.9,MT.granite);b.rotation.y=ry;add(b,x,H+.55,z);const cap=box(.7,.12,2,MT.granite);cap.rotation.y=ry;add(cap,x,H+1.16,z,false)}};
   crenel(-W/2+.8,D/2-.35,W/2-.8,D/2-.35);crenel(-W/2+.8,-D/2+.35,W/2-.8,-D/2+.35,[[-15,-11.6],[11.6,15]]);crenel(-W/2+.6,-D/2+1,-W/2+.6,D/2-1);crenel(W/2-.6,-D/2+1,W/2-.6,D/2-1);
@@ -100,7 +100,7 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
   /* 난간: 앞뒤 칸 사이, 양 끝(동서)은 가운데 칸을 비워 드나든다 */for(const z of[-4.6,4.6])for(let i=0;i<5;i++){const x0=XS[i]+.4,x1=XS[i+1]-.4;const r=box(x1-x0,.12,.12,MT.pillar);add(r,(x0+x1)/2,F1+.85,z,false);for(let x=x0+.3;x<x1;x+=.6){const b=box(.08,.8,.08,MT.wood);add(b,x,F1+.42,z,false)}S(x0,x1,F1,F1+.95,z-.15,z+.15)}
   for(const x of[-11,11])for(const[z0,z1]of[[-4.2,-1.4],[1.4,4.2]]){const r=box(.12,.12,z1-z0,MT.pillar);add(r,x,F1+.85,(z0+z1)/2,false);S(x-.15,x+.15,F1,F1+.95,z0,z1)}
   G.add(brackets(MT,11,4.6,F1+C1+.3,1.1));
-  spots.push({x:0,y:F1,z:2.6,r:3,t:'누각 1층',h:'정면 다섯 칸, 옆면 두 칸의 2층 누각이에요. 처마 밑 공포(짜임)가 촘촘한 다포식이고, 붉은 기둥과 초록 단청이 어울려요.'})}
+  spots.push({x:0,y:F1,z:2.6,r:3,t:'누각 1층',vt:[6.4, 8.6],vn:'기둥 단청 칠하기',vc:'쇼츠에서 무이가 칠하던 기둥 단청이 지금 둘러싼 이 기둥들이에요.',h:'정면 다섯 칸, 옆면 두 칸의 2층 누각이에요. 처마 밑 공포(짜임)가 촘촘한 다포식이고, 붉은 기둥과 초록 단청이 어울려요.'})}
  const F2=F1+C1+1.4;/* 2층 바닥 */const C2=3.6;
  /* 1층에서 2층 오르는 나무 계단(가운데) */{const steps=Math.round((F2-F1)/.26),rise=(F2-F1)/steps,run=(9.2-1.6)/steps;for(let i=0;i<steps;i++){const x0=1.6+i*run,x1=x0+run+(i===steps-1?.8:0);const st=box(x1-x0,.16,1.8,MT.floor);add(st,(x0+x1)/2,F1+(i+1)*rise-.08,0,false);S(x0,x1,F1,F1+(i+1)*rise,-.9,.9)}for(const sz of[-1,1]){const side=box(steps*run+.8,.3,.12,MT.wood);side.rotation.z=Math.atan2(F2-F1,steps*run);add(side,1.6+(steps*run)/2,F1+(F2-F1)/2,sz*.95,false)}}
  /* 2층 바닥(계단 위만 비움) */{const t=.3;const fl=(x0,x1,z0,z1)=>{const b=box(x1-x0,t,z1-z0,MT.floor);add(b,(x0+x1)/2,F2-t/2,(z0+z1)/2);S(x0,x1,F2-t,F2,z0,z1)};fl(-10.8,10.8,1.0,4.6);fl(-10.8,10.8,-4.6,-1.0);fl(-10.8,6.0,-1.0,1.0);fl(9.2,10.8,-1.0,1.0);/* 계단 구멍 둘레 난간 */for(const sz of[-1,1]){const r=box(2.4,.1,.1,MT.pillar);add(r,7.2,F2+.9,sz*1.02,false);for(let x=6.1;x<8.45;x+=.5){const b=box(.07,.9,.07,MT.wood);add(b,x,F2+.45,sz*1.02,false)}S(6.0,8.4,F2,F2+.95,sz*1.02-.08,sz*1.02+.08)}{const r=box(.1,.1,2.1,MT.pillar);add(r,6.02,F2+.9,0,false);S(5.94,6.1,F2,F2+.95,-1,1)}}
@@ -112,8 +112,8 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
   G.add(brackets(MT,10,4.2,F2+C2+.1,1.0));
   /* 2층 천장 서까래 */const ce=new THREE.Mesh(new THREE.PlaneGeometry(20,8.4).rotateX(Math.PI/2),MT.raft);ce.position.set(0,F2+C2+1.3,0);G.add(ce);cam.push(ce);
   /* 세로 현판 崇禮門 */const sg=box(1.3,2.75,.18,MT.sign);const pm=MT.sign.clone();sg.material=[MT.wood,MT.wood,MT.wood,MT.wood,pm,MT.wood];if(!opts.mini)new THREE.TextureLoader().load(new URL('../textures/sungnyemun/hyeonpan.jpg',import.meta.url).href,t=>{t.colorSpace=THREE.SRGBColorSpace;pm.map=t;pm.needsUpdate=true});add(sg,0,F2+C2-.2,4.75,false);
-  spots.push({x:0,y:0,z:9,r:3.5,t:'세로 현판 崇禮門',h:'다른 문의 현판은 가로로 쓰지만 숭례문 현판은 세로로 썼어요. 남쪽 관악산의 불 기운을 막으려 했다는 이야기가 전해요.'});
-  spots.push({x:0,y:F2,z:2.4,r:3,t:'누각 2층',h:'살창 너머로 서울 거리가 내려다보여요. 2008년 불이 났을 때 이 2층 지붕이 무너졌고, 5년 동안 전통 방식으로 다시 지어 2013년에 문을 열었어요.'})}
+  spots.push({x:0,y:0,z:9,r:3.5,t:'세로 현판 崇禮門',vt:[2.6, 6],vn:'처마 밑 공포 살피기',vc:'쇼츠에서 비계에 올라 살피던 공포가 이 현판 바로 위 처마 밑 짜임이에요.',h:'다른 문의 현판은 가로로 쓰지만 숭례문 현판은 세로로 썼어요. 남쪽 관악산의 불 기운을 막으려 했다는 이야기가 전해요.'});
+  spots.push({x:0,y:F2,z:2.4,r:3,t:'누각 2층',vt:[22.6, 26],vn:'처마 단청 이어 칠하기',vc:'쇼츠 끝무렵 처마 아래 단청을 칠하던 장면이에요. 2층 처마 밑을 올려다보면 같은 자리예요.',h:'살창 너머로 서울 거리가 내려다보여요. 2008년 불이 났을 때 이 2층 지붕이 무너졌고, 5년 동안 전통 방식으로 다시 지어 2013년에 문을 열었어요.'})}
  /* 지붕들 */{const h0=F1+C1+1.6;const sk=skirtRoof(MT,13.6,7.0,10.4,4.5,h0,h0+1.6,.9);G.add(sk);sk.traverse(o=>{if(o.isMesh)cam.push(o)});
   for(const m of rafters(MT,13.2,6.6,h0-.15))G.add(m);
   const r2h0=F2+C2+1.2;const top=hipRoof(MT,12.8,6.8,6,r2h0,r2h0+4.4,1.1,.45);G.add(top);top.traverse(o=>{if(o.isMesh)cam.push(o)});for(const m of rafters(MT,12.4,6.4,r2h0-.15))G.add(m)}
@@ -121,9 +121,9 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
  {for(const sx of[-1,1]){const L=opts.wallLen??26,h=5.2;const wall=box(L,h,7,MT.granite);wall.material=MT.granite;add(wall,sx*(W/2+L/2-.2),h/2,0);S(Math.min(sx*(W/2-.2),sx*(W/2+L-.2)),Math.max(sx*(W/2-.2),sx*(W/2+L-.2)),0,h,-3.5,3.5);
    for(let i=0;i<Math.floor(L/2.2);i++){const x=sx*(W/2+1+i*2.2);for(const z of[-3.2,3.2]){const b=box(1.9,1,.6,MT.granite);add(b,x,h+.5,z)}}}
   spots.push({x:-20,y:0,z:6.2,r:3,t:'한양도성 성벽',h:'숭례문은 한양도성의 남쪽 정문이에요. 조선 태조 때인 1398년에 처음 세웠어요. 옛 성벽은 대부분 헐렸고, 지금은 문 양쪽에 일부만 다시 쌓아 두었어요.'})}
- spots.push({x:0,y:0,z:14,r:3.2,t:'숭례문 실제 크기',h:'지금 보는 숭례문은 실제 크기로 지었어요. 석축(육축) 폭 약 30m, 높이 약 6.5m, 지붕 꼭대기까지 약 20m예요. 무이 키가 1.5m쯤이니 얼마나 큰지 느껴 보세요. 국보예요.'});
+ spots.push({x:0,y:0,z:14,r:3.2,t:'숭례문 실제 크기',vt:[10.5, 16],vn:'비계를 두른 복원 현장',vc:'쇼츠에서 비계를 세우고 고치던 숭례문을 같은 자리, 실제 크기로 보고 있어요. 쇼츠 속 벚꽃은 상상 장면이에요.',h:'지금 보는 숭례문은 실제 크기로 지었어요. 석축(육축) 폭 약 30m, 높이 약 6.5m, 지붕 꼭대기까지 약 20m예요. 무이 키가 1.5m쯤이니 얼마나 큰지 느껴 보세요. 국보예요.'});
  /* 탐방 페이지가 쓰는 유산별 설정 */
- const meta={title:'숭례문 · 실제 크기',hint:'실제 크기 숭례문이에요. 홍예 통로를 지나 성 안쪽 돌계단으로 육축 위에 오르고, 누각 안 계단으로 2층까지 올라가 봐요. (육축·현판 사진: 한국관광공사, 공공누리 1유형)',
+ const meta={title:'숭례문 · 실제 크기',video:'sungnye',hint:'실제 크기 숭례문이에요. 홍예 통로를 지나 성 안쪽 돌계단으로 육축 위에 오르고, 누각 안 계단으로 2층까지 올라가 봐요. (육축·현판 사진: 한국관광공사, 공공누리 1유형)',
   env:{plaza:{w:96,d:80,x:0,z:0},beds:true,sign:{x:4.5,z:16.5,lines:['숭례문 崇禮門','국보 · 1398년 처음 세움','육축 폭 약 30m · 높이 약 20m','실제 크기로 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<52&&Math.abs(z)<44)||(Math.abs(x)<16&&z>0&&z<140)},
   npc:[['science',[[-8,22],[8,22],[8,12],[-8,12]]],['ceramic',[[-3,6],[3,6],[3,-6],[-3,-6]]],['painter',[[-12,H+.45,-5.6],[12,H+.45,-5.6]]],['metal',[[20,-12],[-20,-12]]],['carpenter',[[-6,1.4],[6,-1.4]]]],
   level:P=>P.y>H+.3+5.5?'누각 2층':P.y>H+.3?'누각 1층':P.y>H-.3?'육축 위':Math.abs(P.x)<2.4&&Math.abs(P.z)<6?'홍예 통로':P.y>.6?'돌계단':'광장',

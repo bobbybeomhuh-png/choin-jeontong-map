@@ -17,6 +17,8 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 #ttl{font:700 16px "Noto Serif KR",serif;background:var(--panel);padding:6px 11px;border-radius:9px;border:1px solid var(--line)}.chip{background:var(--panel);border:1px solid var(--line);padding:6px 10px;border-radius:20px;font-size:13px;white-space:nowrap}
 #hint{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 58px);transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:8px 16px;font-size:14.5px;text-align:center;max-width:min(560px,calc(100vw - 28px));transition:opacity .6s;pointer-events:none;z-index:9}
 #act{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);font:20px "Do Hyeon",sans-serif;padding:11px 24px;border-radius:12px;background:var(--gold);color:#1d1408;border:3px solid #3b2a1c;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:7;white-space:nowrap}
+#pip{position:fixed;left:10px;top:calc(env(safe-area-inset-top) + 58px);width:132px;z-index:7;background:rgba(20,13,8,.88);border:2px solid var(--gold);border-radius:10px;padding:5px;color:#f3ead6;font:12px "Gowun Dodum",sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.4)}#pip video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:6px;display:block;background:#000}#pip b{display:block;color:#f2d27a;font:15px "Do Hyeon",sans-serif;margin-top:4px}#pip span{display:block;line-height:1.35}
+#vfull{position:fixed;inset:0;z-index:22;background:rgba(10,7,4,.85);display:grid;place-items:center;padding:12px}#vfull .in{display:flex;flex-direction:column;align-items:center;gap:8px;max-height:100%}#vfull video{max-height:78vh;max-width:92vw;aspect-ratio:9/16;background:#000;border-radius:10px}#vfull p{color:#f3ead6;font:15px "Gowun Dodum",sans-serif;margin:0;text-align:center}
 #card{position:fixed;inset:0;z-index:20;background:rgba(10,7,4,.7);display:grid;place-items:center;padding:14px}#card .in{width:min(520px,100%);background:#f6efe2;color:#2a1d12;border-radius:14px;padding:18px;display:grid;gap:10px}#card h2{margin:0;font:700 22px "Noto Serif KR",serif}#card p{margin:0;line-height:1.7;font-size:15.5px}#card .btn{justify-self:end;background:#3b2a1c;color:#fff4dc}
 #load{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:radial-gradient(800px 500px at 50% 40%,#5a3a20,#140e09 70%);color:var(--ink);transition:opacity .8s;text-align:center}#load b{display:block;font:700 28px "Noto Serif KR",serif;margin-bottom:8px}#load span{color:var(--muted)}
 #stick{position:fixed;left:20px;bottom:calc(env(safe-area-inset-bottom) + 30px);width:116px;height:116px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);z-index:6;touch-action:none}#stick i{position:absolute;left:33px;top:33px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.55)}
@@ -32,14 +34,20 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <body>
 <canvas id="c"></canvas>
 <div id="load"><div><b id="lt">미니어처 속으로 들어가는 중…</b><span id="ls">작은 모형이 실제 크기로 커져요</span></div></div>
-<header id="top" hidden><span id="ttl">숭례문 · 실제 크기</span><span class="chip" id="lvl">광장</span><span class="sp"></span><button class="btn" id="bView" type="button">1인칭 (V)</button><button class="btn" id="bBack" type="button">미니어처로 돌아가기</button></header>
+<header id="top" hidden><span id="ttl">숭례문 · 실제 크기</span><span class="chip" id="lvl">광장</span><span class="sp"></span><button class="btn" id="bShorts" type="button" hidden>쇼츠 보기</button><button class="btn" id="bView" type="button">1인칭 (V)</button><button class="btn" id="bBack" type="button">미니어처로 돌아가기</button></header>
 <div id="hint" hidden></div>
 <button id="act" type="button" hidden></button>
 <canvas id="mini" width="300" height="300" hidden></canvas>
 <div id="stick" hidden><i></i></div><button id="jumpB" type="button" hidden>점프</button>
-<section id="card" hidden><div class="in"><h2 id="cT"></h2><p id="cP"></p><button class="btn" id="cX" type="button">닫기</button></div></section>
+<div id="pip" hidden><video id="pipV" muted playsinline loop preload="none"></video><b>쇼츠 속 이 장면</b><span id="pipT"></span></div>
+<section id="vfull" hidden><div class="in"><video id="vfV" controls playsinline preload="none"></video><p id="vfT"></p><button class="btn" id="vfX" type="button">닫기</button></div></section>
+<section id="card" hidden><div class="in"><h2 id="cT"></h2><p id="cP"></p><button class="btn" id="cV" type="button" hidden>쇼츠 속 이 장면 보기</button> <button class="btn" id="cX" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
+const VSRC=()=>SITEB&&SITEB.video?'../world3d/media/full_'+SITEB.video+'.mp4':null;let pipS=null;
+function fmtT(a){return Math.floor(a)+'초'}
+function pipTick(){const s=spotNow&&spotNow.vt&&VSRC()&&$('#card').hidden&&$('#vfull').hidden?spotNow:null;const v=$('#pipV');if(s!==pipS){pipS=s;if(s){if(!v.src){v.src=VSRC();v.addEventListener('loadedmetadata',()=>{if(pipS)try{v.currentTime=pipS.vt[0]}catch(e){}})}$('#pipT').textContent=s.vn||s.t;$('#pip').hidden=false;try{v.currentTime=s.vt[0]}catch(e){}v.play().catch(()=>{})}else{$('#pip').hidden=true;v.pause()}}if(s&&(v.currentTime>s.vt[1]||v.currentTime<s.vt[0]-.5)){try{v.currentTime=s.vt[0]}catch(e){}}}
+function openFull(t0,txt){const v=$('#vfV');if(!v.src){v.src=VSRC()}if(v.readyState<1){v.addEventListener('loadedmetadata',()=>{try{v.currentTime=t0||0}catch(e){}},{once:true})}$('#vfT').textContent=txt||'';$('#vfull').hidden=false;$('#pip').hidden=true;pipS=null;$('#pipV').pause();try{v.currentTime=t0||0}catch(e){}v.muted=false;v.play().catch(()=>{})}
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import {buildSungnyemun} from './sites/sungnyemun.js';
@@ -93,6 +101,9 @@ $('#bView').addEventListener('click',()=>setFP(!FP));
 $('#bBack').addEventListener('click',()=>{$('#load').hidden=false;$('#load').style.opacity=1;$('#lt').textContent='미니어처로 돌아가는 중…';$('#ls').textContent='무이 월드로 작아져요';setTimeout(()=>{location.href='../world3d/?from=heritage&site='+SITE},500)});
 function hint(t,ms=5000){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
 $('#cX').addEventListener('click',()=>$('#card').hidden=true);
+$('#vfX').addEventListener('click',()=>{$('#vfull').hidden=true;$('#vfV').pause()});$('#pip').addEventListener('click',()=>{if(pipS)openFull(pipS.vt[0],'쇼츠 '+fmtT(pipS.vt[0])+' 장면: '+(pipS.vn||pipS.t))});
+if(SITEB.video){$('#bShorts').hidden=false;$('#bShorts').addEventListener('click',()=>openFull(0,(SITEB.title||'').split(' ·')[0]+' 복원 쇼츠 전체'))}
+$('#cV').addEventListener('click',()=>{const sp=$('#cV')._sp;$('#card').hidden=true;if(sp)openFull(sp.vt[0],'쇼츠 '+fmtT(sp.vt[0])+' 장면: '+(sp.vn||sp.t))});
 /* ---------- 함께 둘러보는 무이들 ---------- */
 const NPC=[];async function placeNPC(){const L=SITEB.npc;
  for(const[k,path]of L){try{const m=await makeMuui(k,1.3+Math.random()*.2);m.path=path.map(p=>p.length===3?{x:p[0],z:p[2],y:p[1]}:{x:p[0],z:p[1]});m.i=0;m.pos=new THREE.Vector3(m.path[0].x,0,m.path[0].z);m.pos.y=floorAt(m.pos.x,m.pos.z,m.path[0].y||0);NPC.push(m);m.play('walk',0)}catch(e){}}}
@@ -120,7 +131,7 @@ const RC=new THREE.Raycaster(),tmp=new THREE.Vector3(),head=new THREE.Vector3();
 R.setAnimationLoop(()=>{try{frame()}catch(e){console.error(e)}});
 function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
  if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null&&Math.hypot(stickV.x,stickV.y)>.1){fx=-stickV.y;sx=stickV.x}if(!$('#card').hidden||intro>0)fx=sx=0;
-  const mag=Math.min(1,Math.hypot(fx,sx)),run=keys.ShiftLeft||keys.ShiftRight||(stickId!==null&&mag>.85);speed+=((mag>.05?(run?5:2.2):0)-speed)*Math.min(1,dt*8);
+  const mag=Math.min(1,Math.hypot(fx,sx)),run=!(keys.ShiftLeft||keys.ShiftRight)&&(stickId===null||mag>.55);speed+=((mag>.05?(run?5:2.2):0)-speed)*Math.min(1,dt*8);
   if(mag>.05){const a=camYaw+Math.PI-Math.atan2(sx,fx);yaw+=wrapA(a-yaw)*Math.min(1,dt*10)}
   P.x+=Math.sin(yaw)*speed*dt;P.z+=Math.cos(yaw)*speed*dt;collide(P);
   const fl=floorAt(P.x,P.z,P.y);vy-=16*dt;P.y+=vy*dt;if(P.y<=fl){if(fl-P.y<STEP+.05||vy<=0){P.y=fl;vy=0;grounded=true}}else if(P.y-fl>.05)grounded=false;if(P.y<fl&&fl-P.y<STEP+.05)P.y=fl;
@@ -133,7 +144,7 @@ function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);la
   sun.position.set(P.x-40,70,P.z+45);sun.target.position.set(P.x,0,P.z)}
  npcTick(dt);if(SITEB.tick)SITEB.tick(P,dt);if(me){const lv=SITEB.level(P);audioTick(dt,speed>.4&&grounded,/누각/.test(lv),/통로|비도|주실|전실/.test(lv))}
  uiT-=dt;if(uiT<=0&&me){uiT=.15;$('#lvl').textContent=SITEB.level(P);
-  spotNow=null;for(const s of SPOTS){if(Math.hypot(P.x-s.x,P.z-s.z)<s.r&&Math.abs(P.y-s.y)<2.5){spotNow=s;break}}const a=$('#act');if(spotNow&&$('#card').hidden){a.textContent=`${spotNow.t} 알아보기`;a.hidden=false;a.onclick=()=>{$('#cT').textContent=spotNow.t;$('#cP').textContent=spotNow.h;$('#card').hidden=false}}else a.hidden=true}
+  spotNow=null;for(const s of SPOTS){if(Math.hypot(P.x-s.x,P.z-s.z)<s.r&&Math.abs(P.y-s.y)<2.5){spotNow=s;break}}pipTick();const a=$('#act');if(spotNow&&$('#card').hidden){a.textContent=`${spotNow.t} 알아보기`;a.hidden=false;a.onclick=()=>{$('#cT').textContent=spotNow.t;$('#cP').textContent=spotNow.h+(spotNow.vt&&spotNow.vc?' '+spotNow.vc:'');$('#cV').hidden=!(spotNow.vt&&VSRC());$('#cV')._sp=spotNow;$('#card').hidden=false}}else a.hidden=true}
  mT-=dt;if(mT<=0){mT=.25;drawMini()}
  if(window.__CAMFN){const k=window.__CAMFN(performance.now()/1000);if(k){cam.position.set(k[0],k[1],k[2]);cam.lookAt(k[3],k[4],k[5]);if(k[6]&&cam.fov!==k[6]){cam.fov=k[6];cam.updateProjectionMatrix()}}}
  R.render(scene,cam)}

@@ -129,11 +129,11 @@ export function buildGeobukseon(opts={}){const MT=materials();const G=new THREE.
     const fm=new THREE.MeshStandardMaterial({color:0x3a2616,roughness:.8});for(const fx of[dx0-.08,dx1+.08]){const po=box(.16,dy1-D+.1,dep+.1,fm);add(po,fx,D+(dy1-D+.1)/2-.05,zc,false)}const li=box(dx1-dx0+.32,.18,dep+.1,fm);add(li,(dx0+dx1)/2,dy1+.09,zc,false);const th=box(dx1-dx0+.32,.08,dep+.1,fm);add(th,(dx0+dx1)/2,D-.02,zc,false)}
    for(const h of HID){h.visible=false;const i=cam.indexOf(h);if(i>=0)cam.splice(i,1)}root.traverse(m=>{if(m.isMesh&&!mini)cam.push(m)});G.userData.model=W},undefined,e=>console.warn('거북선 모델을 못 불러와 단순 모양으로 보여요',e))}
  /* ---------- 안내 지점 ---------- */
- spots.push({x:-2,y:QY,z:11,r:3.2,t:'거북선 실제 크기',h:'임진왜란(1592) 때 이순신 장군이 이끈 조선 수군의 돌격선이에요. 판옥선 위에 거북 등처럼 덮개를 씌워 군사를 지켰어요. 남아 있는 실물이 없어 기록과 연구를 바탕으로 다시 지었어요. 여기서는 길이 약 34m, 폭 약 10m예요.'});
- spots.push({x:15,y:QY,z:9.5,r:3,t:'용머리',h:'뱃머리 용머리에서 유황과 염초를 태운 연기를 뿜어 적을 겁주고 배의 움직임을 가렸다고 해요. 이순신 장군의 장계에는 용머리 입으로 화포를 쏘았다는 기록도 있어요.'});
- spots.push({x:6,y:QY,z:9.5,r:2.6,t:'거북 등의 쇠못',h:'덮개 위에는 날카로운 쇠못(칼송곳)을 촘촘히 꽂아 적이 뛰어오르지 못하게 했어요. 그 위를 거적으로 덮어 송곳을 숨기기도 했어요. 가운데 십자 모양 길만 사람이 다닐 수 있게 비워 두었어요.'});
- spots.push({x:1,y:D,z:-2.4,r:1.6,t:'화포',h:'양옆 포 구멍으로 천자총통, 지자총통 같은 화포를 쏘았어요. 덮개 덕분에 군사들은 안에서 몸을 숨긴 채 싸울 수 있었어요.'});
- spots.push({x:-6,y:D,z:2.2,r:1.6,t:'노',h:'바람이 없어도 노를 저어 움직였어요. 노 하나에 여러 사람이 붙어 장단에 맞춰 저었어요. 뒤쪽 큰 북은 장수가 신호를 보낼 때 쳤어요.'});
+ spots.push({x:-2,y:QY,z:11,r:3.2,t:'거북선 실제 크기',vt:[14, 18.5],vn:'다 만든 거북선 둘러보기',vc:'쇼츠에서 무이들이 완성한 거북선을 둘러보는 장면과 같은 모습이에요. 쇼츠 속 배는 작업대 위 모형이고, 여기는 실제 크기예요.',h:'임진왜란(1592) 때 이순신 장군이 이끈 조선 수군의 돌격선이에요. 판옥선 위에 거북 등처럼 덮개를 씌워 군사를 지켰어요. 남아 있는 실물이 없어 기록과 연구를 바탕으로 다시 지었어요. 여기서는 길이 약 34m, 폭 약 10m예요.'});
+ spots.push({x:15,y:QY,z:9.5,r:3,t:'용머리',vt:[2.6, 6],vn:'용머리를 뱃머리에 끼우기',vc:'쇼츠에서 용머리를 뱃머리에 맞춰 끼우던 바로 그 자리예요. 지금 올려다보는 용머리가 그 용머리예요.',h:'뱃머리 용머리에서 유황과 염초를 태운 연기를 뿜어 적을 겁주고 배의 움직임을 가렸다고 해요. 이순신 장군의 장계에는 용머리 입으로 화포를 쏘았다는 기록도 있어요.'});
+ spots.push({x:6,y:QY,z:9.5,r:2.6,t:'거북 등의 쇠못',vt:[6.4, 8.6],vn:'거북 등 무늬와 쇠못 자리 새기기',vc:'쇼츠에서 새기던 거북 등판이 머리 위 덮개예요. 쇠못이 촘촘히 박힌 모습을 실제 크기로 볼 수 있어요.',h:'덮개 위에는 날카로운 쇠못(칼송곳)을 촘촘히 꽂아 적이 뛰어오르지 못하게 했어요. 그 위를 거적으로 덮어 송곳을 숨기기도 했어요. 가운데 십자 모양 길만 사람이 다닐 수 있게 비워 두었어요.'});
+ spots.push({x:1,y:D,z:-2.4,r:1.6,t:'화포',vt:[19.8, 22.2],vn:'설계도와 하나하나 맞춰 보기',vc:'쇼츠 끝무렵 설계도와 맞춰 보던 장면이에요. 화포와 포 구멍 자리도 그렇게 맞춰요.',h:'양옆 포 구멍으로 천자총통, 지자총통 같은 화포를 쏘았어요. 덮개 덕분에 군사들은 안에서 몸을 숨긴 채 싸울 수 있었어요.'});
+ spots.push({x:-6,y:D,z:2.2,r:1.6,t:'노',vt:[8.6, 10.4],vn:'노를 움직이는 톱니 재기',vc:'쇼츠에서 자로 치수를 재던 장치가 이 노 젓는 자리와 이어져요.',h:'바람이 없어도 노를 저어 움직였어요. 노 하나에 여러 사람이 붙어 장단에 맞춰 저었어요. 뒤쪽 큰 북은 장수가 신호를 보낼 때 쳤어요.'});
  spots.push({x:3,y:-.6,z:0,r:2,t:'아래 선실',h:'아래층은 군사들이 쉬고 식량, 물, 화약, 화살, 포탄을 두던 곳이에요. 뒤쪽 칸막이 안은 장수 방이에요.'});
  /* ---------- 움직임: 용머리 연기, 깃발, 물결, 실내 등불 ---------- */
  let IL=[];if(!mini){const a=new THREE.PointLight(0xffd29a,16,12,1.6);a.position.set(-4,D+WH+.9,0);const b=new THREE.PointLight(0xffd29a,14,12,1.6);b.position.set(7,D+WH+.9,0);const c=new THREE.PointLight(0xffc98a,12,10,1.6);c.position.set(-6,1.0,0);const d=new THREE.PointLight(0xffc98a,12,10,1.6);d.position.set(6,1.0,0);G.add(a,b,c,d);IL=[a,b,c,d]}
@@ -144,7 +144,7 @@ export function buildGeobukseon(opts={}){const MT=materials();const G=new THREE.
   const on=Math.abs(P.x)<20&&P.z<9.5;if(on!==lon){lon=on;for(const l of IL)l.visible=on}};
  const inHull=P=>Math.abs(P.x)<L-.2&&Math.abs(P.z)<B(P.x)+.1&&P.y>-1;
  return{group:G,solids,cam,spots,tick,baseAt:(x,z)=>Math.abs(x)<L&&Math.abs(z)<B(x)?-1.6:0,spawn:{x:-2,z:20,y:QY,yaw:Math.PI},size:{L,D,QY},
-  title:'거북선 · 실제 크기',hint:'실제 크기 거북선이에요. 널다리를 건너 옆문으로 들어가 노와 화포가 있는 포판을 둘러보고, 가운데 사다리 계단으로 아래 선실까지 내려가 봐요. (바깥 3D 모델: Heat Of Fusion, CC BY)',
+  title:'거북선 · 실제 크기',video:'geobuk',hint:'실제 크기 거북선이에요. 널다리를 건너 옆문으로 들어가 노와 화포가 있는 포판을 둘러보고, 가운데 사다리 계단으로 아래 선실까지 내려가 봐요. (바깥 3D 모델: Heat Of Fusion, CC BY)',
   env:{plaza:null,beds:false,sea:false,trees:false,groundY:-1.6,sign:{x:3,z:13,y:QY,lines:['거북선 龜船','임진왜란 · 1592년','길이 약 34m · 폭 약 10m','실제 크기로 지었어요']},treeAvoid:(x,z)=>z<80&&Math.abs(x)<80,islands:true},
   npc:[['science',[[-6,QY,12],[8,QY,12],[8,QY,15],[-6,QY,15]]],['carpenter',[[-9,D,0],[9,D,0]]],['ceramic',[[-2,-.6,1.2],[9,-.6,1.2]]],['metal',[[-12.2,D,1.4],[-12.2,D,-1.4]]]],
   level:P=>{if(inHull(P))return P.y<.8?'아래 선실':'포판(노·화포 갑판)';if(P.z<QZ&&P.z>B(DX))return'널다리';return'선착장'},
