@@ -1,7 +1,7 @@
 /* 공통 바탕(모든 유산 마당): 담장·대문으로 마당 닫기, 흙마당, 석등·장독대·평상·바위, 풀포기·들꽃, 가까운 뒷산.
    갱신 2026-11-12. 마당 범위는 COURTS(유산마다 [x0,x1,z0,z1, 담장 종류, 대문 너비, 담 높이]). 대문은 늘 +z 쪽 가운데(gx로 옮김). */
 import * as THREE from 'three';
-import {paintedPines,lumpyHill} from './treekit.js';
+import {paintedPines,lumpyHill,plantBroad} from './treekit.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 /* 담장 종류: earth 토담(기와 얹음), stone 돌담, fort 성벽, low 낮은 돌 석축, none 담 없음 */
 export const COURTS={
@@ -22,7 +22,7 @@ export const COURTS={
  hanyang:{x0:-40,x1:40,z0:-52,z1:34,wall:'none',gate:0},
  sungnyemun:{x0:-48,x1:48,z0:-40,z1:40,wall:'none',gate:0},
  seokguram:{x0:-22,x1:22,z0:-12,z1:34,wall:'none',gate:0,noHills:true}};
-export function buildEnvKit(scene,SITE,EV,SOL,TOUCH){const C=COURTS[SITE];if(!C||EV.noKit)return;const r=mulb(SITE.length*97+13);const MT=materials();const G=new THREE.Group();scene.add(G);const gy=C.y||0;
+export function buildEnvKit(scene,SITE,EV,SOL,TOUCH,SP=[]){const C=COURTS[SITE];if(!C||EV.noKit)return;const r=mulb(SITE.length*97+13);const MT=materials();const G=new THREE.Group();scene.add(G);const gy=C.y||0;
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
  const hit=(x,z,rr)=>SOL.some(s=>s.r?Math.hypot(x-s.cx,z-s.cz)<s.r+rr:(x>s.x0-rr&&x<s.x1+rr&&z>s.z0-rr&&z<s.z1+rr));
@@ -65,6 +65,11 @@ export function buildEnvKit(scene,SITE,EV,SOL,TOUCH){const C=COURTS[SITE];if(!C|
   im.count=k;G.add(im);
   const FC=[0xf2d03a,0xf6f2e8,0xe86a8a,0xb88ad8,0xf08a3a];const fm=new THREE.MeshStandardMaterial({roughness:.8});const NF=TOUCH?300:600;const fl=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.09,0),fm,NF);let kf=0;const col=new THREE.Color();
   for(let t=0;t<NF*4&&kf<NF;t++){const x=(C.x0+C.x1)/2+(r()-.5)*(C.x1-C.x0+60),z=(C.z0+C.z1)/2+(r()-.5)*(C.z1-C.z0+60);if(inC(x,z,.5)||hit(x,z,.3)||EV.sea&&z>130)continue;const cx=x,cz=z;const n=3+((r()*4)|0);for(let j=0;j<n&&kf<NF;j++){o.position.set(cx+(r()-.5)*1.2,gy+.35+r()*.2,cz+(r()-.5)*1.2);o.scale.setScalar(1);o.rotation.set(0,0,0);o.updateMatrix();fl.setMatrixAt(kf,o.matrix);fl.setColorAt(kf++,col.setHex(FC[(r()*FC.length)|0]))}}fl.count=kf;G.add(fl)}
+ /* ---------- 마당 둘레 나무: 넓은 마당이 휑하지 않게 담 안쪽을 따라 ---------- */
+ if(!['gyeongju','sungnyemun','hanyang','seokguram','geobukseon','suwon','worldmap','village'].includes(SITE)&&C.wall!=='none'||SITE==='naju'){const TL=[],GP=[0x4f7f3a,0x5f8c40,0x6a9446,0x7a9a48,0xd8a040],gxx=C.gx||0,GWW=C.gate||0,ins=2.8,step=8.5,sh=(x,z,r)=>SP.some(t=>Math.hypot(x-t.x,z-t.z)<(t.r||1.5)+r);
+  const tryT=(x,z)=>{if(hit(x,z,1.6)||sh(x,z,2.2))return;if(Math.abs(x-gxx)<GWW/2+5&&z>C.z1-9)return;TL.push([x,gy,z,r()*6,.95+r()*.35,GP[(r()*GP.length)|0]]);SOL.push({cx:x,cz:z,r:.45,y0:-9,y1:gy+6})};
+  for(let x=C.x0+ins;x<=C.x1-ins;x+=step){tryT(x+(r()-.5)*2,C.z0+ins);tryT(x+(r()-.5)*2,C.z1-ins)}for(let z=C.z0+ins+step;z<=C.z1-ins-step;z+=step){tryT(C.x0+ins,z+(r()-.5)*2);tryT(C.x1-ins,z+(r()-.5)*2)}
+  if(TL.length)plantBroad(G,TL)}
  /* ---------- 가까운 뒷산: 마당 뒤를 감싸는 숲 언덕 ---------- */
  if(!EV.noHills&&!C.noHills){const hz=C.z0-28,W=C.x1-C.x0;const hm=[0x4f7a44,0x5a8450,0x456d3c];const tr=paintedPines(500),pc=new THREE.Color();const o=new THREE.Object3D();let k=0;
   for(let i=0;i<7;i++){const x=C.x0-40+i*(W+80)/6+(r()-.5)*10,z=hz-r()*25,rr=26+r()*16,h=12+r()*12;const m=lumpyHill(rr,h,hm[i%3],i+1);m.position.set(x,gy-1,z);m.receiveShadow=true;G.add(m);
