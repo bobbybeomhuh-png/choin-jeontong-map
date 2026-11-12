@@ -280,6 +280,30 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   </a>
 </section>
 
+<style>
+.websec{max-width:1180px;margin:0 auto 56px;padding:0 20px}
+.websec h2{margin:0 0 6px}
+.websec .wsub{color:var(--muted,#8a7b62);font-size:14px;line-height:1.7;margin:0 0 18px}
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.wcard{display:grid;grid-template-rows:auto 1fr;border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;background:var(--band,#1c1710);color:var(--bandtx,#efe4cc);border:1px solid rgba(230,190,106,.18);transition:transform .3s}
+.wcard:hover{transform:translateY(-3px)}
+.wcard img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.wcard div{padding:14px 16px 16px}
+.wcard b{display:block;font-size:16px;margin-bottom:6px}
+.wcard p{margin:0 0 10px;font-size:13px;line-height:1.65;color:#cdbf9f}
+.wcard span{font-size:12.5px;font-weight:700;color:var(--bandgold,#e6be6a)}
+@media(max-width:860px){.wgrid{grid-template-columns:1fr}}
+</style>
+<section class="websec" id="webSec">
+  <h2>웹에서 바로 걸어 보는 유산</h2>
+  <p class="wsub">설치 없이 휴대폰과 PC에서 바로 열립니다. 공공 3D 자료와 사진을 바탕으로 유산 19곳을 걸어 다니는 공간으로 만들었고, 지역별로 같은 방식의 공간을 제작할 수 있습니다.</p>
+  <div class="wgrid">
+    <a class="wcard" href="heritage3d/?site=worldmap" target="_blank" rel="noopener"><img src="poster/web3d_map.jpg" alt="무이 전국 지도 3D" loading="lazy"><div><b>무이 전국 지도</b><p>동고서저 지형 위로 말을 타고 날아 16개 도시, 유산 19곳에 내려앉습니다. 도시마다 도장과 쇼츠가 이어집니다.</p><span>전국 지도 열기</span></div></a>
+    <a class="wcard" href="heritage3d/?site=suwon" target="_blank" rel="noopener"><img src="poster/web3d_suwon.jpg" alt="수원 화성 장안문 3D" loading="lazy"><div><b>수원 화성 장안문</b><p>실측 3D 장안문과 거중기, 화성능행도 병풍까지. 유산 마당 하나가 이런 모습으로 만들어집니다.</p><span>유산 마당 걸어 보기</span></div></a>
+    <a class="wcard" href="dcube/" target="_blank" rel="noopener"><img src="dcube/media/pambok_poster.jpg" alt="초인 실감 상영관" loading="lazy"><div><b>초인 실감 상영관</b><p>전주 팔복예술공장 D-CUBE 상영작을 웹에서 다시 봅니다. 실감 전시를 집에서 이어 보는 방식입니다.</p><span>상영관 들어가기</span></div></a>
+  </div>
+</section>
+
 <section class="blk" id="histSec">
   <div class="wrap">
     <h2>선정 · 수상 · 전시</h2>
