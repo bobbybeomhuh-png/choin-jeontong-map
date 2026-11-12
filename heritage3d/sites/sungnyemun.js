@@ -1,6 +1,7 @@
 /* 숭례문(서울 남대문) 실제 크기 모형. 단위 1 = 1m. 앞(성 밖, 남쪽)이 +z, 홍예 통로는 z축을 따라 뚫려 있다.
    ⏱ 2026-11-12 만듦. 치수는 공개 자료의 대략값(육축 폭 약 30m·깊이 약 12m·높이 약 6.5m, 누각 정면 5칸·측면 2칸 중층, 전체 높이 약 20m)을 따름. */
 import * as THREE from 'three';
+import {buildMarket} from './market.js';
 export const tex=(w,h,fn,rep)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;t.wrapS=t.wrapT=THREE.RepeatWrapping;if(rep)t.repeat.set(rep[0],rep[1]);return t};
 export const noise=(q,w,h,n,cols,sz=2)=>{for(let i=0;i<n;i++){q.fillStyle=cols[(Math.random()*cols.length)|0];q.fillRect(Math.random()*w,Math.random()*h,sz,sz)}};
 const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
@@ -123,9 +124,13 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
   spots.push({x:-20,y:0,z:6.2,r:3,t:'한양도성 성벽',h:'숭례문은 한양도성의 남쪽 정문이에요. 조선 태조 때인 1398년에 처음 세웠어요. 옛 성벽은 대부분 헐렸고, 지금은 문 양쪽에 일부만 다시 쌓아 두었어요.'})}
  spots.push({x:0,y:0,z:14,r:3.2,t:'숭례문 실제 크기',vt:[10.5, 16],vn:'비계를 두른 복원 현장',vc:'쇼츠에서 비계를 세우고 고치던 숭례문을 같은 자리, 실제 크기로 보고 있어요. 쇼츠 속 벚꽃은 상상 장면이에요.',h:'지금 보는 숭례문은 실제 크기로 지었어요. 석축(육축) 폭 약 30m, 높이 약 6.5m, 지붕 꼭대기까지 약 20m예요. 무이 키가 1.5m쯤이니 얼마나 큰지 느껴 보세요. 국보예요.'});
  /* 탐방 페이지가 쓰는 유산별 설정 */
- const meta={quest:{t:'숭례문 복원 의뢰',d:'목수 무이가 숭례문 점검을 맡겼어요. 아래 자리를 차례로 찾아가 보세요.',steps:[['광장에서 숭례문 바라보기','숭례문 실제 크기'],['세로 현판 崇禮門','세로 현판 崇禮門'],['홍예 천장의 쌍룡','홍예 천장의 쌍룡'],['육축 돌계단 오르기','육축 돌계단'],['누각 1층','누각 1층'],['누각 2층','누각 2층']]},title:'숭례문 · 실제 크기',video:'sungnye',hint:'실제 크기 숭례문이에요. 홍예 통로를 지나 성 안쪽 돌계단으로 육축 위에 오르고, 누각 안 계단으로 2층까지 올라가 봐요. (육축·현판 사진: 한국관광공사, 공공누리 1유형)',
-  env:{plaza:{w:96,d:80,x:0,z:0},beds:true,sign:{x:4.5,z:16.5,lines:['숭례문 崇禮門','국보 · 1398년 처음 세움','육축 폭 약 30m · 높이 약 20m','실제 크기로 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<52&&Math.abs(z)<44)||(Math.abs(x)<16&&z>0&&z<140)},
-  npc:[['science',[[-8,22],[8,22],[8,12],[-8,12]]],['ceramic',[[-3,6],[3,6],[3,-6],[-3,-6]]],['painter',[[-12,H+.45,-5.6],[12,H+.45,-5.6]]],['metal',[[20,-12],[-20,-12]]],['carpenter',[[-6,1.4],[6,-1.4]]]],
+ /* ---------- 문 밖 칠패시장: 양쪽 시전 행랑과 좌판 ---------- */
+ {const rows=[{x:-21,z0:12,z1:38,face:1,k:0},{x:21,z0:12,z1:38,face:-1,k:3}];rows.carts=[[-9,30,.3],[10,16,-.5]];buildMarket(G,solids,spots,rows,{seed:11,mini:!!(typeof opts!=='undefined'&&opts.mini)});
+  spots.push({x:-13,y:0,z:24,r:3,t:'칠패시장',h:'숭례문 밖 칠패(七牌)에는 조선 후기 서울의 큰 시장이 섰어요. 종로 시전, 배오개(이현)와 함께 서울 3대 시장으로 꼽혔고, 서해에서 올라온 생선과 곡식, 옹기가 많이 팔렸어요. (본떠 지음)'});
+  spots.push({x:13,y:0,z:30,r:2.6,t:'어물전',h:'칠패시장은 어물이 특히 유명했어요. 마포와 용산 나루로 들어온 굴비와 젓갈이 이곳에서 팔려 나갔어요.'})}
+ const meta={quest:{t:'숭례문 복원 의뢰',d:'목수 무이가 숭례문 점검을 맡겼어요. 아래 자리를 차례로 찾아가 보세요.',steps:[['광장에서 숭례문 바라보기','숭례문 실제 크기'],['세로 현판 崇禮門','세로 현판 崇禮門'],['홍예 천장의 쌍룡','홍예 천장의 쌍룡'],['육축 돌계단 오르기','육축 돌계단'],['누각 1층','누각 1층'],['누각 2층','누각 2층'],['칠패시장','칠패시장'],['어물전','어물전']]},title:'숭례문 · 실제 크기',video:'sungnye',hint:'실제 크기 숭례문이에요. 홍예 통로를 지나 성 안쪽 돌계단으로 육축 위에 오르고, 누각 안 계단으로 2층까지 올라가 봐요. (육축·현판 사진: 한국관광공사, 공공누리 1유형)',
+  env:{plaza:{w:96,d:80,x:0,z:0},beds:false,sign:{x:4.5,z:16.5,lines:['숭례문 崇禮門','국보 · 1398년 처음 세움','육축 폭 약 30m · 높이 약 20m','실제 크기로 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<52&&Math.abs(z)<44)||(Math.abs(x)<16&&z>0&&z<140)},
+  npc:[['science',[[-8,22],[8,22],[8,12],[-8,12]]],['ceramic',[[-15.5,14],[-15.5,36]]],['metal',[[15.5,36],[15.5,14]]],['painter',[[-5,34],[5,34]]],['ceramic',[[-3,6],[3,6],[3,-6],[-3,-6]]],['painter',[[-12,H+.45,-5.6],[12,H+.45,-5.6]]],['metal',[[20,-12],[-20,-12]]],['carpenter',[[-6,1.4],[6,-1.4]]]],
   level:P=>P.y>H+.3+5.5?'누각 2층':P.y>H+.3?'누각 1층':P.y>H-.3?'육축 위':Math.abs(P.x)<2.4&&Math.abs(P.z)<6?'홍예 통로':P.y>.6?'돌계단':'광장',
   camCap:P=>(P.y>H+.3&&Math.abs(P.x)<12.5&&Math.abs(P.z)<5.5)?(P.y>H+5?3.2:4.2):Infinity,
   mini:{S:4.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#b9b2a6';g.fillRect(X(-48),Z(-40),96*S,80*S);g.fillStyle='#8e877c';g.fillRect(X(-15),Z(-6),30*S,12*S);g.fillStyle='#7a7468';g.fillRect(X(-41),Z(-3.5),26*S,7*S);g.fillRect(X(15),Z(-3.5),26*S,7*S);g.fillStyle='#4a4e54';g.fillRect(X(-12.8),Z(-6.8),25.6*S,13.6*S);g.fillStyle='#d8c8a0';g.fillRect(X(-2.3),Z(-6),4.6*S,12*S)}}};

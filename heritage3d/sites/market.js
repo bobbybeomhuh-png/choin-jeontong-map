@@ -1,0 +1,33 @@
+/* 조선 시장 거리 조각: 시전 행랑(긴 가게 집), 좌판과 차일, 물건(옹기·비단 필·과일·굴비·갓·짚신), 가게 깃발, 수레.
+   갱신 2026-11-12. 숭례문 밖 칠패시장처럼 꾸밀 때 씀(본떠 지은 연출). */
+import * as THREE from 'three';
+import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
+/* row: {x, z0, z1, face:+1|-1(가게 앞이 +x 쪽이면 +1)} */
+export function buildMarket(G,solids,spots,rows,{seed=5,mini=false}={}){const MT=materials();const r=mulb(seed);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
+ const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
+ const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
+ const wood=M(0x7a5634),wall=M(0xefe6d2),dark=M(0x3b2414);
+ const jar=M(0x5a3420,{roughness:.35}),cloth=[0xc8342c,0x2f5fa8,0xe6c23a,0x3f8a5a,0xe8a0b8,0xf2ede2,0x6a4aa0];
+ const lathe=(pts,m)=>new THREE.Mesh(new THREE.LatheGeometry(pts.map(([a,b])=>new THREE.Vector2(a,b)),14),m);
+ const banner=(ch,col)=>{const cv=document.createElement('canvas');cv.width=96;cv.height=256;const q=cv.getContext('2d');q.fillStyle=col;q.fillRect(0,0,96,256);q.strokeStyle='rgba(0,0,0,.25)';q.lineWidth=6;q.strokeRect(3,3,90,250);q.fillStyle='#1b120a';q.font='bold 72px "Noto Serif KR",serif';q.textAlign='center';q.fillText(ch,48,150);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshStandardMaterial({map:t,side:THREE.DoubleSide,roughness:.9})};
+ const SHOPS=[['布','비단·무명 가게','#f2ede2'],['器','옹기 가게','#e8d8b0'],['果','과일 가게','#f2d27a'],['魚','어물전','#cfe0ea'],['笠','갓 가게','#e8e0d0'],['鞋','짚신 가게','#e6d2a6']];
+ /* 물건 한 무더기 */function goods(kind,x,y,z,g){const add=o=>{o.castShadow=true;g.add(o);return o};
+  if(kind===0){for(let i=0;i<7;i++){const b=add(new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.7,10),M(cloth[i%cloth.length],{roughness:.9})));b.rotation.z=Math.PI/2;b.position.set(x,y+.12+Math.floor(i/4)*.24,z-.45+(i%4)*.3)}}
+  else if(kind===1){for(let i=0;i<5;i++){const s=.6+r()*.5;const p=add(lathe([[.001,0],[.12,0],[.2,.15],[.22,.32],[.14,.48],[.1,.5],[.001,.5]],jar));p.scale.setScalar(s);p.position.set(x+(r()-.5)*.6,y,z-.6+i*.3)}}
+  else if(kind===2){const bk=add(new THREE.Mesh(new THREE.CylinderGeometry(.42,.32,.22,14,1,true),M(0xb08a4a,{side:THREE.DoubleSide})));bk.position.set(x,y+.11,z);const fc=[0xe8622c,0xd8352a,0xf0a030];for(let i=0;i<14;i++){const f=add(new THREE.Mesh(new THREE.SphereGeometry(.08,8,6),M(fc[i%3],{roughness:.5})));const a=r()*6.3,d=r()*.3;f.position.set(x+Math.cos(a)*d,y+.2+r()*.08,z+Math.sin(a)*d)}}
+  else if(kind===3){const rod=add(box(.04,.04,1.4,wood));rod.position.set(x,y+1.1,z);for(let i=0;i<8;i++){const f=add(new THREE.Mesh(new THREE.ConeGeometry(.05,.42,6),M(0xc8a060,{roughness:.4,metalness:.2})));f.rotation.x=Math.PI;f.position.set(x,y+.85,z-.6+i*.17)}}
+  else if(kind===4){for(let i=0;i<4;i++){const h=add(new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,.22,14),M(0x1d1a18,{roughness:.6})));h.position.set(x,y+.11,z-.45+i*.3);const br=add(new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.015,20),M(0x1d1a18,{roughness:.6,transparent:true,opacity:.85})));br.position.set(x,y+.01,z-.45+i*.3)}}
+  else {for(let i=0;i<10;i++){const s=add(box(.12,.06,.3,M(0xd8c088)));s.position.set(x+(i%2)*.16,y+.03+Math.floor(i/4)*.07,z-.45+(i%5)*.22)}}}
+ for(const row of rows){const {x,z0,z1,face}=row;const L=z1-z0,DEP=4.4,PH=2.9,BAY=3.2;const cz=(z0+z1)/2;const fx=x+face*DEP/2;/* 가게 앞면 x */const g=new THREE.Group();G.add(g);
+  const base=box(DEP+.6,.3,L+.6,M(0xb3aa98));base.position.set(x,.15,cz);g.add(base);const fl=box(DEP,.05,L,M(0x8a6a4a));fl.position.set(x,.32,cz);g.add(fl);
+  const bk=box(.2,PH,L,wall);bk.position.set(x-face*DEP/2,.3+PH/2,cz);g.add(bk);for(const zz of[z0,z1]){const sw=box(DEP,PH,.2,wall);sw.position.set(x,.3+PH/2,zz);g.add(sw)}
+  S(x-DEP/2-.3,x+DEP/2+.3,0,.3,z0-.3,z1+.3);S(x-face*DEP/2-.2,x-face*DEP/2+.2,0,9,z0,z1);S(x-DEP/2,x+DEP/2,0,9,z0-.2,z0+.2);S(x-DEP/2,x+DEP/2,0,9,z1-.2,z1+.2);
+  const nb=Math.max(2,Math.round(L/BAY));for(let i=0;i<=nb;i++){const zz=z0+i*L/nb;const c=new THREE.Mesh(new THREE.CylinderGeometry(.13,.15,PH,8),wood);c.position.set(fx,.3+PH/2,zz);c.castShadow=true;g.add(c);solids.push({cx:fx,cz:zz,r:.18,y0:0,y1:9})}
+  if(!mini){const rf=hipRoof(MT,L/2+.9,DEP/2+1,L/2-1.2,.3+PH+.05,.3+PH+1.9,.3,.12,{plain:true,rs:.5});rf.rotation.y=Math.PI/2;rf.position.set(x,0,cz);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});g.add(rf)}
+  /* 칸마다 가게 */for(let i=0;i<nb;i++){const zz=z0+(i+.5)*L/nb;const k=(i+(row.k||0))%SHOPS.length;const [ch,nm,bc]=SHOPS[k];
+   const sh=box(.5,1.4,L/nb-.6,dark);sh.position.set(x-face*(DEP/2-.5),.3+.7,zz);g.add(sh);for(let lv=0;lv<3;lv++){const p=box(.6,.04,L/nb-.6,wood);p.position.set(x-face*(DEP/2-.55),.55+lv*.45,zz);g.add(p)}goods(k,x-face*(DEP/2-.6),.57,zz,g);goods(k,x-face*(DEP/2-.6),1.02,zz,g);
+   /* 좌판(가게 앞) */const tb=box(1.1,.08,L/nb-1,wood);tb.position.set(fx+face*1.2,.72,zz);g.add(tb);for(const sz of[-1,1])for(const sx of[-1,1]){const l=box(.07,.68,.07,wood);l.position.set(fx+face*1.2+sx*.45,.36,zz+sz*(L/nb-1.2)/2);g.add(l)}goods(k,fx+face*1.2,.76,zz,g);S(fx+face*.6,fx+face*1.8,0,.9,zz-(L/nb-1)/2,zz+(L/nb-1)/2);
+   /* 차일(햇빛 가리개) */const aw=new THREE.Mesh(new THREE.PlaneGeometry(2.2,L/nb-.3),M(0xf2ede2,{side:THREE.DoubleSide,roughness:1}));aw.rotation.set(0,face>0?Math.PI/2:-Math.PI/2,0);aw.rotateX(-1.25);aw.position.set(fx+face*1.05,2.55,zz);g.add(aw);for(const sz of[-1,1]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.1,6),wood);p.position.set(fx+face*2.05,1.05,zz+sz*(L/nb-.5)/2);g.add(p)}
+   /* 가게 깃발 */const pole=new THREE.Mesh(new THREE.CylinderGeometry(.04,.05,3.6,6),wood);pole.position.set(fx+face*.15,1.8,zz-(L/nb)/2+.5);g.add(pole);const bn=new THREE.Mesh(new THREE.PlaneGeometry(.5,1.3),banner(ch,bc));bn.position.set(fx+face*.15,2.7,zz-(L/nb)/2+.85);bn.rotation.y=Math.PI/2;g.add(bn)}}
+ /* 수레 둘 */for(const [x,z,ry] of rows.carts||[]){const c=new THREE.Group();c.position.set(x,0,z);c.rotation.y=ry;G.add(c);const bed=box(1.3,.1,2.4,wood);bed.position.y=.7;c.add(bed);for(const sx of[-1,1]){const wh=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.1,14),wood);wh.rotation.z=Math.PI/2;wh.position.set(sx*.75,.55,0);c.add(wh);const sh=box(.07,.07,2.2,wood);sh.position.set(sx*.4,.65,2.1);sh.rotation.x=-.2;c.add(sh)}for(let i=0;i<4;i++){const p=lathe([[.001,0],[.12,0],[.2,.15],[.22,.32],[.14,.48],[.1,.5],[.001,.5]],jar);p.scale.setScalar(.9);p.position.set(-.35+(i%2)*.7,.75,-.5+Math.floor(i/2)*.9);c.add(p)}S(x-1.2,x+1.2,0,1.3,z-1.6,z+1.6)}}
