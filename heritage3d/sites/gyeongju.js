@@ -20,7 +20,7 @@ export function buildGyeongju(opts={}){const mini=!!opts.mini;const MT=materials
  /* ---------- 바닥: 잔디, 흙길, 낮은 돌담 ---------- */
  const PATH=tex(256,256,(q,w,h)=>{q.fillStyle='#c9b48a';q.fillRect(0,0,w,h);noise(q,w,h,4000,['rgba(0,0,0,.06)','rgba(255,255,255,.08)','rgba(120,90,50,.08)'],2)});PATH.wrapS=PATH.wrapT=THREE.RepeatWrapping;
  const pathM=new THREE.MeshStandardMaterial({map:PATH,roughness:1});
- const lane=(x0,z0,x1,z1,w)=>{const len=Math.hypot(x1-x0,z1-z0);const t=PATH.clone();t.needsUpdate=true;t.repeat.set(w/4,len/4);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,len),new THREE.MeshStandardMaterial({map:t,roughness:1}));m.rotation.x=-Math.PI/2;m.rotation.z=-Math.atan2(x1-x0,z1-z0)+Math.PI;m.position.set((x0+x1)/2,.03,(z0+z1)/2);m.receiveShadow=true;G.add(m)};
+ const lane=(x0,z0,x1,z1,w)=>{const len=Math.hypot(x1-x0,z1-z0);const t=PATH.clone();t.needsUpdate=true;t.repeat.set(w/4,len/4);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,len),new THREE.MeshStandardMaterial({map:t,roughness:1}));m.rotation.x=-Math.PI/2;m.rotation.z=-Math.atan2(x1-x0,z1-z0)+Math.PI;m.position.set((x0+x1)/2,.03+(lane.n=(lane.n||0)+1)*.012,(z0+z1)/2);m.receiveShadow=true;G.add(m)};
  lane(0,24,0,-62,5);lane(-26,-6,26,-6,4);lane(-26,-6,-26,-36,4);lane(26,-6,26,-30,4);
  /* ---------- 첨성대: 공개 실측값으로 쌓기 ---------- */
  {const CH=new THREE.Group();CH.position.set(-26,0,-40);G.add(CH);const GR=M(0xc9c0ae),GRd=M(0xb3aa98);
