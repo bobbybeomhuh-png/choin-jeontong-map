@@ -159,6 +159,9 @@ function pitchHtml(region){
      + '<a href="mailto:'+REQ_EMAIL+'">'+REQ_EMAIL+'</a></div></div>';
   return h;
 }
+// ★2026-11-12 무이 3D 유산 마당으로 가는 다리(유산 마당이 있는 도시만). 돌아오면 이 도시로.
+var WALK3D={'서울':[['hanyang','한양 궁궐 마당'],['sungnyemun','숭례문']],'경주':[['gyeongju','신라 유산 마당'],['seokguram','석굴암']],'여수':[['geobukseon','거북선']],'수원':[['suwon','화성 장안문']],'이천':[['icheon','백자 가마 마을']],'통영':[['tongyeong','나전칠기 공방']],'강릉':[['gangneung','오죽헌 초충도 정원']],'합천':[['hapcheon','해인사 장경판전']],'영주':[['yeongju','부석사 무량수전']],'예산':[['yesan','수덕사 대웅전']],'나주':[['naju','반남 고분 발굴장']],'문경':[['mungyeong','망댕이가마 사발 마을']],'영월':[['minhwa','민화 사랑방']],'강진':[['gangjin','고려청자 가마']],'부여':[['buyeo','백제 궁남지']],'진주':[['jinju','진주성 촉석루']]};
+function walk3dHtml(region){var L=WALK3D[region];if(!L)return '';return '<div class="lab" style="color:#2f4a7a">'+(LANG==='en'?'WALK IN 3D':'3D로 걸어 보기')+'</div><div class="walk3d">'+L.map(function(x){return '<a href="heritage3d/?site='+x[0]+'&from=story">◈ '+esc(x[1])+' <i>실제 크기</i></a>'}).join('')+'</div>';}
 // 지역 대표: 초인 제작 영상 있으면 그걸 우선(VIDEOS 연동 시 자동), 없으면 대표 컨셉.
 function flagshipHtml(region, concept){
   var hasVid = (typeof VIDEOS!=='undefined' && VIDEOS[region] && VIDEOS[region].length);
@@ -365,6 +368,7 @@ function applyHash(){
 }
 window.applyHash=applyHash;
 window.addEventListener('popstate', applyHash);   // 뒤로/앞으로 → 해당 뷰 복원
+window.addEventListener('load', function(){ var hh=decodeURIComponent((location.hash||'').replace(/^#/,'')); if(hh && hh!=='map' && hh!=='meet') setTimeout(applyHash,400); });   // ★주소의 도시(#수원)로 바로 열기
 
 // 헤더 로고 = 메인(홈)으로. 클릭 시 지도 기본화면으로 리셋(새로고침 없이)
 $('brand').addEventListener('click', function(e){ e.preventDefault(); setView('map'); if(window.homeView) homeView(500); window.scrollTo(0,0); });
@@ -438,6 +442,7 @@ function renderCity(c){
     +(d.so?('<div class="lab">'+T[LANG].place+'</div><div class="val">'+esc(d.so)+'</div>'):'')
     +(d.pe?('<div class="lab">'+T[LANG].person+'</div><div class="val">'+esc(d.pe)+'</div>'):'')
     + flagshipHtml(name, concept)
+    + walk3dHtml(name)
     + videosHtml(name)
     +'<div class="lab">'+T[LANG].media+'</div>'+(media?'<div class="val">'+esc(media)+'</div>':soon)
     +'<div class="lab">'+T[LANG].imagine+'</div>'+(imagine?'<div class="val">'+esc(imagine)+'</div>':soon)
