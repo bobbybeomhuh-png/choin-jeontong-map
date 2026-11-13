@@ -146,7 +146,9 @@ button,input,select{font:inherit;color:inherit}
 import * as THREE from 'three';
 import {VRButton} from 'three/addons/webxr/VRButton.js';
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+/* 압축 모델(Draco) 풀기 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;GLTFLoader.prototype.load=function(...a){if(!this.dracoLoader)this.setDRACOLoader(DL);return _l.apply(this,a)}}
+
 
 /* ---------------- 상영 목록 ----------------
    room: 안쪽 치수(m). layout: 영상 한 장 안에서 각 면이 차지하는 픽셀 칸.

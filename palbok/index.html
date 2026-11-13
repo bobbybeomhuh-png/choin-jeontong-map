@@ -46,7 +46,9 @@ button{font:inherit;color:inherit}
 <div id="fade"></div>
 <script type="module">
 import * as THREE from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+/* 압축 모델(Draco) 풀기 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;GLTFLoader.prototype.load=function(...a){if(!this.dracoLoader)this.setDRACOLoader(DL);return _l.apply(this,a)}}
+
 const $=s=>document.querySelector(s);const qs=new URLSearchParams(location.search);
 
 /* ---------------- 장면 ----------------
