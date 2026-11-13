@@ -340,7 +340,7 @@ function drawMini(){const c=$('#mini'),g=c.getContext('2d'),MI=SITEB.mini,S=MI.S
 /* ---------- 시작: 미니어처에서 커지며 들어온다 ---------- */
 let intro=0;(async()=>{let k='base';try{k=localStorage.getItem('muui3d-kind')||'base'}catch(e){}try{me=await makeMuui(k,1.45)}catch(e){me=await makeMuui('base',1.45)}me.play('idle',0);placeNPC();
  intro=3.2;setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,800)},300);$('#top').hidden=false;$('#mini').hidden=false;if(TOUCH){$('#stick').hidden=false;$('#jumpB').hidden=false}
- setTimeout(()=>hint(SITEB.hint,REQ_AT&&qs.get('req')?5000:8000),3300)})();
+ setTimeout(()=>{let t=SITEB.hint||'';if(TOUCH){t=t.replace(/\s*\([^)]*\)/g,'');const m=t.match(/^.*?[.!?](\s|$)/);if(m)t=m[0].trim();t+=' 자세한 이야기는 이야기 단추에서.'}hint(t,REQ_AT&&qs.get('req')?5000:TOUCH?6000:8000)},TOUCH?7200:3300)})();
 /* ---------- 소리: 바람, 새소리, 발소리(돌·나무), 통로·석굴 안 울림. 배경음악 없음 ---------- */
 let AC=null,AM=null,AW=null,AT={bird:1,step:0},NB=null;
 function audioOn(){if(AC){if(AC.state==='suspended')AC.resume();return}const C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C();AM=AC.createGain();AM.gain.value=1;AM.connect(AC.destination);const n=AC.sampleRate*4|0;NB=AC.createBuffer(1,n,AC.sampleRate);const c=NB.getChannelData(0);let b=0;for(let i=0;i<n;i++){const w=Math.random()*2-1;b=.97*b+.03*w;c[i]=w*.5+b*2.5}
