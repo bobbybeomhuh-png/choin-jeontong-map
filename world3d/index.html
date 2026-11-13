@@ -102,12 +102,14 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <script type="module">
 import {plantBroad} from './treekit.js';import {autoBatchLater} from './batchkit.js';import {trk} from '../heritage3d/trk3d.js';import {rallyState,rallyAward,dailyState} from '../heritage3d/rally.js';
 import * as THREE from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import {buildSungnyemun} from '../heritage3d/sites/sungnyemun.js';
 import {buildSeokguram} from '../heritage3d/sites/seokguram.js';
 import {buildGeobukseon} from '../heritage3d/sites/geobukseon.js';
 import {buildVillage} from '../heritage3d/sites/village.js';
+/* 압축 모델(Draco) 풀기: 모든 모델 로더에 같은 해독기를 붙인다 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;GLTFLoader.prototype.load=function(...a){if(!this.dracoLoader)this.setDRACOLoader(DL);return _l.apply(this,a)}}
+
 const $=s=>document.querySelector(s);const qs=new URLSearchParams(location.search);const lang='ko';
 const ALLK0=[{k:'base',n:'무이',d:'상모 쓴 원형'}];const KINDS=[{k:'ceramic',n:'도공 무이',d:'달항아리'},{k:'science',n:'과학 무이',d:'측우기'},{k:'carpenter',n:'목수 무이',d:'다보탑'},{k:'painter',n:'화공 무이',d:'일월오봉도'},{k:'metal',n:'금속 무이',d:'금동대향로'}];
 /* ---------------- 장면 ---------------- */

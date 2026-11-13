@@ -67,7 +67,7 @@ export function buildSuwon(opts={}){const mini=!!opts.mini;const MT=materials();
  /* ---------- 실측 나무(KCISA 화성행궁 소나무·버드나무)와 행궁 별주 ---------- */
  function many(k,list){if(mini)return;gl.load(MURL(k),m=>{const src=m.scene;src.traverse(e=>{if(e.isMesh){e.castShadow=true;if(e.material){e.material.side=THREE.DoubleSide}}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(V(0,0,0));for(const [x,z,h,ry] of list){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=ry||0;G.add(o)}},undefined,e=>console.warn('모델 못 불러옴',k,e))}
  const PINES=[[-14,10,9,0],[-38,30,11,1],[-42,52,8.5,2],[12,46,10,3],[36,40,9.5,1.5],[-12,48,8,.7],[38,8,10,2.4]],WILLS=[[-8.2,14,8,0],[4.4,14,7.5,1],[-8.2,30,8.5,2],[4.4,30,8,3],[-8.2,44,7.6,1.2],[4.4,44,8.2,.4]];
- many('pine',[...PINES,...WILLS.map(([x,z,h,ry])=>[x,z,h+1,ry])]);for(const [x,z] of[...PINES,...WILLS])solids.push({cx:x,cz:z,r:.5,y0:0,y1:9});
+ many('pine_lo',[...PINES,...WILLS.map(([x,z,h,ry])=>[x,z,h+1,ry])]);for(const [x,z] of[...PINES,...WILLS])solids.push({cx:x,cz:z,r:.5,y0:0,y1:9});
  /* 행궁 별주(서남쪽) */{const bx=-26,bz=42;const pd=box(15.5,.5,21,M(0xb3aa98));pd.position.set(bx,.25,bz);G.add(pd);place('byeolchu',{x:bx,y:.5,z:bz,ry:Math.PI/2});S(bx-7.6,bx+7.6,0,9,bz-10.4,bz+10.4);
   spots.push({x:bx+10,y:0,z:bz,r:2.6,t:'별주',h:'화성행궁 안 건물로, 임금이 행차했을 때 잔치에 쓸 술과 음식을 마련하던 곳이에요. 1795년 혜경궁 홍씨 회갑 잔치도 이곳에서 준비했어요. (3D: 한국문화정보원 KCISA, CC BY)'})}
  /* ---------- 성벽 쌓는 현장: 비계와 오르는 경사로, 성돌 ---------- */
