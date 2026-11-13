@@ -23,7 +23,7 @@ export function sundialGame(ctx){const ui=overlay('linear-gradient(#f3d9a4,#d9b4
   /* 영침과 그림자 */const gx=cx,gy=cy-R*.05;q.strokeStyle='#3b2a1c';q.lineWidth=4*u;q.beginPath();q.moveTo(cx-R*.9,cy-R*.32);q.lineTo(gx,gy);q.stroke();const shx=cx+R*.85*Math.cos(Math.PI*sun);q.strokeStyle='rgba(30,20,10,.55)';q.lineWidth=5*u;q.beginPath();q.moveTo(gx,gy);q.lineTo(shx,cy+R*.05);q.stroke();q.fillStyle='rgba(30,20,10,.7)';q.beginPath();q.arc(shx,cy+R*.05,6*u,0,7);q.fill();
   /* 받침 */q.fillStyle='#4a3420';q.fillRect(cx-20*u,cy+R*.4,40*u,R*.5);q.fillRect(cx-R*.6,cy+R*.9,R*1.2,14*u);
   if(flash>0){q.fillStyle=`rgba(255,255,255,${flash*.3})`;q.fillRect(0,0,W,H)}
-  q.fillStyle='#2b1d12';q.font='15px "Gowun Dodum",sans-serif';q.textAlign='center';q.fillText(`${Math.min(round+1,3)} / 3`,W/2,H*.95);
+  q.fillStyle='#2b1d12';q.font='15px "Gowun Dodum",sans-serif';q.textAlign='left';q.font='bold 16px "Gowun Dodum",sans-serif';q.fillText(`${Math.min(round+1,3)} / 3`,16,H-16);
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 
 /* ---------- 숭례문 기와 올리기: 좌우로 오가는 기와를 눌러 내려 지붕 줄에 맞춰 쌓는다 ---------- */
@@ -44,9 +44,9 @@ export function tileGame(ctx){const ui=overlay('linear-gradient(#b9d3e6,#e8e0cc)
   /* 문루 */const cx=W/2+(shake?Math.sin(now*.09)*5:0);q.fillStyle='#8f877a';q.fillRect(cx-W*.32,base+th*.2,W*.64,H);q.fillStyle='#3b2a1c';q.beginPath();q.ellipse(cx,base+th*2.4,W*.07,th*1.6,0,Math.PI,0);q.fill();
   q.fillStyle='#7a2a1c';q.fillRect(cx-W*.26,base-6*u,W*.52,10*u);
   rows.forEach((rx,i)=>{const tx=cx+rx*W*.25,ty=base-(i+1)*th;q.fillStyle=i%2?'#4a4a50':'#55555c';q.beginPath();q.roundRect?q.roundRect(tx-tw/2,ty,tw,th-2,8*u):q.rect(tx-tw/2,ty,tw,th-2);q.fill();q.fillStyle='rgba(255,255,255,.12)';q.fillRect(tx-tw/2+6*u,ty+4*u,tw-12*u,5*u)});
-  if(!ended){const T0=H>W?H*.3:H*.12,ax=cx+(drop?drop.x:x)*W*.25,ay=drop?T0+drop.y:T0;q.strokeStyle='rgba(60,40,20,.6)';q.lineWidth=2;q.beginPath();q.moveTo(ax,0);q.lineTo(ax,ay);q.stroke();q.fillStyle='#4a4a50';q.beginPath();q.roundRect?q.roundRect(ax-tw/2,ay,tw,th-2,8*u):q.rect(ax-tw/2,ay,tw,th-2);q.fill();
+  if(!ended){const T0=Math.max(H>W?H*.3:H*.12,(ui.top.getBoundingClientRect().bottom||0)+10),ax=cx+(drop?drop.x:x)*W*.25,ay=drop?T0+drop.y:T0;q.strokeStyle='rgba(60,40,20,.6)';q.lineWidth=2;q.beginPath();q.moveTo(ax,0);q.lineTo(ax,ay);q.stroke();q.fillStyle='#4a4a50';q.beginPath();q.roundRect?q.roundRect(ax-tw/2,ay,tw,th-2,8*u):q.rect(ax-tw/2,ay,tw,th-2);q.fill();
    q.strokeStyle='rgba(216,168,56,.7)';q.setLineDash([6,6]);q.beginPath();q.moveTo(cx+prevX*W*.25,top-th*1.2);q.lineTo(cx+prevX*W*.25,top);q.stroke();q.setLineDash([])}
-  q.fillStyle='#2b1d12';q.font='15px "Gowun Dodum",sans-serif';q.textAlign='center';q.fillText(`${rows.length} / ${N} 장`,W/2,H*.95);
+  q.fillStyle='#2b1d12';q.font='15px "Gowun Dodum",sans-serif';q.textAlign='left';q.font='bold 16px "Gowun Dodum",sans-serif';q.fillText(`${rows.length} / ${N} 장`,16,H-16);
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 
 /* ---------- 금동대향로 맞추기: 받침부터 봉황까지 아래에서 위로 순서대로 ---------- */
