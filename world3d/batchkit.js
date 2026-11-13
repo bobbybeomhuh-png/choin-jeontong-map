@@ -59,11 +59,13 @@ export function autoBatch(scene, roots, opts = {}) {
       const mesh = new THREE.Mesh(mg, mat); mesh.castShadow = list[0].castShadow; mesh.receiveShadow = list[0].receiveShadow; mesh.name = 'batched'; mesh.matrixAutoUpdate = false; mesh.updateMatrix();
       scene.add(mesh);
       const G = { mesh, list, mats: list.map(o => [o.material, matState(o.material)]), mws: list.map(o => o.matrixWorld.clone()), masks: list.map(o => o.layers.mask), anc: new Set(), on: true };
+      G.loc = list.map(o => [o.position.clone(), o.quaternion.clone(), o.scale.clone()]); G.frz = list.map(() => false);
       for (const o of list) { o.layers.mask = 0; let p = o; while (p && p !== scene) { G.anc.add(p); p = p.parent } }
+      G.ancM = new Map(); for (const a of G.anc) if (!list.includes(a)) G.ancM.set(a, a.matrixWorld.clone());
       groups.push(G);
     } catch (e) { console.warn('batch', e) }
   }
-  const undo = G => { if (!G.on) return; G.on = false; G.list.forEach((o, i) => o.layers.mask = G.masks[i]); scene.remove(G.mesh); G.mesh.geometry.dispose(); if (G.mesh.material !== G.list[0].material) G.mesh.material.dispose() };
+  const undo = G => { if (!G.on) return; G.on = false; G.list.forEach((o, i) => { o.layers.mask = G.masks[i]; if (G.frz[i]) { o.matrixAutoUpdate = true; o.matrixWorldAutoUpdate = true; o.updateMatrix(); o.updateMatrixWorld(true) } }); scene.remove(G.mesh); G.mesh.geometry.dispose(); if (G.mesh.material !== G.list[0].material) G.mesh.material.dispose() };
   /* 숨김은 바로 감지 */
   const watched = new WeakSet(), byObj = new Map();
   for (const G of groups) for (const a of G.anc) { if (!byObj.has(a)) byObj.set(a, []); byObj.get(a).push(G) }
@@ -81,9 +83,11 @@ export function autoBatch(scene, roots, opts = {}) {
       let bad = false;
       for (let j = 0; j < G.list.length && !bad; j++) {
         const o = G.list[j];
-        if (!o.parent || !o.visible || o.material !== G.mats[j][0] || !o.matrixWorld.equals(G.mws[j]) || matState(o.material) !== G.mats[j][1] || o.layers.mask !== 0) bad = true;
+        const L = G.loc[j], moved = G.frz[j] ? (!o.position.equals(L[0]) || !o.quaternion.equals(L[1]) || !o.scale.equals(L[2])) : !o.matrixWorld.equals(G.mws[j]);
+        if (!o.parent || !o.visible || o.material !== G.mats[j][0] || moved || matState(o.material) !== G.mats[j][1] || o.layers.mask !== 0) bad = true;
       }
       if (!bad) for (const a of G.anc) if (!a.visible) { bad = true; break }
+      if (!bad) for (const [a, m] of G.ancM) if (!a.matrixWorld.equals(m)) { bad = true; break }
       if (bad) undo(G);
     }
   };
