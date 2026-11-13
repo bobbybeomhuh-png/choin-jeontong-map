@@ -57,7 +57,7 @@ export function brushGame(ctx){const ui=overlay('radial-gradient(900px 600px at 
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 
 /* ---------- 따라 긋기: 점선을 따라 한 획씩. 강진 상감 학 무늬, 강릉 오죽 ---------- */
-function traceGame(ctx,o){const ui=overlay(o.bg);let alive=true,si=0,cur=[],acc=[],down=false,done=false;const PW=600,PH=420;
+export function traceGame(ctx,o){const ui=overlay(o.bg);let alive=true,si=0,cur=[],acc=[],down=false,done=false;const PW=600,PH=420;
  const paper=document.createElement('canvas');paper.width=PW;paper.height=PH;const pq=paper.getContext('2d');const resetPaper=()=>{pq.clearRect(0,0,PW,PH);o.drawBase(pq,PW,PH)};resetPaper();
  const ac=ctx.ac(),out=ctx.out();let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=o.sfxF||1800;f.Q.value=1;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
  title(ui.top,o.title,o.sub);const S=o.strokes;
