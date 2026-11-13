@@ -57,7 +57,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 <section id="card" hidden><div class="in"><h2 id="cT"></h2><p id="cP"></p><button class="btn" id="cV" type="button" hidden>쇼츠 속 이 장면 보기</button> <button class="btn" id="cX" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
-/* 압축 모델(Draco) 풀기: 모든 모델 로더에 같은 해독기를 붙인다 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;GLTFLoader.prototype.load=function(...a){if(!this.dracoLoader)this.setDRACOLoader(DL);return _l.apply(this,a)}}
+/* 압축 모델(Draco) 풀기: 모든 모델 로더에 같은 해독기를 붙인다 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;let READY=false;const Q=[];window.__h3Ready=()=>{if(READY)return;READY=true;const q=Q.splice(0);q.forEach(f=>f())};setTimeout(()=>window.__h3Ready(),12000);/* 느린 데이터: 캐릭터를 먼저 받고 큰 모형은 그 뒤에 */GLTFLoader.prototype.load=function(url,...a){if(!this.dracoLoader)this.setDRACOLoader(DL);if(READY||/muui_|horse/.test(String(url)))return _l.call(this,url,...a);Q.push(()=>_l.call(this,url,...a))}}
 
 const VSRC=()=>SITEB&&SITEB.video?'../world3d/media/full_'+SITEB.video+'.mp4':SITEB&&SITEB.short?'media/shorts/'+SITEB.short+'.mp4':null;let pipS=null,VBLOB=null;
 /* 서버가 구간 요청을 안 받아 중간으로 못 넘기므로, 영상을 한 번 통째로 받아 메모리에서 재생 */function vblob(){if(!VBLOB)VBLOB=fetch(VSRC()).then(r=>r.blob()).then(b=>URL.createObjectURL(b)).catch(()=>VSRC());return VBLOB}
@@ -373,7 +373,7 @@ function npcTick(dt){for(const m of NPC){const PS=personaOf(m.k),tgt=m.path[(m.i
 function drawMini(){const c=$('#mini'),g=c.getContext('2d'),MI=SITEB.mini,S=MI.S,X=x=>150+(x-MI.ox)*S,Z=z=>150+(z-MI.oz)*S;g.clearRect(0,0,300,300);g.fillStyle='rgba(111,143,69,.9)';g.fillRect(0,0,300,300);MI.draw(g,X,Z,S);
  g.save();g.translate(X(P.x),Z(P.z));g.rotate(Math.PI-yaw);g.fillStyle='#f2c14e';g.strokeStyle='#2a1b0c';g.lineWidth=3;g.beginPath();g.moveTo(0,-12);g.lineTo(9,9);g.lineTo(-9,9);g.closePath();g.fill();g.stroke();g.restore()}
 /* ---------- 시작: 미니어처에서 커지며 들어온다 ---------- */
-let intro=0;(async()=>{let k='base';try{k=localStorage.getItem('muui3d-kind')||'base'}catch(e){}try{me=await makeMuui(k,1.45)}catch(e){me=await makeMuui('base',1.45)}me.play('idle',0);placeNPC();
+let intro=0;(async()=>{let k='base';try{k=localStorage.getItem('muui3d-kind')||'base'}catch(e){}try{me=await makeMuui(k,1.45)}catch(e){me=await makeMuui('base',1.45)}me.play('idle',0);placeNPC();setTimeout(()=>{try{window.__h3Ready()}catch(e){}},200);
  intro=3.2;setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,800)},300);$('#top').hidden=false;$('#mini').hidden=false;if(TOUCH){$('#stick').hidden=false;$('#jumpB').hidden=false}
  setTimeout(()=>{let t=SITEB.hint||'';if(TOUCH){t=t.replace(/\s*\([^)]*\)/g,'');const m=t.match(/^.*?[.!?](\s|$)/);if(m)t=m[0].trim();t+=' 자세한 이야기는 이야기 단추에서.'}hint(t,REQ_AT&&qs.get('req')?5000:TOUCH?6000:8000)},TOUCH?7200:3300)})();
 /* ---------- 소리: 바람, 새소리, 발소리(돌·나무), 통로·석굴 안 울림. 배경음악 없음 ---------- */
