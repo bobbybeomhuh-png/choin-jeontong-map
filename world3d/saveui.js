@@ -2,7 +2,7 @@
 import {makeCode,readCode,applySave,snapshot,summary} from '../heritage3d/save.js';
 export function initSaveUI({hint,trk}){
  const top=document.getElementById('top');let bt=document.getElementById('bSave');
- if(!bt&&top){bt=document.createElement('button');bt.className='btn';bt.id='bSave';bt.type='button';bt.textContent='이어하기';top.append(bt);bt.addEventListener('click',()=>open())}
+ if(!bt&&top){bt=document.createElement('button');bt.className='btn ex';bt.id='bSave';bt.type='button';bt.textContent='이어하기';top.append(bt);bt.addEventListener('click',()=>open())}
  const css='background:#3b2a1c;color:#fff4dc;border:0;border-radius:8px;padding:8px 12px;font:15px "Gowun Dodum",sans-serif;cursor:pointer';
  function open(pre){let o=document.getElementById('saveP');if(!o){o=document.createElement('section');o.id='saveP';o.style.cssText='position:fixed;inset:0;z-index:27;background:rgba(10,6,3,.62);display:grid;place-items:center;padding:12px';o.addEventListener('click',e=>{if(e.target===o)o.hidden=true});document.body.append(o)}
   o.hidden=false;o.innerHTML='';const b=document.createElement('div');b.style.cssText='background:#f4ecd8;color:#2b1d12;border:4px double #8e2b20;border-radius:12px;width:min(520px,100%);max-height:calc(100vh - 24px);overflow:auto;padding:14px;font:14px "Gowun Dodum",sans-serif;line-height:1.6';o.append(b);
