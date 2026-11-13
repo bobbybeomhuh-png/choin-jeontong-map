@@ -270,6 +270,21 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+/* 수업 활동지: ?sheet=1 이면 이 유산 마당의 장소와 설명으로 인쇄용 한 장을 만든다(게임 안 사실만) */
+if(qs.get('sheet'))setTimeout(()=>{try{const Q=SITEB.quest||{},steps=(Q.steps||[]).map(st=>qSpot(st[1])).filter(Boolean);const L=steps.length?steps:SPOTS.filter(s=>s.t&&s.h).slice(0,8);const G=MGAMES.find(g=>g.site===SITE);
+ const first=t=>{t=(t||'').replace(/\s*\([^)]*\)/g,'');const m=t.match(/^.*?[.!?](\s|$)/);return m?m[0].trim():t.slice(0,80)};
+ const o=document.createElement('div');o.id='sheet';o.style.cssText='position:fixed;inset:0;z-index:60;background:#fff;color:#111;overflow:auto;font:15px/1.6 "Gowun Dodum","Noto Sans KR",sans-serif';
+ const url=`https://choin-studio.pages.dev/heritage3d/?site=${SITE}&from=class`;
+ o.innerHTML=`<style>@media print{#sheet .np{display:none}#sheet{position:static}body>*:not(#sheet){display:none!important}}#sheet .pg{max-width:760px;margin:0 auto;padding:28px 30px}#sheet h1{font:28px "Do Hyeon",sans-serif;margin:0 0 4px}#sheet h2{font:18px "Do Hyeon",sans-serif;margin:18px 0 6px;color:#8e2b20}#sheet .box{border:1.5px solid #333;border-radius:6px;min-height:58px;margin:6px 0 10px}#sheet li{margin:3px 0}#sheet .sm{color:#555;font-size:13px}</style>
+ <div class="pg"><div class="np" style="text-align:right"><button class="btn" onclick="print()" style="background:#8e2b20;color:#fff">인쇄하기</button> <button class="btn" onclick="document.getElementById('sheet').remove()" style="background:#3b2a1c;color:#fff">닫기</button></div>
+ <div class="sm">무이 복원단 수업 활동지 · 초인 스튜디오</div><h1>${SITEB.title}</h1><div class="sm">이름 ____________ 날짜 ________ · 들어가는 주소 ${url}</div>
+ <h2>1. 복원 의뢰 장소를 찾았으면 표시해요</h2><ol>${L.map(s=>`<li>□ <b>${s.t}</b> <span class="sm">${first(s.h)}</span></li>`).join('')}</ol>
+ ${G?`<h2>2. 이곳의 놀이: ${G.label.replace(/\s*\S$/,'')}</h2><div>작품 품질 ______ %   한 번 더 했을 때 ______ %</div><div class="sm">어떻게 하면 품질이 올라갔는지 적어 봐요.</div><div class="box"></div>`:''}
+ <h2>${G?3:2}. 동행 무이가 알려 준 것 중 가장 놀라웠던 것</h2><div class="box"></div>
+ <h2>${G?4:3}. 이 유산을 지키려면 우리가 할 수 있는 일</h2><div class="box"></div>
+ <h2>${G?5:4}. 기념 엽서</h2><div class="sm">P 키나 완료 카드의 기념 엽서 찍기로 엽서를 만들고, 가장 마음에 드는 장면을 그려 봐요.</div><div class="box" style="min-height:170px"></div>
+ <div class="sm" style="margin-top:14px">3D 자료 출처는 각 장소 설명에 적혀 있어요. 무이 복원단 · 초인 스튜디오</div></div>`;
+ document.body.append(o);try{trk('h3_sheet',SITE)}catch(e){}}catch(e){console.warn('sheet',e)}},3500);
 /* 컴퓨터: 처음 15초 조작 안내 한 줄 */
 if(!TOUCH&&SITE!=='worldmap')setTimeout(()=>{try{const k=document.createElement('div');k.style.cssText='position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;background:rgba(20,14,8,.72);color:#f3ead6;font:13px "Gowun Dodum",sans-serif;padding:6px 14px;border-radius:999px;pointer-events:none;transition:opacity 1s;white-space:nowrap';k.innerHTML='<b style="color:#f2d27a">W A S D</b> 걷기 · <b style="color:#f2d27a">Shift</b> 천천히 · <b style="color:#f2d27a">Space</b> 점프 · <b style="color:#f2d27a">C</b> 무이 부르기 · <b style="color:#f2d27a">P</b> 기념 엽서 · <b style="color:#f2d27a">V</b> 1인칭 · 마우스 끌기 둘러보기';document.body.append(k);setTimeout(()=>{k.style.opacity='0';setTimeout(()=>k.remove(),1200)},15000)}catch(e){}},2500);
 /* 카메라 가림막 보강: 지붕·처마처럼 높이 떠 있는 큰 면은 카메라가 뚫고 들어가지 않게 가림막 목록에 더한다 */
