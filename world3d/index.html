@@ -1228,8 +1228,8 @@ let last=performance.now(),uiT=0;const tmp=new THREE.Vector3();
 R.setAnimationLoop(()=>{try{frame()}catch(e){console.error(e)}});
 try{trk('w3_enter',(new URLSearchParams(location.search).get('go')||''))}catch(e){}
 /* 휴대폰 가볍게: 멈춰 있는 같은 재질 조각을 묶어 그리기(?nobatch 로 끔) */
-setTimeout(()=>{try{R.compile(scene,cam)}catch(e){}},1500);
-if(!/nobatch/.test(location.search))setTimeout(()=>{try{autoBatchLater(scene,2500,r=>{window.__BATCH=r;try{R.compile(scene,cam)}catch(e){}})}catch(e){console.warn('batch',e)}},6000);
+setTimeout(()=>{try{if(R.compileAsync)R.compileAsync(scene,cam).catch(()=>{})}catch(e){}},1500);
+if(!/nobatch/.test(location.search))setTimeout(()=>{try{autoBatchLater(scene,2500,r=>{window.__BATCH=r;try{if(R.compileAsync)R.compileAsync(scene,cam).catch(()=>{})}catch(e){}})}catch(e){console.warn('batch',e)}},6000);
 function frame(){const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
  if(me){let fx=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),sx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);if(stickId!==null){fx=-stickV.y;sx=stickV.x}if(SEATED&&(Math.abs(fx)+Math.abs(sx))>0)standUp3();if(photo||bandWatch||game||WK||ws||SEATED){fx=0;sx=0}
   const mag=Math.min(1,Math.hypot(fx,sx)),run=!(keys.ShiftLeft||keys.ShiftRight)&&(stickId===null||mag>.55);const want=mag>.05?(run?4.2:1.8):0;speed+=(want-speed)*Math.min(1,dt*8);

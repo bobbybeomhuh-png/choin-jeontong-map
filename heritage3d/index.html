@@ -272,6 +272,7 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+/* 처음 보는 물체가 나올 때 멈칫하지 않게 셰이더를 미리 준비 */const preC=()=>{try{if(R.compileAsync)R.compileAsync(scene,cam).catch(()=>{})}catch(e){}};setTimeout(preC,2500);setTimeout(preC,9000);
 /* 수업 활동지: ?sheet=1 이면 이 유산 마당의 장소와 설명으로 인쇄용 한 장을 만든다(게임 안 사실만) */
 if(qs.get('sheet'))setTimeout(()=>{try{const Q=SITEB.quest||{},steps=(Q.steps||[]).map(st=>qSpot(st[1])).filter(Boolean);const L=steps.length?steps:SPOTS.filter(s=>s.t&&s.h).slice(0,8);const G=MGAMES.find(g=>g.site===SITE);
  const first=t=>{t=(t||'').replace(/\s*\([^)]*\)/g,'');const m=t.match(/^.*?[.!?](\s|$)/);return m?m[0].trim():t.slice(0,80)};

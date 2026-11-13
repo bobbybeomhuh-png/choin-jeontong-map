@@ -142,7 +142,7 @@ export function buildGeobukseon(opts={}){const MT=materials();const G=new THREE.
  let lon=null;const tick=(P,dt)=>{const t=performance.now()/1000;const MO=G.userData.mouth;if(MO){const mx=MO.x,my=MO.y;for(const s of SM){s.userData.t+=dt;const u=(s.userData.t%4)/4;s.position.set(mx+u*3.2,my+u*2.6+Math.sin(u*6+s.id)*.2,Math.sin(u*5+s.id*.7)*.5*u);const k=.35+u*1.6;s.scale.set(k,k,1);s.material.opacity=.45*(1-u)}}
   if(G.userData.flags)for(const f of G.userData.flags){const p=f.geometry.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i);p.setZ(i,Math.sin(t*4+x*3)*.12*(x+.8))}p.needsUpdate=true}
   if(G.userData.water){G.userData.water.offset.x+=dt*.01;G.userData.water.offset.y+=dt*.006}
-  const on=Math.abs(P.x)<20&&P.z<9.5;if(on!==lon){lon=on;for(const l of IL)l.visible=on}};
+  const on=Math.abs(P.x)<20&&P.z<9.5;if(on!==lon){lon=on;for(const l of IL){if(l.userData.i0===undefined)l.userData.i0=l.intensity;l.visible=true;l.intensity=on?l.userData.i0:0}}};
  const inHull=P=>Math.abs(P.x)<L-.2&&Math.abs(P.z)<B(P.x)+.1&&P.y>-1;
  /* ---------- 여수 선소와 수군 진영: 짓는 판옥선 뼈대, 통나무, 총통 포대, 진남관, 소나무, 깃발 ---------- */
  {const Mk=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));const bx=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};const TOUCH=typeof matchMedia!=='undefined'&&matchMedia('(pointer:coarse)').matches;const MTk=materials();const wd=Mk(0x8a6a44),wd2=Mk(0x6b4a2e);const Y=QY;
