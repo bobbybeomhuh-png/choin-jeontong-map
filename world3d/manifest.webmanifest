@@ -1,0 +1,16 @@
+{
+  "name": "무이 월드 · 무이 복원단",
+  "short_name": "무이 월드",
+  "description": "무이 복원단이 되어 전국의 유산을 걸어 다니며 복원하고 진열장을 채우는 웹 3D",
+  "lang": "ko",
+  "start_url": "/world3d/?from=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1d140c",
+  "theme_color": "#2b1d12",
+  "icons": [
+    {"src": "/world3d/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/world3d/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
