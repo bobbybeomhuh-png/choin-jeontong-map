@@ -1228,6 +1228,8 @@ $('#go').addEventListener('click',async()=>{try{localStorage.setItem('muui3d-kin
 /* ---------------- 프레임 ---------------- */
 let last=performance.now(),uiT=0;const tmp=new THREE.Vector3();
 R.setAnimationLoop(()=>{try{frame()}catch(e){console.error(e)}});
+/* 투명 양면 재질은 매 프레임 두 번 다시 만들기를 해서 느림: 한 번에 그리게 */setInterval(()=>{try{scene.traverse(o=>{const ms=o.material?(Array.isArray(o.material)?o.material:[o.material]):[];for(const m of ms)if(m&&m.transparent&&m.side===THREE.DoubleSide&&!m.forceSinglePass)m.forceSinglePass=true})}catch(e){}},3000);
+
 try{trk('w3_enter',(new URLSearchParams(location.search).get('go')||''))}catch(e){}
 /* 휴대폰 가볍게: 멈춰 있는 같은 재질 조각을 묶어 그리기(?nobatch 로 끔) */
 setTimeout(()=>{try{if(R.compileAsync)R.compileAsync(scene,cam).catch(()=>{})}catch(e){}},1500);

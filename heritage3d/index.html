@@ -272,6 +272,8 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+/* 투명 양면 재질은 매 프레임 두 번 다시 만들기를 해서 느림: 한 번에 그리게 */setInterval(()=>{try{scene.traverse(o=>{const ms=o.material?(Array.isArray(o.material)?o.material:[o.material]):[];for(const m of ms)if(m&&m.transparent&&m.side===THREE.DoubleSide&&!m.forceSinglePass)m.forceSinglePass=true})}catch(e){}},3000);
+
 /* 전국 지도: 복원을 끝낸 유산 입구 위에 붉은 復 도장 */
 if(SITE==='worldmap')setTimeout(()=>{try{const D=new Set(JSON.parse(localStorage.getItem('muui-h3-stamps')||'[]'));if(!D.size)return;const cv=document.createElement('canvas');cv.width=cv.height=128;const q=cv.getContext('2d');q.fillStyle='rgba(246,236,214,.95)';q.beginPath();q.arc(64,64,58,0,7);q.fill();q.strokeStyle='#b8322a';q.lineWidth=8;q.beginPath();q.arc(64,64,54,0,7);q.stroke();q.lineWidth=3;q.beginPath();q.arc(64,64,44,0,7);q.stroke();q.fillStyle='#b8322a';q.font='bold 58px "Noto Serif KR",serif';q.textAlign='center';q.textBaseline='middle';q.fillText('復',64,68);const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;const mt=new THREE.SpriteMaterial({map:tx,depthWrite:false,fog:false});let n=0;for(const sp of SPOTS){if(!sp.go||!D.has(sp.go))continue;const s2=new THREE.Sprite(mt);s2.scale.set(2.6,2.6,1);s2.position.set(sp.x,floorAt(sp.x,sp.z,(sp.y||0)+1)+5.2,sp.z);scene.add(s2);n++}window.__DONEMK=n}catch(e){console.warn('donemk',e)}},3000);
 setTimeout(()=>{try{const D=dailyState();if(D.site===SITE&&!D.done&&COMP)compSay(`오늘의 놀이가 바로 여기 있어요: ${D.n}! 하면 하루 도장을 받아요.`,4.5)}catch(e){}},15000);
