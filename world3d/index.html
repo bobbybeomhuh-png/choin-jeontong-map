@@ -150,7 +150,7 @@ const DOORS=[{k:'ceramic',th:-60,yt:'D41vfukgbIU',v:'media/moonjar_loop.mp4',p:'
  {k:'carpenter',th:0,yt:'IBUkbwbvjW0',v:'media/loop_carpenter.mp4',p:'media/door_carpenter.jpg'},{k:'painter',th:30,yt:'csCScVH96tY',v:'media/loop_painter.mp4',p:'media/door_painter.jpg'},{k:'metal',th:60,yt:'PeMQZDzp0x8',v:'media/loop_metal.mp4',p:'media/door_metal.jpg'}];
 const LAT=tex(256,448,(q,w,h)=>{q.strokeStyle='#6b3f22';q.lineWidth=10;q.strokeRect(5,5,w-10,h-10);q.lineWidth=4;for(let x=0;x<=w;x+=w/4){q.beginPath();q.moveTo(x,0);q.lineTo(x,h);q.stroke()}for(let y=0;y<=h;y+=h/7){q.beginPath();q.moveTo(0,y);q.lineTo(w,y);q.stroke()}});
 for(const d of DOORS){const[x,z]=rP(RC+1.45,d.th),g=new THREE.Group();const fr=box(2.9,4.1,.18,WOOD);fr.position.y=2.05;g.add(fr);
- const v=document.createElement('video');v.src=d.v;v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.crossOrigin='anonymous';v.preload='metadata';d.vid=v;
+ const v=document.createElement('video');v.src=d.v;v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.crossOrigin='anonymous';v.preload='none';d.vid=v;
  const mt=new THREE.MeshBasicMaterial({map:new THREE.TextureLoader().load(d.p,t=>{t.colorSpace=THREE.SRGBColorSpace}),toneMapped:false});d.mat=mt;
  const sc=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.8),mt);sc.position.set(0,2.05,.1);g.add(sc);const lt=new THREE.Mesh(new THREE.PlaneGeometry(2.6,3.8),new THREE.MeshBasicMaterial({map:LAT,transparent:true,toneMapped:false}));lt.position.set(0,2.05,.11);g.add(lt);
  add(g,x,.3,z,-d.th*Math.PI/180+Math.PI*0,false);g.lookAt(0,.3,0);const[fx,fz]=rP(RC-1.2,d.th);d.fx=fx;d.fz=fz}
