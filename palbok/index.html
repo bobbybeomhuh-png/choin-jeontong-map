@@ -18,7 +18,7 @@ button{font:inherit;color:inherit}
 #top{position:fixed;left:0;right:0;top:0;display:flex;gap:8px;align-items:center;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;pointer-events:none}
 #top>*{pointer-events:auto}#top .sp{flex:1}
 #ttl{font:700 17px "Noto Serif KR",serif;background:rgba(20,16,12,.72);padding:7px 12px;border-radius:8px;border:1px solid var(--line)}
-#act{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);font:22px "Do Hyeon",sans-serif;padding:12px 26px;border-radius:12px;background:var(--gold);color:#1d1408;border:3px solid #3b2a1c;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#act{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);font:22px "Do Hyeon",sans-serif;padding:12px 26px;border-radius:12px;background:var(--gold);color:#1d1408;border:3px solid #3b2a1c;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35)}@media (pointer:coarse){#act{left:auto;right:16px;transform:none;max-width:calc(100vw - 180px)}}
 #hint{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 62px);transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:8px 16px;font-size:14.5px;text-align:center;max-width:calc(100vw - 28px);transition:opacity .6s;pointer-events:none}
 #tk{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.55);z-index:20;padding:14px}
 #tk .in{display:grid;gap:12px;justify-items:center;width:min(560px,100%)}
@@ -210,10 +210,12 @@ $('#bWorld').addEventListener('click',()=>{location.href=FROM_MAP?'../heritage3d
 function hint(t,ms=5200){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
 function hideHint(){const h=$('#hint');if(!h.hidden){h.style.opacity=0;setTimeout(()=>h.hidden=true,600)}}
 
+/* 휴대폰 조이스틱(다른 무이 공간과 같은 조작) */
+const JOY={x:0,y:0};if(matchMedia('(pointer:coarse)').matches){const j=document.createElement('div');j.id='joy';j.style.cssText='position:fixed;left:22px;bottom:calc(env(safe-area-inset-bottom) + 26px);width:124px;height:124px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);z-index:6;touch-action:none';const k=document.createElement('div');k.style.cssText='position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.75);pointer-events:none';j.append(k);document.body.append(j);let id=null;const mv=e=>{const r=j.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const L=Math.hypot(dx,dy),M=46;if(L>M){dx*=M/L;dy*=M/L}k.style.transform=`translate(${dx}px,${dy}px)`;JOY.x=dx/M;JOY.y=dy/M};j.addEventListener('pointerdown',e=>{e.preventDefault();id=e.pointerId;try{j.setPointerCapture(id)}catch(_){}mv(e);hideHint()});j.addEventListener('pointermove',e=>{if(e.pointerId===id)mv(e)});const up=e=>{if(e.pointerId!==id)return;id=null;JOY.x=JOY.y=0;k.style.transform=''};j.addEventListener('pointerup',up);j.addEventListener('pointercancel',up)}
 /* ---------------- 프레임 ---------------- */
 let last=performance.now(),uiT=0,curYaw=0,actFn=null;$('#act').addEventListener('click',()=>actFn&&actFn());
 R.setAnimationLoop(()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
- const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+ let f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-JOY.y,s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+JOY.x;if(Math.abs(f)<.12)f=0;if(Math.abs(s)<.12)s=0;f=Math.max(-1,Math.min(1,f));s=Math.max(-1,Math.min(1,s));
  if(f||s){gliding=false;pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*s)*2.6*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*s)*2.6*dt;clampPos(pos)}
  if(gliding){const d=goal.clone().sub(pos);d.y=0;const L=d.length();if(L<.03)gliding=false;else pos.addScaledVector(d,Math.min(1,dt*2.2))}
  curYaw+=(yaw-curYaw)*Math.min(1,dt*14);cam.position.set(pos.x,EYE,pos.z);cam.rotation.set(pitch,curYaw,0,'YXZ');cam.rotation.x=pitch;cam.fov+=(fov-cam.fov)*Math.min(1,dt*10);cam.updateProjectionMatrix();
@@ -226,7 +228,7 @@ addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=inne
 
 /* 시작: 골목 입구에서 안쪽을 본다 */
 document.fonts&&document.fonts.ready.then(()=>{banner.needsUpdate=true});
-setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);hint(matchMedia('(pointer:coarse)').matches?'화면을 밀어 둘러보고, 바닥을 두 번 톡 치면 걸어가요. 오른쪽 앞 매표소에서 티켓을 받으세요.':'끌어서 둘러보고 WASD로 걸어요. 바닥을 두 번 누르면 그 자리로 가요. 오른쪽 앞 매표소에서 티켓을 받으세요.',7000)},700);
+setTimeout(()=>{$('#load').style.opacity=0;setTimeout(()=>$('#load').hidden=true,600);hint(matchMedia('(pointer:coarse)').matches?'왼쪽 아래 원으로 걸어요. 오른쪽 앞 매표소에서 티켓을 받으세요.':'끌어서 둘러보고 WASD로 걸어요. 바닥을 두 번 누르면 그 자리로 가요. 오른쪽 앞 매표소에서 티켓을 받으세요.',7000)},700);
 if(qs.get('from')==='dcube'){pos.set(DOOR.x-1.6,0,DOOR.z+.4);yaw=-Math.PI/2+.3;curYaw=yaw}
 window.__PB={get pos(){return pos},look(y,p){yaw=y;pitch=p;curYaw=y},tp(x,z){pos.set(x,0,z)},giveTicket,enterCube,get ticket(){return ticket},NPCS};
 </script>
