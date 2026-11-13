@@ -35,7 +35,7 @@ export function tileGame(ctx){const ui=overlay('linear-gradient(#b9d3e6,#e8e0cc)
  const close=()=>{alive=false;removeEventListener('keydown',kd);ui.o.remove()};ui.x.onclick=close;ui.again=()=>{rows=[];ended=false;miss=0;drop=null;title(ui.top,'기와 쌓기','한 번 더! 기와가 아래 기와 위에 올 때 눌러요.');ui.top.querySelector('b').style.color='#8e2b20'};
  let last=performance.now();
  const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const {W,H,u,base,tw,th}=G(),q=ui.q;const d=Math.min(2,devicePixelRatio||1);q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);shake=Math.max(0,shake-dt);
-  window.__TILE={x,drop:!!drop,prev:rows.length?rows[rows.length-1]:0,n:rows.length};const sp=(1.1+rows.length*.18);if(!drop&&!ended){x+=dir*sp*dt;if(x>1){x=1;dir=-1}if(x<-1){x=-1;dir=1}}
+  window.__TILE={x,drop:!!drop,prev:rows.length?rows[rows.length-1]:0,n:rows.length};const sp=(1.1+rows.length*.18)*(miss>=2?.6:1);if(!drop&&!ended){x+=dir*sp*dt;if(x>1){x=1;dir=-1}if(x<-1){x=-1;dir=1}}
   const top=base-rows.length*th;const prevX=rows.length?rows[rows.length-1]:0;
   if(drop){drop.v+=2400*u*dt;drop.y+=drop.v*dt;const ty=top-th-H*.12;if(drop.y>=top-(H>W?H*.36:H*.18)){const off=Math.abs(drop.x-prevX)*W*.25;const sc=Math.max(0,1-off/(tw*.55));
     if(off>tw*.75){miss++;shake=.4;blip(ac,out,300,120,.3,.25,'square');ctx.say(miss>=2?'괜찮아요, 가운데 올 때 눌러요!':'어이쿠, 기와가 미끄러졌어요!');drop=null}
