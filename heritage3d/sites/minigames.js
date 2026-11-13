@@ -2,7 +2,7 @@
    갱신 2026-11-13. 원칙: 실제 몸짓 그대로(문지르기, 위아래로 끌기, 돌리기), 즉각 소리와 가루, 실패는 웃음, 점수 대신 작품 품질.
    ctx = {ac:()=>AudioContext, out:()=>GainNode, done:(key,quality,label)=>void, say:(text)=>void} */
 const CSS='position:fixed;inset:0;z-index:30;touch-action:none;user-select:none';
-function overlay(bg){const o=document.createElement('div');o.style.cssText=CSS+';background:'+bg;const c=document.createElement('canvas');c.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:0';o.append(c);
+function overlay(bg){const o=document.createElement('div');o.style.cssText=CSS+';background:'+bg;o.dataset.mg='1';const c=document.createElement('canvas');c.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:0';o.append(c);
  const top=document.createElement('div');top.style.cssText='position:absolute;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);text-align:center;color:#f3ead6;font:15px "Gowun Dodum",sans-serif;max-width:min(560px,92vw);pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.5);z-index:2';o.append(top);
  const x=document.createElement('button');x.type='button';x.className='btn';x.textContent='닫기';x.style.cssText='position:absolute;right:12px;top:calc(env(safe-area-inset-top) + 12px);z-index:3';o.append(x);document.body.append(o);
  const fit=()=>{const r=o.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);if(c.width!==Math.round(r.width*d)){c.width=Math.round(r.width*d);c.height=Math.round(r.height*d)}return{W:r.width,H:r.height,d}};
