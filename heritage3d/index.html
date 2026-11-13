@@ -127,7 +127,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoade
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import {buildSungnyemun,materials as SMAT} from './sites/sungnyemun.js';
 import {lumpyHill} from './sites/treekit.js';
-import {rubbingGame,wheelGame,craneGame} from './sites/minigames.js';import {kilnGame,brushGame,inlayGame,bambooGame} from './sites/minigames2.js';import {rowGame,bellGame,cannonGame,peonyGame,najeonGame} from './sites/minigames3.js';import {sundialGame,tileGame,incenseGame} from './sites/minigames4.js';import {trk} from './trk3d.js';import {rallyAward,dailyMark} from './rally.js';
+import {rubbingGame,wheelGame,craneGame} from './sites/minigames.js';import {kilnGame,brushGame,inlayGame,bambooGame} from './sites/minigames2.js';import {rowGame,bellGame,cannonGame,peonyGame,najeonGame} from './sites/minigames3.js';import {sundialGame,tileGame,incenseGame} from './sites/minigames4.js';import {trk} from './trk3d.js';import {rallyAward,dailyMark,dailyState} from './rally.js';
 import {LINES} from './sites/complines.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {buildSeokguram} from './sites/seokguram.js';
@@ -272,6 +272,7 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+setTimeout(()=>{try{const D=dailyState();if(D.site===SITE&&!D.done&&COMP)compSay(`오늘의 놀이가 바로 여기 있어요: ${D.n}! 하면 하루 도장을 받아요.`,4.5)}catch(e){}},15000);
 /* 처음 보는 물체가 나올 때 멈칫하지 않게 셰이더를 미리 준비 */const preC=()=>{try{if(R.compileAsync)R.compileAsync(scene,cam).catch(()=>{})}catch(e){}};setTimeout(preC,2500);setTimeout(preC,9000);
 /* 수업 활동지: ?sheet=1 이면 이 유산 마당의 장소와 설명으로 인쇄용 한 장을 만든다(게임 안 사실만) */
 if(qs.get('sheet'))setTimeout(()=>{try{const Q=SITEB.quest||{},steps=(Q.steps||[]).map(st=>qSpot(st[1])).filter(Boolean);const L=steps.length?steps:SPOTS.filter(s=>s.t&&s.h).slice(0,8);const G=MGAMES.find(g=>g.site===SITE);
