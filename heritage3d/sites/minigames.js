@@ -72,7 +72,7 @@ export function wheelGame(ctx){const ui=overlay('radial-gradient(900px 600px at 
 export function craneGame(ctx){const ui=overlay('linear-gradient(#bcd6e8,#f2e6cf 70%)');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';const T=(a,b)=>{title(ui.top,a,b);ui.top.firstChild.style.color='#8e2b20'};let alive=true,stone=0,lift=0,sway=0,swayV=0,phase='lift',carry=0,carryDir=1,placed=[false,false,false],fails=0,ang=null,squeak=0;
  T('거중기로 성돌 올리기','도르래 손잡이를 빙글빙글 돌려 돌을 끝까지 올려요. 너무 빨리 돌리면 흔들려요.');
  const ac=ctx.ac(),out=ctx.out();
- const geo=()=>{const {W,H}=ui.fit(),u=Math.min(W/900,H/600);return{W,H,u,wx:W*.5,wy:H*.3,base:H*.86}};
+ const geo=()=>{const {W,H}=ui.fit(),u=Math.min(W/900,H/600),tb=(ui.top.getBoundingClientRect().bottom||0)+8;return{W,H,u,wx:W*.5,wy:Math.max(H*.3,tb+40*u),base:H*.86}};
  let down=false;const turn=e=>{if(phase!=='lift')return;const r=ui.c.getBoundingClientRect(),{u,wx,wy}=geo(),hx=wx-250*u,hy=wy+170*u,a=Math.atan2(e.clientY-r.top-hy,e.clientX-r.left-hx);if(ang!==null){let da=a-ang;da=Math.atan2(Math.sin(da),Math.cos(da));if(da>0){lift=Math.min(1,lift+da*.035);swayV+=Math.max(0,da-.25)*.8;squeak+=da;if(squeak>.9){squeak=0;blip(ac,out,500+lift*500,420+lift*400,.12,.05,'sawtooth')}}}ang=a};
  ui.c.addEventListener('pointerdown',e=>{down=true;ang=null;ui.c.setPointerCapture(e.pointerId);if(phase==='carry')drop();else turn(e)});ui.c.addEventListener('pointermove',e=>{if(down)turn(e)});const up=()=>{down=false;ang=null};ui.c.addEventListener('pointerup',up);ui.c.addEventListener('pointercancel',up);
  const slotX=i=>(-140+i*140);

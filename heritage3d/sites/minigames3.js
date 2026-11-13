@@ -39,7 +39,7 @@ export function bellGame(ctx){const ui=overlay('radial-gradient(900px 600px at 5
   for(const[r,g,dur]of P){for(const det of[0,.6]){const o=ac.createOscillator(),G=ac.createGain();o.frequency.value=base*r+det;G.gain.setValueAtTime(.0001,t0);G.gain.exponentialRampToValueAtTime(g*.5,t0+.02);G.gain.exponentialRampToValueAtTime(.0001,t0+dur*(.6+k*.6));o.connect(G).connect(M);o.start(t0);o.stop(t0+dur*1.3)}}
   const n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=600;g.gain.setValueAtTime(.25*k,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.15);n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+.2)};
  title(ui.top,'범종 치기','당목(나무 공이)을 뒤로 끌어 당겼다 놓아요. 금빛 칸만큼 당기면 종이 가장 곱게 울려요. 세 번.');
- const geo=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,bx:W*(W<H?.66:.6),by:H*.5,lx:W*(W<H?.66:.6)-150*u,ly:H*.56}};
+ const geo=()=>{const {W,H}=ui.fit(),tb=(ui.top.getBoundingClientRect().bottom||0)+8,u=Math.min(W/(W<H?560:900),H/600,(H-tb)/450),by=Math.max(H*.5,tb+250*u);return{W,H,u,bx:W*(W<H?.66:.6),by,lx:W*(W<H?.66:.6)-150*u,ly:by+H*.06}};
  ui.c.addEventListener('pointerdown',e=>{if(ended||swing>0)return;drag=e.clientX;ui.c.setPointerCapture(e.pointerId)});
  ui.c.addEventListener('pointermove',e=>{if(drag==null)return;const {u}=geo();pull=Math.max(0,Math.min(1,(drag-e.clientX)/(260*u)))});
  const rel=()=>{if(drag==null)return;drag=null;if(pull<.08){pull=0;return}swing=pull;sv=0};ui.c.addEventListener('pointerup',rel);ui.c.addEventListener('pointercancel',rel);
