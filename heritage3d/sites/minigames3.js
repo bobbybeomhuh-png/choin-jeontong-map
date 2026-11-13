@@ -39,7 +39,7 @@ export function bellGame(ctx){const ui=overlay('radial-gradient(900px 600px at 5
   for(const[r,g,dur]of P){for(const det of[0,.6]){const o=ac.createOscillator(),G=ac.createGain();o.frequency.value=base*r+det;G.gain.setValueAtTime(.0001,t0);G.gain.exponentialRampToValueAtTime(g*.5,t0+.02);G.gain.exponentialRampToValueAtTime(.0001,t0+dur*(.6+k*.6));o.connect(G).connect(M);o.start(t0);o.stop(t0+dur*1.3)}}
   const n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=600;g.gain.setValueAtTime(.25*k,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.15);n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+.2)};
  title(ui.top,'범종 치기','당목(나무 공이)을 뒤로 끌어 당겼다 놓아요. 금빛 칸만큼 당기면 종이 가장 곱게 울려요. 세 번.');
- const geo=()=>{const {W,H}=ui.fit(),u=Math.min(W/900,H/600);return{W,H,u,bx:W*.6,by:H*.5,lx:W*.6-150*u,ly:H*.56}};
+ const geo=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,bx:W*(W<H?.66:.6),by:H*.5,lx:W*(W<H?.66:.6)-150*u,ly:H*.56}};
  ui.c.addEventListener('pointerdown',e=>{if(ended||swing>0)return;drag=e.clientX;ui.c.setPointerCapture(e.pointerId)});
  ui.c.addEventListener('pointermove',e=>{if(drag==null)return;const {u}=geo();pull=Math.max(0,Math.min(1,(drag-e.clientX)/(260*u)))});
  const rel=()=>{if(drag==null)return;drag=null;if(pull<.08){pull=0;return}swing=pull;sv=0};ui.c.addEventListener('pointerup',rel);ui.c.addEventListener('pointercancel',rel);
@@ -64,7 +64,7 @@ export function cannonGame(ctx){const ui=overlay('linear-gradient(#c9d8e0 0%,#e8
  const ac=ctx.ac(),out=ctx.out();
  const boom=k=>{if(!ac||!out)return;const t0=ac.currentTime,n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=k?500:900;g.gain.setValueAtTime(k?.5:.35,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+(k?.9:.5));n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+1);blip(ac,out,90,40,.4,.3)};
  title(ui.top,'현자총통 쏘기','총통에서 뒤로 끌어 방향과 힘을 정하고 놓아요. 왜선을 두 번 맞히면 가라앉아요. 다섯 발.');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';ui.top.querySelector('b').style.color='#8e2b20';
- const G=()=>{const {W,H}=ui.fit(),u=Math.min(W/900,H/600);return{W,H,u,cx:W*.16,cy:H*.56-104*u,sea:H*.56}};
+ const G=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,cx:W*.16,cy:H*.56-104*u,sea:H*.56}};
  ui.c.addEventListener('pointerdown',e=>{if(ended||ball)return;const R=ui.c.getBoundingClientRect();drag=[e.clientX-R.left,e.clientY-R.top];aim=null;ui.c.setPointerCapture(e.pointerId)});
  ui.c.addEventListener('pointermove',e=>{if(!drag)return;const R=ui.c.getBoundingClientRect();aim=[drag[0]-(e.clientX-R.left),drag[1]-(e.clientY-R.top)]});
  const rel=()=>{if(!drag)return;drag=null;if(!aim)return;const {u,cx,cy}=G(),p=Math.min(1,Math.hypot(aim[0],aim[1])/(220*u)),a=Math.atan2(-aim[1],Math.max(1,aim[0]));if(p<.1){aim=null;return}ball={x:cx,y:cy,vx:Math.cos(a)*p*900*u,vy:-Math.sin(a)*p*900*u};shots++;boom(0);aim=null};
