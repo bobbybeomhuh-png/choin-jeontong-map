@@ -64,12 +64,12 @@ export function traceGame(ctx,o){const ui=overlay(o.bg);let alive=true,si=0,cur=
  const rect=()=>{const {W,H}=ui.fit(),s=Math.min(W*.92/PW,H*.64/PH);return{s,x0:(W-PW*s)/2,y0:H*.19}};
  const toP=e=>{const R=ui.c.getBoundingClientRect(),{s,x0,y0}=rect();return[(e.clientX-R.left-x0)/s,(e.clientY-R.top-y0)/s]};
  const near=(p,path)=>{let m=1e9;for(let i=0;i<path.length-1;i++){const [ax,ay]=path[i],[bx,by]=path[i+1],dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let k=((p[0]-ax)*dx+(p[1]-ay)*dy)/l;k=Math.max(0,Math.min(1,k));m=Math.min(m,Math.hypot(p[0]-ax-k*dx,p[1]-ay-k*dy))}return m};
- const cover=(pts,path)=>{let n=0;for(const q of path){if(pts.some(p=>Math.hypot(p[0]-q[0],p[1]-q[1])<26))n++}return n/path.length};
+ const TOL=()=>{const {s}=rect();return Math.max(26,34/s)};const cover=(pts,path)=>{const R=TOL();let n=0;for(const q of path){if(pts.some(p=>Math.hypot(p[0]-q[0],p[1]-q[1])<R))n++}return n/path.length};
  const dens=path=>{const r=[];for(let i=0;i<path.length-1;i++){const [ax,ay]=path[i],[bx,by]=path[i+1],n=Math.max(1,Math.ceil(Math.hypot(bx-ax,by-ay)/10));for(let k=0;k<n;k++)r.push([ax+(bx-ax)*k/n,ay+(by-ay)*k/n])}r.push(path[path.length-1]);return r};const SD=S.map(dens);
  ui.c.addEventListener('pointerdown',e=>{if(done)return;down=true;cur=[toP(e)];ui.c.setPointerCapture(e.pointerId)});
  ui.c.addEventListener('pointermove',e=>{if(!down||done)return;const p=toP(e),l=cur[cur.length-1];if(Math.hypot(p[0]-l[0],p[1]-l[1])>2){cur.push(p);if(ng)ng.gain.setTargetAtTime(.12,ac.currentTime,.03)}});
  const up=()=>{if(!down)return;down=false;if(ng)ng.gain.setTargetAtTime(0,ac.currentTime,.05);if(cur.length<4)return;const cv=cover(cur,SD[si]),dev=cur.reduce((a,p)=>a+near(p,SD[si]),0)/cur.length;
-  if(cv>.6){const sc=Math.max(0,Math.min(1,cv*1.1-dev/60));acc.push(sc);o.commit(pq,cur,si);si++;blip(ac,out,500+si*80,900+si*80,.18,.2);if(si<S.length)ctx.say(o.praise[si%o.praise.length]);
+  if(cv>.6){const sc=Math.max(0,Math.min(1,cv*1.1-dev/(60*TOL()/26)));acc.push(sc);o.commit(pq,cur,si);si++;blip(ac,out,500+si*80,900+si*80,.18,.2);if(si<S.length)ctx.say(o.praise[si%o.praise.length]);
    if(si>=S.length){done=true;const Q=Math.max(10,Math.round(acc.reduce((a,b)=>a+b,0)/acc.length*100));o.finish&&o.finish(pq,PW,PH);ctx.done(o.key,Q,o.label);blip(ac,out,660,1320,.5,.25);finishCard(ui,o.doneHead,Q>=75?o.goodBody:o.okBody,Q,close)}}
   else{ctx.say(o.miss);blip(ac,out,300,200,.15,.12,'triangle')}cur=[]};
  ui.c.addEventListener('pointerup',up);ui.c.addEventListener('pointercancel',up);

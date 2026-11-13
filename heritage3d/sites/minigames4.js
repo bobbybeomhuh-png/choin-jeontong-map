@@ -37,14 +37,14 @@ export function tileGame(ctx){const ui=overlay('linear-gradient(#b9d3e6,#e8e0cc)
  const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const {W,H,u,base,tw,th}=G(),q=ui.q;const d=Math.min(2,devicePixelRatio||1);q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);shake=Math.max(0,shake-dt);
   window.__TILE={x,drop:!!drop,prev:rows.length?rows[rows.length-1]:0,n:rows.length};const sp=(1.1+rows.length*.18);if(!drop&&!ended){x+=dir*sp*dt;if(x>1){x=1;dir=-1}if(x<-1){x=-1;dir=1}}
   const top=base-rows.length*th;const prevX=rows.length?rows[rows.length-1]:0;
-  if(drop){drop.v+=2400*u*dt;drop.y+=drop.v*dt;const ty=top-th-H*.12;if(drop.y>=top-(H>W?H*.28:H*.18)){const off=Math.abs(drop.x-prevX)*W*.25;const sc=Math.max(0,1-off/(tw*.55));
+  if(drop){drop.v+=2400*u*dt;drop.y+=drop.v*dt;const ty=top-th-H*.12;if(drop.y>=top-(H>W?H*.36:H*.18)){const off=Math.abs(drop.x-prevX)*W*.25;const sc=Math.max(0,1-off/(tw*.55));
     if(off>tw*.75){miss++;shake=.4;blip(ac,out,300,120,.3,.25,'square');ctx.say(miss>=2?'괜찮아요, 가운데 올 때 눌러요!':'어이쿠, 기와가 미끄러졌어요!');drop=null}
     else{rows.push(drop.x);blip(ac,out,700+rows.length*60,500,.12,.25,'triangle');ctx.say(sc>.85?['딱 맞았어요!','착!','고르게 얹혔어요.'][rows.length%3]:'조금 비뚤어요.');drop.sc=sc;(rows.sc||(rows.sc=[])).push(sc);drop=null;
      if(rows.length>=N){ended=true;setTimeout(()=>{if(!alive)return;const avg=rows.sc.reduce((a,b)=>a+b,0)/rows.sc.length,Q=Math.max(10,Math.round(avg*100-miss*8));ctx.done('tile',Q,'숭례문 기와 쌓기');finishCard(ui,'기와 한 짐 완성!',Q>=75?'반듯하게 쌓여 지붕 일꾼 무이가 바로 올릴 수 있어요.':'조금 기우뚱하지만 무너지진 않았어요. 한 번 더 해 볼까요?',Q,close)},700)}}}}
   /* 문루 */const cx=W/2+(shake?Math.sin(now*.09)*5:0);q.fillStyle='#8f877a';q.fillRect(cx-W*.32,base+th*.2,W*.64,H);q.fillStyle='#3b2a1c';q.beginPath();q.ellipse(cx,base+th*2.4,W*.07,th*1.6,0,Math.PI,0);q.fill();
   q.fillStyle='#7a2a1c';q.fillRect(cx-W*.26,base-6*u,W*.52,10*u);
   rows.forEach((rx,i)=>{const tx=cx+rx*W*.25,ty=base-(i+1)*th;q.fillStyle=i%2?'#4a4a50':'#55555c';q.beginPath();q.roundRect?q.roundRect(tx-tw/2,ty,tw,th-2,8*u):q.rect(tx-tw/2,ty,tw,th-2);q.fill();q.fillStyle='rgba(255,255,255,.12)';q.fillRect(tx-tw/2+6*u,ty+4*u,tw-12*u,5*u)});
-  if(!ended){const T0=H>W?H*.22:H*.12,ax=cx+(drop?drop.x:x)*W*.25,ay=drop?T0+drop.y:T0;q.strokeStyle='rgba(60,40,20,.6)';q.lineWidth=2;q.beginPath();q.moveTo(ax,0);q.lineTo(ax,ay);q.stroke();q.fillStyle='#4a4a50';q.beginPath();q.roundRect?q.roundRect(ax-tw/2,ay,tw,th-2,8*u):q.rect(ax-tw/2,ay,tw,th-2);q.fill();
+  if(!ended){const T0=H>W?H*.3:H*.12,ax=cx+(drop?drop.x:x)*W*.25,ay=drop?T0+drop.y:T0;q.strokeStyle='rgba(60,40,20,.6)';q.lineWidth=2;q.beginPath();q.moveTo(ax,0);q.lineTo(ax,ay);q.stroke();q.fillStyle='#4a4a50';q.beginPath();q.roundRect?q.roundRect(ax-tw/2,ay,tw,th-2,8*u):q.rect(ax-tw/2,ay,tw,th-2);q.fill();
    q.strokeStyle='rgba(216,168,56,.7)';q.setLineDash([6,6]);q.beginPath();q.moveTo(cx+prevX*W*.25,top-th*1.2);q.lineTo(cx+prevX*W*.25,top);q.stroke();q.setLineDash([])}
   q.fillStyle='#2b1d12';q.font='15px "Gowun Dodum",sans-serif';q.textAlign='center';q.fillText(`${rows.length} / ${N} 장`,W/2,H*.95);
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
