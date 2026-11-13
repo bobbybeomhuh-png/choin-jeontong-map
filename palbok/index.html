@@ -201,7 +201,8 @@ function enterCube(){if(!ticket){hint('먼저 앞쪽 매표소에서 티켓을 �
  const go=()=>{$('#fade').style.opacity=1;setTimeout(()=>{location.href='../dcube/?w=pambok&auto=1&from=palbok'},900)};$('#tkOk').onclick=go;setTimeout(go,2600)}
 $('#tkSave').addEventListener('click',()=>{$('#tkc').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='choin-ticket-'+ticket.no+'.png';document.body.append(a);a.click();a.remove()},'image/png')});
 let ac=null;function beep(f){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.06,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.25);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.26)}catch(e){}}
-$('#bWorld').addEventListener('click',()=>{location.href='../world3d/?from=palbok'});
+const FROM_MAP=new URLSearchParams(location.search).get('from')==='worldmap';if(FROM_MAP)$('#bWorld').textContent='전국 지도로';
+$('#bWorld').addEventListener('click',()=>{location.href=FROM_MAP?'../heritage3d/?site=worldmap&city='+encodeURIComponent('../palbok/?from=worldmap'):'../world3d/?from=palbok'});
 
 /* 안내 */
 function hint(t,ms=5200){const h=$('#hint');h.textContent=t;h.hidden=false;h.style.opacity=1;clearTimeout(hint.t);hint.t=setTimeout(()=>{h.style.opacity=0;setTimeout(()=>h.hidden=true,600)},ms)}
