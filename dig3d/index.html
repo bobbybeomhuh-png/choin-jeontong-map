@@ -84,7 +84,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
  <div id="kinds"></div>
  <div><button class="btn main" id="go" type="button" style="font-size:18px;padding:11px 30px">발굴 시작</button> <button class="btn" id="fresh" type="button" hidden>처음부터 새로 하기</button> <a class="btn" href="../dig/">블록 발굴 터로</a></div>
 </div></section>
-<header id="top" hidden><span id="ttl">무이 월드 · 발굴 터</span><span class="chip" id="area">공방</span><button class="chip" id="stampC" type="button">도장 0</button><span class="chip" id="pcs"></span><span class="chip" id="cond"></span><span class="chip opt" id="on">혼자 탐사 중</span><span class="sp"></span><button class="btn" id="menuB" type="button">메뉴</button><button class="btn mi" id="bSnd" type="button">소리 켬</button><button class="btn mi" id="bMus" type="button">음악 켬</button><button class="btn mi" id="bView" type="button">1인칭 (V)</button><button class="btn mi" id="bInv" type="button">친구 부르기</button><button class="btn mi" id="bHelp" type="button">설명</button><button class="btn mi" id="bWorld" type="button">무이 월드로</button><a class="btn mi" href="../dig/">블록판</a><button class="btn mi" id="bRst" type="button">처음부터</button></header>
+<header id="top" hidden><span id="ttl">무이 월드 · 발굴 터</span><span class="chip" id="area">공방</span><button class="chip" id="stampC" type="button">도장 0</button><span class="chip opt" id="coinC" style="color:#f2d27a"></span><span class="chip" id="pcs"></span><span class="chip" id="cond"></span><span class="chip opt" id="on">혼자 탐사 중</span><span class="sp"></span><button class="btn" id="menuB" type="button">메뉴</button><button class="btn mi" id="bSnd" type="button">소리 켬</button><button class="btn mi" id="bMus" type="button">음악 켬</button><button class="btn mi" id="bView" type="button">1인칭 (V)</button><button class="btn mi" id="bInv" type="button">친구 부르기</button><button class="btn mi" id="bHelp" type="button">설명</button><button class="btn mi" id="bWorld" type="button">무이 월드로</button><a class="btn mi" href="../dig/">블록판</a><button class="btn mi" id="bRst" type="button">처음부터</button></header>
 <section id="quest" hidden><div id="steps"></div><div id="qt"></div><div id="qd"></div><div class="row"><button class="btn" id="bAuto" type="button">자동으로 가기 (G)</button><button class="btn" id="bRedo" type="button" hidden>새로 발굴하기</button></div></section>
 <div id="hint" hidden></div>
 <div id="say" hidden></div>
@@ -108,7 +108,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 /* 압축 모델(Draco) 풀기 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;GLTFLoader.prototype.load=function(...a){if(!this.dracoLoader)this.setDRACOLoader(DL);return _l.apply(this,a)}}
 
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';import {trk} from '../heritage3d/trk3d.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';import {trk} from '../heritage3d/trk3d.js';import {coinState,coinPop,PRICE} from '../heritage3d/coin.js';import {achNew,achToast} from '../heritage3d/ach.js';
 const $=s=>document.querySelector(s);const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const rnd=(a,b)=>a+Math.random()*(b-a);const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const TOUCH=matchMedia('(pointer:coarse)').matches;
 const TICK=[];const BLK=[];
@@ -679,8 +679,8 @@ $('#bRedo').addEventListener('click',()=>{if(!confirm('세 유적을 처음부�
 /* ================= 도장 ================= */
 try{trk('d3_enter')}catch(e){}
 let STG=new Set();try{STG=new Set(JSON.parse(localStorage.getItem('muui3d-stamps')||'[]'))}catch(e){}
-function stampUI(){$('#stampC').textContent=`도장 ${STG.size}/17`}
-function stampGet(k){try{if(!STG.has(k))trk('d3_stamp',k)}catch(e){}if(STG.has(k))return;STG.add(k);try{localStorage.setItem('muui3d-stamps',JSON.stringify([...STG]))}catch(e){}stampUI();setTimeout(()=>{const t=$('#toast');t.textContent=`도장을 받았어요 · ${SK(k.slice(4)).name} 발굴 (${STG.size}/17)`;t.hidden=false;t.style.opacity=1;sfx('stamp');setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.hidden=true,600)},2600)},2400)}
+function stampUI(){$('#stampC').textContent=`도장 ${STG.size}/17`;try{$('#coinC').textContent='엽전 '+coinState().coins}catch(e){}}
+function stampGet(k){try{if(!STG.has(k))trk('d3_stamp',k)}catch(e){}if(STG.has(k))return;STG.add(k);try{localStorage.setItem('muui3d-stamps',JSON.stringify([...STG]))}catch(e){}stampUI();setTimeout(()=>{try{coinPop(PRICE.dig,'발굴 도장')}catch(e){}},2600);setTimeout(()=>{try{achToast(achNew())}catch(e){}},5200);setTimeout(()=>{const t=$('#toast');t.textContent=`도장을 받았어요 · ${SK(k.slice(4)).name} 발굴 (${STG.size}/17)`;t.hidden=false;t.style.opacity=1;sfx('stamp');setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.hidden=true,600)},2600)},2400)}
 $('#stampC').addEventListener('click',()=>hint(`도장 ${STG.size}/17 · 발굴 터 세 곳(${SITES.filter(s=>STG.has('dig_'+s.k)).length}/3)과 무이 월드 마당 열네 곳을 돌며 모아요. 도장판은 무이 월드 3D에 있어요.`,5000));
 /* ================= 유적 지도 ================= */
 function openAtlas(){if(!me)return;audio();$('#bMap').classList.remove('bob');try{localStorage.setItem('muui3d-dig-map','1')}catch(e){}const box=$('#sites');box.innerHTML='';
