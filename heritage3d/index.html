@@ -270,6 +270,9 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+/* 현장 특별 도장: 주소 뒤 ?ev=행사코드 로 들어오면 그 행사 도장을 준다(축제·전시 QR용) */
+const EVENTS={demo:{n:'무이 복원단 시연 도장',d:'초인 스튜디오 시연'},cheongju2026:{n:'국가유산 미디어아트 청주 도장',d:'2026 청주 현장'},palbok:{n:'뺄불통가마 관람 도장',d:'전주 팔복예술공장'}};
+setTimeout(()=>{try{const ev=(qs.get('ev')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);if(!ev)return;const E=EVENTS[ev]||{n:'현장 방문 특별 도장',d:ev};const L=JSON.parse(localStorage.getItem('muui-ev-stamps')||'[]');if(L.some(x=>x.k===ev))return;const now=new Date();L.push({k:ev,n:E.n,d:E.d,t:`${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()}`,site:SITE});localStorage.setItem('muui-ev-stamps',JSON.stringify(L));stampPop(E.n);if(COMP)setTimeout(()=>compSay(`현장 특별 도장이에요! 무이 월드 진열장에 따로 모아 둘게요.`,3.5),1200)}catch(e){}},6500);
 function mgCtx(){return{ac:()=>{audioOn();return AC},out:()=>AM,say:t=>{try{if(COMP)compSay(t,3.5);else hint(t,3000)}catch(e){}},done:(key,Q,label)=>{try{const k='muui-h3-games',a=JSON.parse(localStorage.getItem(k)||'[]');if(!a.includes(key)){a.push(key);localStorage.setItem(k,JSON.stringify(a))}const bq=JSON.parse(localStorage.getItem('muui-h3-gameq')||'{}');bq[key]=Math.max(bq[key]||0,Q);localStorage.setItem('muui-h3-gameq',JSON.stringify(bq))}catch(e){}
  try{stampPop(label+' 완성');if(COMP){COMP.forceSeq=[['joy',1.6],['cheer',1.4]];compSay(Q>=80?'우와, 진짜 잘했어요!':'좋아요! 한 번 더 하면 더 좋아질 거예요.',4)}}catch(e){}}}}
 function mgOpen(fn){MG_OPEN=true;for(const k in keys)keys[k]=false;fn(mgCtx());const watch=setInterval(()=>{if(!document.querySelector('body>div[style*="z-index:30"]')){MG_OPEN=false;clearInterval(watch)}},500)}
