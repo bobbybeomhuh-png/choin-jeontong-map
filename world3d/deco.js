@@ -3,6 +3,8 @@
    엽전 계산은 ../heritage3d/coin.js 하나로 통일. 갱신 2026-11-13 */
 import {coinState,spendCoins,PRICE} from '../heritage3d/coin.js';
 import {chapterState} from '../heritage3d/story.js';
+import {festNow,festStamp,FEST_COIN} from '../heritage3d/play.js';
+import {coinPop} from '../heritage3d/coin.js';
 export const DECO=[
  {k:'flower',n:'길섶 꽃밭',p:30,d:'디딤돌 길 양옆에 봉선화와 맨드라미를 심어요.',x:0,z:26,b:0},
  {k:'tower',n:'소원 돌탑',p:30,d:'납작한 돌을 하나씩 얹어 소원을 비는 돌탑이에요.',x:4.7,z:23.4,b:.5},
@@ -55,3 +57,15 @@ export function initDeco({THREE:T,scene,BLOCK,hint,sfx,trk}){
  function refresh(){try{if(cb)cb.innerHTML='<i class="yj"></i><span class="yt">엽전 </span>'+coinState().coins}catch(e){}}refresh();setInterval(refresh,4000);
  let last=performance.now();const loop=()=>{const n=performance.now();tick(Math.min(.05,(n-last)/1000));last=n;requestAnimationFrame(loop)};requestAnimationFrame(loop);
  return{openShop,place,placed,refresh}}
+/* 명절 행사: 기간 안이면(또는 ?fest=동지 코드) 마당에 명절 장식을 놓고 방문 도장을 준다 */
+export function initFest({THREE:T,scene,hint,sfx,trk}){const f=festNow();if(!f)return null;
+ const M=(c,o={})=>new T.MeshStandardMaterial({color:c,roughness:.8,...o});const mesh=(g,m,x=0,y=0,z=0)=>{const o=new T.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;return o};
+ const G=new T.Group();G.name='fest_'+f.k;scene.add(G);const anim=[];
+ if(f.fx==='kite'){const C=[['#c0392b','#f2c14e'],['#2d4f9a','#f6f1e6'],['#2f6a4a','#e0457a']];C.forEach(([a,b],i)=>{const k=new T.Group();const d=mesh(new T.PlaneGeometry(1.6,1.6),M(a,{side:T.DoubleSide,emissive:a,emissiveIntensity:.25}));d.rotation.z=Math.PI/4;k.add(d);const c=mesh(new T.CircleGeometry(.32,16),M(b,{side:T.DoubleSide}),0,0,.01);k.add(c);for(let j=0;j<5;j++)k.add(mesh(new T.BoxGeometry(.05,.5,.02),M(b),Math.sin(j)*.1,-1.3-j*.45,0));k.position.set(-4+i*4,3.6+i*.6,40+i*3);G.add(k);anim.push(t=>{k.position.y=3.6+i*.6+Math.sin(t*.9+i)*.35;k.rotation.z=Math.sin(t*1.3+i)*.25})})}
+ if(f.fx==='moon'){const m=new T.Mesh(new T.SphereGeometry(7,32,20),new T.MeshBasicMaterial({color:'#fff3c4',fog:false}));m.position.set(-6,7.5,95);G.add(m);const h=new T.Mesh(new T.SphereGeometry(10,32,20),new T.MeshBasicMaterial({color:'#ffe9a0',transparent:true,opacity:.18,fog:false,depthWrite:false}));h.position.copy(m.position);G.add(h)}
+ if(f.fx==='patjuk'){const x=-8,z=20.6;G.add(mesh(new T.BoxGeometry(1.6,.08,.9),M('#5a3420'),x,.55,z));for(const[a,b]of[[-.7,-.35],[.7,-.35],[-.7,.35],[.7,.35]])G.add(mesh(new T.BoxGeometry(.08,.55,.08),M('#5a3420'),x+a,.27,z+b));for(let i=0;i<3;i++){const bx=x-.5+i*.5;G.add(mesh(new T.SphereGeometry(.2,14,8,0,Math.PI*2,Math.PI/2,Math.PI/2),M('#e9e1d0'),bx,.8,z));const top=mesh(new T.CircleGeometry(.18,16),M('#6e1e1a'),bx,.79,z);top.rotation.x=-Math.PI/2;G.add(top);for(let j=0;j<3;j++)G.add(mesh(new T.SphereGeometry(.035,8,6),M('#fffaf0'),bx+Math.cos(j*2)*.08,.8,z+Math.sin(j*2)*.08))}}
+ if(f.fx==='swing'){const x=1.3,z=35,w=M('#6b4a26');for(const sx of[-1,1])G.add(mesh(new T.CylinderGeometry(.09,.11,4.2,8),w,x+sx*1.1,2.1,z));G.add(mesh(new T.CylinderGeometry(.08,.08,2.4,8),w,x,4.15,z).rotateZ(Math.PI/2));const sw=new T.Group();sw.position.set(x,4.1,z);for(const sx of[-1,1])sw.add(mesh(new T.CylinderGeometry(.015,.015,3.3,4),M('#d8c8a0'),sx*.35,-1.65,0));sw.add(mesh(new T.BoxGeometry(.9,.06,.3),w,0,-3.3,0));G.add(sw);anim.push(t=>{sw.rotation.x=Math.sin(t*1.4)*.45})}
+ if(anim.length){let t=0,last=performance.now();const loop=()=>{const n=performance.now();t+=Math.min(.05,(n-last)/1000);last=n;for(const a of anim)a(t);requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+ const got=festStamp(f);setTimeout(()=>{try{hint(f.msg+(got?` ${f.n} 방문 도장과 엽전 ${FEST_COIN}을 받았어요.`:''),6500);if(got){coinPop(FEST_COIN,f.n+' 방문');sfx&&sfx('ding');trk&&trk('w3_fest',f.k)}}catch(e){}},got?9000:7000);
+ return{f,group:G}}
+
