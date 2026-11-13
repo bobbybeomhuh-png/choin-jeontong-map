@@ -1,11 +1,11 @@
 /* 유산 마당 짧은 놀이 2: 문경 가마 불 때기, 나주 금동관 붓질, 강진 상감 새기기, 강릉 대나무 치기
    갱신 2026-11-13. 원칙은 1편과 같음: 동작 하나, 즉각 소리, 실패는 웃음, 점수 대신 작품 품질. */
-import {overlay,title,noiseSrc,blip,finishCard} from './minigames.js';
+import {overlay,title,noiseSrc,blip,finishCard,softOut} from './minigames.js';
 
 /* ---------- 문경 망댕이가마 불 때기: 장작을 넣어 불 온도를 금빛 띠 안에 지킨다 ---------- */
 export function kilnGame(ctx){const ui=overlay('radial-gradient(900px 600px at 50% 70%,#2a1408,#0b0603 75%)');let alive=true,T=300,push=0,t=0,inBand=0,crack=0,hot=0,ended=false;
  const DUR=24,STG=[[0,900,'예열'],[7,1100,'본불'],[15,1250,'막불']];const band=()=>{let c=STG[0];for(const s of STG)if(t>=s[0])c=s;return c};
- const ac=ctx.ac(),out=ctx.out();let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='highpass';f.frequency.value=900;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
+ const ac=ctx.ac(),out=softOut(ctx);let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='highpass';f.frequency.value=900;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
  title(ui.top,'가마 불 때기','화면을 눌러 장작을 넣어요. 불 온도를 금빛 띠 안에 지켜요.');
  const sparks=[];const feed=()=>{if(ended)return;push+=1;blip(ac,out,180,70,.25,.25,'triangle');const {W,H}=ui.fit();for(let i=0;i<14;i++)sparks.push({x:W/2+(Math.random()-.5)*60,y:H*.72,vx:(Math.random()-.5)*120,vy:-80-Math.random()*160,l:1})};
  ui.c.addEventListener('pointerdown',feed);const kd=e=>{if(e.code==='Space'){e.preventDefault();feed()}};addEventListener('keydown',kd);
@@ -38,7 +38,7 @@ export function brushGame(ctx){const ui=overlay('radial-gradient(900px 600px at 
   q.fillStyle=gold;const tree=(x,h)=>{q.beginPath();q.moveTo(x-10,300);q.lineTo(x-10,300-h);q.lineTo(x+10,300-h);q.lineTo(x+10,300);q.fill();q.stroke();for(let k=1;k<4;k++){const yy=300-h*k/4;q.beginPath();q.moveTo(x-10,yy);q.lineTo(x-34,yy-30);q.lineTo(x-26,yy-36);q.lineTo(x-10,yy-14);q.fill();q.stroke();q.beginPath();q.moveTo(x+10,yy);q.lineTo(x+34,yy-30);q.lineTo(x+26,yy-36);q.lineTo(x+10,yy-14);q.fill();q.stroke()}q.beginPath();q.arc(x,300-h-10,13,0,7);q.fill();q.stroke()};
   tree(300,190);tree(200,150);tree(400,150);for(let i=0;i<30;i++){q.fillStyle='#7ec4b0';q.beginPath();q.arc(160+Math.random()*280,140+Math.random()*150,3,0,7);q.fill()}}
  const sq=soil.getContext('2d');const fillSoil=()=>{sq.globalCompositeOperation='source-over';sq.fillStyle='#8a6a48';sq.fillRect(0,0,PW,PH);for(let i=0;i<5000;i++){sq.fillStyle=`rgba(${60+Math.random()*80|0},${40+Math.random()*50|0},${20+Math.random()*30|0},.6)`;sq.fillRect(Math.random()*PW,Math.random()*PH,2+Math.random()*3,2+Math.random()*3)}};fillSoil();
- let total=PW*PH/16;const ac=ctx.ac(),out=ctx.out();let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=4200;f.Q.value=.7;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
+ let total=PW*PH/16;const ac=ctx.ac(),out=softOut(ctx);let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=4200;f.Q.value=.7;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
  title(ui.top,'흙 털어 유물 꺼내기','붓으로 살살 문질러 흙을 털어요. 너무 빠르면 유물이 긁혀요.');
  const dust=[];const rect=()=>{const {W,H}=ui.fit(),s=Math.min(W*.9/PW,H*.62/PH);return{s,x0:(W-PW*s)/2,y0:H*.2}};let speed=0;
  const rub=e=>{if(done)return;const R=ui.c.getBoundingClientRect(),{s,x0,y0}=rect(),px=(e.clientX-R.left-x0)/s,py=(e.clientY-R.top-y0)/s;if(last){const dd=Math.hypot(px-last[0],py-last[1]);speed=speed*.7+dd*.3;sq.globalCompositeOperation='destination-out';sq.strokeStyle=`rgba(0,0,0,${speed>45?.85:.6})`;sq.lineCap='round';sq.lineWidth=30;sq.beginPath();sq.moveTo(last[0],last[1]);sq.lineTo(px,py);sq.stroke();
@@ -59,7 +59,7 @@ export function brushGame(ctx){const ui=overlay('radial-gradient(900px 600px at 
 /* ---------- 따라 긋기: 점선을 따라 한 획씩. 강진 상감 학 무늬, 강릉 오죽 ---------- */
 export function traceGame(ctx,o){const ui=overlay(o.bg);let alive=true,si=0,cur=[],acc=[],down=false,done=false;const PW=600,PH=420;
  const paper=document.createElement('canvas');paper.width=PW;paper.height=PH;const pq=paper.getContext('2d');const resetPaper=()=>{pq.clearRect(0,0,PW,PH);o.drawBase(pq,PW,PH)};resetPaper();
- const ac=ctx.ac(),out=ctx.out();let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=o.sfxF||1800;f.Q.value=1;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
+ const ac=ctx.ac(),out=softOut(ctx);let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=o.sfxF||1800;f.Q.value=1;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
  title(ui.top,o.title,o.sub);const S=o.strokes;
  const rect=()=>{const {W,H}=ui.fit(),s=Math.min(W*.92/PW,H*.64/PH);return{s,x0:(W-PW*s)/2,y0:H*.19}};
  const toP=e=>{const R=ui.c.getBoundingClientRect(),{s,x0,y0}=rect();return[(e.clientX-R.left-x0)/s,(e.clientY-R.top-y0)/s]};

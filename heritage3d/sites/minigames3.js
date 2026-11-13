@@ -1,11 +1,11 @@
 /* 유산 마당 짧은 놀이 3: 거북선 노 젓기, 범종 치기, 현자총통 쏘기, 민화 모란 그리기, 통영 자개 붙이기
    갱신 2026-11-13. 원칙은 1, 2편과 같음. */
-import {overlay,title,noiseSrc,blip,finishCard} from './minigames.js';
+import {overlay,title,noiseSrc,blip,finishCard,softOut} from './minigames.js';
 import {traceGame} from './minigames2.js';
 
 /* ---------- 거북선 노 젓기: 북소리에 맞춰 왼쪽, 오른쪽 번갈아 ---------- */
 export function rowGame(ctx){const ui=overlay('linear-gradient(#1d4a6a,#0b2236)');let alive=true,t=0,dist=0,v=0,good=0,tot=0,side=0,lastBeat=-1,ended=false,oarL=0,oarR=0,shake=0;
- const BEAT=.8,DUR=24,GOAL=100;const ac=ctx.ac(),out=ctx.out();
+ const BEAT=.8,DUR=24,GOAL=100;const ac=ctx.ac(),out=softOut(ctx);
  const drum=()=>{if(!ac||!out)return;const t0=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(110,t0);o.frequency.exponentialRampToValueAtTime(48,t0+.25);g.gain.setValueAtTime(.42,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.35);o.connect(g).connect(out);o.start(t0);o.stop(t0+.4)};
  const splash=()=>{if(!ac||!out)return;const n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain(),t0=ac.currentTime;f.type='lowpass';f.frequency.value=1600;g.gain.setValueAtTime(.18,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.3);n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+.35)};
  title(ui.top,'거북선 노 젓기','북이 둥 울릴 때 왼쪽, 오른쪽을 번갈아 눌러요. (← → 키도 돼요)');
@@ -34,7 +34,7 @@ export function rowGame(ctx){const ui=overlay('linear-gradient(#1d4a6a,#0b2236)'
 
 /* ---------- 범종 치기: 당목을 끌어 당겼다 놓는다. 알맞은 힘이면 맥놀이가 길게 운다 ---------- */
 export function bellGame(ctx){const ui=overlay('radial-gradient(900px 600px at 50% 40%,#2c2418,#0c0906 75%)');let alive=true,pull=0,drag=null,swing=0,sv=0,hits=[],ended=false,glow=0,sway=0;
- const ac=ctx.ac(),out=ctx.out();
+ const ac=ctx.ac(),out=softOut(ctx);
  const ring=k=>{if(!ac||!out)return;const t0=ac.currentTime,base=72,P=[[1,.5,7],[2.01,.28,5],[2.76,.18,4],[5.4,.07,2.5],[8.9,.04,1.5]],M=ac.createGain();M.gain.value=.55*k;M.connect(out);
   for(const[r,g,dur]of P){for(const det of[0,.6]){const o=ac.createOscillator(),G=ac.createGain();o.frequency.value=base*r+det;G.gain.setValueAtTime(.0001,t0);G.gain.exponentialRampToValueAtTime(g*.5,t0+.02);G.gain.exponentialRampToValueAtTime(.0001,t0+dur*(.6+k*.6));o.connect(G).connect(M);o.start(t0);o.stop(t0+dur*1.3)}}
   const n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=600;g.gain.setValueAtTime(.25*k,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.15);n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+.2)};
@@ -61,7 +61,7 @@ export function bellGame(ctx){const ui=overlay('radial-gradient(900px 600px at 5
 
 /* ---------- 현자총통 쏘기: 뒤로 끌어 방향과 힘을 정하고 놓아 쏜다 ---------- */
 export function cannonGame(ctx){const ui=overlay('linear-gradient(#c9d8e0 0%,#e8dcc0 55%,#2d5a78 56%,#173a52 100%)');let alive=true,drag=null,aim=null,ball=null,shots=0,hitN=0,ended=false,ship={x:.78,v:.018,hp:2,sink:0},booms=[];
- const ac=ctx.ac(),out=ctx.out();
+ const ac=ctx.ac(),out=softOut(ctx);
  const boom=k=>{if(!ac||!out)return;const t0=ac.currentTime,n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=k?500:900;g.gain.setValueAtTime(k?.5:.35,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+(k?.9:.5));n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+1);blip(ac,out,90,40,.4,.3)};
  title(ui.top,'현자총통 쏘기','총통에서 뒤로 끌어 방향과 힘을 정하고 놓아요. 왜선을 두 번 맞히면 가라앉아요. 다섯 발.');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';ui.top.querySelector('b').style.color='#8e2b20';
  const G=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,cx:W*.16,cy:H*.56-104*u,sea:H*.56}};

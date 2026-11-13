@@ -1,10 +1,10 @@
 /* 유산 마당 짧은 놀이 4: 한양 앙부일구, 숭례문 기와 올리기, 부여 금동대향로 맞추기
    갱신 2026-11-13. 원칙은 앞 편들과 같음. */
-import {overlay,title,blip,finishCard} from './minigames.js';
+import {overlay,title,blip,finishCard,softOut} from './minigames.js';
 
 /* ---------- 앙부일구: 해를 끌어 그림자 끝을 알려 준 시각 줄에 맞춘다 ---------- */
 export function sundialGame(ctx){const ui=overlay('linear-gradient(#f3d9a4,#d9b47a)');let alive=true,sun=.2,drag=false,round=0,scores=[],ended=false,flash=0;
- const ac=ctx.ac(),out=ctx.out();const HOURS=['묘시','진시','사시','오시','미시','신시','유시'];const ASK=[3,1,5];
+ const ac=ctx.ac(),out=softOut(ctx);const HOURS=['묘시','진시','사시','오시','미시','신시','유시'];const ASK=[3,1,5];
  title(ui.top,'앙부일구 읽기','해를 좌우로 끌어 그림자 끝을 금빛 시각 줄에 맞추고 손을 떼요. 세 번.');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';ui.top.querySelector('b').style.color='#8e2b20';
  const G=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,cx:W/2,cy:H*.62,R:200*u}};
  const setSun=e=>{const R=ui.c.getBoundingClientRect(),{W}=G();sun=Math.max(0,Math.min(1,(e.clientX-R.left-W*.1)/(W*.8)))};
@@ -28,7 +28,7 @@ export function sundialGame(ctx){const ui=overlay('linear-gradient(#f3d9a4,#d9b4
 
 /* ---------- 숭례문 기와 올리기: 좌우로 오가는 기와를 눌러 내려 지붕 줄에 맞춰 쌓는다 ---------- */
 export function tileGame(ctx){const ui=overlay('linear-gradient(#b9d3e6,#e8e0cc)');let alive=true,t=0,x=0,dir=1,drop=null,rows=[],ended=false,miss=0,shake=0;
- const ac=ctx.ac(),out=ctx.out();const N=6;
+ const ac=ctx.ac(),out=softOut(ctx);const N=6;
  title(ui.top,'기와 쌓기','지붕에 올릴 수키와를 반듯하게 쌓아요. 오가는 기와를 눌러 내려요. 여섯 장.');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';ui.top.querySelector('b').style.color='#8e2b20';
  const G=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,base:H*.8,tw:120*u,th:30*u}};
  const go=()=>{if(ended||drop)return;drop={x,y:0,v:0}};ui.c.addEventListener('pointerdown',go);const kd=e=>{if(e.code==='Space'){e.preventDefault();go()}};addEventListener('keydown',kd);
@@ -51,7 +51,7 @@ export function tileGame(ctx){const ui=overlay('linear-gradient(#b9d3e6,#e8e0cc)
 
 /* ---------- 금동대향로 맞추기: 받침부터 봉황까지 아래에서 위로 순서대로 ---------- */
 export function incenseGame(ctx){const ui=overlay('radial-gradient(900px 600px at 50% 45%,#2a2418,#0c0a06 75%)');let alive=true,step=0,wrong=0,ended=false,smoke=[],shuffle=[];
- const ac=ctx.ac(),out=ctx.out();
+ const ac=ctx.ac(),out=softOut(ctx);
  const P=[{k:'dragon',n:'용 받침',h:70,draw:(q,x,y,u)=>{q.fillStyle='#b8902e';q.beginPath();q.ellipse(x,y-20*u,70*u,26*u,0,0,7);q.fill();q.strokeStyle='#6b4a14';q.lineWidth=5*u;q.beginPath();q.moveTo(x-50*u,y-20*u);q.bezierCurveTo(x-20*u,y-70*u,x+20*u,y+20*u,x+40*u,y-50*u);q.stroke();q.beginPath();q.arc(x+44*u,y-56*u,9*u,0,7);q.fillStyle='#d4ab45';q.fill()}},
   {k:'body',n:'연꽃 몸체',h:80,draw:(q,x,y,u)=>{q.fillStyle='#c9a03a';q.beginPath();q.moveTo(x-80*u,y-80*u);q.quadraticCurveTo(x-70*u,y,x,y);q.quadraticCurveTo(x+70*u,y,x+80*u,y-80*u);q.closePath();q.fill();q.strokeStyle='#6b4a14';q.lineWidth=2*u;for(let i=-3;i<=3;i++){q.beginPath();q.moveTo(x+i*22*u,y-80*u);q.quadraticCurveTo(x+i*18*u,y-30*u,x+i*6*u,y-6*u);q.stroke()}}},
   {k:'lid',n:'산봉우리 뚜껑',h:66,draw:(q,x,y,u)=>{q.fillStyle='#d4ab45';q.beginPath();q.moveTo(x-80*u,y);for(let i=0;i<=8;i++){const xx=x-80*u+i*20*u;q.lineTo(xx,y-(60+((i*37)%5)*12)*u*(1-Math.abs(i-4)/8))}q.lineTo(x+80*u,y);q.closePath();q.fill();q.strokeStyle='#6b4a14';q.lineWidth=2*u;q.stroke();for(let i=0;i<5;i++){q.fillStyle='#6b4a14';q.beginPath();q.arc(x-40*u+i*20*u,y-40*u-(i%2)*10*u,4*u,0,7);q.fill()}}},

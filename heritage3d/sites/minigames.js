@@ -91,4 +91,5 @@ export function craneGame(ctx){const ui=overlay('linear-gradient(#bcd6e8,#f2e6cf
   if(phase==='lift'){q.fillStyle='rgba(0,0,0,.3)';q.fillRect(W/2-120,H*.93,240,10);q.fillStyle='#f2c14e';q.fillRect(W/2-120,H*.93,240*lift,10)}
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 
-export {overlay,title,noiseSrc,blip,finishCard};
+function softOut(ctx,k=.45){const o=ctx.out(),a=ctx.ac();if(!o||!a)return o;const g=a.createGain();g.gain.value=k;g.connect(o);return g}
+export {overlay,title,noiseSrc,blip,finishCard,softOut};
