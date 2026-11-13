@@ -68,7 +68,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 @media (pointer:fine){#stick,#jumpB{display:none!important}}
 @media (pointer:coarse){#act{left:auto;right:12px;transform:none;bottom:calc(env(safe-area-inset-bottom) + 84px)}#bar{left:auto;right:8px;transform:none}#bar button{min-width:50px;padding:4px 6px}#quest{width:min(290px,calc(100vw - 20px))}}
 @media (max-width:600px){#quest{font-size:12px;top:calc(env(safe-area-inset-top) + 98px)}#tray{top:calc(env(safe-area-inset-top) + 98px)}#qt{font-size:16px}#qd{font-size:12.5px}#bar button{min-width:46px;font-size:11px}#bar button b{font-size:14px}}
-</style>
+@media (pointer:coarse){#bar button i{display:none}}</style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <link rel="manifest" href="/world3d/manifest.webmanifest"><meta name="theme-color" content="#2b1d12"><link rel="apple-touch-icon" href="/world3d/icon-192.png"><meta property="og:type" content="website"><meta property="og:title" content="무이 발굴 터"><meta property="og:description" content="고분, 바다 밑 난파선, 산성에서 유물을 찾아 공방에서 복원해요."><meta property="og:image" content="https://choin-studio.pages.dev/world3d/og_muui.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="https://choin-studio.pages.dev/dig3d/"><meta name="twitter:card" content="summary_large_image"><meta name="description" content="고분, 바다 밑 난파선, 산성에서 유물을 찾아 공방에서 복원해요."><link rel="icon" type="image/png" href="/world3d/icon-192.png"></head>
 <body>
@@ -658,8 +658,8 @@ function guideFrame(t){const R0=G.route;let n=0;if(R0.length&&me&&!SEATED){let p
  const end=R0.length?R0[R0.length-1]:null,showBeam=end&&(G.st===0||G.st===3||G.st===-1)&&!SEATED;BEAM.visible=!!showBeam;if(showBeam){BEAM.position.set(end[0],groundY(end[0],end[1]),end[1]);BEAM.children[0].material.opacity=.16+Math.sin(t*3)*.06}
  const pin=$('#pin');if(end&&me&&!SEATED&&!uiOpen()&&!TRAY){const tx=end[0],tz=end[1],d=Math.hypot(tx-pos.x,tz-pos.z);if(d<2.2&&G.st!==-1){pin.hidden=true}else{pv.set(tx,groundY(tx,tz)+1.6,tz).project(cam);const behind=pv.z>1;let sx=(pv.x*.5+.5)*innerWidth,sy=(-pv.y*.5+.5)*innerHeight;if(behind){sx=innerWidth-sx;sy=innerHeight-sy}const m=60,on=!behind&&sx>m&&sx<innerWidth-m&&sy>110&&sy<innerHeight-150;pin.hidden=false;const tx2=(on?'여기로 ':'이쪽으로 ')+Math.round(d)+'칸';if(pin.firstChild.textContent!==tx2)pin.firstChild.textContent=tx2;if(on){pin.style.left=sx+'px';pin.style.top=sy+'px';pin.lastChild.style.transform=''}else{const cx=innerWidth/2,cy=innerHeight/2;let dx=sx-cx,dy=sy-cy;const k=Math.min((innerWidth/2-m)/Math.max(1,Math.abs(dx)),(innerHeight/2-130)/Math.max(1,Math.abs(dy)));pin.style.left=(cx+dx*k)+'px';pin.style.top=(cy+dy*k)+'px';pin.lastChild.style.transform=`rotate(${Math.atan2(dy,dx)-Math.PI/2}rad)`}}}else pin.hidden=true;
  GUIDE.material.opacity=.6+Math.sin(t*6)*.35}
-let autoStall=0,autoLast=null;function toggleAuto(){auto=!auto;$('#bAuto').textContent=auto?'멈추기':'자동으로 가기 (G)';autoStall=0;autoLast=null;if(auto)hint('바닥 화살표를 따라 자동으로 가요. 움직이면 멈춰요.',2500)}
-$('#bAuto').addEventListener('click',()=>{audio();toggleAuto()});
+let autoStall=0,autoLast=null;function toggleAuto(){auto=!auto;$('#bAuto').textContent=auto?'멈추기':(TOUCH?'자동으로 가기':'자동으로 가기 (G)');autoStall=0;autoLast=null;if(auto)hint('바닥 화살표를 따라 자동으로 가요. 움직이면 멈춰요.',2500)}
+if(TOUCH)$('#bAuto').textContent='자동으로 가기';$('#bAuto').addEventListener('click',()=>{audio();toggleAuto()});
 /* ================= 복원대 ================= */
 let TRAY=null,trayP=null,trayH=0;const piecesEl=$('#pieces');
 function openTray(){const s=SITES[ST.cur];if(!s)return;audio();if(auto)toggleAuto();TRAY=s;$('#tray').hidden=false;$('#bar').hidden=true;trayP=null;trayH=0;renderTray();sfx('tick')}
