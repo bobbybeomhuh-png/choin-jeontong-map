@@ -12,7 +12,7 @@ function noiseSrc(ac){const n=ac.sampleRate*2|0,b=ac.createBuffer(1,n,ac.sampleR
 function blip(ac,out,f0,f1,dur,g,type='sine'){if(!ac||!out)return;const t=ac.currentTime,o=ac.createOscillator(),G=ac.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);G.gain.setValueAtTime(g,t);G.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(G).connect(out);o.start(t);o.stop(t+dur+.03)}
 function finishCard(ui,head,body,q,onClose){const d=document.createElement('div');d.style.cssText='position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 28px);transform:translateX(-50%);background:#f4ecd8;color:#2b1d12;border:4px double #8e2b20;border-radius:8px;padding:14px 18px;text-align:center;font:15px "Gowun Dodum",sans-serif;min-width:min(340px,90vw);z-index:3';
  const h=document.createElement('b');h.style.cssText='display:block;font:22px "Do Hyeon",sans-serif;color:#8e2b20';h.textContent=head;const p=document.createElement('div');p.textContent=body;const qq=document.createElement('div');qq.style.cssText='margin:6px 0 10px;font:18px "Do Hyeon",sans-serif';qq.textContent=`작품 품질 ${q}%`;
- const b=document.createElement('button');b.type='button';b.className='btn main';b.textContent='마당으로 돌아가기';b.onclick=onClose;const r=document.createElement('button');r.type='button';r.className='btn';r.textContent='한 번 더';r.style.marginLeft='8px';r.onclick=()=>{d.remove();ui.again&&ui.again()};d.append(h,p,qq,b,r);ui.o.append(d)}
+ const b=document.createElement('button');b.type='button';b.className='btn main';b.textContent='마당으로 돌아가기';b.onclick=onClose;const r=document.createElement('button');r.type='button';r.className='btn';r.textContent='한 번 더';r.style.cssText='margin-left:8px;background:#3b2a1c;color:#fff4dc';r.onclick=()=>{d.remove();ui.again&&ui.again()};d.append(h,p,qq,b,r);ui.o.append(d)}
 
 /* ---------- 해인사 경판 탁본: 문지른 곳만 먹빛 글자가 드러난다 ---------- */
 export function rubbingGame(ctx){const ui=overlay('radial-gradient(900px 600px at 50% 45%,#3a2a1c,#120c07 75%)');let alive=true,done=false,prog=0,last=null,speed=0;
@@ -90,3 +90,5 @@ export function craneGame(ctx){const ui=overlay('linear-gradient(#bcd6e8,#f2e6cf
   /* 줄과 돌 */if(phase!=='done'&&stone<3){const sx=wx+(phase==='carry'?carry*230*u:0)+sway*30*u,sy=base-120*u-(phase==='carry'?1:lift)*(base-120*u-(wy+90*u));q.strokeStyle='#4a3a28';q.lineWidth=3*u;q.beginPath();q.moveTo(wx+(phase==='carry'?carry*230*u:0),wy-20*u);q.lineTo(sx,sy-30*u);q.stroke();q.fillStyle='#a49d90';q.fillRect(sx-58*u,sy-30*u,116*u,58*u);q.strokeStyle='#6d675c';q.lineWidth=2;q.strokeRect(sx-58*u,sy-30*u,116*u,58*u)}
   if(phase==='lift'){q.fillStyle='rgba(0,0,0,.3)';q.fillRect(W/2-120,H*.93,240,10);q.fillStyle='#f2c14e';q.fillRect(W/2-120,H*.93,240*lift,10)}
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+
+export {overlay,title,noiseSrc,blip,finishCard};
