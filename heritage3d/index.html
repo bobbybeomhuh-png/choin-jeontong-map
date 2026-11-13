@@ -270,6 +270,8 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+/* 컴퓨터: 처음 15초 조작 안내 한 줄 */
+if(!TOUCH&&SITE!=='worldmap')setTimeout(()=>{try{const k=document.createElement('div');k.style.cssText='position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;background:rgba(20,14,8,.72);color:#f3ead6;font:13px "Gowun Dodum",sans-serif;padding:6px 14px;border-radius:999px;pointer-events:none;transition:opacity 1s;white-space:nowrap';k.innerHTML='<b style="color:#f2d27a">W A S D</b> 걷기 · <b style="color:#f2d27a">Shift</b> 천천히 · <b style="color:#f2d27a">Space</b> 점프 · <b style="color:#f2d27a">C</b> 무이 부르기 · <b style="color:#f2d27a">P</b> 기념 엽서 · <b style="color:#f2d27a">V</b> 1인칭 · 마우스 끌기 둘러보기';document.body.append(k);setTimeout(()=>{k.style.opacity='0';setTimeout(()=>k.remove(),1200)},15000)}catch(e){}},2500);
 /* 카메라 가림막 보강: 지붕·처마처럼 높이 떠 있는 큰 면은 카메라가 뚫고 들어가지 않게 가림막 목록에 더한다 */
 const camAug=()=>{try{if(SITE==='worldmap'||!Array.isArray(CAMM))return;const have=new Set(CAMM),bb=new THREE.Box3(),sz=new THREE.Vector3();let n=0;scene.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||have.has(o)||!o.visible)return;const m=o.material;if(!m||Array.isArray(m)||m.transparent)return;bb.setFromObject(o);bb.getSize(sz);if((Math.max(sz.x,sz.z)>2.5&&bb.min.y>1.6&&sz.y<6)||(bb.max.y>1.5&&Math.max(sz.x,sz.z)>1.5&&Math.max(sz.x,sz.z)<30)){CAMM.push(o);have.add(o);n++}});window.__CAMAUG=(window.__CAMAUG||0)+n}catch(e){}};setTimeout(camAug,3000);setTimeout(camAug,9000);
 try{trk('h3_enter',SITE)}catch(e){}
