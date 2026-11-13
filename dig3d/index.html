@@ -106,7 +106,7 @@ button{font:inherit;color:inherit}.btn{background:var(--panel);border:1px solid 
 import {plantBroad,paintedPines} from './treekit.js';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';import {trk} from '../heritage3d/trk3d.js';
 const $=s=>document.querySelector(s);const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const rnd=(a,b)=>a+Math.random()*(b-a);const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const TOUCH=matchMedia('(pointer:coarse)').matches;
 const TICK=[];const BLK=[];
@@ -675,9 +675,10 @@ function nextQuest(){const k=$('#card').dataset.k,s=SK(k);$('#card').hidden=true
 $('#cKeep').addEventListener('click',()=>{const fresh=$('#card').dataset.fresh;$('#card').hidden=true;if(fresh)nextQuest()});$('#cNext').addEventListener('click',nextQuest);
 $('#bRedo').addEventListener('click',()=>{if(!confirm('세 유적을 처음부터 다시 발굴할까요? 도감과 도장은 그대로예요.'))return;const book=ST.book;for(const s of SITES)ST[s.k]={got:[],fx:[],done:false,cond:100,wall:0,scanned:false};ST.cur=0;ST.acc=false;ST.said={};ST.book=book;save();location.reload()});
 /* ================= 도장 ================= */
+try{trk('d3_enter')}catch(e){}
 let STG=new Set();try{STG=new Set(JSON.parse(localStorage.getItem('muui3d-stamps')||'[]'))}catch(e){}
 function stampUI(){$('#stampC').textContent=`도장 ${STG.size}/17`}
-function stampGet(k){if(STG.has(k))return;STG.add(k);try{localStorage.setItem('muui3d-stamps',JSON.stringify([...STG]))}catch(e){}stampUI();setTimeout(()=>{const t=$('#toast');t.textContent=`도장을 받았어요 · ${SK(k.slice(4)).name} 발굴 (${STG.size}/17)`;t.hidden=false;t.style.opacity=1;sfx('stamp');setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.hidden=true,600)},2600)},2400)}
+function stampGet(k){try{if(!STG.has(k))trk('d3_stamp',k)}catch(e){}if(STG.has(k))return;STG.add(k);try{localStorage.setItem('muui3d-stamps',JSON.stringify([...STG]))}catch(e){}stampUI();setTimeout(()=>{const t=$('#toast');t.textContent=`도장을 받았어요 · ${SK(k.slice(4)).name} 발굴 (${STG.size}/17)`;t.hidden=false;t.style.opacity=1;sfx('stamp');setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.hidden=true,600)},2600)},2400)}
 $('#stampC').addEventListener('click',()=>hint(`도장 ${STG.size}/17 · 발굴 터 세 곳(${SITES.filter(s=>STG.has('dig_'+s.k)).length}/3)과 무이 월드 마당 열네 곳을 돌며 모아요. 도장판은 무이 월드 3D에 있어요.`,5000));
 /* ================= 유적 지도 ================= */
 function openAtlas(){if(!me)return;audio();$('#bMap').classList.remove('bob');try{localStorage.setItem('muui3d-dig-map','1')}catch(e){}const box=$('#sites');box.innerHTML='';
