@@ -270,6 +270,8 @@ const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부�
 let SG=null;
 let MG_OPEN=false;
 const MGINV=new Set();
+/* 카메라 가림막 보강: 지붕·처마처럼 높이 떠 있는 큰 면은 카메라가 뚫고 들어가지 않게 가림막 목록에 더한다 */
+const camAug=()=>{try{if(SITE==='worldmap'||!Array.isArray(CAMM))return;const have=new Set(CAMM),bb=new THREE.Box3(),sz=new THREE.Vector3();let n=0;scene.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||have.has(o)||!o.visible)return;const m=o.material;if(!m||Array.isArray(m)||m.transparent)return;bb.setFromObject(o);bb.getSize(sz);if((Math.max(sz.x,sz.z)>2.5&&bb.min.y>1.6&&sz.y<6)||(bb.max.y>1.5&&Math.max(sz.x,sz.z)>1.5&&Math.max(sz.x,sz.z)<30)){CAMM.push(o);have.add(o);n++}});window.__CAMAUG=(window.__CAMAUG||0)+n}catch(e){}};setTimeout(camAug,3000);setTimeout(camAug,9000);
 try{trk('h3_enter',SITE)}catch(e){}
 /* 현장 특별 도장: 주소 뒤 ?ev=행사코드 로 들어오면 그 행사 도장을 준다(축제·전시 QR용) */
 const EVENTS={demo:{n:'무이 복원단 시연 도장',d:'초인 스튜디오 시연'},cheongju2026:{n:'국가유산 미디어아트 청주 도장',d:'2026 청주 현장'},palbok:{n:'뺄불통가마 관람 도장',d:'전주 팔복예술공장'}};
@@ -395,7 +397,7 @@ function frame(){try{fxTick(Math.min(.05,(performance.now()-(frame._l||performan
  if(window.__CAMFN){const k=window.__CAMFN(performance.now()/1000);if(k){cam.position.set(k[0],k[1],k[2]);cam.lookAt(k[3],k[4],k[5]);if(k[6]&&cam.fov!==k[6]){cam.fov=k[6];cam.updateProjectionMatrix()}}}
  if(SHAKE>0){SHAKE=Math.max(0,SHAKE-1/60);const k=SHAKE*.5;cam.position.x+=(Math.random()-.5)*k;cam.position.y+=(Math.random()-.5)*k;cam.updateMatrixWorld()}if(window.__fcTick)window.__fcTick();R.render(scene,cam)}
 addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()});
-window.__H3={scene,R,THREE,NPC,get COMP(){return COMP},get HORSE(){return HORSE},pegasus,setRide,face(a){yaw=a},SITEB,get AM(){audioOn();return AM},collide,floorAt,get P(){return P},tp(x,z,y=0){P.set(x,y,z);vy=0},cam(y,p,d){camYaw=y;camPitch=p;camDist=d},setFP,SOL,SPOTS,get me(){return me}};
+window.__H3={scene,R,THREE,NPC,get COMP(){return COMP},get HORSE(){return HORSE},pegasus,setRide,face(a){yaw=a},SITEB,get AM(){audioOn();return AM},collide,floorAt,get P(){return P},get CAM(){return cam},tp(x,z,y=0){P.set(x,y,z);vy=0},cam(y,p,d){camYaw=y;camPitch=p;camDist=d},setFP,SOL,SPOTS,get me(){return me}};
 </script>
 </body>
 </html>
