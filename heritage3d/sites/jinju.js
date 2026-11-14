@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,noise,mulb,materials,hipRoof,brackets} from './sungnyemun.js';
 import {placeHanok} from './hanokkit.js';
+import {buildHall} from './hallkit.js';
 const MURL=k=>new URL('../models/jinju/'+k+'.glb',import.meta.url).href;
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 export function buildJinju(opts={}){const mini=!!opts.mini;const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(71);
@@ -25,15 +26,11 @@ export function buildJinju(opts={}){const mini=!!opts.mini;const MT=materials();
   spots.push({x:7,y:0,z:CZ+1.4,r:2.2,t:'의암',h:'촉석루 아래 남강에 있는 바위예요. 임진왜란(1593) 진주성 싸움 뒤 논개가 왜장을 끌어안고 이 바위에서 강으로 뛰어들었다는 이야기가 전해요. 그래서 "의로운 바위", 의암이라 불러요.'})}
  /* ---------- 촉석루: 절벽 위 큰 누각 ---------- */
  const LX=0,LZ=CZ+6.5,W=15,D=10,H1=2.4,PH=3.6;
- {const stn=M(0xb8b1a4),pil=M(0x8a3a2a);const base=box(W+2,.6,D+2,stn);base.position.set(LX,.3,LZ);G.add(base);S(LX-(W+2)/2,LX+(W+2)/2,0,.6,LZ-(D+2)/2,LZ+(D+2)/2);
-  const XS=[-7.5,-4.5,-1.5,1.5,4.5,7.5],ZS=[-5,-1.7,1.7,5];for(const x of XS)for(const z of ZS){const sp=new THREE.Mesh(new THREE.CylinderGeometry(.3,.34,H1,10),stn);sp.position.set(LX+x,.6+H1/2,LZ+z);sp.castShadow=true;G.add(sp);solids.push({cx:LX+x,cz:LZ+z,r:.38,y0:0,y1:H1+.7})}
-  const FY=.6+H1;const fl=box(W+.8,.3,D+.8,M(0x9a7350));fl.position.set(LX,FY+.15,LZ);G.add(fl);S(LX-(W+.8)/2,LX+(W+.8)/2,FY,FY+.3,LZ-(D+.8)/2,LZ+(D+.8)/2);
-  /* 오르는 나무 계단(동쪽) */for(let i=0;i<10;i++){const sh=FY+.3,st=box(1.6,.12,.42,M(0x8a5a34));const y=(i+1)*sh/10;st.position.set(LX+W/2+1.6,y-.06,LZ+3.6-i*.42);G.add(st);S(LX+W/2+.8,LX+W/2+2.4,0,y,LZ+3.6-i*.42-.21,LZ+3.6-i*.42+.21)}
-  for(const x of XS)for(const z of ZS){const p=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,PH,12),pil);p.position.set(LX+x,FY+.3+PH/2,LZ+z);p.castShadow=true;G.add(p);solids.push({cx:LX+x,cz:LZ+z,r:.28,y0:FY,y1:FY+5})}
-  /* 계자 난간 */const rl=M(0x8a3a2a);for(const[x0,x1,z]of[[-7.6,7.6,-5.2],[-7.6,7.6,5.2]]){const b=box(x1-x0,.1,.1,rl);b.position.set(LX+(x0+x1)/2,FY+1.05,LZ+z);G.add(b);S(LX+x0,LX+x1,FY,FY+1.1,LZ+z-.1,LZ+z+.1)}for(const x of[-7.6,7.6]){const b=box(.1,.1,10.4,rl);b.position.set(LX+x,FY+1.05,LZ);G.add(b);S(LX+x-.1,LX+x+.1,FY,FY+1.1,LZ-5.2,x>0?LZ+2.6:LZ+5.2)}
-  if(!mini){{const bk=brackets(MT,7.7,5.2,FY+.3+PH+.05,1.0);bk.position.set(LX,0,LZ);G.add(bk)}const rf=hipRoof(MT,10.2,7.4,5.2,FY+.3+PH+1.2,FY+.3+PH+5.2,.9,.35,{rs:.75});rf.position.set(LX,0,LZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
-  {const cv=document.createElement('canvas');cv.width=640;cv.height=200;const q=cv.getContext('2d');q.fillStyle='#1d1612';q.fillRect(0,0,640,200);q.strokeStyle='#d8a838';q.lineWidth=12;q.strokeRect(8,8,624,184);q.fillStyle='#f2e6c0';q.font='bold 120px "Noto Serif KR","Batang",serif';q.textAlign='center';q.fillText('矗石樓',320,150);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(3,.95),new THREE.MeshBasicMaterial({map:t}));pl.position.set(LX,FY+.3+PH+.75,LZ+5.35);G.add(pl)}
-  spots.push({x:LX,y:FY+.3,z:LZ,r:3,t:'촉석루',h:'남강 절벽 위에 선 진주성의 누각이에요. 평소엔 과거 시험장과 잔치 자리였고, 싸움 때는 장수가 지휘하던 곳이에요. 아래층은 돌기둥, 위층은 마루로 된 누각이에요. 한국전쟁 때 불타 1960년에 다시 지었어요. 계단은 동쪽에 있어요.'});
+ /* 자세한 한옥 부품으로: 아래층 돌기둥, 위층 마루·계자난간·단청, 팔작지붕, 사방이 트인 누각 */
+ const FY=.6+H1;{G.add(buildHall({x:LX,z:LZ,W,D,nx:5,nz:3,FY:.6,PH,loft:{h:H1,stone:true},roof:'hip',name:'矗石樓',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'open',right:'open',rail:true,railGap:[-1.6,.6],stairs:'none',mini,solids,light:false}).group);
+  /* 오르는 나무 계단(동쪽) */for(let i=0;i<10;i++){const sh=FY,st=box(1.6,.12,.42,M(0x8a5a34));const y=(i+1)*sh/10;st.position.set(LX+W/2+1.6,y-.06,LZ+3.6-i*.42);G.add(st);S(LX+W/2+.8,LX+W/2+2.4,0,y,LZ+3.6-i*.42-.21,LZ+3.6-i*.42+.21)}
+  {const lnd=box(1.8,.12,1.4,M(0x8a5a34));lnd.position.set(LX+W/2+1.0,FY-.06,LZ-.6);G.add(lnd);S(LX+W/2+.1,LX+W/2+1.9,0,FY,LZ-1.3,LZ+.1)}
+  spots.push({x:LX,y:FY,z:LZ,r:3,t:'촉석루',h:'남강 절벽 위에 선 진주성의 누각이에요. 평소엔 과거 시험장과 잔치 자리였고, 싸움 때는 장수가 지휘하던 곳이에요. 아래층은 돌기둥, 위층은 마루로 된 누각이에요. 한국전쟁 때 불타 1960년에 다시 지었어요. 계단은 동쪽에 있어요.'});
   spots.push({x:LX,y:0,z:LZ+8,r:2.6,t:'누각 앞마당',h:'계단(동쪽)으로 누각 위에 올라 남강과 의암을 내려다보세요.'})}
  /* ---------- 성벽과 여장(절벽 위) ---------- */
  {const stn=new THREE.MeshStandardMaterial({map:tex(256,128,(q,w,h)=>{q.fillStyle='#9a9284';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=32)for(let x=-(y/32%2)*30;x<w;x+=60){const g=150+(r()*40|0);q.fillStyle=`rgb(${g},${g-5},${g-14})`;q.fillRect(x+2,y+2,56,28)}}),roughness:.95});
