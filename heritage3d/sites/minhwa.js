@@ -2,6 +2,7 @@
    갱신 2026-11-12. 그림은 저작권이 끝난 조선 민화 사진(위키미디어 공용 퍼블릭 도메인. 책가도는 보스턴 미술관 MFAB 1984.824).
    영월에는 한국민화박물관이 있어 무이 민화 쇼츠의 고향으로 둠. 건물은 전시용으로 지은 것(특정 실물 복원 아님). */
 import * as THREE from 'three';
+import {buildHall} from './hallkit.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const T=k=>new URL('../textures/minhwa/'+k+'.jpg',import.meta.url).href;
 export function buildMinhwa(opts={}){const mini=!!opts.mini;const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(29);
@@ -17,15 +18,7 @@ export function buildMinhwa(opts={}){const mini=!!opts.mini;const MT=materials()
  if(!mini){const jm=M(0x4a2a1a,{roughness:.4});for(let i=0;i<9;i++){const s=.5+r()*.35;const j=new THREE.Mesh(new THREE.SphereGeometry(s,16,12),jm);j.scale.y=1.15;j.position.set(9+(i%3)*1.2,s*1.1,6+Math.floor(i/3)*1.2);j.castShadow=true;G.add(j);const lid=new THREE.Mesh(new THREE.CylinderGeometry(s*.55,s*.6,.1,14),jm);lid.position.set(j.position.x,s*2.25,j.position.z);G.add(lid)}const base=box(4.2,.3,4.2,M(0xb3aa98));base.position.set(10.2,.15,7.2);G.add(base);S(8,12.4,0,1.6,5,9.4)}
  /* ---------- 전시 한옥 ---------- */
  const HX=0,HZ=-10,W=22,D=11,FY=.45,PH=4.2;const wall=M(0xf2ede2),pil=M(0x6b4a2e);
- {const base=box(W+1.4,FY,D+1.4,M(0xb3aa98));base.position.set(HX,FY/2,HZ);G.add(base);S(HX-(W+1.4)/2,HX+(W+1.4)/2,0,FY,HZ-(D+1.4)/2,HZ+(D+1.4)/2);
-  for(let i=0;i<3;i++){const st=box(4,FY*(i+1)/3,.4,M(0xb3aa98));st.position.set(HX,FY*(i+1)/6,HZ+D/2+.7+(2-i)*.4+.2);G.add(st);S(HX-2,HX+2,0,FY*(i+1)/3,HZ+D/2+.7+(2-i)*.4,HZ+D/2+.7+(3-i)*.4)}
-  const fl=box(W,.08,D,M(0x9a7350));fl.position.set(HX,FY+.04,HZ);G.add(fl);
-  const bk=box(W,PH,.25,wall);bk.position.set(HX,FY+PH/2,HZ-D/2);G.add(bk);S(HX-W/2,HX+W/2,0,9,HZ-D/2-.2,HZ-D/2+.2);
-  for(const sx of[-1,1]){const sw=box(.25,PH,D,wall);sw.position.set(HX+sx*W/2,FY+PH/2,HZ);G.add(sw);S(HX+sx*W/2-.2,HX+sx*W/2+.2,0,9,HZ-D/2,HZ+D/2)}
-  for(const x of[-11,-6.6,-2.2,2.2,6.6,11]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,12),pil);c.position.set(HX+x,FY+PH/2,HZ+D/2);c.castShadow=true;G.add(c);solids.push({cx:HX+x,cz:HZ+D/2,r:.26,y0:0,y1:9})}
-  const ce=box(W,.15,D,M(0x5a3a22));ce.position.set(HX,FY+PH+.07,HZ);G.add(ce);
-  if(!mini){const rf=hipRoof(MT,W/2+1.6,D/2+1.6,W/2-3,FY+PH+.2,FY+PH+3.4,.6,.25,{plain:true,rs:.6});rf.position.set(HX,0,HZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
-  {const cv=document.createElement('canvas');cv.width=640;cv.height=170;const q=cv.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,640,170);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(6,6,628,158);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 84px "Noto Serif KR",serif';q.fillText('민화 사랑방',320,115);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.4,.9),new THREE.MeshBasicMaterial({map:t}));pl.position.set(HX,FY+PH-.5,HZ+D/2+.25);G.add(pl)}
+ {/* 자세한 한옥 부품으로: 앞이 트인 사랑방 전시실, 익공, 팔작지붕 */G.add(buildHall({x:HX,z:HZ,W,D,nx:5,nz:3,FY,PH,roof:'hip',name:'민화 사랑방',pillar:0x6b4a2e,bracket:'ik',front:'open',back:'wall',left:'wall',right:'wall',mini,solids,light:false,plain:true}).group);
   const lamp1=new THREE.PointLight(0xfff0d8,14,14,1.6);lamp1.position.set(HX-5,FY+PH-.4,HZ);const lamp2=lamp1.clone();lamp2.position.set(HX+5,FY+PH-.4,HZ);G.add(lamp1,lamp2)}
  const Y=FY+2.25;
  /* 뒷벽: 십장생도 병풍(사진 한 장) */art('sipjang',7.2,3.83,HX,FY+2.25,HZ-D/2+.14,0,.15);

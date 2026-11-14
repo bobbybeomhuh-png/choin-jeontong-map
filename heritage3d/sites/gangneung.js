@@ -2,6 +2,7 @@
    갱신 2026-11-12. 그림: 전 신사임당 초충도 8폭과 발문 2장(위키미디어 공용, 공공누리 제1유형, 국립중앙박물관 소장품 사진).
    별당과 전시 정자는 오죽헌(몽룡실) 같은 조선 별당을 본떠 지은 것(실측 아님). 오죽 숲·초충 화단·나비는 그림에서 따 온 연출. */
 import * as THREE from 'three';
+import {buildHall} from './hallkit.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const T=k=>new URL('../textures/gangneung/'+k+'.jpg',import.meta.url).href;
 export function buildGangneung(opts={}){const mini=!!opts.mini;const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(83);
@@ -23,14 +24,7 @@ export function buildGangneung(opts={}){const mini=!!opts.mini;const MT=material
  spots.push({x:-6,y:0,z:-21,r:2.6,t:'오죽',h:'줄기가 까마귀처럼 검은 대나무예요. 신사임당이 태어나고 율곡 이이가 태어난 강릉 집 둘레에 오죽이 많아 집 이름이 오죽헌(烏竹軒)이 되었어요.'});
  /* ---------- 별당(몽룡실을 본뜸) ---------- */
  const HX=-9,HZ=-14,W=10,D=6,FY=.8,PH=3;const wall=M(0xf2ede2),pil=M(0x7a5634);
- {const base=box(W+1.2,FY,D+1.2,M(0xb3aa98));base.position.set(HX,FY/2,HZ);G.add(base);S(HX-(W+1.2)/2,HX+(W+1.2)/2,0,FY,HZ-(D+1.2)/2,HZ+(D+1.2)/2);
-  for(let i=0;i<3;i++){const st=box(2.4,FY*(i+1)/3,.35,M(0xb3aa98));st.position.set(HX,FY*(i+1)/6,HZ+D/2+.6+(2-i)*.35+.17);G.add(st);S(HX-1.2,HX+1.2,0,FY*(i+1)/3,HZ+D/2+.6+(2-i)*.35,HZ+D/2+.6+(3-i)*.35)}
-  const fl=box(W,.06,D,M(0x9a7350));fl.position.set(HX,FY+.03,HZ);G.add(fl);
-  const bk=box(W,PH,.2,wall);bk.position.set(HX,FY+PH/2,HZ-D/2);G.add(bk);S(HX-W/2,HX+W/2,0,9,HZ-D/2-.15,HZ-D/2+.15);for(const sx of[-1,1]){const sw=box(.2,PH,D,wall);sw.position.set(HX+sx*W/2,FY+PH/2,HZ);G.add(sw);S(HX+sx*W/2-.15,HX+sx*W/2+.15,0,9,HZ-D/2,HZ+D/2)}
-  /* 방(왼쪽 두 칸)은 문살 창, 오른쪽은 대청 */const lat=tex(128,128,(q,w,h)=>{q.fillStyle='#efe6cf';q.fillRect(0,0,w,h);q.strokeStyle='#6b4a2e';q.lineWidth=4;for(let i=0;i<=w;i+=16){q.beginPath();q.moveTo(i,0);q.lineTo(i,h);q.stroke();q.beginPath();q.moveTo(0,i);q.lineTo(w,i);q.stroke()}});const dw=new THREE.Mesh(new THREE.PlaneGeometry(W*.48,PH-.5),new THREE.MeshStandardMaterial({map:lat,roughness:.9}));dw.position.set(HX-W*.25,FY+(PH-.5)/2,HZ+D/2-.02);G.add(dw);const dwb=box(W*.48,PH,.12,wall);dwb.position.set(HX-W*.25,FY+PH/2,HZ+D/2-.1);G.add(dwb);S(HX-W/2,HX,0,9,HZ+D/2-.2,HZ+D/2);
-  for(const x of[-W/2,-W/4,0,W/4,W/2]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,PH,10),pil);c.position.set(HX+x,FY+PH/2,HZ+D/2);c.castShadow=true;G.add(c);solids.push({cx:HX+x,cz:HZ+D/2,r:.22,y0:0,y1:9})}
-  if(!mini){const rf=hipRoof(MT,W/2+1.3,D/2+1.3,W/2-1.6,FY+PH+.15,FY+PH+2.5,.45,.2,{plain:true,rs:.5});rf.position.set(HX,0,HZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
-  {const cv=document.createElement('canvas');cv.width=512;cv.height=170;const q=cv.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,512,170);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(6,6,500,158);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 96px "Noto Serif KR",serif';q.fillText('夢龍室',256,122,480);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(1.8,.6),new THREE.MeshBasicMaterial({map:t}));pl.position.set(HX-W*.25,FY+PH-.25,HZ+D/2+.22);G.add(pl)}
+ {/* 자세한 한옥 부품으로: 왼쪽 두 칸 방(띠살문), 오른쪽 두 칸 대청(열림), 익공, 팔작지붕 */G.add(buildHall({x:HX,z:HZ,W,D,nx:4,nz:2,FY,PH,roof:'hip',name:'夢龍室',pillar:0x7a5634,bracket:'ik',front:['door','door','open','open'],entry:-1,back:'wall',left:'wall',right:'window',mini,solids,light:false,plain:true}).group);
   /* 대청에 발문 두 장 */art('cc_9',1.05,1.22,HX+W*.2,FY+1.7,HZ-D/2+.13,0,.08);art('cc_10',1.05,1.22,HX+W*.38,FY+1.7,HZ-D/2+.13,0,.08);
   spots.push({x:HX-W*.25,y:0,z:HZ+D/2+2.4,r:2.2,t:'몽룡실',h:'신사임당이 검은 용이 바다에서 날아드는 꿈을 꾸고 율곡 이이를 낳았다는 방이에요. 그래서 "용꿈 꾼 방", 몽룡실이라 불러요. 오죽헌 별당은 조선 초 집으로 손꼽히게 오래된 살림집이에요. (본떠 지음)'});
   spots.push({x:HX+W*.29,y:FY,z:HZ-.6,r:1.8,t:'발문',h:'초충도 화첩 끝에 후대 학자들이 붙인 글(발문)이에요. 그림이 얼마나 생생한지, 누가 어떻게 간직해 왔는지를 적었어요. (사진: 국립중앙박물관 소장품, 공공누리 제1유형)'})}
