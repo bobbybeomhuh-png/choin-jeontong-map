@@ -10,6 +10,7 @@ import {buildSeokguram} from './seokguram.js';
 import {buildGeobukseon} from './geobukseon.js';
 import {PROV,CITIES,ITEMS} from './worldmap_data.js';
 import {getModel} from './hanokkit.js';
+import {buildScenery,boatRig} from './worldscenery.js';
 /* 쇼츠 목록에 없는 도시를 덧붙임: 청주(용두사지 철당간 자리, 경위도 127.488, 36.636을 같은 투영으로) */if(!CITIES['청주'])CITIES['청주']={x:-6.17,z:-28.76,r:'충북'};
 const LAND_H=.6,WATER_Y=.35;const SHORTS=new URL('../media/shorts/',import.meta.url).href;
 const RCOL={'수도권':0x9fcf5e,'강원':0x5fb86a,'충청':0xc2dc6e,'전라':0xd6d85a,'경북':0x7cc46a,'경남':0xa8d266,'제주':0x6fbf5a,'기타':0x9fcf5e};
@@ -120,7 +121,8 @@ export function buildWorldmap(opts={}){const mini=!!opts.mini;const G=new THREE.
    if(!S.vid){const v=document.createElement('video');v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';v.crossOrigin='anonymous';S.vid=v;const load=()=>{v.src=SHORTS+S.vl[S.idx].v+'.mp4';v.play().catch(()=>{});const nx=k=>S.vl[(S.idx+k)%S.vl.length].v;new THREE.TextureLoader().load(SHORTS+nx(1)+'.jpg',t=>{t.colorSpace=THREE.SRGBColorSpace;S.lm.map=t;S.lm.needsUpdate=true});new THREE.TextureLoader().load(SHORTS+nx(2)+'.jpg',t=>{t.colorSpace=THREE.SRGBColorSpace;S.rm.map=t;S.rm.needsUpdate=true})};
     v.addEventListener('playing',()=>{if(!S.tex){S.tex=new THREE.VideoTexture(v);S.tex.colorSpace=THREE.SRGBColorSpace}S.mid.map=S.tex;S.mid.needsUpdate=true},{});v.addEventListener('ended',()=>{S.idx=(S.idx+1)%S.vl.length;load()});load()}
    else if(S.vid.paused)S.vid.play().catch(()=>{})}};
- const tick=(P,dt)=>{const t=performance.now()/1000;scrTick(P);WT.offset.x+=dt*.004;WT.offset.y+=dt*.003;
+ /* 지역 볼거리와 물가 나룻배 */let SCN=null,BRG=null;if(!mini){try{SCN=buildScenery(G,{provAt,HALL,TOP,WATER_Y,spots,mulb});BRG=boatRig(G,{provAt,WATER_Y})}catch(e){console.warn('볼거리',e)}}
+ const tick=(P,dt)=>{const t=performance.now()/1000;scrTick(P);try{SCN&&SCN.tick(P,dt,t);BRG&&BRG.tick(dt,t)}catch(e){}WT.offset.x+=dt*.004;WT.offset.y+=dt*.003;
   for(const c of ANIM.clouds){c.position.x+=c.userData.v*dt;if(c.position.x>220)c.position.x=-220}
   for(const b of ANIM.boats){const u=b.userData;u.a+=u.w*dt;b.position.x=u.cx+Math.cos(u.a)*u.rad;b.position.z=u.cz+Math.sin(u.a)*u.rad;b.rotation.y=-u.a+(u.w>0?0:Math.PI);b.position.y=WATER_Y+Math.sin(t*1.3+u.cx)*.08;b.rotation.z=Math.sin(t*1.1+u.cz)*.04}
   for(const g of ANIM.birds){const u=g.userData;u.a+=dt*.12;g.position.set(u.cx+Math.cos(u.a)*u.rad,u.y+Math.sin(t*.5+u.cx)*2,u.cz+Math.sin(u.a)*u.rad);g.rotation.y=-u.a;g.children.forEach((b,i)=>{b.scale.y=1+Math.sin(t*7+i)*.6})}
@@ -132,7 +134,7 @@ export function buildWorldmap(opts={}){const mini=!!opts.mini;const G=new THREE.
   env:{plaza:null,beds:false,sea:false,trees:false,noHills:true,groundY:-3,fog:[160,620],sign:{x:CITIES['서울'].x+4.5,z:CITIES['서울'].z+10,y:TOP,lines:['무이 전국 지도','쇼츠 속 유산이 있는 16곳','도시로 날아가기','바다는 걸어서 건너요']},treeAvoid:()=>false},
   npc:[['carpenter',[[CITIES['서울'].x-3,TOP,CITIES['서울'].z+6],[CITIES['서울'].x+3,TOP,CITIES['서울'].z+6]]],['ceramic',[[CITIES['경주'].x-3,TOP,CITIES['경주'].z+6],[CITIES['경주'].x+3,TOP,CITIES['경주'].z+6]]],['science',[[CITIES['여수'].x-3,TOP,CITIES['여수'].z+6],[CITIES['여수'].x+3,TOP,CITIES['여수'].z+6]]]],
   level:P=>{let best=null,bd=28;for(const[nm,c]of CITYL){const d=Math.hypot(P.x-c.x,P.z-c.z);if(d<bd){bd=d;best=nm}}if(best)return best;const p=provAt(P.x,P.z);return p?p.r:'바다'},
-  camCap:()=>Infinity,
+  camCap:()=>Infinity,bounds:[-175,215,-175,215],
   baseAt:(x,z)=>provAt(x,z)?TOP+Math.max(0,HALL(x,z)-.3):0,
   mini:{S:.78,ox:8,oz:18,draw(g,X,Z,S){g.fillStyle='#3a7a8c';g.fillRect(0,0,300,300);for(const p of PROV){g.fillStyle=RCSS[p.r]||'#8fae62';g.beginPath();p.rings[0].forEach(([x,z],i)=>i?g.lineTo(X(x),Z(z)):g.moveTo(X(x),Z(z)));g.closePath();g.fill()}g.fillStyle='#a8352a';for(const[,c]of CITYL){g.beginPath();g.arc(X(c.x),Z(c.z),3,0,7);g.fill()}}}};
  /* 유산에서 돌아오면 그 도시 앞에서 시작 */const back={cheongju:'청주',sungnyemun:'서울',seokguram:'경주',geobukseon:'여수',gyeongju:'경주',hanyang:'서울',minhwa:'영월',gangjin:'강진',buyeo:'부여',jinju:'진주',suwon:'수원',icheon:'이천',tongyeong:'통영',gangneung:'강릉',hapcheon:'합천',yeongju:'영주',yesan:'예산',naju:'나주',mungyeong:'문경'}[new URLSearchParams(location.search).get('city')]||'서울';const SC0=CITIES[back];
