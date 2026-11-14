@@ -22,8 +22,15 @@ export const HANOK={
 const FOOT={sarang:[16.1,10.1],nongga:[17.7,7.1],hall:[19.4,7.4],wall:[12.3,1.7],gate:[11.8,8.2],choga1:[14.9,14],choga2:[22.6,6.8]};
 export function footOf(k,ry=0,s=1){const[w,d]=FOOT[k];const ax=Math.abs(Math.sin(ry))>.5;return ax?[d*s,w*s]:[w*s,d*s]}
 /* 한 채 세우기. SOL에 충돌 상자(속까지 막음)를 넣는다. hole=true면 대문처럼 가운데를 비움 */
-export function placeHanok(G,SOL,k,x,z,ry=0,{y=0,s=1,sx=1,solid=true,hole=false,TOUCH=false}={}){const H=HANOK[k];const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;G.add(g);
+export function placeHanok(G,SOL,k,x,z,ry=0,{y=0,s=1,sx=1,solid=true,hole=false,TOUCH=false,walls=false}={}){const H=HANOK[k];const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;G.add(g);
  getModel(H.f).then(src=>{if(!src)return;const o=src.clone();const b=new THREE.Box3().setFromObject(o),sz=b.getSize(new THREE.Vector3());const sc=(H.h?H.h/sz.y:1)*s;o.scale.setScalar(sc);o.scale.x*=sx;/* 담장처럼 길이만 늘이고 높이·두께는 그대로 */o.rotation.y=H.fr;o.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(o);o.position.set(-(b2.min.x+b2.max.x)/2,-b2.min.y,-(b2.min.z+b2.max.z)/2);if(TOUCH)o.traverse(e=>{if(e.isMesh)e.castShadow=false});g.add(o)});
+ /* 큰채(hall) 모델은 뒤·옆이 기둥만 있어 속이 비침 → 뒤와 양옆에 화방벽+회벽+살창을 채움(앞은 문짝이 있으니 그대로). 몸채 범위는 모델을 재서 얻은 값 */
+ if(walls&&k==='hall'){const W=new THREE.Group();g.add(W);const mk=c=>new THREE.MeshStandardMaterial({color:c,roughness:.9});const pl=mk(0xefe6d6),hw=mk(0x9a5a48),wd=mk(0x5a3a22),wn=mk(0x3a4a3a);const X0=-8.5,X1=8.45,Z0=-2.52,Z1=2.5,Y0=.45,Y1=3.0;
+  const bx=(w,h,d,m,x,yy,z)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.set(x,yy,z);b.castShadow=b.receiveShadow=true;W.add(b)};
+  const wall=(ax,az,bx2,bz,win)=>{const L=Math.hypot(bx2-ax,bz-az),cx=(ax+bx2)/2,cz=(az+bz)/2,along=Math.abs(bx2-ax)>Math.abs(bz-az);const t=.2;const W2=along?L:t,D2=along?t:L;bx(W2,.9,D2,hw,cx,Y0+.45,cz);bx(W2,Y1-Y0-.9,D2,pl,cx,Y0+.9+(Y1-Y0-.9)/2,cz);bx(along?L:t+.04,.14,along?t+.04:L,wd,cx,Y0+.92,cz);bx(along?L:t+.04,.14,along?t+.04:L,wd,cx,Y1-.05,cz);
+   const n=Math.max(1,Math.round(L/3.4));for(let i=0;i<n;i++){const u=-L/2+L*(i+.5)/n;const x=along?cx+u:cx,z=along?cz:cz+u;if(!win)continue;bx(along?1:t+.06,.7,along?t+.06:1,wn,x,Y0+1.65,z);for(let q=-2;q<=2;q++)bx(along?.04:t+.08,.7,along?t+.08:.04,wd,along?x+q*.2:x,Y0+1.65,along?z:z+q*.2)}};
+  wall(X0,Z0,X1,Z0,true);wall(X0,Z0,X0,Z1,true);wall(X1,Z0,X1,Z1,true);
+  if(SOL){const c=Math.cos(ry),sn=Math.sin(ry);const tw=(lx,lz)=>[x+lx*c+lz*sn,z-lx*sn+lz*c];for(const [a,b2,cc,d] of[[X0,X1,Z0-.15,Z0+.15],[X0-.15,X0+.15,Z0,Z1],[X1-.15,X1+.15,Z0,Z1]]){const p1=tw(a,cc),p2=tw(b2,d);SOL.push({x0:Math.min(p1[0],p2[0]),x1:Math.max(p1[0],p2[0]),y0:-9,y1:9,z0:Math.min(p1[1],p2[1]),z1:Math.max(p1[1],p2[1])})}}}
  if(solid&&SOL){const[w,d]=footOf(k,ry,s);const hw=w/2,hd=d/2;if(hole){const ax=Math.abs(Math.sin(ry))>.5;const t=1.4;/* 대문: 양옆 기둥 칸만 막고 가운데 통로는 비움 */if(ax){SOL.push({x0:x-hw,x1:x+hw,y0:-9,y1:20,z0:z-hd,z1:z-hd+t},{x0:x-hw,x1:x+hw,y0:-9,y1:20,z0:z+hd-t,z1:z+hd})}else{SOL.push({x0:x-hw,x1:x-hw+t,y0:-9,y1:20,z0:z-hd,z1:z+hd},{x0:x+hw-t,x1:x+hw,y0:-9,y1:20,z0:z-hd,z1:z+hd})}}
   else SOL.push({x0:x-hw+.3,x1:x+hw-.3,y0:-9,y1:20,z0:z-hd+.3,z1:z+hd-.3})}
  return g}

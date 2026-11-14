@@ -57,7 +57,7 @@ export function buildJinju(opts={}){const mini=!!opts.mini;const MT=materials();
   spots.push({x:AX+4,y:.45,z:AZ+2.2,r:1.6,t:'판갑',h:'쇠판을 이어 몸통을 감싼 판갑과 팔뚝을 지키는 팔 보호구예요. 오래전부터 쓰인 갑옷 방식이에요. (3D: 국가유산청 재현 에셋)'});
   spots.push({x:AX,y:.45,z:AZ-1.2,r:2,t:'무기 걸개',h:'왼쪽부터 월도(긴 자루 끝에 반달 칼날), 사인검(호랑이 기운을 담은 칼), 화승총(조총), 각궁(소뿔로 만든 조선 활), 쇠뇌예요. 조선 군사는 특히 활쏘기에 강했어요. (3D: 국가유산청 재현 에셋)'})}
  /* ---------- 성 안 건물: 공북문, 창렬사, 영남포정사(공개 3D 한옥으로) ---------- */
- if(!mini){const TOUCH=matchMedia('(pointer:coarse)').matches;placeHanok(G,solids,'gate',0,31.5,0,{hole:true,TOUCH});placeHanok(G,solids,'hall',-24,22,0,{TOUCH});placeHanok(G,solids,'sarang',24.5,24,Math.PI,{TOUCH});
+ if(!mini){const TOUCH=matchMedia('(pointer:coarse)').matches;placeHanok(G,solids,'gate',0,31.5,0,{hole:true,TOUCH});placeHanok(G,solids,'hall',-24,22,0,{TOUCH,walls:true});placeHanok(G,solids,'sarang',24.5,24,Math.PI,{TOUCH});
   spots.push({x:0,y:0,z:26,r:2.4,t:'공북문',h:'진주성의 정문이에요. 북쪽 임금이 계신 곳을 향해 절한다는 뜻으로 이름 지었어요. 2002년에 옛 모습대로 다시 세웠어요. (3D: 한국문화정보원 외대문, CC BY · 본떠 세움)'});
   spots.push({x:-24,y:0,z:16,r:2.4,t:'창렬사',h:'진주성 싸움에서 목숨을 바친 김시민 장군과 김천일 장군 등을 모신 사당이에요. 해마다 제사를 지내 그 뜻을 기려요. (3D 한옥: chrishong, CC BY · 본떠 세움)'});
   spots.push({x:24.5,y:0,z:17,r:2.4,t:'영남포정사',h:'조선 후기 경상우도 관찰사가 일을 보던 관아예요. 진주가 경상도 서쪽의 중심 고을이었다는 걸 보여 줘요. 지금은 문루가 남아 있어요. (3D 한옥: chrishong, CC BY · 본떠 세움)'})}
