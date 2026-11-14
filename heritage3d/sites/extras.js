@@ -8,6 +8,7 @@ import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 import {buildMarket} from './market.js';
 import {COURTS} from './envkit.js';
 import {placeHanok,footOf} from './hanokkit.js';
+import {buildHall} from './hallkit.js';
 const U=p=>new URL('../models/'+p+'.glb',import.meta.url).href;
 const gl=new GLTFLoader();{const d=new DRACOLoader();d.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(d)}
 const CACHE={};function getModel(p,cb){if(!CACHE[p])CACHE[p]=new Promise(res=>gl.load(U(p),m=>res(m.scene),undefined,()=>res(null)));CACHE[p].then(s=>s&&cb(s))}
@@ -49,7 +50,7 @@ export function buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS,SB){const C=SITES[SITE
   G.userData.village=put}}
  /* 시장 */if(C.market){const rows=C.market.slice();rows.carts=[];buildMarket(G,SOL,[],rows,{seed:SITE.length})}
  const fx=new Set(C.fx||[]);const spots=[];
- const pav=(x,z,W,D,PH,FY,col=0x8a3a2a)=>{const base=box(W+1,FY,D+1,M(0xb3aa98));base.position.set(x,FY/2,z);G.add(base);S(x-(W+1)/2,x+(W+1)/2,-9,FY,z-(D+1)/2,z+(D+1)/2);for(const sx of[-1,1])for(const sz of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),M(col));c.position.set(x+sx*W/2,FY+PH/2,z+sz*D/2);c.castShadow=true;G.add(c);SOL.push({cx:x+sx*W/2,cz:z+sz*D/2,r:.26,y0:-9,y1:20})}const rf=hipRoof(MT,W/2+1.2,D/2+1.2,Math.max(.6,W/2-1.4),FY+PH+.1,FY+PH+2.2,.45,.18,{plain:true,rs:.5});rf.position.set(x,0,z);rf.traverse(o=>{if(o.isMesh)o.castShadow=!TOUCH});G.add(rf)};
+ const pav=(x,z,W,D,PH,FY,col=0x8a3a2a)=>{G.add(buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3.6)),nz:1,FY,PH,roof:'hip',pillar:col,bracket:'ik',front:'open',left:'open',right:'open',back:'open',solids:SOL,light:false,plain:true,roofScale:.7}).group)};
  const bellPav=(x,z)=>{pav(x,z,4.4,4.4,3.6,.5);const bell=new THREE.Mesh(new THREE.LatheGeometry([[.001,1.3],[.45,1.28],[.62,1.05],[.7,.5],[.82,.05],[.86,0],[.8,0]].map(([a,b])=>new THREE.Vector2(a,b)),24),M(0x5a6a5a,{roughness:.45,metalness:.6,side:THREE.DoubleSide}));bell.position.set(x,2,z);bell.castShadow=true;G.add(bell);spots.push({x:x,y:0,z:z+4,r:2.2,t:'범종각',h:'절에서 새벽과 저녁에 종을 쳐 하루를 열고 닫아요. 종소리가 골짜기를 따라 멀리 퍼져요. (본떠 지음)'})};
  /* 한양: 드므(방화수 그릇)와 정료대(횃불 받침) */if(fx.has('drumu')){for(const [x,z] of[[-16,-24],[16,-24]]){if(hit(x,z,.9))continue;const d=new THREE.Mesh(new THREE.LatheGeometry([[.001,0],[.55,0],[.75,.15],[.8,.6],[.85,.7],[.001,.7]].map(([a,b])=>new THREE.Vector2(a,b)),24),M(0x3a4a3a,{metalness:.6,roughness:.4}));d.position.set(x,.3,z);d.castShadow=true;G.add(d);const st=box(1.4,.3,1.4,M(0xa8a196));st.position.set(x,.15,z);G.add(st);const w=new THREE.Mesh(new THREE.CircleGeometry(.75,20).rotateX(-Math.PI/2),M(0x506a78,{roughness:.05,metalness:.3}));w.position.set(x,.95,z);G.add(w);SOL.push({cx:x,cz:z,r:.85,y0:-9,y1:1.2})}
    spots.push({x:16,y:0,z:-21.6,r:1.8,t:'드므',h:'궁궐 전각 둘레에 놓은 넓은 쇠 그릇이에요. 물을 담아 두면 불귀신이 제 얼굴을 보고 놀라 달아난다고 믿었고, 실제로 불을 끄는 물로도 썼어요.'})}
