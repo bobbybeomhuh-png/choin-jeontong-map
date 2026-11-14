@@ -6,12 +6,14 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 import {buildMarket} from './market.js';
+import {COURTS} from './envkit.js';
+import {placeHanok,footOf} from './hanokkit.js';
 const U=p=>new URL('../models/'+p+'.glb',import.meta.url).href;
 const gl=new GLTFLoader();{const d=new DRACOLoader();d.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(d)}
 const CACHE={};function getModel(p,cb){if(!CACHE[p])CACHE[p]=new Promise(res=>gl.load(U(p),m=>res(m.scene),undefined,()=>res(null)));CACHE[p].then(s=>s&&cb(s))}
 /* 초가: [종류 1|2, x, z, ry]  1=ㄱ자 집(약 15x14m), 2=일자 집(약 23x7m) */
 const SITES={
- hanyang:{pines:[[-50,10,11],[52,-6,10],[-54,-30,10],[50,-40,11],[-48,40,9],[48,42,10]],fx:['drumu','jeongnyo']},
+ hanyang:{village:false,pines:[[-50,10,11],[52,-6,10],[-54,-30,10],[50,-40,11],[-48,40,9],[48,42,10]],fx:['drumu','jeongnyo']},
  minhwa:{pines:[[-28,26,9],[27,24,10],[-30,-26,10],[28,-28,9]],chogas:[[1,-40,4,Math.PI/2],[2,40,-6,Math.PI/2],[1,-36,38,0],[2,34,36,0]],fx:['peony']},
  gangjin:{pines:[[-34,30,9],[33,28,10],[-36,-30,10]],chogas:[[2,-44,0,Math.PI/2],[1,40,4,-Math.PI/2],[2,44,40,Math.PI/2]],fx:['onggi']},
  icheon:{pines:[[-34,30,9],[33,28,10],[-36,-30,10]],chogas:[[2,-44,0,Math.PI/2],[1,40,4,-Math.PI/2],[2,44,40,Math.PI/2]],fx:['onggi']},
@@ -23,8 +25,8 @@ const SITES={
  yesan:{pines:[[-30,10,10],[30,12,9],[-30,-24,10],[30,-26,11]],fx:['bell2']},
  naju:{pines:[[-40,20,10],[40,26,9],[-42,-40,10]],chogas:[[2,-52,30,Math.PI/2],[1,52,30,0]],fx:['dig']},
  mungyeong:{pines:[[-36,26,10],[36,24,9],[-38,-30,10]],chogas:[[1,-46,6,Math.PI/2],[2,44,-4,Math.PI/2],[2,-44,38,Math.PI/2]],fx:['racks','onggi']},
- village:{pines:[[-24,22,9],[24,24,10],[-26,-20,10],[26,-22,9]]}};
-export function buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS){const C=SITES[SITE];if(!C)return;const G=new THREE.Group();scene.add(G);const r=mulb(SITE.length*31+7);const MT=materials();
+ village:{village:false,pines:[[-24,22,9],[24,24,10],[-26,-20,10],[26,-22,9]]}};
+export function buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS,SB){const C=SITES[SITE];if(!C)return;const G=new THREE.Group();scene.add(G);const r=mulb(SITE.length*31+7);const MT=materials();
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
  const S=(x0,x1,y0,y1,z0,z1)=>SOL.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
@@ -32,6 +34,19 @@ export function buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS){const C=SITES[SITE];i
  /* 소나무 */if(C.pines){const P=C.pines.filter(([x,z])=>!hit(x,z,.8));getModel('misc/pine_lo',src=>{src.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.material.side=THREE.DoubleSide}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(new THREE.Vector3());for(const [x,z,h] of P){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=x*.37+z;G.add(o)}});for(const [x,z] of P)SOL.push({cx:x,cz:z,r:.5,y0:-9,y1:20})}
  /* 초가 */if(C.chogas){for(const [k,x,z,ry] of C.chogas){const w=k===1?14:22.6,d=k===1?13.4:6.8;const ax=Math.abs(Math.sin(ry))>.5;const hw=(ax?d:w)/2,hd=(ax?w:d)/2;if(hit(x,z,0)&&SOL.some(s=>!s.r&&x>s.x0&&x<s.x1&&z>s.z0&&z<s.z1))continue;
    getModel('misc/choga'+k,src=>{const o=src.clone();o.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.receiveShadow=true}});o.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(o);const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;o.position.set(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);g.add(o);G.add(g)});S(x-hw,x+hw,-9,6,z-hd,z+hd)}}
+ /* 한옥 마을(2026-11-14): 담 바깥 세 면에 공개 3D 한옥을 두르고, 담 안 넓게 빈 곳에 한두 채. 의뢰 지점·시작 자리·무이 걷는 길은 피한다 */
+ if(C.village!==false){const CT=COURTS[SITE];if(CT){const gx=CT.gx!=null?CT.gx:(CT.x0+CT.x1)/2;const NPCS=((SB&&SB.npc)||[]).map(n=>n[1]).filter(Boolean);const SPT=(SPOTS||[]).concat(SB&&SB.spawn?[{x:SB.spawn.x,z:SB.spawn.z,r:6}]:[]);
+  const segD=(px,pz,a,b)=>{const ax=a[0],az=a.length>2?a[2]:a[1],bx=b[0],bz=b.length>2?b[2]:b[1];const vx=bx-ax,vz=bz-az,L=vx*vx+vz*vz||1;let t=((px-ax)*vx+(pz-az)*vz)/L;t=Math.max(0,Math.min(1,t));return Math.hypot(px-ax-vx*t,pz-az-vz*t)};
+  const free=(x,z,w,d,m)=>{const x0=x-w/2-m,x1=x+w/2+m,z0=z-d/2-m,z1=z+d/2+m;if(SOL.some(s=>s.r?(s.cx>x0-s.r&&s.cx<x1+s.r&&s.cz>z0-s.r&&s.cz<z1+s.r&&s.y1>0):(s.x1>x0&&s.x0<x1&&s.z1>z0&&s.z0<z1&&s.y1>0)))return false;if(SPT.some(p=>p.x>x0-(p.r||2)-1.5&&p.x<x1+(p.r||2)+1.5&&p.z>z0-(p.r||2)-1.5&&p.z<z1+(p.r||2)+1.5))return false;
+   for(const P of NPCS)for(let i=0;i<P.length;i++){const a=P[i],b=P[(i+1)%P.length];const cx=Math.max(x0,Math.min(x1,0)),_=cx;for(const[px,pz]of[[x0,z0],[x1,z0],[x0,z1],[x1,z1],[x,z]])if(segD(px,pz,a,b)<1.2)return false;const ax=a[0],az=a.length>2?a[2]:a[1];if(ax>x0&&ax<x1&&az>z0&&az<z1)return false}return true};
+  const KINDS=C.vk||['choga1','sarang','choga2','nongga','choga1','hall','choga2','sarang'];let ki=(SITE.length*3)%KINDS.length;const put=[];
+  const side=(axis,fixed,from,to,ry,dir)=>{let t=from;let tries=0;while((dir>0?t<to:t>to)&&tries++<24){const k=KINDS[ki%KINDS.length];const[w,d]=footOf(k,ry);const along=axis==='z'?d:w,across=axis==='z'?w:d;const c=fixed+Math.sign(fixed-(axis==='z'?(CT.x0+CT.x1)/2:(CT.z0+CT.z1)/2))*(across/2);const pos=axis==='z'?[c,t+dir*along/2]:[t+dir*along/2,c];
+    if(axis==='x'&&Math.abs(pos[0]-gx)<(along/2+(CT.gate||6)/2+5)){t+=dir*4;continue}
+    if(free(pos[0],pos[1],w,d,1)){placeHanok(G,SOL,k,pos[0],pos[1],ry,{TOUCH});put.push(k);ki++;t+=dir*(along+3.5+r()*3)}else t+=dir*3}};
+  const gap=6+(CT.wall==='fort'?2:0);const zEnd=CT.noBack?CT.z0+2:CT.z0-14;side('z',CT.x0-gap,CT.z1+4,zEnd,Math.PI/2,-1);side('z',CT.x1+gap,CT.z1+4,zEnd,-Math.PI/2,-1);if(!CT.noFront)side('x',CT.z1+gap,CT.x0-gap,CT.x1+gap,Math.PI,1);
+  /* 담 안: 마당 가장자리 쪽 빈 곳 */const NIN=C.vin!=null?C.vin:(CT.wall==='none'?0:2);let nin=0;if(NIN){const cand=[];for(let x=CT.x0+3;x<=CT.x1-3;x+=2)for(let z=CT.z0+3;z<=CT.z1-3;z+=2)cand.push([x,z,Math.min(x-CT.x0,CT.x1-x,z-CT.z0)]);cand.sort((a,b)=>a[2]-b[2]);
+   for(const k of['nongga','sarang','nongga']){if(nin>=NIN)break;for(const[x,z]of cand){const ry=(x-CT.x0<CT.x1-x)?Math.PI/2:-Math.PI/2;const near=Math.min(x-CT.x0,CT.x1-x)<Math.min(z-CT.z0,99);const R2=near?ry:0;const[w,d]=footOf(k,R2);if(x-w/2<CT.x0+1.2||x+w/2>CT.x1-1.2||z-d/2<CT.z0+1.2||z+d/2>CT.z1-8)continue;if(Math.abs(x-gx)<w/2+6&&z+d/2>CT.z1-14)continue;if(free(x,z,w,d,2.2)){placeHanok(G,SOL,k,x,z,R2,{TOUCH});nin++;put.push('in:'+k);break}}}}
+  G.userData.village=put}}
  /* 시장 */if(C.market){const rows=C.market.slice();rows.carts=[];buildMarket(G,SOL,[],rows,{seed:SITE.length})}
  const fx=new Set(C.fx||[]);const spots=[];
  const pav=(x,z,W,D,PH,FY,col=0x8a3a2a)=>{const base=box(W+1,FY,D+1,M(0xb3aa98));base.position.set(x,FY/2,z);G.add(base);S(x-(W+1)/2,x+(W+1)/2,-9,FY,z-(D+1)/2,z+(D+1)/2);for(const sx of[-1,1])for(const sz of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),M(col));c.position.set(x+sx*W/2,FY+PH/2,z+sz*D/2);c.castShadow=true;G.add(c);SOL.push({cx:x+sx*W/2,cz:z+sz*D/2,r:.26,y0:-9,y1:20})}const rf=hipRoof(MT,W/2+1.2,D/2+1.2,Math.max(.6,W/2-1.4),FY+PH+.1,FY+PH+2.2,.45,.18,{plain:true,rs:.5});rf.position.set(x,0,z);rf.traverse(o=>{if(o.isMesh)o.castShadow=!TOUCH});G.add(rf)};
