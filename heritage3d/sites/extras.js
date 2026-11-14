@@ -2,7 +2,7 @@
    갱신 2026-11-12. index.html이 공통 바탕(envkit) 다음에 부른다. */
 import * as THREE from 'three';
 import {koreanBell} from './bellkit.js';
-import {plantBroad} from './treekit.js';
+import {plantBroad,tamePineRoots} from './treekit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
@@ -33,7 +33,7 @@ export function buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS,SB){const C=SITES[SITE
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
  const S=(x0,x1,y0,y1,z0,z1)=>SOL.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
  const hit=(x,z,rr)=>SOL.some(s=>s.r?Math.hypot(x-s.cx,z-s.cz)<s.r+rr:(x>s.x0-rr&&x<s.x1+rr&&z>s.z0-rr&&z<s.z1+rr));
- /* 소나무 */if(C.pines){const P=C.pines.filter(([x,z])=>!hit(x,z,.8));getModel('misc/pine_lo',src=>{src.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.material.side=THREE.DoubleSide}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(new THREE.Vector3());for(const [x,z,h] of P){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=x*.37+z;G.add(o)}});for(const [x,z] of P)SOL.push({cx:x,cz:z,r:.5,y0:-9,y1:20})}
+ /* 소나무 */if(C.pines){const P=C.pines.filter(([x,z])=>!hit(x,z,.8));getModel('misc/pine_lo',src=>{tamePineRoots(src);src.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.material.side=THREE.DoubleSide}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(new THREE.Vector3());for(const [x,z,h] of P){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=x*.37+z;G.add(o)}});for(const [x,z] of P)SOL.push({cx:x,cz:z,r:.5,y0:-9,y1:20})}
  /* 초가 */if(C.chogas){for(const [k,x,z,ry] of C.chogas){const w=k===1?14:22.6,d=k===1?13.4:6.8;const ax=Math.abs(Math.sin(ry))>.5;const hw=(ax?d:w)/2,hd=(ax?w:d)/2;if(hit(x,z,0)&&SOL.some(s=>!s.r&&x>s.x0&&x<s.x1&&z>s.z0&&z<s.z1))continue;
    getModel('misc/choga'+k,src=>{const o=src.clone();o.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.receiveShadow=true}});o.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(o);const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;o.position.set(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);g.add(o);G.add(g)});S(x-hw,x+hw,-9,6,z-hd,z+hd)}}
  /* 한옥 마을(2026-11-14): 담 바깥 세 면에 공개 3D 한옥을 두르고, 담 안 넓게 빈 곳에 한두 채. 의뢰 지점·시작 자리·무이 걷는 길은 피한다 */

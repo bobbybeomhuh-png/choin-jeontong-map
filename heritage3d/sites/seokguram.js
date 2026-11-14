@@ -2,6 +2,7 @@
    ⏱ 2026-11-12 만듦. 구성: 앞 목조 전각 → 전실(팔부신중) → 비도(금강역사·사천왕) → 둥근 주실(본존불·십일면관음·나한·보살·감실·돔 천장·연꽃 덮개돌) + 흙 봉분.
    치수는 공개 자료의 대략값(주실 지름 약 6.8m, 본존불 약 3.3m·대좌까지 약 5m)을 따름. */
 import * as THREE from 'three';
+import {tamePineRoots} from './treekit.js';
 import {koreanBell,striker} from './bellkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 /* 본존불 몸: 국가유산청(KOREA HERITAGE SERVICE) 「Stone Seated Vairocana Buddha Statue」(CC BY 4.0) 3D 스캔에서 불상 몸만 떼어 씀. 광배·팔각 대좌는 빼고 석굴암식 연꽃 대좌·뒷벽 광배 위에 올림. 손 모양은 원본(지권인) 그대로라 석굴암 항마촉지인과 다름. */
@@ -191,7 +192,7 @@ export function buildSeokguram(opts={}){const MT=materials();const G=new THREE.G
    spots.push({x:X+1.6,y:0,z:Z+1.4,r:1.6,t:'약수터',h:'석굴암에는 예부터 샘물이 솟았어요. 일제강점기 수리 때 샘물길을 잘못 건드려 석굴 안에 습기가 차는 문제가 생겼다고 해요. 물과 바람의 길이 석굴암을 지켜 온 비밀이었어요.'})}
   /* 동해 전망 난간(마당 남쪽 끝) */{const Z=34.5;const dk=bx(16,.3,3,Mk(0xb3aa98));dk.position.set(0,.15,Z);G.add(dk);for(let i=0;i<=8;i++){const p=bx(.14,1,.14,Mk(0x6b4a2e));p.position.set(-8+i*2,.8,Z+1.4);G.add(p)}const rl=bx(16,.1,.1,Mk(0x6b4a2e));rl.position.set(0,1.25,Z+1.4);G.add(rl);SS(-8,8,0,1.4,Z+1.3,Z+1.5);
    spots.push({x:0,y:.3,z:Z,r:2.6,t:'동해 전망',h:'석굴암 본존불은 동남쪽 동해를 바라보고 앉아 있어요. 동지 무렵 해 뜨는 쪽과 거의 맞아서, 새벽 해가 본존불 이마를 비춘다는 이야기가 전해요.'})}
-  /* 실측 소나무 */if(!mini){const P=[[-21,30,10],[22,33,9],[-25,6,11],[26,-3,10],[-20,-15,9.5],[19,-17,10],[-26,20,8.5],[27,16,9]];new GLTFLoader().load(new URL('../models/misc/pine_lo.glb',import.meta.url).href,m=>{const src=m.scene;const TOUCH=matchMedia('(pointer:coarse)').matches;src.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.material.side=THREE.DoubleSide}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(new THREE.Vector3());for(const [x,z,h] of P){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=z*.3;G.add(o)}});for(const [x,z] of P)solids.push({cx:x,cz:z,r:.5,y0:0,y1:9})}}
+  /* 실측 소나무 */if(!mini){const P=[[-21,30,10],[22,33,9],[-25,6,11],[26,-3,10],[-20,-15,9.5],[19,-17,10],[-26,20,8.5],[27,16,9]];new GLTFLoader().load(new URL('../models/misc/pine_lo.glb',import.meta.url).href,m=>{const src=tamePineRoots(m.scene);const TOUCH=matchMedia('(pointer:coarse)').matches;src.traverse(e=>{if(e.isMesh){e.castShadow=!TOUCH;e.material.side=THREE.DoubleSide}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(new THREE.Vector3());for(const [x,z,h] of P){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=z*.3;G.add(o)}});for(const [x,z] of P)solids.push({cx:x,cz:z,r:.5,y0:0,y1:9})}}
  /* 실내 조명은 건물 가까이 있을 때만 켠다(바깥에서는 계산을 아낀다) */const IL=G.userData.inLights||[];let lon=null;const tick=P=>{const on=P.z<12&&Math.abs(P.x)<9;if(on!==lon){lon=on;for(const l of IL){if(l.userData.i0===undefined)l.userData.i0=l.intensity;l.visible=true;l.intensity=on?l.userData.i0:0}}};/* 빛 개수를 바꾸면 모든 재질을 다시 만들어 2초 멈춤: 켜고 끄는 대신 밝기만 */
  return{tick,group:G,solids,cam,spots,spawn:{x:0,z:24,yaw:Math.PI},size:{T,R,CZ},
   title:'경주 석굴암 · 실제 크기',
