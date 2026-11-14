@@ -76,12 +76,28 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  function addItem(par,it){const P=PARTS[it.k];const g=new THREE.Group();g.position.set(it.x,TOP,it.z);g.rotation.y=(it.r||0)*Math.PI/2;g.userData.it=it;par.add(g);buildPart(g,it.k);return g}
  function hanok(g,W,D,H){/* 기단 */box(W+.8,.45,D+.8,mats.stone,0,.22,0,g);
   /* 기둥(어두운 나무) */const cols=Math.round(W/2.4);for(let i=0;i<=cols;i++)for(const z of[-D/2,D/2]){cyl(.13,.15,H,mats.woodD,-W/2+i*W/cols,.45+H/2,z,g,8)}for(const x of[-W/2,W/2])cyl(.13,.15,H,mats.woodD,x,.45+H/2,0,g,8);
-  /* 앞은 통유리, 옆·뒤는 흰 벽 + 창살 띠 */const gl=new THREE.Mesh(new THREE.PlaneGeometry(W-.3,H-.4),mats.glass);gl.position.set(0,.45+(H-.4)/2+.05,D/2-.05);g.add(gl);for(let i=1;i<cols;i++)box(.06,H-.4,.08,mats.woodD,-W/2+i*W/cols,.45+(H-.4)/2+.05,D/2-.05,g);
+  /* 앞은 통유리, 옆·뒤는 흰 벽 + 창살 띠 *//* 문 자리(기둥 사이 한 칸)는 비워 드나들게 */const dc=doorX(W),gh=H-.4,gy=.45+gh/2+.05;for(const [a,b] of[[-W/2+.15,dc-.7],[dc+.7,W/2-.15]]){const gl=new THREE.Mesh(new THREE.PlaneGeometry(b-a,gh),mats.glass);gl.position.set((a+b)/2,gy,D/2-.05);g.add(gl)}box(1.6,.16,.16,mats.woodD,dc,.45+2.15,D/2-.05,g);for(const x of[dc-.75,dc+.75])box(.1,2.1,.12,mats.woodD,x,.45+1.05,D/2-.05,g);if(gh>2.3){const tg=new THREE.Mesh(new THREE.PlaneGeometry(1.4,gh-2.2),mats.glass);tg.position.set(dc,.45+2.2+(gh-2.2)/2+.05,D/2-.05);g.add(tg)}for(let i=1;i<cols;i++)box(.06,H-.4,.08,mats.woodD,-W/2+i*W/cols,.45+(H-.4)/2+.05,D/2-.05,g);
   box(W,H-.4,.15,mats.plaster,0,.45+(H-.4)/2+.05,-D/2+.1,g);for(const x of[-W/2+.1,W/2-.1])box(.15,H-.4,D-.2,mats.plaster,x,.45+(H-.4)/2+.05,0,g);
   box(W+.1,.22,D+.1,mats.woodD,0,.45+H-.1,0,g);/* 창방 */
   /* 툇마루 */box(W,.12,1.1,mats.woodL,0,.5,D/2+.6,g);
   /* 기와 지붕 */try{const rf=hipRoof(MT,W/2+1.2,D/2+1.1,Math.max(.6,W/2-D/2),.45+H+.1,.45+H+D*.36+.6,.35,.15,{plain:true,rs:.5});g.add(rf.group||rf)}catch(e){box(W+2,.4,D+2,mats.woodD,0,.45+H+.4,0,g)}
   /* 안쪽: 마루와 등 */box(W-.4,.06,D-.4,mats.woodL,0,.48,0,g);const lp=new THREE.Mesh(new THREE.SphereGeometry(.18,10,8),mats.lamp);lp.position.set(0,.45+H-.5,0);g.add(lp)}
+ const doorX=W=>{const cols=Math.round(W/2.4);return cols%2?0:-W/cols/2};
+ /* ---------- 부딪힘·바닥: 부품마다 막는 모양(부품 로컬). r=사각 벽, c=둥근 기둥, f=올라서는 바닥, sw=물 ---------- */
+ const SH={};{const hk=(W,D)=>{const dc=doorX(W),R=[];R.push([0,-D/2+.1,W/2,.12],[-W/2+.1,0,.12,D/2],[W/2-.1,0,.12,D/2]);const a=-W/2,b=dc-.7,c=dc+.7,e=W/2;R.push([(a+b)/2,D/2-.05,(b-a)/2,.1],[(c+e)/2,D/2-.05,(e-c)/2,.1]);return{r:R,f:[[0,0,(W+.8)/2,(D+.8)/2,.45],[0,D/2+.6,W/2,.55,.56]]}};
+  SH.hanokS=hk(6,4);SH.hanokL=hk(10,6);SH.hanokL.f.push([6.6,0,1.5,3,.38]);
+  SH.sauna={c:[[0,0,1.75]]};SH.pav={c:[[-1.4,-1.4,.16],[1.4,-1.4,.16],[-1.4,1.4,.16],[1.4,1.4,.16]],f:[[0,0,1.7,1.7,.35],[0,0,1.5,1.5,.8]]};
+  SH.deck={f:[[0,0,2,2,.2]]};SH.wall={r:[[0,0,2,.26]]};SH.gate={c:[[-1.3,0,.2],[1.3,0,.2]]};SH.jars={r:[[0,0,1.1,.8]]};SH.lantern={c:[[0,0,.3]]};
+  SH.fire={c:[[0,0,.72]]};SH.pine={c:[[0,0,.2]]};SH.maple={c:[[0,0,.2]]};SH.bench={f:[[0,0,1.1,.7,.51]]};SH.pool={sw:[[0,0,3.1,1.4]]};}
+ /* 월드 → 로컬: rotation.y=a 일 때 (dx·cos−dz·sin, dx·sin+dz·cos). 로컬 → 월드는 그 반대 */
+ const toL=(x,z,ox,oz,a)=>{const c=Math.cos(a),s=Math.sin(a),dx=x-ox,dz=z-oz;return[dx*c-dz*s,dx*s+dz*c]};const toW=(x,z,a)=>{const c=Math.cos(a),s=Math.sin(a);return[x*c+z*s,-x*s+z*c]};
+ function eachItem(x,z,fn){for(const L of lots.values()){const S=L.S;if(Math.abs(x-L.p.x)>S/2+8||Math.abs(z-L.p.z)>S/2+8)continue;const [lx,lz]=toL(x,z,L.p.x,L.p.z,L.p.ry);for(const it of (L.mine?me.items:(L.data.items||[]))){const sh=SH[it.k];if(!sh)continue;const a=(it.r||0)*Math.PI/2;const [ix,iz]=toL(lx,lz,it.x,it.z,a);if(Math.abs(ix)>8||Math.abs(iz)>8)continue;fn(sh,ix,iz,(dx,dz)=>{const [ax,az]=toW(dx,dz,a);return toW(ax,az,L.p.ry)})}}}
+ const lift=(x,z)=>{let h=0,w=false;eachItem(x,z,(sh,ix,iz)=>{if(sh.f)for(const [cx,cz,hw,hd,y] of sh.f)if(Math.abs(ix-cx)<hw&&Math.abs(iz-cz)<hd&&y>h)h=y;if(sh.sw)for(const [cx,cz,hw,hd] of sh.sw)if(Math.abs(ix-cx)<hw&&Math.abs(iz-cz)<hd)w=true});return w?-.45:h};
+ const PR=.34;let swimming=false;
+ function pushOut(P){eachItem(P.x,P.z,(sh,ix,iz,back)=>{let mx=0,mz=0;
+  if(sh.r)for(const [cx,cz,hw,hd] of sh.r){const px=ix+mx-cx,pz=iz+mz-cz;const qx=Math.max(-hw,Math.min(hw,px)),qz=Math.max(-hd,Math.min(hd,pz));const dx=px-qx,dz=pz-qz,d=Math.hypot(dx,dz);if(d>=PR)continue;if(d>1e-5){mx+=dx/d*(PR-d);mz+=dz/d*(PR-d)}else{const ox=hw+PR-Math.abs(px),oz=hd+PR-Math.abs(pz);if(ox<oz)mx+=Math.sign(px||1)*ox;else mz+=Math.sign(pz||1)*oz}}
+  if(sh.c)for(const [cx,cz,r] of sh.c){const dx=ix+mx-cx,dz=iz+mz-cz,d=Math.hypot(dx,dz);if(d<r+PR){const k=(r+PR-d)/(d||1);mx+=(d?dx:1)*k;mz+=dz*k}}
+  if(mx||mz){const [wx,wz]=back(mx,mz);P.x+=wx;P.z+=wz}})}
  function buildPart(g,k){switch(k){
   case 'hanokS':hanok(g,6,4,2.7);break;
   case 'hanokL':hanok(g,10,6,3.1);/* 옆 날개 데크 */box(3,.15,6,mats.woodL,6.6,.3,0,g);break;
@@ -92,7 +108,7 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
   case 'lawn':box(4,.06,4,M(0x5fae3a,{roughness:1}),0,.03,0,g);break;
   case 'path':for(let i=0;i<4;i++)cyl(.45,.5,.1,mats.stone,(i%2?.15:-.15),.05,-1.5+i,g,10);break;
   case 'wall':box(4,1.2,.5,mats.stone,0,.6,0,g);box(4.2,.2,.7,MT&&MT.roof?MT.roof:mats.woodD,0,1.3,0,g);break;
-  case 'gate':for(const x of[-1.3,1.3])box(.25,2.4,.25,mats.woodD,x,1.2,0,g);box(1.2,1.9,.1,mats.wood,-.62,.95,0,g);box(1.2,1.9,.1,mats.wood,.62,.95,0,g);box(3.2,.3,.6,mats.woodD,0,2.5,0,g);break;
+  case 'gate':for(const x of[-1.3,1.3])box(.25,2.4,.25,mats.woodD,x,1.2,0,g);/* 문짝은 안쪽으로 활짝 열어 둠 */for(const sx of[-1,1]){const h=new THREE.Group();h.position.set(sx*1.18,0,0);h.rotation.y=sx*1.35;g.add(h);box(1.15,1.9,.1,mats.wood,-sx*.58,.95,0,h)}box(3.2,.3,.6,mats.woodD,0,2.5,0,g);break;
   case 'pond':{const s=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,.15,24),mats.stone);s.position.y=.07;g.add(s);const w=new THREE.Mesh(new THREE.CylinderGeometry(1.45,1.45,.05,24),mats.water);w.position.y=.16;g.add(w);for(let i=0;i<3;i++){const p=new THREE.Mesh(new THREE.CircleGeometry(.25,10).rotateX(-Math.PI/2),M(0x4f9a3c));p.position.set(Math.cos(i*2)*.7,.2,Math.sin(i*2)*.7);g.add(p);const f=new THREE.Mesh(new THREE.SphereGeometry(.1,8,6),mats.pink);f.position.set(Math.cos(i*2)*.7,.27,Math.sin(i*2)*.7);g.add(f)}break}
   case 'jars':box(2.2,.25,1.6,mats.stone,0,.12,0,g);for(let i=0;i<5;i++){const j=new THREE.Mesh(new THREE.SphereGeometry(.32+(i%2)*.08,12,10),mats.jar);j.scale.y=1.2;j.position.set(-.75+i*.38,.6,(i%2?.35:-.3));j.castShadow=true;g.add(j)}break;
   case 'lantern':cyl(.25,.3,.2,mats.stone,0,.1,0,g,8);cyl(.1,.1,.8,mats.stone,0,.6,0,g,8);box(.45,.4,.45,mats.stone,0,1.2,0,g);box(.3,.25,.3,mats.lamp,0,1.2,0,g);cyl(0,.4,.3,mats.stoneD,0,1.55,0,g,4);break;
@@ -138,6 +154,7 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  act.addEventListener('click',()=>{if(!near||acting>0)return;acting=1.1;const n=near;try{H().act(n.kind==='wood'?'hammer':'dig',1.1)}catch(e){}setTimeout(()=>{n.hp--;const got=n.kind==='wood'?3:2;if(n.kind==='wood')me.wood+=got;else me.stone+=got;save();draw();try{const AC=H().AC;if(AC&&!window.__MUTE){const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=n.kind==='wood'?320:520;g.gain.setValueAtTime(.18,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.25);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.26)}}catch(e){}
    n.g.scale.setScalar(.6+n.hp*.13);if(n.hp<=0){n.g.visible=false;n.back=45;say(n.kind==='wood'?'나무 다 베었어요. 조금 있으면 새로 자라요.':'돌 다 캤어요. 조금 있으면 새로 생겨요.')}},700)});
  const tick=(P,dt,t)=>{for(const f of anim)f(t);acting=Math.max(0,acting-dt);
+  if(Math.hypot(P.x-IX,P.z-IZ)<400&&P.y<TOP+3.5&&!window.__CAMFN){pushOut(P);const sw=lift(P.x,P.z)<0;if(sw&&!swimming)say('첨벙! 수영장이에요. 시원하다~',2.5);swimming=sw}
   for(const n of nodes){if(n.back>0){n.back-=dt;if(n.back<=0){n.hp=3;n.g.visible=true;n.g.scale.setScalar(1)}}}
   onIsle=Math.hypot(P.x-IX,P.z-IZ)<RC+180;res.hidden=!onIsle;if(hb)hb.hidden=!onIsle;
   if(!onIsle){act.hidden=true;return}
@@ -148,4 +165,4 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
    if(mode==='place'&&ghost){const ahead=lotLocal(P.x+Math.sin(myYaw())*2.8,P.z+Math.cos(myYaw())*2.8);const p=PARTS[gIt.k];const hw=(gIt.r%2?p.d:p.w)/2,hd=(gIt.r%2?p.w:p.d)/2;gIt.x=Math.round(Math.max(-S/2+hw,Math.min(S/2-hw,ahead.x))*2)/2;gIt.z=Math.round(Math.max(-S/2+hd,Math.min(S/2-hd,ahead.z))*2)/2;ghost.position.set(gIt.x,TOP+.02,gIt.z)}}};
  const myYaw=()=>{try{const R=H().me.root;return R.rotation.y}catch(e){return 0}};
  /* 지도에 쓰는 것 */
- const API={tick,onLand,center:{x:IX,z:IZ},myLot:()=>myLot,draw,lotLocal,myLotPos:()=>myLot?{x:myLot.p.x,z:myLot.p.z}:null,state:()=>({me,server,lots:[...lots.keys()]}),nodes};window.__HOMES=API;return API}
+ const API={tick,onLand,lift,center:{x:IX,z:IZ},myLot:()=>myLot,draw,lotLocal,myLotPos:()=>myLot?{x:myLot.p.x,z:myLot.p.z}:null,state:()=>({me,server,lots:[...lots.keys()]}),nodes};window.__HOMES=API;return API}

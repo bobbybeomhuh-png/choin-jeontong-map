@@ -142,7 +142,7 @@ export function buildWorldmap(opts={}){const mini=!!opts.mini;const G=new THREE.
   npc:[['carpenter',[[CITIES['서울'].x-3,TOP,CITIES['서울'].z+6],[CITIES['서울'].x+3,TOP,CITIES['서울'].z+6]]],['ceramic',[[CITIES['경주'].x-3,TOP,CITIES['경주'].z+6],[CITIES['경주'].x+3,TOP,CITIES['경주'].z+6]]],['science',[[CITIES['여수'].x-3,TOP,CITIES['여수'].z+6],[CITIES['여수'].x+3,TOP,CITIES['여수'].z+6]]]],
   level:P=>{let best=null,bd=28;for(const[nm,c]of CITYL){const d=Math.hypot(P.x-c.x,P.z-c.z);if(d<bd){bd=d;best=nm}}if(best)return best;const p=provAt(P.x,P.z);return p?p.r:'바다'},
   camCap:()=>Infinity,bounds:[-560,215*MS,-175*MS,215*MS],
-  baseAt:(x,z)=>provAt(x,z)?TOP+Math.max(0,HALL(x,z)-.3):(HOME&&HOME.onLand(x,z))?TOP:0,
+  baseAt:(x,z)=>provAt(x,z)?TOP+Math.max(0,HALL(x,z)-.3):(HOME&&HOME.onLand(x,z))?TOP+HOME.lift(x,z):0,
   mini:{S:.78/MS,ox:8*MS,oz:18*MS,draw(g,X,Z,S){g.fillStyle='#3a7a8c';g.fillRect(0,0,300,300);for(const p of PROV){g.fillStyle=RCSS[p.r]||'#8fae62';g.beginPath();p.rings[0].forEach(([x,z],i)=>i?g.lineTo(X(x),Z(z)):g.moveTo(X(x),Z(z)));g.closePath();g.fill()}g.fillStyle='#7cb85a';g.beginPath();g.arc(X(-250),Z(48),Math.max(3,34*S),0,7);g.fill();g.fillStyle='#a8352a';for(const[,c]of CITYL){g.beginPath();g.arc(X(c.x),Z(c.z),3,0,7);g.fill()}}}};
  /* 유산에서 돌아오면 그 도시 앞에서 시작 */const back={cheongju:'청주',sungnyemun:'서울',seokguram:'경주',geobukseon:'여수',gyeongju:'경주',hanyang:'서울',minhwa:'영월',gangjin:'강진',buyeo:'부여',jinju:'진주',suwon:'수원',icheon:'이천',tongyeong:'통영',gangneung:'강릉',hapcheon:'합천',yeongju:'영주',yesan:'예산',naju:'나주',mungyeong:'문경'}[new URLSearchParams(location.search).get('city')]||'서울';const SC0=CITIES[back];
  return Object.assign({group:G,solids,cam,spots,tick,horse:true,spawn:{x:SC0.x,z:SC0.z+(back==='서울'?12:4.6),y:TOP+.3,yaw:Math.PI},size:{}},meta)}
