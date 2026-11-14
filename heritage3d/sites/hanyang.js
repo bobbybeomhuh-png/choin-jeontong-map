@@ -3,6 +3,7 @@
    근정전 향로, 어보, 궁궐 등. 건물(월대·정전·행각)과 박석·품계석은 근정전 배치를 본떠 지음(실측 복제 아님).
    근정전 실제: 정면 5칸 측면 5칸 중층 건물, 두 단 월대. 여기서는 단층 지붕으로 줄여 지음. */
 import * as THREE from 'three';
+import {buildHall} from './hallkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,noise,mulb,materials,hipRoof,brackets} from './sungnyemun.js';
 const MURL=k=>new URL('../models/hanyang/'+k+'.glb',import.meta.url).href;
@@ -40,15 +41,8 @@ export function buildHanyang(opts={}){const mini=!!opts.mini;const MT=materials(
   spots.push({x:0,y:T2,z:WZ+6.6,r:2.4,t:'월대',h:'정전을 받치는 두 단의 넓은 돌 기단이에요. 나라의 큰 의식 때 왕과 신하가 오르던 무대예요. 가운데 계단의 넓은 돌(답도)에는 원래 봉황을 새겨요. 양쪽 쇠 그릇(드무)에는 물을 담아 불귀신을 쫓는다고 믿었어요.'})}
  const HZ=WZ-2,HW=24,HD=12,HY=T2+.3,PH=6.4;
  {const pil=M(0x8a3a2a),wall=M(0xf1ece2),lat=new THREE.MeshStandardMaterial({map:tex(256,256,(q,w,h)=>{q.fillStyle='#ead9b0';q.fillRect(0,0,w,h);q.strokeStyle='#7a2f22';q.lineWidth=5;for(let i=0;i<=10;i++){q.beginPath();q.moveTo(i*w/10,0);q.lineTo(i*w/10,h);q.stroke();q.beginPath();q.moveTo(0,i*h/10);q.lineTo(w,i*h/10);q.stroke()}q.lineWidth=14;q.strokeStyle='#8a3a2a';q.strokeRect(0,0,w,h)}),roughness:.9});
-  const fl=box(HW,.3,HD,M(0x9a7350));fl.position.set(0,T2+.15,HZ);G.add(fl);S(-HW/2,HW/2,0,HY,HZ-HD/2,HZ+HD/2);
-  const XS=[-12,-7.2,-2.4,2.4,7.2,12],ZS=[-6,-2,2,6];for(const x of XS)for(const z of ZS){if(Math.abs(z)<3&&Math.abs(x)<10)continue;const c=new THREE.Mesh(new THREE.CylinderGeometry(.34,.38,PH,14),pil);c.position.set(x,HY+PH/2,HZ+z);c.castShadow=true;G.add(c);solids.push({cx:x,cz:HZ+z,r:.42,y0:0,y1:20})}
+  /* 자세한 한옥 부품으로: 정면 5칸·측면 3칸 중층, 다포, 앞 가운데 칸 열림, 옆·뒤 창호 */G.add(buildHall({x:0,z:HZ,W:HW,D:HD,nx:5,nz:3,FY:T2-.02,PH,base:false,stairs:'none',roof:'hip',name:'勤政殿',pillar:0x9a3a26,bracket:'dapo',front:'door',entry:[1,2,3],back:'window',left:'window',right:'window',upper:{h:3.4},roofScale:1.15,mini,solids,light:false}).group);
   for(const x of[-4.8,4.8])for(const z of[-2,2]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.4,.44,PH+1.2,14),pil);c.position.set(x,HY+(PH+1.2)/2,HZ+z);c.castShadow=true;G.add(c);solids.push({cx:x,cz:HZ+z,r:.48,y0:0,y1:20})}
-  /* 뒤·옆 벽은 창호, 앞은 문을 활짝 열어 둠 */for(let i=0;i<5;i++){const x0=XS[i],x1=XS[i+1];const p=new THREE.Mesh(new THREE.PlaneGeometry(x1-x0-.7,PH-1.2),lat);p.position.set((x0+x1)/2,HY+(PH-1.2)/2,HZ-6+.05);G.add(p)}S(-HW/2,HW/2,0,20,HZ-6.3,HZ-5.8);
-  for(const sx of[-1,1]){for(let j=0;j<3;j++){const z0=ZS[j],z1=ZS[j+1];const p=new THREE.Mesh(new THREE.PlaneGeometry(z1-z0-.7,PH-1.2),lat);p.rotation.y=sx*Math.PI/2;p.position.set(sx*(12-.05),HY+(PH-1.2)/2,HZ+(z0+z1)/2);G.add(p)}S(sx*12-.3,sx*12+.3,0,20,HZ-6,HZ+6)}
-  const ceil=box(HW,.2,HD,M(0x2f5a46));ceil.position.set(0,HY+PH+.1,HZ);G.add(ceil);
-  /* 창방 단청 띠 */const dan=M(0x2f6b55);for(const z of[-6,6]){const b=box(HW+.6,.6,.5,dan);b.position.set(0,HY+PH-.3,HZ+z);G.add(b)}for(const x of[-12,12]){const b=box(.5,.6,HD+.6,dan);b.position.set(x,HY+PH-.3,HZ);G.add(b)}
-  if(!mini){const bk=brackets(MT,12.4,6.4,HY+PH+.15,1.15);bk.position.z=HZ;G.add(bk);const rf=hipRoof(MT,16.5,10.2,8.5,HY+PH+1.4,HY+PH+7.2,1.2,.5,{rs:.95});rf.position.set(0,0,HZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
-  /* 현판 勤政殿 */{const cv=document.createElement('canvas');cv.width=640;cv.height=200;const q=cv.getContext('2d');q.fillStyle='#1d1612';q.fillRect(0,0,640,200);q.strokeStyle='#d8a838';q.lineWidth=12;q.strokeRect(8,8,624,184);q.fillStyle='#f2e6c0';q.font='bold 120px "Noto Serif KR","Batang",serif';q.textAlign='center';q.fillText('勤政殿',320,150);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.6,1.1),new THREE.MeshBasicMaterial({map:t}));pl.position.set(0,HY+PH+.9,HZ+6.45);G.add(pl)}
   /* 어탑과 어좌, 일월오봉도, 향로, 등, 어보 */const AT=M(0x8a3a2a);const at=box(6,.9,3.6,AT);at.position.set(0,HY+.45,HZ-3.6);G.add(at);S(-3,3,0,HY+.9,HZ-5.4,HZ-1.8);for(let i=0;i<3;i++){const st=box(2,.3*(i+1),.35,AT);st.position.set(0,HY+.15*(i+1),HZ-1.6+(2-i)*.35);G.add(st);S(-1,1,0,HY+.3*(i+1),HZ-1.75+(2-i)*.35,HZ-1.4+(2-i)*.35)}
   place('ilwol',{x:0,y:HY+.9,z:HZ-5.2});place('throne',{x:0,y:HY+.9,z:HZ-3.9});place('lamp',{x:-2.6,y:HY+.9,z:HZ-3.4,h:1.6});place('lamp',{x:2.6,y:HY+.9,z:HZ-3.4,h:1.6});
   for(const sx of[-1,1]){const pd=box(.7,.8,.7,M(0x5a3a22));pd.position.set(sx*2.4,HY+.4,HZ);G.add(pd);solids.push({cx:sx*2.4,cz:HZ,r:.5,y0:0,y1:4});place('hyangro',{x:sx*2.4,y:HY+.8,z:HZ,h:.62})}
