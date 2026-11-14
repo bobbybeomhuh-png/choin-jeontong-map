@@ -16,7 +16,7 @@ const SITES={
  gangjin:{pines:[[-34,30,9],[33,28,10],[-36,-30,10]],chogas:[[2,-44,0,Math.PI/2],[1,40,4,-Math.PI/2],[2,44,40,Math.PI/2]],fx:['onggi']},
  icheon:{pines:[[-34,30,9],[33,28,10],[-36,-30,10]],chogas:[[2,-44,0,Math.PI/2],[1,40,4,-Math.PI/2],[2,44,40,Math.PI/2]],fx:['onggi']},
  buyeo:{pines:[[-46,20,10],[46,24,9],[-48,-20,11],[48,-30,10],[0,-50,10]],chogas:[[2,-60,30,Math.PI/2],[1,58,40,0]]},
- jinju:{pines:[[-28,30,9],[28,30,10],[-30,6,10]],fx:['tents','uigisa']},
+ jinju:{pines:[[-28,30,9],[28,30,10],[-30,6,10]],fx:['uigisa']},
  tongyeong:{pines:[[-28,24,9],[28,26,10]],market:[{x:-25,z0:-2,z1:22,face:1,k:4}],fx:['gongbang']},
  gangneung:{pines:[[-40,10,11],[34,20,10],[-44,-24,10]],chogas:[[2,-52,12,Math.PI/2],[1,40,-6,-Math.PI/2]],fx:['baerong','yulgok']},
  yeongju:{pines:[[-32,8,10],[32,6,11],[-34,-26,10],[34,-28,9]],fx:['anyang','bell']},

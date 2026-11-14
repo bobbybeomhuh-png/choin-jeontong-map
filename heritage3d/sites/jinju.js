@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,noise,mulb,materials,hipRoof,brackets} from './sungnyemun.js';
+import {placeHanok} from './hanokkit.js';
 const MURL=k=>new URL('../models/jinju/'+k+'.glb',import.meta.url).href;
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 export function buildJinju(opts={}){const mini=!!opts.mini;const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(71);
@@ -58,6 +59,11 @@ export function buildJinju(opts={}){const mini=!!opts.mini;const MT=materials();
   spots.push({x:AX-4,y:.45,z:AZ+2.2,r:1.6,t:'두정갑',h:'조선 장수가 입던 갑옷이에요. 천 안쪽에 쇠 미늘을 대고 겉에 둥근 못(두정)을 박아 "두정갑"이라 해요. 투구와 함께 붉은 비단으로 지어 위엄이 있었어요. (3D: Heat Of Fusion, CC BY)'});
   spots.push({x:AX+4,y:.45,z:AZ+2.2,r:1.6,t:'판갑',h:'쇠판을 이어 몸통을 감싼 판갑과 팔뚝을 지키는 팔 보호구예요. 오래전부터 쓰인 갑옷 방식이에요. (3D: 국가유산청 재현 에셋)'});
   spots.push({x:AX,y:.45,z:AZ-1.2,r:2,t:'무기 걸개',h:'왼쪽부터 월도(긴 자루 끝에 반달 칼날), 사인검(호랑이 기운을 담은 칼), 화승총(조총), 각궁(소뿔로 만든 조선 활), 쇠뇌예요. 조선 군사는 특히 활쏘기에 강했어요. (3D: 국가유산청 재현 에셋)'})}
+ /* ---------- 성 안 건물: 공북문, 창렬사, 영남포정사(공개 3D 한옥으로) ---------- */
+ if(!mini){const TOUCH=matchMedia('(pointer:coarse)').matches;placeHanok(G,solids,'gate',0,31.5,0,{hole:true,TOUCH});placeHanok(G,solids,'hall',-24,22,0,{TOUCH});placeHanok(G,solids,'sarang',24.5,24,Math.PI,{TOUCH});
+  spots.push({x:0,y:0,z:26,r:2.4,t:'공북문',h:'진주성의 정문이에요. 북쪽 임금이 계신 곳을 향해 절한다는 뜻으로 이름 지었어요. 2002년에 옛 모습대로 다시 세웠어요. (3D: 한국문화정보원 외대문, CC BY · 본떠 세움)'});
+  spots.push({x:-24,y:0,z:16,r:2.4,t:'창렬사',h:'진주성 싸움에서 목숨을 바친 김시민 장군과 김천일 장군 등을 모신 사당이에요. 해마다 제사를 지내 그 뜻을 기려요. (3D 한옥: chrishong, CC BY · 본떠 세움)'});
+  spots.push({x:24.5,y:0,z:17,r:2.4,t:'영남포정사',h:'조선 후기 경상우도 관찰사가 일을 보던 관아예요. 진주가 경상도 서쪽의 중심 고을이었다는 걸 보여 줘요. 지금은 문루가 남아 있어요. (3D 한옥: chrishong, CC BY · 본떠 세움)'})}
  const tick=(P,dt)=>{if(G.userData.water){G.userData.water.offset.x+=dt*.012}};
  const meta={quest:{t:'진주성 순례',d:'진주성의 이야기가 담긴 여섯 곳을 찾아 보세요.',steps:[['진주성 성벽','진주성 성벽'],['현자총통 포대','현자총통'],['촉석루 위','촉석루'],['남강의 의암','의암'],['무기고의 두정갑','두정갑'],['무기 걸개','무기 걸개']],done:'진주대첩의 성벽과 촉석루, 무기고까지 다 둘러봤어요.'},
   title:'진주성 촉석루와 무기고',hint:'남강 절벽 위 진주성이에요. 성벽과 현자총통 포대를 지나 촉석루(동쪽 계단)에 올라 의암을 내려다보고, 무기고에서 조선 장수 갑옷과 무기를 보세요. (3D: 국가유산청 재현 에셋 · Heat Of Fusion, CC BY · 건물은 본떠 지음)',
