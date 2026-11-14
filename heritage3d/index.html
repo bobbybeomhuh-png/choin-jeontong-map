@@ -200,7 +200,7 @@ const CITYOF={sungnyemun:'서울',hanyang:'서울',seokguram:'경주',gyeongju:'
 /* 마감: 하늘빛 환경광 + 단색 재질에 결 입히기(늦게 붙는 것도 몇 번 더) */if(!qs.has('nofin')){try{skyEnv(R,scene);finishScene(scene);for(const t of[3000,8000,16000])setTimeout(()=>{try{finishScene(scene)}catch(e){}},t)}catch(e){console.warn('마감 실패',e)}
  if(!TOUCH&&qs.has('ao'))aoSetup(R,scene,cam).then(f=>{POST=f;window.__FX=f})}
 /* 움직이지 않는 물체 묶어 그리기(전국 지도): 3초 지켜본 뒤 안 움직인 것만 같은 재질끼리 합친다 */
-function staticBatch(root,done){const snap=new Map();root.updateMatrixWorld(true);root.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||!o.visible||!o.geometry||Array.isArray(o.material))return;let v=true,p=o;while(p){if(!p.visible){v=false;break}p=p.parent}if(v)snap.set(o,o.matrixWorld.clone())});
+function staticBatch(root,done){const snap=new Map();root.updateMatrixWorld(true);root.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||!o.visible||!o.geometry||Array.isArray(o.material))return;let v=true,p=o;while(p){if(!p.visible||p.userData.noBatch){v=false;break}p=p.parent}if(v)snap.set(o,o.matrixWorld.clone())});
  setTimeout(()=>{try{root.updateMatrixWorld(true);const groups=new Map();let n=0;
   for(const[o,m0]of snap){if(!o.parent||!o.matrixWorld.equals(m0)||!o.visible)continue;const m=o.material;if(m.isShaderMaterial||m.userData&&m.userData.wing)continue;const g=o.geometry;if(!g.attributes.position||g.morphAttributes&&Object.keys(g.morphAttributes).length)continue;
    const key=[m.type,m.color&&m.color.getHex(),m.emissive&&m.emissive.getHex(),m.emissiveIntensity,m.map&&m.map.uuid,m.transparent,m.opacity,m.side,m.flatShading,m.vertexColors,m.roughness,m.metalness,m.alphaTest,m.depthWrite,o.castShadow,o.receiveShadow,m.polygonOffset].join('|');

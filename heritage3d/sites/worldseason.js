@@ -13,6 +13,7 @@ const PT={
  summer:spriteTex(q=>{const g=q.createRadialGradient(32,32,0,32,32,30);g.addColorStop(0,'rgba(250,255,170,1)');g.addColorStop(.3,'rgba(200,255,90,.7)');g.addColorStop(1,'rgba(160,230,60,0)');q.fillStyle=g;q.fillRect(0,0,64,64)}),
  autumn:spriteTex(q=>{q.fillStyle='#e8603c';q.beginPath();for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*2/5;q.moveTo(32,34);q.lineTo(32+Math.cos(a-.25)*14,34+Math.sin(a-.25)*14);q.lineTo(32+Math.cos(a)*26,34+Math.sin(a)*26);q.lineTo(32+Math.cos(a+.25)*14,34+Math.sin(a+.25)*14)}q.fill();q.strokeStyle='#8a3a1c';q.lineWidth=2;q.beginPath();q.moveTo(32,34);q.lineTo(32,58);q.stroke()}),
  winter:spriteTex(q=>{const g=q.createRadialGradient(32,32,0,32,32,26);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.5,'rgba(255,255,255,.8)');g.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=g;q.fillRect(0,0,64,64)})};
+let _ice=null;const ICE=()=>{if(_ice)return _ice;const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#ffffff';q.fillRect(0,0,256,256);for(let i=0;i<40;i++){q.fillStyle=`rgba(180,215,235,${.15+Math.random()*.2})`;q.beginPath();q.ellipse(Math.random()*256,Math.random()*256,10+Math.random()*30,4+Math.random()*10,Math.random()*3,0,7);q.fill()}q.strokeStyle='rgba(120,160,190,.55)';q.lineWidth=1.4;for(let i=0;i<14;i++){let x=Math.random()*256,y=Math.random()*256;q.beginPath();q.moveTo(x,y);for(let k=0;k<5;k++){x+=(Math.random()-.5)*50;y+=(Math.random()-.5)*50;q.lineTo(x,y)}q.stroke()}_ice=new THREE.CanvasTexture(c);_ice.wrapS=_ice.wrapT=THREE.RepeatWrapping;_ice.colorSpace=THREE.SRGBColorSpace;return _ice};
 export function buildSeason(G,{TOP,provAt,HALL,mulb,MS=1,scene}){const U=G.userData,r=mulb(1411);const tc=new THREE.Color(),tw=new THREE.Color();
  /* 처음 색을 기억해 두고 계절마다 거기서 바꾼다 */
  const keep=(im)=>{if(!im||!im.instanceColor)return null;return Float32Array.from(im.instanceColor.array)};
@@ -34,6 +35,9 @@ export function buildSeason(G,{TOP,provAt,HALL,mulb,MS=1,scene}){const U=G.userD
     else if(s==='summer')tc.lerp(tw.setHex(0x3f8a34),h<10?.3:.1);
     ca.setXYZ(i,tc.r,tc.g,tc.b)}ca.needsUpdate=true}
   if(paddy){if(s==='winter'){paddy.map=null;paddy.color.setHex(0xeef2f4)}else{paddy.map=paddyMap;paddy.color.setHex(s==='spring'?0x9cc8e0:s==='summer'?0x8fd060:0xffffff)}paddy.needsUpdate=true}
+  /* 강: 겨울엔 꽁꽁 언 얼음(금 간 결), 강가는 눈 */const RM=new Set(),BM=new Set();G.traverse(o=>{if(o.isMesh&&o.userData.river==='water')RM.add(o.material);if(o.isMesh&&o.userData.river==='bank')BM.add(o.material)});for(const m of RM){if(!m.userData.c0){m.userData.c0=m.color.getHex();m.userData.r0=m.roughness;m.userData.m0=m.metalness}if(s==='winter'){m.color.setHex(0xbcdff2);m.roughness=.3;m.metalness=.05;m.map=ICE();}else{m.color.setHex(m.userData.c0);m.roughness=m.userData.r0;m.metalness=m.userData.m0;m.map=null}m.needsUpdate=true}
+  for(const m of BM){if(!m.userData.c0)m.userData.c0=m.color.getHex();m.color.setHex(s==='winter'?0xf4f6f8:m.userData.c0)}
+  try{(U.onSeason||[]).forEach(f=>f(s))}catch(e){console.warn(e)}
   if(sea&&sea0){sea.color.copy(sea0);if(s==='winter')sea.color.lerp(tw.setHex(0xa8c8d8),.4);if(s==='summer')sea.color.lerp(tw.setHex(0xb8f4f0),.3)}
   {const sc=scene||(window.__H3&&window.__H3.scene);if(sc&&sc.fog)sc.fog.color.setHex(FOG[s])}
   FL.material.map=PT[s];FL.material.size=s==='summer'?.4:s==='winter'?.55:.75;FL.material.blending=s==='summer'?THREE.AdditiveBlending:THREE.NormalBlending;FL.material.needsUpdate=true;
