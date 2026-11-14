@@ -18,7 +18,7 @@ export const COURTS={
  yesan:{x0:-24,x1:24,z0:-22,z1:22,wall:'earth',gate:5},
  mungyeong:{x0:-30,x1:30,z0:-29,z1:22,wall:'earth',gate:5},
  hapcheon:{x0:-38,x1:38,z0:-34,z1:20,wall:'earth',gate:6},
- suwon:{x0:-44,x1:42,z0:-2,z1:52,wall:'none',gate:0},
+ suwon:{x0:-44,x1:42,z0:-2,z1:52,wall:'none',gate:0,hillGap:78},
  naju:{x0:-32,x1:32,z0:-34,z1:24,wall:'none',gate:0},
  buyeo:{x0:-40,x1:40,z0:-40,z1:30,wall:'none',gate:0},
  hanyang:{x0:-40,x1:40,z0:-52,z1:34,wall:'none',gate:0},
@@ -90,7 +90,7 @@ export function buildEnvKit(scene,SITE,EV,SOL,TOUCH,SP=[]){const C=COURTS[SITE];
   for(let x=C.x0+ins;x<=C.x1-ins;x+=step){tryT(x+(r()-.5)*2,C.z0+ins);tryT(x+(r()-.5)*2,C.z1-ins)}for(let z=C.z0+ins+step;z<=C.z1-ins-step;z+=step){tryT(C.x0+ins,z+(r()-.5)*2);tryT(C.x1-ins,z+(r()-.5)*2)}
   if(TL.length)plantBroad(G,TL)}
  /* ---------- 가까운 뒷산: 마당 뒤를 감싸는 숲 언덕 ---------- */
- if(!EV.noHills&&!C.noHills){const hz=C.z0-28,W=C.x1-C.x0;const hm=[0x4f7a44,0x5a8450,0x456d3c];const tr=paintedPines(500),pc=new THREE.Color();const o=new THREE.Object3D();let k=0;
+ if(!EV.noHills&&!C.noHills){const hz=C.z0-(C.hillGap||28)/* 마당 뒤에 성곽·옹성 같은 걸 둔 곳은 뒷산을 더 멀리 */,W=C.x1-C.x0;const hm=[0x4f7a44,0x5a8450,0x456d3c];const tr=paintedPines(500),pc=new THREE.Color();const o=new THREE.Object3D();let k=0;
   for(let i=0;i<7;i++){const x=C.x0-40+i*(W+80)/6+(r()-.5)*10,z=hz-r()*25,rr=26+r()*16,h=12+r()*12;const m=lumpyHill(rr,h,hm[i%3],i+1);m.position.set(x,gy-1,z);m.receiveShadow=true;G.add(m);
    for(let j=0;j<70&&k<500;j++){const a=r()*Math.PI*2,d=Math.sqrt(r())*rr*.92;const tx=x+Math.cos(a)*d,tz=z+Math.sin(a)*d;const ty=gy-1+h*Math.sqrt(Math.max(0,1-(d/rr)**2));const s=2.2+r()*1.8;o.position.set(tx,ty-.5,tz);o.rotation.set(0,r()*6,0);o.scale.set(s*2.1,s*1.5,s*2.1);o.updateMatrix();tr.setColorAt(k,pc.setHSL(.27+r()*.06,.35+r()*.15,.55+r()*.25));tr.setMatrixAt(k++,o.matrix)}}
   tr.count=k;tr.castShadow=false;G.add(tr)}
