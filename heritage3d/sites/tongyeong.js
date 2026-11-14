@@ -2,6 +2,7 @@
    갱신 2026-11-12. 나전 3D: 한국공예디자인문화진흥원 KCDF 나전칠함(CC BY), 클리블랜드 미술관 1990.15 용봉무늬 두루마리 상자(CC0).
    세병관은 삼도수군통제영 객사(정면 9칸, 측면 5칸 큰 마루집)를 본떠 지은 것(실측 아님). 공방·자개 더미·바다는 연출. */
 import * as THREE from 'three';
+import {buildHall} from './hallkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const MURL=k=>new URL('../models/tongyeong/'+k+'.glb',import.meta.url).href;
@@ -22,14 +23,7 @@ export function buildTongyeong(opts={}){const mini=!!opts.mini;const MT=material
   /* 돛단배 */if(!mini){const sail=M(0xf3ead6,{side:THREE.DoubleSide}),hull=M(0x6b4a2e);const B=[];for(let i=0;i<5;i++){const b=new THREE.Group();const hb=box(4,.8,1.4,hull);hb.position.y=.2;b.add(hb);const ms=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,4,6),hull);ms.position.y=2.2;b.add(ms);const sl=new THREE.Mesh(new THREE.PlaneGeometry(2.4,2.8),sail);sl.position.set(.1,2.6,0);sl.rotation.y=Math.PI/2;b.add(sl);b.position.set(-60+i*28,-1.5,SZ-14-r()*30);b.userData.p=r()*6;G.add(b);B.push(b)}G.userData.boats=B}}
  /* ---------- 세병관: 정면 9칸, 측면 5칸 큰 마루집 ---------- */
  const HX=0,HZ=-12,W=27,D=12,FY=1.1,PH=4.6;
- {const stn=M(0xb8b1a4),pil=M(0x8a3a2a);const base=box(W+2.4,FY,D+2.4,stn);base.position.set(HX,FY/2,HZ);G.add(base);S(HX-(W+2.4)/2,HX+(W+2.4)/2,0,FY,HZ-(D+2.4)/2,HZ+(D+2.4)/2);
-  /* 앞 돌계단 */for(let i=0;i<4;i++){const st=box(5,FY*(i+1)/4,.45,stn);st.position.set(HX,FY*(i+1)/8,HZ+D/2+1.2+(3-i)*.45+.22);G.add(st);S(HX-2.5,HX+2.5,0,FY*(i+1)/4,HZ+D/2+1.2+(3-i)*.45,HZ+D/2+1.2+(4-i)*.45)}
-  const fl=box(W,.1,D,M(0x9a7350));fl.position.set(HX,FY+.05,HZ);G.add(fl);
-  const XS=[...Array(10)].map((_,i)=>-W/2+i*W/9),ZS=[...Array(6)].map((_,i)=>-D/2+i*D/5);
-  for(const x of XS)for(const z of ZS){if(Math.abs(x)<W/2-.1&&Math.abs(z)<D/2-.1)continue;const c=new THREE.Mesh(new THREE.CylinderGeometry(.28,.3,PH,12),pil);c.position.set(HX+x,FY+PH/2,HZ+z);c.castShadow=true;G.add(c);solids.push({cx:HX+x,cz:HZ+z,r:.34,y0:0,y1:9})}
-  const ce=box(W+.4,.3,D+.4,M(0x5a3a22));ce.position.set(HX,FY+PH+.15,HZ);G.add(ce);
-  if(!mini){const rf=hipRoof(MT,W/2+2,D/2+2,W/2-3.5,FY+PH+.3,FY+PH+4.4,.8,.3,{plain:true,rs:.7});rf.position.set(HX,0,HZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
-  {const cv=document.createElement('canvas');cv.width=640;cv.height=200;const q=cv.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,640,200);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(6,6,628,188);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 120px "Noto Serif KR",serif';q.fillText('洗兵館',320,148,600);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.2,1),new THREE.MeshBasicMaterial({map:t}));pl.position.set(HX,FY+PH-.6,HZ+D/2+.32);G.add(pl)}
+ {/* 자세한 한옥 부품으로: 정면 9칸·측면 5칸, 사방이 트인 큰 마루집, 익공, 팔작지붕 */G.add(buildHall({x:HX,z:HZ,W,D,nx:9,nz:5,FY,PH,roof:'hip',name:'洗兵館',pillar:0x9a3a26,bracket:'ik',front:'open',left:'open',right:'open',back:['open','open','open','wall','wall','wall','open','open','open'],inner:false,mini,solids,light:false}).group);
   const lamp1=new THREE.PointLight(0xfff0d8,14,16,1.6);lamp1.position.set(HX-5,FY+PH-.6,HZ);const lamp2=lamp1.clone();lamp2.position.set(HX+5,FY+PH-.6,HZ);G.add(lamp1,lamp2);
   spots.push({x:HX,y:0,z:HZ+D/2+4.4,r:3,t:'세병관',h:'삼도수군통제영(경상·전라·충청 바다를 지키던 수군 본부)의 객사예요. 1605년에 세운 큰 마루집으로, 이름은 "은하수를 끌어와 병기를 씻는다"는 시에서 땄어요. 전쟁이 끝나 평화를 바란다는 뜻이에요. 이곳은 본떠 지은 것이에요.'})}
  /* ---------- 세병관 안 나전 진열장 ---------- */
