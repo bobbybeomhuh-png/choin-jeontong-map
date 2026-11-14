@@ -30,7 +30,7 @@ export function buildCheongju(opts={}){const mini=!!opts.mini,TOUCH=opts.touch!=
   spots.push({x:DX-4.4,y:0,z:DZ-3.6,r:2,t:'당간지주',h:'철당간을 붙잡아 세운 두 돌기둥이에요. 기둥 사이에 당간을 끼우고 구멍에 빗장을 질러 고정했어요. 용두사라는 절은 사라지고 이 당간만 남아 청주 시내 한가운데에 서 있어요.'})}
  /* ---------- 흥덕사 터: 대문, 금속활자 공방, 직지 진열 ---------- */
  const HX=-26;
- {placeHanok(G,solids,'gate',HX,2,0,{hole:true,TOUCH});hanokWall(G,solids,-43,2,HX-6.2,2,{TOUCH});hanokWall(G,solids,HX+6.2,2,-11,2,{TOUCH});hanokWall(G,solids,-11,2,-11,-14,{TOUCH});
+ {placeHanok(G,solids,'gate',HX,2,0,{hole:true,TOUCH});hanokWall(G,solids,-43,2,HX-6.2,2,{TOUCH,extB:0});hanokWall(G,solids,HX+6.2,2,-11,2,{TOUCH,extA:0});hanokWall(G,solids,-11,2,-11,-14,{TOUCH});
   placeHanok(G,solids,'hall',HX,-24,0,{TOUCH,walls:true});
   {const cv=document.createElement('canvas');cv.width=512;cv.height=150;const q=cv.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,512,150);q.strokeStyle='#d8a838';q.lineWidth=8;q.strokeRect(6,6,500,138);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 96px "Noto Serif KR",serif';q.fillText('興德寺',256,112,480);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.65),new THREE.MeshBasicMaterial({map:t}));const PX=HX+8.6,PZ=7.6;pl.position.set(PX,1.6,PZ);G.add(pl);const po=box(.14,1.9,.14,M(0x5a3a22));po.position.set(PX-1.2,.95,PZ-.05);G.add(po);const po2=po.clone();po2.position.x=PX+1.2;G.add(po2);solids.push({cx:PX-1.2,cz:PZ,r:.12,y0:0,y1:2},{cx:PX+1.2,cz:PZ,r:.12,y0:0,y1:2})}
   /* 진열대: 직지 조판본(기울여 세움)과 금속활자(받침 위, 크게 키움) */const wd=M(0x6b4a2e),gl=new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.14,roughness:.05,metalness:0,depthWrite:false});

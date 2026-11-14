@@ -9,7 +9,7 @@ import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const MURL=k=>new URL('../models/gyeongju/'+k+'.glb',import.meta.url).href;
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 export function buildGyeongju(opts={}){const mini=!!opts.mini;const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(57);
- const MOUNDS=[[-36,-8,12,6],[37,-10,10,5],[-38,-66,13,6.5],[38,-70,12,6],[-24,14,7,3.4],[30,-88,9,4.5],[-30,-90,8,4]];
+ const MOUNDS=[[-36,-8,12,6],[37,-10,10,5],[-35,-66,12.3,6.3],[36,-70,11.4,5.8],[-24,14,7,3.4],[30,-88,9,4.5],[-30,-90,8,4]];
  const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};

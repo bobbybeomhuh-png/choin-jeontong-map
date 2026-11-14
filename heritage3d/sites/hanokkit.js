@@ -35,6 +35,6 @@ export function placeHanok(G,SOL,k,x,z,ry=0,{y=0,s=1,sx=1,solid=true,hole=false,
   else SOL.push({x0:x-hw+.3,x1:x+hw-.3,y0:-9,y1:20,z0:z-hd+.3,z1:z+hd-.3})}
  return g}
 /* 담장 한 줄: (x0,z0)에서 (x1,z1)까지 같은 담장을 이어 붙인다(축에 나란한 줄만) */
-export function hanokWall(G,SOL,x0,z0,x1,z1,{TOUCH=false,ext=.6}={}){/* 양끝을 담 두께 절반쯤 늘려 모퉁이에서 두 줄이 빈틈 없이 만나게 한다. 높이는 늘이지 않고 길이만 맞춘다 */const L0=Math.hypot(x1-x0,z1-z0),ux=(x1-x0)/L0,uz=(z1-z0)/L0;const ax=x0-ux*ext,az=z0-uz*ext,bx=x1+ux*ext,bz=z1+uz*ext;const L=L0+2*ext,n=Math.max(1,Math.round(L/12.3)),sx=L/n/12.3,ry=Math.abs(x1-x0)>Math.abs(z1-z0)?0:Math.PI/2;
+export function hanokWall(G,SOL,x0,z0,x1,z1,{TOUCH=false,ext=.6,extA=ext,extB=ext}={}){/* 양끝을 담 두께 절반쯤 늘려 모퉁이에서 두 줄이 빈틈 없이 만나게 한다. 높이는 늘이지 않고 길이만 맞춘다 */const L0=Math.hypot(x1-x0,z1-z0),ux=(x1-x0)/L0,uz=(z1-z0)/L0;/* 대문에 닿는 끝은 extA/extB=0으로 늘이지 않음(문을 파고들지 않게) */const ax=x0-ux*extA,az=z0-uz*extA,bx=x1+ux*extB,bz=z1+uz*extB;const L=L0+extA+extB,n=Math.max(1,Math.round(L/12.3)),sx=L/n/12.3,ry=Math.abs(x1-x0)>Math.abs(z1-z0)?0:Math.PI/2;
  for(let i=0;i<n;i++){const t=(i+.5)/n;placeHanok(G,null,'wall',ax+(bx-ax)*t,az+(bz-az)*t,ry,{sx,solid:false,TOUCH})}
  const th=.5;SOL.push({x0:Math.min(x0,x1)-th,x1:Math.max(x0,x1)+th,y0:-9,y1:9,z0:Math.min(z0,z1)-th,z1:Math.max(z0,z1)+th})}
