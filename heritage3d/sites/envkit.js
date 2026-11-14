@@ -9,6 +9,7 @@ export const COURTS={
  minhwa:{x0:-20,x1:20,z0:-19,z1:21,wall:'earth',gate:4},
  gangjin:{x0:-26,x1:24,z0:-26,z1:25,wall:'earth',gate:5},
  icheon:{x0:-26,x1:24,z0:-26,z1:25,wall:'earth',gate:5},
+ cheongju:{x0:-46,x1:46,z0:-46,z1:36,wall:'earth',gate:6},
  jinju:{x0:-36,x1:36,z0:-16,z1:38,wall:'fort',gate:6,h:4.2,noBack:true,noHills:true},
  tongyeong:{x0:-34,x1:34,z0:-29,z1:29,wall:'stone',gate:6,noBack:true,noHills:true},
  gangneung:{x0:-32,x1:24,z0:-33,z1:25,wall:'earth',gate:4},

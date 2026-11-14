@@ -1,0 +1,64 @@
+/* 청주 철당간과 흥덕사 마당. 단위 1 = 1m, 입구 +z.
+   갱신 2026-11-14. 철당간 = 실측 스캔(kyoroki, CC BY), 직지 조판본·금속활자 = 한국문화정보원 KCISA(CC BY),
+   한옥 = 공개 3D(hanokkit.js 출처 참고). 마당 배치(흥덕사 터, 읍성 마을, 압각수, 남석교)는 청주의 유산을 한곳에 모아 본떠 지음(실제 거리와 다름). */
+import * as THREE from 'three';
+import {tex,noise,mulb} from './sungnyemun.js';
+import {plantBroad} from './treekit.js';
+import {getModel,placeHanok,hanokWall} from './hanokkit.js';
+export function buildCheongju(opts={}){const mini=!!opts.mini,TOUCH=opts.touch!=null?!!opts.touch:matchMedia('(pointer:coarse)').matches;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(43);
+ const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
+ /* 공개 3D 한 점 세우기: 높이(h) 또는 가장 긴 변(len)에 맞춘다 */
+ const place=(p,{x,y=0,z,h=null,len=null,ry=0,rx=0})=>{const g=new THREE.Group();g.position.set(x,y,z);g.rotation.set(rx,ry,0);G.add(g);if(mini)return g;getModel(p).then(src=>{if(!src)return;const o=src.clone();const b=new THREE.Box3().setFromObject(o),s=b.getSize(new THREE.Vector3());const sc=h?h/s.y:len?len/Math.max(s.x,s.z):1;o.scale.setScalar(sc);o.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(o);o.position.set(-(b2.min.x+b2.max.x)/2,-b2.min.y,-(b2.min.z+b2.max.z)/2);g.add(o)});return g};
+ const stoneT=tex(256,256,(q,w,h)=>{q.fillStyle='#a49c8e';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=32)for(let x=-(y/32%2)*24;x<w;x+=48){const g=150+(r()*36|0);q.fillStyle=`rgb(${g},${g-5},${g-14})`;q.fillRect(x+2,y+2,44,28)}noise(q,w,h,2500,['rgba(0,0,0,.08)'],2)});stoneT.wrapS=stoneT.wrapT=THREE.RepeatWrapping;
+ const dirtT=tex(256,256,(q,w,h)=>{q.fillStyle='#b89a72';q.fillRect(0,0,w,h);noise(q,w,h,5000,['#a88a62','#c4a67e','#9a7c56'],2)});dirtT.wrapS=dirtT.wrapT=THREE.RepeatWrapping;
+ const flat=(w,d,t,x,z,rep,y=.02)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({map:t.clone(),roughness:.95}));m.material.map.repeat.set(...rep);m.material.map.needsUpdate=true;m.position.set(x,y,z);m.receiveShadow=true;G.add(m);return m};
+ /* ---------- 바닥: 철당간 돌마당, 흙길 ---------- */
+ {const pl=new THREE.Mesh(new THREE.CircleGeometry(11,48).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({map:stoneT,roughness:.92}));stoneT.repeat.set(5,5);pl.position.set(0,.03,-6);pl.receiveShadow=true;G.add(pl);
+  flat(5,26,dirtT,0,17,[1.5,8]);flat(30,4.5,dirtT,-17,9.6,[9,1.4]);flat(30,4.5,dirtT,17,4,[9,1.4]);flat(4.5,40,dirtT,17,-14,[1.4,12],.025)}
+ /* ---------- 용두사지 철당간 ---------- */
+ const DX=0,DZ=-6;
+ {const base=box(4.6,.5,4.6,new THREE.MeshStandardMaterial({map:stoneT,roughness:.9}));base.position.set(DX,.25,DZ);G.add(base);S(DX-2.3,DX+2.3,-9,.5,DZ-2.3,DZ+2.3);
+  place('cheongju/cheoldanggan',{x:DX,y:.5,z:DZ,h:13.3});solids.push({cx:DX,cz:DZ,r:1.4,y0:0,y1:16});
+  /* 둘레 낮은 돌난간 */const rl=M(0x9a9284);for(const[a,b,c,d]of[[-3.6,3.6,-3.6,-3.6],[-3.6,3.6,3.6,3.6],[-3.6,-3.6,-3.6,3.6],[3.6,3.6,-3.6,1]]){const w=Math.abs(b-a)||.25,dd=Math.abs(d-c)||.25;const k=box(w,.5,dd,rl);k.position.set(DX+(a+b)/2,.25,DZ+(c+d)/2);G.add(k);S(DX+Math.min(a,b)-.12,DX+Math.max(a,b)+.12,-9,.5,DZ+Math.min(c,d)-.12,DZ+Math.max(c,d)+.12)}
+  spots.push({x:DX+4.6,y:0,z:DZ+3.4,r:2.6,t:'철당간',h:'고려 광종 13년(962)에 세운 쇠 당간이에요(국보). 당간은 절 입구에 깃발(당)을 거는 높은 장대예요. 쇠통 서른 개를 이어 올렸는데 지금은 스무 개가 남았어요. 아래에서 세 번째 쇠통에 세운 까닭과 해가 새겨져 있어, 언제 세웠는지 분명히 알 수 있는 드문 당간이에요. (3D: 실측 스캔 kyoroki, CC BY)'});
+  spots.push({x:DX-4.4,y:0,z:DZ-3.6,r:2,t:'당간지주',h:'철당간을 붙잡아 세운 두 돌기둥이에요. 기둥 사이에 당간을 끼우고 구멍에 빗장을 질러 고정했어요. 용두사라는 절은 사라지고 이 당간만 남아 청주 시내 한가운데에 서 있어요.'})}
+ /* ---------- 흥덕사 터: 대문, 금속활자 공방, 직지 진열 ---------- */
+ const HX=-26;
+ {placeHanok(G,solids,'gate',HX,2,0,{hole:true,TOUCH});hanokWall(G,solids,-43,2,HX-6.2,2,{TOUCH});hanokWall(G,solids,HX+6.2,2,-11,2,{TOUCH});hanokWall(G,solids,-11,2,-11,-14,{TOUCH});
+  placeHanok(G,solids,'hall',HX,-24,0,{TOUCH});
+  {const cv=document.createElement('canvas');cv.width=512;cv.height=150;const q=cv.getContext('2d');q.fillStyle='#2a1a10';q.fillRect(0,0,512,150);q.strokeStyle='#d8a838';q.lineWidth=8;q.strokeRect(6,6,500,138);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 96px "Noto Serif KR",serif';q.fillText('興德寺',256,112,480);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const pl=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.65),new THREE.MeshBasicMaterial({map:t}));const PX=HX+8.6,PZ=7.6;pl.position.set(PX,1.6,PZ);G.add(pl);const po=box(.14,1.9,.14,M(0x5a3a22));po.position.set(PX-1.2,.95,PZ-.05);G.add(po);const po2=po.clone();po2.position.x=PX+1.2;G.add(po2);solids.push({cx:PX-1.2,cz:PZ,r:.12,y0:0,y1:2},{cx:PX+1.2,cz:PZ,r:.12,y0:0,y1:2})}
+  /* 진열대: 직지 조판본(기울여 세움)과 금속활자(받침 위, 크게 키움) */const wd=M(0x6b4a2e),gl=new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.14,roughness:.05,metalness:0,depthWrite:false});
+  {const tx=HX-2.6,tz=-12;const t=box(3.2,.9,1.6,wd);t.position.set(tx,.45,tz);G.add(t);S(tx-1.6,tx+1.6,-9,1.6,tz-.8,tz+.8);place('cheongju/jikji_plate',{x:tx,y:.92,z:tz,len:2.2,rx:-.55,ry:Math.PI});const cs=box(3.1,1.2,1.5,gl);cs.castShadow=false;cs.position.set(tx,1.5,tz);G.add(cs);
+   spots.push({x:tx,y:0,z:tz+2.4,r:1.8,t:'직지 조판본',h:'1377년(고려 우왕 3년) 청주 흥덕사에서 금속활자로 찍은 책 「백운화상초록불조직지심체요절」, 줄여서 직지예요. 지금 남은 금속활자 책 가운데 세계에서 가장 오래되었고, 2001년 유네스코 세계기록유산이 되었어요. 남은 하권은 프랑스 국립도서관에 있어요. 활자를 한 판에 짜 넣은 모습을 되살린 조판본이에요(실제보다 크게). (3D: 한국문화정보원, CC BY)'})}
+  {const tx=HX+3,tz=-12;const p=new THREE.Mesh(new THREE.CylinderGeometry(.55,.65,1,16),M(0x8a8478));p.position.set(tx,.5,tz);p.castShadow=true;G.add(p);solids.push({cx:tx,cz:tz,r:.7,y0:0,y1:1.6});place('cheongju/jikji_type',{x:tx,y:1,z:tz,len:.5,ry:-.4});const cs=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.7,20,1,true),gl);cs.position.set(tx,1.35,tz);G.add(cs);
+   spots.push({x:tx,y:0,z:tz+2.2,r:1.6,t:'금속활자',h:'글자 하나를 쇠로 부어 만든 활자예요. 밀랍에 글자를 새기고 흙으로 감싼 뒤 녹인 쇳물을 부어 만들었다고 해요(밀랍주조법). 진짜 활자는 손톱만 해서 여기서는 크게 키워 보여 줘요. 금속 무이가 가장 좋아하는 유물이에요. (3D: 한국문화정보원, CC BY)'})}
+  spots.push({x:HX,y:0,z:9,r:2.4,t:'흥덕사 대문',h:'흥덕사는 직지를 찍어 낸 고려의 절이에요. 오랫동안 어디 있었는지 몰랐는데, 1985년 청주 운천동 공사장에서 "흥덕사"라고 새긴 쇠북 조각이 나와 절터를 찾았어요. 지금 그 자리 옆에 청주고인쇄박물관이 있어요. (대문 3D: 한국문화정보원 외대문, CC BY · 절은 본떠 지음)'});
+  spots.push({x:HX,y:0,z:-16.6,r:2.4,t:'인쇄 공방',h:'활자를 판에 짜고 먹을 바른 뒤 종이를 얹어 문질러 찍었어요. 한 판을 다 찍으면 활자를 풀어 다음 쪽을 다시 짰어요. 그래서 적은 수의 책을 여러 가지로 찍기 좋았어요. (3D 한옥: chrishong, CC BY)'})}
+ /* ---------- 읍성 마을: 기와집과 초가, 담장 골목 ---------- */
+ {placeHanok(G,solids,'sarang',28,-26,0,{TOUCH});placeHanok(G,solids,'nongga',36.5,-4,-Math.PI/2,{TOUCH});placeHanok(G,solids,'choga1',-31,24,0,{TOUCH});placeHanok(G,solids,'choga2',24,-39.5,0,{TOUCH});placeHanok(G,solids,'sarang',-30,-38,0,{TOUCH});placeHanok(G,solids,'nongga',-40,-10,Math.PI/2,{TOUCH});placeHanok(G,solids,'nongga',-12,25,Math.PI,{TOUCH});
+  /* 마을 나무: 가을 활엽수 */if(!mini){const TL=[],PAL=[0xe8603c,0xf08c3a,0xf6c04a,0x9cc05a,0xd8503a,0x6f9a48];for(const[x,z]of[[10,30],[38,30],[42,14],[-6,-40],[12,-28],[-42,-26],[-4,12],[8,12],[40,-20],[-18,-36]]){TL.push([x,0,z,r()*6,.7+r()*.3,PAL[TL.length%PAL.length]]);solids.push({cx:x,cz:z,r:.6,y0:-9,y1:20})}plantBroad(G,TL)}
+  hanokWall(G,solids,21,-19,21,-8,{TOUCH});hanokWall(G,solids,21,10,32,10,{TOUCH});
+  /* 장독대 */const jm=M(0x5a3420,{roughness:.35});for(let i=0;i<9;i++){const s=.55+r()*.4;const j=new THREE.Mesh(new THREE.LatheGeometry([[.001,0],[.3,0],[.5,.35],[.55,.7],[.36,1.05],[.28,1.1],[.001,1.1]].map(([a,b])=>new THREE.Vector2(a,b)),14),jm);j.scale.setScalar(s);j.position.set(26+(i%3)*1.1,.3,-16+Math.floor(i/3)*1.1);j.castShadow=!TOUCH;G.add(j)}{const st=box(4,.3,3.6,M(0xa8a196));st.position.set(27.1,.15,-14.9);G.add(st);S(25,29.2,-9,1.1,-16.8,-13)}
+  spots.push({x:17,y:0,z:-12,r:2.6,t:'읍성 마을',h:'청주에는 조선 시대 돌로 쌓은 청주읍성이 있었어요. 성 안에는 관아와 기와집, 성 밖에는 초가가 모여 살았지요. 일제강점기에 성벽이 헐려 지금은 성안길이라는 길 이름으로 남았어요. 철당간도 바로 그 성안길 곁에 서 있어요. (3D 한옥: chrishong · 한국문화정보원, CC BY · 마을은 본떠 지음)'})}
+ /* ---------- 압각수: 900살 은행나무 ---------- */
+ {const AX=2,AZ=-30;if(!mini){plantBroad(G,[[AX,0,AZ,.4,2.3,0xf2c230],[AX+.6,0,AZ+.4,2.1,1.9,0xf6d040]]);/* 떨어진 은행잎 */const lf=new THREE.Mesh(new THREE.CircleGeometry(7,32).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({map:tex(256,256,(q,w,h)=>{q.fillStyle='#8a9a50';q.fillRect(0,0,w,h);noise(q,w,h,9000,['#f2c230','#f6d040','#e8b020','#d8a018'],3)}),roughness:1}));lf.position.set(AX,.035,AZ);lf.receiveShadow=true;G.add(lf)}
+  const rl=M(0x9a9284);for(let i=0;i<16;i++){const a=i/16*Math.PI*2;const p=box(.25,.6,.25,rl);p.position.set(AX+Math.cos(a)*4.2,.3,AZ+Math.sin(a)*4.2);G.add(p)}solids.push({cx:AX,cz:AZ,r:4.3,y0:-9,y1:20});
+  spots.push({x:AX,y:0,z:AZ+6.2,r:2.4,t:'압각수',h:'청주 중앙공원에 있는 900살쯤 된 은행나무예요. 잎이 오리발을 닮아 "압각수"라고 불러요. 고려 말 억울하게 청주 감옥에 갇힌 선비들이 큰물이 졌을 때 이 나무에 올라 살아났고, 그 일로 풀려났다는 이야기가 전해요.'})}
+ /* ---------- 남석교: 개울 위 돌다리 ---------- */
+ const BZ=22,BX=26;
+ {const wt=tex(256,256,(q,w,h)=>{q.fillStyle='#4f8a92';q.fillRect(0,0,w,h);for(let i=0;i<60;i++){q.strokeStyle='rgba(225,242,245,'+(.08+r()*.12)+')';q.lineWidth=2;q.beginPath();q.ellipse(r()*w,r()*h,8+r()*20,2+r()*3,0,0,7);q.stroke()}});wt.wrapS=wt.wrapT=THREE.RepeatWrapping;wt.repeat.set(8,1);const w=new THREE.Mesh(new THREE.PlaneGeometry(38,5).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({map:wt,roughness:.15,metalness:.1}));w.position.set(25,.05,BZ);G.add(w);G.userData.water=wt;
+  const bank=M(0x8a8478,{flatShading:true});for(let x=7;x<44;x+=1.4)for(const sz of[-1,1]){const k=new THREE.Mesh(new THREE.DodecahedronGeometry(.45+r()*.25,0),bank);k.position.set(x+r()*.5,.08,BZ+sz*(2.6+r()*.2));k.castShadow=!TOUCH;G.add(k)}
+  S(6,BX-1.9,-9,2,BZ-2.6,BZ+2.6);S(BX+1.9,44,-9,2,BZ-2.6,BZ+2.6);
+  const sl=new THREE.MeshStandardMaterial({map:stoneT,roughness:.9});for(let i=0;i<4;i++){const s=box(3.4,.3,1.9,sl);s.position.set(BX,.2,BZ-2.85+i*1.9);G.add(s)}for(const pz of[-1.9,0,1.9]){const pr=box(.9,.7,.7,sl);pr.position.set(BX,-.35,BZ+pz);G.add(pr)}
+  spots.push({x:BX,y:0,z:BZ+4.2,r:2.2,t:'남석교',h:'청주 무심천 옛 물줄기에 놓였던 큰 돌다리예요. 조선 시대 기록에도 나오는 청주의 자랑이었는데, 물길이 바뀌고 땅이 덮이면서 지금은 육거리시장 아래 묻혀 있어요. 언제 처음 놓였는지는 의견이 갈려요. 다시 꺼내 복원하자는 이야기가 이어지고 있어요. (다리는 본떠 지음)'})}
+ const tick=(P,dt)=>{if(G.userData.water)G.userData.water.offset.x+=dt*.02};
+ const meta={quest:{t:'청주 직지 순례',d:'철당간과 직지의 고장 청주를 둘러보세요. 노란 빛기둥을 따라가요.',steps:[['용두사지 철당간','철당간'],['흥덕사 대문','흥덕사 대문'],['직지 조판본','직지 조판본'],['금속활자','금속활자'],['900살 은행나무 압각수','압각수'],['묻힌 돌다리 남석교','남석교'],['청주 읍성 마을','읍성 마을']],done:'철당간에서 직지, 압각수와 남석교까지 청주의 이야기를 다 모았어요!'},
+  title:'청주 철당간과 흥덕사 · 실제 크기',hint:'국보 용두사지 철당간(실측 스캔)이 선 돌마당이에요. 서쪽 흥덕사 대문 안에서 직지 조판본과 금속활자를 보고, 동쪽 읍성 마을과 남석교, 뒤쪽 압각수까지 둘러보세요. (3D: kyoroki · 한국문화정보원 · chrishong, CC BY · 배치는 본떠 지음)',
+  env:{plaza:null,beds:false,trees:true,sign:{x:5,z:30,lines:['청주 철당간과 흥덕사','철당간 · 직지 · 금속활자','압각수 · 남석교 · 읍성 마을','직지의 고장 청주']},treeAvoid:(x,z)=>Math.abs(x)<44&&z>-46&&z<36},
+  npc:[['metal',[[-28,-6],[-22,-6]]],['carpenter',[[14,-2],[14,-20]]],['painter',[[-4,-20],[6,-20]]]],
+  level:P=>P.x<-11&&P.z<2?'흥덕사 터':P.x>20&&P.z<10?'읍성 마을':Math.abs(P.z-BZ)<4&&P.x>6?'남석교':Math.hypot(P.x-2,P.z+30)<8?'압각수':Math.hypot(P.x-DX,P.z-DZ)<11?'철당간 마당':'청주 고을',
+  camCap:()=>Infinity,tick,
+  mini:{S:3.2,ox:0,oz:-4,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.fillStyle='#a49c8e';g.beginPath();g.arc(X(DX),Z(DZ),11*S,0,7);g.fill();g.fillStyle='#3b3b3b';g.fillRect(X(HX-9.7),Z(-27.7),19.4*S,7.4*S);g.fillRect(X(HX-5.9),Z(-2.1),11.8*S,8.2*S);g.fillRect(X(20),Z(-31),16*S,10*S);g.fillRect(X(33),Z(-12.8),7*S,17.7*S);g.fillStyle='#b08a50';g.fillRect(X(-38),Z(17),15*S,14*S);g.fillRect(X(13),Z(-43),22.6*S,6.8*S);g.fillStyle='#4f8a92';g.fillRect(X(6),Z(BZ-2.5),38*S,5*S);g.fillStyle='#a49c8e';g.fillRect(X(BX-1.7),Z(BZ-3.8),3.4*S,7.6*S);g.fillStyle='#f2c230';g.beginPath();g.arc(X(2),Z(-30),5*S,0,7);g.fill();g.fillStyle='#2a1a10';g.beginPath();g.arc(X(DX),Z(DZ),1.2*S,0,7);g.fill()}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:27,yaw:Math.PI},size:{}},meta)}
