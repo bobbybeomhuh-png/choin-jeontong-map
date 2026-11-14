@@ -65,7 +65,7 @@ export function boatRig(G,{provAt,WATER_Y,MS=1}){const DV=seaDive(G,{WATER_Y,MS}
   {const hp0=HR&&HR.root.position;const deep=hp0&&!provAt(hp0.x,hp0.z)&&!provAt(hp0.x+8,hp0.z)&&!provAt(hp0.x-8,hp0.z)&&!provAt(hp0.x,hp0.z+8)&&!provAt(hp0.x,hp0.z-8);DV.tick(t,on&&riding,deep)}
   if(!riding){if(on){on=false;B.visible=false}return}
   const hp=HR.root.position;const sea=!provAt(hp.x,hp.z);
-  if(sea&&!on){on=true;poof(hp);if(!told){told=true;H.say('물에 닿았더니 말이 나룻배가 됐어요! 노 저어 가요~',4)}}
+  if(sea&&!on){on=true;poof(hp);if(!told){told=true;H.say('물에 닿았더니 말이 나룻배가 됐어요! 먼 바다로 나가 「바닷속 보기」를 눌러 봐요~',5)}}
   if(!sea&&on){on=false;poof(hp);B.visible=false;HR.root.visible=true}
   if(!on)return;HR.root.visible=false;B.visible=true;const bob=Math.sin(t*2.2)*.06;B.position.set(hp.x,WATER_Y+.12+bob,hp.z);B.rotation.y=HR.root.rotation.y;B.rotation.z=Math.sin(t*1.7)*.04;me.root.position.set(hp.x-Math.sin(B.rotation.y)*.2,WATER_Y+.36+bob,hp.z-Math.cos(B.rotation.y)*.2);
   const mv=last?Math.hypot(hp.x-last.x,hp.z-last.z)/Math.max(dt,1e-3):0;last={x:hp.x,z:hp.z};for(const[o,s]of oars){o.rotation.x=mv>.5?Math.sin(t*6)*.6:Math.sin(t*1.5)*.1;o.rotation.y=mv>.5?Math.cos(t*6)*.3*s:0}
@@ -101,8 +101,8 @@ export function buildRoads(G,{CITIES,provAt,HALL,TOP,spots,mulb,solids}){const r
   const p3=at(R,.3);sot(p3.x+p3.dz*2,p3.z-p3.dx*2)});
  for(let i=0,n=0;i<900&&n<40;i++){const x=(-170+r()*355)*1.6,z=(-165+r()*365)*1.6;if(!provAt(x,z)||HALL(x,z)>.2)continue;scare(x,z);n++}
  for(const[,c]of C.filter((_,i)=>i%3===0))kite(c.x+8,c.z-6);
- /* 보부상: 지게 진 짐꾼이 길을 오간다 */const walkers=[];for(let i=0;i<Math.min(14,roads.length);i++){const R=roads[(i*7)%roads.length];const g=new THREE.Group();G.add(g);const bd=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.5,4,8),M(0xe8e0cc));bd.position.y=.7;g.add(bd);const hd=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),M(0xf2e0c8));hd.position.y=1.35;g.add(hd);const hat=new THREE.Mesh(new THREE.ConeGeometry(.42,.32,14),M(0x3b2a1c));hat.position.y=1.62;g.add(hat);
-  const jige=new THREE.Group();jige.position.set(0,.9,-.32);g.add(jige);for(const s of[-.18,.18]){const l=new THREE.Mesh(new THREE.BoxGeometry(.05,1.3,.05),wood);l.position.set(s,0,0);jige.add(l)}const bundle=new THREE.Mesh(new THREE.BoxGeometry(.6,.5,.4),M([0xc8342c,0x2d4f9a,0x6a4aa0,0x2f6a4a][i%4]));bundle.position.set(0,.45,-.12);jige.add(bundle);const stick=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.4,5),wood);stick.position.set(.35,.7,.1);stick.rotation.z=-.2;g.add(stick);
+ /* 보부상: 지게 진 짐꾼이 길을 오간다 */const walkers=[];for(let i=0;i<Math.min(14,roads.length);i++){const R=roads[(i*7)%roads.length];const g=new THREE.Group();G.add(g);const bd=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.5,4,8),M(0xe8e0cc));bd.position.y=.7;g.add(bd);const hd=new THREE.Mesh(new THREE.SphereGeometry(.24,12,10),M(0xf2e0c8));hd.position.y=1.35;g.add(hd);const hat=new THREE.Mesh(new THREE.ConeGeometry(.5,.3,14),M(0xd9b765,{roughness:1}));hat.position.y=1.6;g.add(hat);
+  const jige=new THREE.Group();jige.position.set(0,.82,-.36);g.add(jige);for(const s of[-.18,.18]){const l=new THREE.Mesh(new THREE.BoxGeometry(.05,1.3,.05),wood);l.position.set(s,0,0);jige.add(l)}const bundle=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),M([0xc8342c,0x2d4f9a,0x6a4aa0,0x2f6a4a][i%4]));bundle.scale.set(1.15,.85,.85);bundle.position.set(0,.08,-.14);jige.add(bundle);const knot=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),M([0xc8342c,0x2d4f9a,0x6a4aa0,0x2f6a4a][i%4]));knot.position.set(0,.32,-.1);knot.scale.set(1.6,.8,1);jige.add(knot);const stick=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.4,5),wood);stick.position.set(.35,.7,.1);stick.rotation.z=-.2;g.add(stick);
   walkers.push({g,R,t:r(),v:(.012+r()*.01)*(r()<.5?-1:1)*60/Math.max(40,R.d)})}
  anim.push((t,dt)=>{for(const w of walkers){w.t+=w.v*dt;if(w.t>.97||w.t<.03){w.v*=-1;w.t=Math.min(.97,Math.max(.03,w.t))}const p=at(w.R,w.t);w.g.position.set(p.x+p.dz*.5*Math.sign(w.v),gy(p.x,p.z)+Math.abs(Math.sin(t*6+w.t*50))*.08,p.z-p.dx*.5*Math.sign(w.v));w.g.rotation.y=Math.atan2(p.dx*Math.sign(w.v),p.dz*Math.sign(w.v))}});
   return{tick:(P,dt,t)=>{for(const f of anim)f(t,dt)},roads:roads.length,jumak:jm}}
@@ -132,5 +132,5 @@ export function seaDive(G,{WATER_Y,MS=1}){const D=new THREE.Group();D.visible=fa
   const NM={east:'동해 바닷속: 오징어, 대게, 돌고래',south:'남해 바닷속: 해녀, 전복, 문어, 물고기 떼',west:'서해 바닷속: 꽃게와 조개'};H.say(NM[kind],5);
   window.__CAMFN=t=>{const a=(t-T0)*.18,y=bed+3.5+Math.sin((t-T0)*.25)*1.5;return[cx+Math.cos(a)*11,y,cz+Math.sin(a)*11,cx,bed+2.5,cz,0]}};
  const stop=()=>{const H=window.__H3;on=false;D.visible=false;window.__CAMFN=null;ui.textContent='바닷속 보기';if(H&&saved){const S=H.scene;if(saved.fog&&S.fog){S.fog.color.setHex(saved.fog[0]);S.fog.near=saved.fog[1];S.fog.far=saved.fog[2]}if(saved.sky)saved.sky.visible=true;S.background=saved.bg||null}};
- ui.onclick=()=>{on?stop():start()};
- return{tick:(t,boatOn,deep)=>{ui.style.display=(boatOn&&deep)||on?'block':'none';if(on){for(const f of anim)f(t);if(!boatOn||t-T0>40)stop()}},get on(){return on}}}
+ let deepNow=false;ui.onclick=()=>{if(on){stop();return}if(!deepNow){try{window.__H3.say('땅에서 조금 더 멀리, 먼 바다로 나가면 바닷속이 보여요!',4)}catch(e){}return}start()};
+ return{tick:(t,boatOn,deep)=>{deepNow=deep;ui.style.display=boatOn||on?'block':'none';if(!on)ui.style.opacity=deep?'1':'.6';if(on){for(const f of anim)f(t);if(!boatOn||t-T0>40)stop()}},get on(){return on}}}
