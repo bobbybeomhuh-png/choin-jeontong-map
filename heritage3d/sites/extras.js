@@ -1,6 +1,7 @@
 /* 거점별 덧붙이기(퀄리티 2차): 실측 소나무·초가(한국문화정보원 KCISA, CC BY), 시장 거리, 거점마다 대표 소품.
    갱신 2026-11-12. index.html이 공통 바탕(envkit) 다음에 부른다. */
 import * as THREE from 'three';
+import {koreanBell} from './bellkit.js';
 import {plantBroad} from './treekit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
@@ -51,7 +52,7 @@ export function buildExtras(scene,SITE,EV,SOL,TOUCH,SPOTS,SB){const C=SITES[SITE
  /* 시장 */if(C.market){const rows=C.market.slice();rows.carts=[];buildMarket(G,SOL,[],rows,{seed:SITE.length})}
  const fx=new Set(C.fx||[]);const spots=[];
  const pav=(x,z,W,D,PH,FY,col=0x8a3a2a)=>{G.add(buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3.6)),nz:1,FY,PH,roof:'hip',pillar:col,bracket:'ik',front:'open',left:'open',right:'open',back:'open',solids:SOL,light:false,plain:true,roofScale:.7}).group)};
- const bellPav=(x,z)=>{pav(x,z,4.4,4.4,3.6,.5);const bell=new THREE.Mesh(new THREE.LatheGeometry([[.001,1.3],[.45,1.28],[.62,1.05],[.7,.5],[.82,.05],[.86,0],[.8,0]].map(([a,b])=>new THREE.Vector2(a,b)),24),M(0x5a6a5a,{roughness:.45,metalness:.6,side:THREE.DoubleSide}));bell.position.set(x,2,z);bell.castShadow=true;G.add(bell);spots.push({x:x,y:0,z:z+4,r:2.2,t:'범종각',h:'절에서 새벽과 저녁에 종을 쳐 하루를 열고 닫아요. 종소리가 골짜기를 따라 멀리 퍼져요. (본떠 지음)'})};
+ const bellPav=(x,z)=>{pav(x,z,4.4,4.4,3.6,.5);const bell=koreanBell(1.3);bell.position.set(x,1.85,z);G.add(bell);spots.push({x:x,y:0,z:z+4,r:2.2,t:'범종각',h:'절에서 새벽과 저녁에 종을 쳐 하루를 열고 닫아요. 종소리가 골짜기를 따라 멀리 퍼져요. (본떠 지음)'})};
  /* 한양: 드므(방화수 그릇)와 정료대(횃불 받침) */if(fx.has('drumu')){for(const [x,z] of[[-16,-24],[16,-24]]){if(hit(x,z,.9))continue;const d=new THREE.Mesh(new THREE.LatheGeometry([[.001,0],[.55,0],[.75,.15],[.8,.6],[.85,.7],[.001,.7]].map(([a,b])=>new THREE.Vector2(a,b)),24),M(0x3a4a3a,{metalness:.6,roughness:.4}));d.position.set(x,.3,z);d.castShadow=true;G.add(d);const st=box(1.4,.3,1.4,M(0xa8a196));st.position.set(x,.15,z);G.add(st);const w=new THREE.Mesh(new THREE.CircleGeometry(.75,20).rotateX(-Math.PI/2),M(0x506a78,{roughness:.05,metalness:.3}));w.position.set(x,.95,z);G.add(w);SOL.push({cx:x,cz:z,r:.85,y0:-9,y1:1.2})}
    spots.push({x:16,y:0,z:-21.6,r:1.8,t:'드므',h:'궁궐 전각 둘레에 놓은 넓은 쇠 그릇이에요. 물을 담아 두면 불귀신이 제 얼굴을 보고 놀라 달아난다고 믿었고, 실제로 불을 끄는 물로도 썼어요.'})}
  if(fx.has('jeongnyo')){for(const [x,z] of[[-8,8],[8,8]]){if(hit(x,z,.6))continue;/* 정료대: 두 단 받침 + 팔각 돌기둥 + 위 네모 불판(턱) + 관솔 장작 + 흔들리는 불꽃 */const sm=M(0xa8a196),sd=M(0x948d80);const b0=box(1.1,.18,1.1,sd);b0.position.set(x,.09,z);G.add(b0);const b1=box(.8,.16,.8,sm);b1.position.set(x,.26,z);G.add(b1);const p=new THREE.Mesh(new THREE.CylinderGeometry(.18,.26,1.25,8),sm);p.position.set(x,.96,z);p.castShadow=true;G.add(p);const cap=new THREE.Mesh(new THREE.CylinderGeometry(.34,.2,.14,8),sm);cap.position.set(x,1.65,z);G.add(cap);const top=box(.9,.1,.9,sd);top.position.set(x,1.76,z);G.add(top);for(const [dx,dz,w,d] of[[0,.42,.9,.06],[0,-.42,.9,.06],[.42,0,.06,.9],[-.42,0,.06,.9]]){const r=box(w,.12,d,sm);r.position.set(x+dx,1.85,z+dz);G.add(r)}
