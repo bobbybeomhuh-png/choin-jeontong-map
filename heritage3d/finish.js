@@ -22,12 +22,12 @@ let T=null;function texes(){if(T)return T;
  /* 흙 알갱이: 아주 고운 자갈(가까이서 보이는 결) */
  const soil=canvasTex(256,256,(q,W,H)=>{q.fillStyle=g(128);q.fillRect(0,0,W,H);for(let i=0;i<2600;i++){const v=rnd()<.5?84+rnd()*30:170+rnd()*40,r=.6+rnd()*2.2;q.fillStyle=g(v,.6);q.beginPath();q.ellipse(rnd()*W,rnd()*H,r,r*(.6+rnd()*.4),rnd()*3,0,7);q.fill()}});
  /* 숲 우듬지: 둥근 나무 머리가 빽빽 */
- const forest=canvasTex(512,512,(q,W,H)=>{q.fillStyle=g(96);q.fillRect(0,0,W,H);for(let i=0;i<900;i++){const x=rnd()*W,y=rnd()*H,r=7+rnd()*16;for(const dx of[-W,0,W])for(const dy of[-H,0,H]){const gr=q.createRadialGradient(x+dx-r*.3,y+dy-r*.35,1,x+dx,y+dy,r);gr.addColorStop(0,g(190+rnd()*40));gr.addColorStop(.7,g(120));gr.addColorStop(1,g(60,.9));q.fillStyle=gr;q.beginPath();q.arc(x+dx,y+dy,r,0,7);q.fill()}}});
+ const forest=canvasTex(512,512,(q,W,H)=>{q.fillStyle=g(82);q.fillRect(0,0,W,H);/* 우듬지 크기: 무늬 한 장=약 20m, 나무 머리 지름 1~3m(예전엔 너무 작아 거품처럼 보였음) */for(let i=0;i<420;i++){const x=rnd()*W,y=rnd()*H,r=14+rnd()*26;for(const dx of[-W,0,W])for(const dy of[-H,0,H]){const gr=q.createRadialGradient(x+dx-r*.3,y+dy-r*.35,1,x+dx,y+dy,r);gr.addColorStop(0,g(190+rnd()*40));gr.addColorStop(.7,g(120));gr.addColorStop(1,g(60,.9));q.fillStyle=gr;q.beginPath();q.arc(x+dx,y+dy,r,0,7);q.fill()}}});
  return T={wood,plaster,stone,soft,soil,forest}}
 /* 색으로 종류 고르기 */
 function kindOf(c){const h={};c.getHSL(h);if(h.l<.06)return null;if(h.s>.18&&(h.h<.11||h.h>.95)&&h.l<.62)return 'wood';if(h.l>.7&&h.s<.4)return 'plaster';if(h.s<.16)return 'stone';if(h.h>.11&&h.h<.17&&h.s>.2)return 'wood';return 'soft'}
 /* 종류별: 무늬 크기(m당 반복), 세기, 거칠기 흔들림 */
-const P={soil:{sc:1.1,amt:.55,rv:.2,ax:0,flat:1},forest:{sc:.09,amt:.9,rv:.1,ax:0,flat:1},wood:{sc:.55,amt:.8,rv:.3,ax:1},plaster:{sc:.22,amt:.45,rv:.15,ax:0},stone:{sc:.35,amt:.75,rv:.25,ax:0},soft:{sc:.4,amt:.45,rv:.15,ax:0}};
+const P={soil:{sc:1.1,amt:.55,rv:.2,ax:0,flat:1},forest:{sc:.05,amt:.75,rv:.1,ax:0,flat:1},wood:{sc:.55,amt:.8,rv:.3,ax:1},plaster:{sc:.22,amt:.45,rv:.15,ax:0},stone:{sc:.35,amt:.75,rv:.25,ax:0},soft:{sc:.4,amt:.45,rv:.15,ax:0}};
 function patch(m,k){const t=texes()[k],p=P[k];m.userData.fin=k;
  m.onBeforeCompile=sh=>{sh.uniforms.uDet={value:t};sh.uniforms.uSc={value:p.sc};sh.uniforms.uAmt={value:p.amt};sh.uniforms.uRv={value:p.rv};sh.uniforms.uGY={value:GY};
   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vFWP;varying vec3 vFWN;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\n{vec4 fw=vec4(transformed,1.0);\n#ifdef USE_INSTANCING\nfw=instanceMatrix*fw;\n#endif\nfw=modelMatrix*fw;vFWP=fw.xyz;vec3 fn=objectNormal;\n#ifdef USE_INSTANCING\nfn=mat3(instanceMatrix)*fn;\n#endif\nvFWN=normalize(mat3(modelMatrix)*fn);}');
