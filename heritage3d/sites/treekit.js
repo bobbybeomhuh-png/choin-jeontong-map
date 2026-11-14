@@ -18,7 +18,7 @@ function broadGeo(){if(BROAD)return BROAD;const r=rng(5),bark=[],leaf=[];
 export function plantBroad(parent,list,{shadow=true}={}){const G=broadGeo(),N=list.length;if(!N)return null;
  const bm=new THREE.MeshStandardMaterial({color:0x5a4030,roughness:.95});const lm=new THREE.MeshStandardMaterial({map:leafTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:.9,vertexColors:true});
  const b=new THREE.InstancedMesh(G.bark,bm,N),l=new THREE.InstancedMesh(G.leaf,lm,N),o=new THREE.Object3D(),c=new THREE.Color();
- list.forEach(([x,y,z,ry,s,hex],i)=>{o.position.set(x,y,z);o.rotation.set(0,ry,0);o.scale.setScalar(s);o.updateMatrix();b.setMatrixAt(i,o.matrix);l.setMatrixAt(i,o.matrix);l.setColorAt(i,c.set(hex==null?0x4f7f3a:hex))});
+ const CR=window.__CROWNS||(window.__CROWNS=[]);list.forEach(([x,y,z,ry,s,hex],i)=>{CR.push({x,y:y+4.3*s,z,r:2.5*s});/* 카메라용 우듬지 자리 */o.position.set(x,y,z);o.rotation.set(0,ry,0);o.scale.setScalar(s);o.updateMatrix();b.setMatrixAt(i,o.matrix);l.setMatrixAt(i,o.matrix);l.setColorAt(i,c.set(hex==null?0x4f7f3a:hex))});
  b.castShadow=l.castShadow=shadow;b.receiveShadow=l.receiveShadow=true;parent.add(b,l);return [b,l]}
 /* 먼 산 소나무: 그린 소나무 판 두 장을 십자로(멀리서 보는 용, 아주 가벼움) */
 let PPT=null;
