@@ -108,7 +108,9 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 /* 압축 모델(Draco) 풀기 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;GLTFLoader.prototype.load=function(...a){if(!this.dracoLoader)this.setDRACOLoader(DL);return _l.apply(this,a)}}
 
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';import {trk} from '../heritage3d/trk3d.js';import {coinState,coinPop,PRICE} from '../heritage3d/coin.js';import {achNew,achToast} from '../heritage3d/ach.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';import {trk} from '../heritage3d/trk3d.js';import {coinState,coinPop,PRICE} from '../heritage3d/coin.js';
+import {finishScene,skyEnv} from '../heritage3d/finish.js';
+setTimeout(()=>{try{if(new URLSearchParams(location.search).has('nofin'))return;skyEnv(R,scene);finishScene(scene);for(const t of[3000,8000,16000])setTimeout(()=>{try{finishScene(scene)}catch(e){}},t)}catch(e){console.warn('마감 실패',e)}},1200);import {achNew,achToast} from '../heritage3d/ach.js';
 const $=s=>document.querySelector(s);const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));const rnd=(a,b)=>a+Math.random()*(b-a);const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const TOUCH=matchMedia('(pointer:coarse)').matches;
 const TICK=[];const BLK=[];
