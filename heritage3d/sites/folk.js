@@ -1,0 +1,48 @@
+/* 전국 지도 계절 옛 풍속 행사. 갱신 2026-11-15
+   달에 맞춰 한 가지가 도시 둘레 세 곳에 선다. 시험: 주소에 ?folk=dongji|daeboreum|dano|chuseok
+   동지 팥죽(11~12월) · 정월대보름 쥐불놀이와 달집(1~3월) · 단오 그네(4~7월) · 추석 강강술래(8~10월)
+   무이는 window.__H3.makeMuui 가 생긴 뒤 천천히 불러온다(지도 처음 뜨는 속도에 영향 없게). */
+import * as THREE from 'three';
+const EV={
+ dongji:{n:'동지 팥죽',h:'동지는 일 년 중 밤이 가장 긴 날이에요. 붉은 팥죽을 쑤어 나눠 먹으며 나쁜 기운을 쫓았어요. 팥죽에는 찹쌀 새알심을 넣어요.'},
+ daeboreum:{n:'정월대보름 쥐불놀이',h:'음력 1월 15일 정월대보름에는 논밭 둑에 불을 놓는 쥐불놀이와 달집태우기를 하며 한 해 풍년을 빌었어요. 구멍 뚫은 깡통에 불씨를 넣어 빙빙 돌리기도 했어요.'},
+ dano:{n:'단오 그네뛰기',h:'음력 5월 5일 단오에는 창포물에 머리를 감고 높은 그네를 뛰었어요. 씨름도 하며 여름을 맞았어요.'},
+ chuseok:{n:'추석 강강술래',h:'음력 8월 15일 추석 보름달 아래, 손을 잡고 둥글게 돌며 노래하는 강강술래를 했어요. 강강술래는 유네스코 인류무형문화유산이에요.'}};
+export function folkKind(){const q=/[?&]folk=(\w+)/.exec(location.search);if(q&&EV[q[1]])return q[1];const m=new Date().getMonth()+1;return m>=11?'dongji':m<=3?'daeboreum':m<=7?'dano':'chuseok'}
+export function buildFolk(G,{CITIES,TOP,landAt,solids}){
+ const kind=folkKind(),E=EV[kind];const root=new THREE.Group();root.userData.noBatch=true;G.add(root);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
+ const cyl=(r1,r2,h,m,x,y,z,g,seg=16)=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),m);b.position.set(x,y,z);b.castShadow=b.receiveShadow=true;g.add(b);return b};
+ const box=(w,h,d,m,x,y,z,g)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.set(x,y,z);b.castShadow=b.receiveShadow=true;g.add(b);return b};
+ const sign=(t,g,y)=>{const c=document.createElement('canvas');c.width=512;c.height=128;const q=c.getContext('2d');q.fillStyle='rgba(120,30,30,.92)';q.beginPath();q.roundRect(6,6,500,116,30);q.fill();q.strokeStyle='#f2d27a';q.lineWidth=6;q.stroke();q.fillStyle='#fff4dc';q.textAlign='center';q.font='bold 56px "Do Hyeon",sans-serif';q.fillText(t,256,84);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx}));s.scale.set(5,1.25,1);s.position.y=y;g.add(s)};
+ /* 자리: 도시 셋 둘레 땅 위(도시 마당 12~16m 밖) */
+ const want=['서울','경주','전주','부여','안동','강릉','광주','대구'];const sites=[];
+ for(const nm of want){const c=CITIES[nm];if(!c||sites.length>=3)continue;for(let k=0;k<16;k++){const a=k/16*Math.PI*2+.4,R=13+(k%3)*1.5;const x=c.x+Math.cos(a)*R,z=c.z+Math.sin(a)*R;let ok=true;try{for(let j=0;j<8;j++){const b=j/8*Math.PI*2;if(!landAt(x+Math.cos(b)*4,z+Math.sin(b)*4)){ok=false;break}}}catch(e){ok=false}if(ok){sites.push({x,z,city:nm});break}}}
+ const anim=[],crew=[];
+ for(const S of sites){const g=new THREE.Group();g.position.set(S.x,TOP,S.z);root.add(g);S.g=g;
+  if(kind==='dongji'){/* 가마솥 + 아궁이 돌 + 김, 그릇 쌓인 소반 */const stone=M(0x8a8276,{flatShading:true});for(let i=0;i<9;i++){const a=i/9*Math.PI*2;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.32,0),stone);r.position.set(Math.cos(a)*1.05,.25,Math.sin(a)*1.05);g.add(r)}
+   const pot=new THREE.Mesh(new THREE.SphereGeometry(.95,20,12,0,Math.PI*2,Math.PI/2,Math.PI/2),M(0x26221e,{metalness:.5,roughness:.5,side:THREE.DoubleSide}));pot.position.y=1.1;g.add(pot);cyl(1.15,1.15,.08,M(0x26221e,{metalness:.5,roughness:.5}),0,1.06,0,g,24);const juk=new THREE.Mesh(new THREE.CircleGeometry(.9,24).rotateX(-Math.PI/2),M(0x6a1e1a,{roughness:.4}));juk.position.y=1.0;g.add(juk);for(let i=0;i<7;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),M(0xf4efe4));b.position.set(Math.cos(i*2.4)*.45*(i%3+1)/3,1.02,Math.sin(i*2.4)*.45*(i%3+1)/3);g.add(b)}
+   const fire=new THREE.Mesh(new THREE.ConeGeometry(.35,.6,8),new THREE.MeshBasicMaterial({color:0xff7a2a}));fire.position.set(0,.35,.9);g.add(fire);const st=[];for(let i=0;i<5;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(.3,8,6),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.4,depthWrite:false}));g.add(s);st.push(s)}
+   anim.push(t=>{fire.scale.set(1,.8+Math.sin(t*11)*.2,1);st.forEach((s,i)=>{const u=(t*.3+i/5)%1;s.position.set(Math.sin(u*5+i)*.3,1.3+u*2.4,Math.cos(u*4+i)*.2);s.scale.setScalar(.6+u*1.6);s.material.opacity=.4*(1-u)})});
+   const tb=new THREE.Group();tb.position.set(2.2,0,.4);g.add(tb);cyl(.55,.55,.07,M(0x8a3a22),0,.42,0,tb,20);for(const a of[0,2.1,4.2])box(.06,.4,.06,M(0x5a2a18),Math.cos(a)*.42,.2,Math.sin(a)*.42,tb);for(let i=0;i<4;i++){const bw=new THREE.Mesh(new THREE.CylinderGeometry(.16,.1,.1,14),M(0xe8e0d0));bw.position.set(-.2+(i%2)*.36,.5+(i>1?.1:0),-.1+(i%2)*.12);tb.add(bw)}
+   solids&&solids.push({cx:S.x,cz:S.z,r:1.35,y0:0,y1:TOP+2});sign(E.n,g,3.6);crew.push({S,acts:['knead','carry'],ring:[[1.6,-.9,-2.2],[-1.6,-.6,1.9]]})}
+  if(kind==='daeboreum'){/* 달집: 짚단 원뿔 + 대나무 + 불 / 쥐불 깡통 둘이 빙빙 / 큰 보름달 */const dj=new THREE.Mesh(new THREE.ConeGeometry(1.6,4.2,10,1,true),M(0xc8a85a,{side:THREE.DoubleSide,flatShading:true}));dj.position.y=2.1;g.add(dj);for(let i=0;i<10;i++){const a=i/10*Math.PI*2;const b=cyl(.05,.06,4.6,M(0x6a8a3a),Math.cos(a)*.9,2.2,Math.sin(a)*.9,g,6);b.rotation.set(Math.sin(a)*.32,0,-Math.cos(a)*.32)}
+   const fl=[];for(let i=0;i<4;i++){const f=new THREE.Mesh(new THREE.ConeGeometry(.5,1.4,8),new THREE.MeshBasicMaterial({color:i%2?0xffb03a:0xff6a2a,transparent:true,opacity:.85}));f.position.set(Math.cos(i*1.6)*.6,.7,Math.sin(i*1.6)*.6);g.add(f);fl.push(f)}
+   const cans=[];for(const [cx,cz] of[[3.4,1.2],[-3,2.2]]){const h=new THREE.Group();h.position.set(cx,1.4,cz);g.add(h);const can=cyl(.12,.12,.22,M(0x9a9aa0,{metalness:.6,roughness:.4}),0,0,0,h,10);const sp=[];for(let k=0;k<10;k++){const s=new THREE.Mesh(new THREE.SphereGeometry(.05,6,4),new THREE.MeshBasicMaterial({color:0xffa030}));h.add(s);sp.push(s)}cans.push({h,can,sp})}
+   const mc=document.createElement('canvas');mc.width=mc.height=128;const mq=mc.getContext('2d');const gr=mq.createRadialGradient(64,64,20,64,64,64);gr.addColorStop(0,'#fff8d8');gr.addColorStop(.7,'#ffe9a0');gr.addColorStop(1,'rgba(255,233,160,0)');mq.fillStyle=gr;mq.fillRect(0,0,128,128);const moon=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(mc),fog:false,depthWrite:false}));moon.scale.set(5,5,1);moon.position.set(0,11,-6);g.add(moon);
+   anim.push(t=>{fl.forEach((f,i)=>{f.scale.set(1,.8+Math.sin(t*9+i)*.25,1)});cans.forEach((c,i)=>{const a=t*5+i*2;c.can.position.set(Math.cos(a)*1.1,Math.sin(a)*1.1,0);c.sp.forEach((s,k)=>{const b=a-k*.12;s.position.set(Math.cos(b)*1.1,Math.sin(b)*1.1,0);s.scale.setScalar(1-k*.08)})})});
+   solids&&solids.push({cx:S.x,cz:S.z,r:1.8,y0:0,y1:TOP+5});sign(E.n,g,5.4);crew.push({S,acts:['cheer','clap'],ring:[[3.4,2.2,1.2],[-3,3.2,2.2]]})}
+  if(kind==='dano'){/* 그네: 큰 나무 기둥 둘 + 가로대 + 줄 + 발판, 무이가 탐 */const wd=M(0x6a4a2e);for(const x of[-1.6,1.6]){const p=cyl(.16,.2,6,wd,x,3,0,g,10);p.rotation.z=x>0?-.06:.06}box(3.8,.2,.2,wd,0,6,0,g);const sw=new THREE.Group();sw.position.y=5.9;g.add(sw);for(const x of[-.35,.35]){const r=cyl(.02,.02,4.6,M(0xd8c8a0),x,-2.3,0,sw,4)}box(.9,.08,.3,M(0x8a5a34),0,-4.6,0,sw);const seat=new THREE.Group();seat.position.y=-4.55;sw.add(seat);
+   const rp=new THREE.Group();g.add(rp);/* 오색 천 */for(const [x,c] of[[-1.6,0xd8433a],[1.6,0x2f6ad8]]){const f=new THREE.Mesh(new THREE.PlaneGeometry(.3,1.2),M(c,{side:THREE.DoubleSide}));f.position.set(x,5.2,.2);rp.add(f)}
+   anim.push(t=>{sw.rotation.x=Math.sin(t*1.5)*.65});solids&&solids.push({cx:S.x-1.6,cz:S.z,r:.3,y0:0,y1:TOP+6},{cx:S.x+1.6,cz:S.z,r:.3,y0:0,y1:TOP+6});sign(E.n,g,7);crew.push({S,acts:['cheer'],ring:[[2.8,1.6,1.6]],swing:seat})}
+  if(kind==='chuseok'){/* 강강술래: 무이 여덟이 둥글게 돎 + 보름달 */const mc=document.createElement('canvas');mc.width=mc.height=128;const mq=mc.getContext('2d');const gr=mq.createRadialGradient(64,64,20,64,64,64);gr.addColorStop(0,'#fff8d8');gr.addColorStop(.7,'#ffe9a0');gr.addColorStop(1,'rgba(255,233,160,0)');mq.fillStyle=gr;mq.fillRect(0,0,128,128);const moon=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(mc),fog:false,depthWrite:false}));moon.scale.set(5,5,1);moon.position.set(0,11,-6);g.add(moon);
+   const mat=new THREE.Mesh(new THREE.CircleGeometry(3.4,32).rotateX(-Math.PI/2),M(0xd8c8a0,{roughness:1}));mat.position.y=.02;g.add(mat);sign(E.n,g,4.6);crew.push({S,circle:8})}}
+ /* 무이 불러오기(늦게) */let loading=false,loaded=false;const pals=[];
+ const loadCrew=()=>{const H=window.__H3;if(!H||!H.makeMuui||loading)return;loading=true;const kinds=['carpenter','painter','ceramic','science','metal','base'];let ki=0;const jobs=[];
+  for(const c of crew){if(c.circle){for(let i=0;i<c.circle;i++)jobs.push({c,i,k:kinds[(ki++)%kinds.length],circle:true})}else c.ring.forEach((r,i)=>jobs.push({c,i,k:kinds[(ki++)%kinds.length],at:r,act:c.acts[i%c.acts.length]}));if(c.swing)jobs.push({c,k:'base',swing:true})}
+  (async()=>{for(const j of jobs){try{const av=await H.makeMuui(j.k,1.3).catch(()=>H.makeMuui('base',1.3));if(j.swing){j.c.swing.add(av.root);av.root.position.set(0,0,0);av.root.scale.multiplyScalar(.9);av.play('idle',0)}else if(j.circle){j.c.S.g.add(av.root);av.play('walk',0)}else{j.c.S.g.add(av.root);av.root.position.set(j.at[0],0,j.at[1]);av.root.rotation.y=j.at[2];av.play(j.act,0)}pals.push({av,j})}catch(e){}}loaded=true})()};
+ let toldSite=null;
+ const tick=(P,dt,t)=>{let near=null,nd=1e9;for(const S of sites){const d=Math.hypot(P.x-S.x,P.z-S.z);if(d<nd){nd=d;near=S}}if(nd>140)return;if(!loading)loadCrew();for(const f of anim)f(t);
+  for(const p of pals){if(p.j.circle){const n=p.j.c.circle,a=t*.45+p.j.i/n*Math.PI*2,R=2.6;p.av.root.position.set(Math.cos(a)*R,0,Math.sin(a)*R);p.av.root.rotation.y=Math.atan2(-Math.sin(a),Math.cos(a))+Math.PI}p.av.mx.update(dt)}
+  if(near&&nd<6&&toldSite!==near){toldSite=near;try{window.__H3.say(E.h,8)}catch(e){}}if(nd>12)toldSite=null};
+ const API={tick,kind,name:E.n,sites:sites.map(s=>({x:s.x,z:s.z,city:s.city}))};window.__FOLK=API;return API}
