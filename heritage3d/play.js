@@ -5,11 +5,11 @@ const S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 
 /* ---- 무이별 솜씨: 맞는 놀이는 작품 품질 +10, 기본 무이는 모든 놀이 +4 ---- */
 export const KIND_N={base:'무이',ceramic:'도공 무이',science:'과학 무이',carpenter:'목수 무이',painter:'화공 무이',metal:'금속 무이'};
-export const ABIL={ceramic:['wheel','kiln','inlay'],science:['sundial','crane','cannon'],carpenter:['tile','row','najeon'],painter:['peony','bamboo','rubbing'],metal:['bell','incense','brush']};
+export const ABIL={ceramic:['wheel','kiln','inlay'],science:['sundial','crane','cannon'],carpenter:['tile','row','najeon'],painter:['peony','bamboo','rubbing'],metal:['bell','incense','brush','type']};
 export const myKind=()=>{try{return localStorage.getItem('muui3d-kind')||'base'}catch(e){return 'base'}};
 export function abilBonus(game){const k=myKind();if(ABIL[k]&&ABIL[k].includes(game))return{v:10,who:KIND_N[k]};if(k==='base'||!ABIL[k])return{v:4,who:'무이'};return{v:0,who:KIND_N[k]}}
 /* 어떤 무이가 어떤 놀이를 잘하는지 사람이 읽는 글 */
-export const GAME_N={wheel:'물레',kiln:'가마 불',inlay:'상감',sundial:'앙부일구',crane:'거중기',cannon:'현자총통',tile:'기와 쌓기',row:'노 젓기',najeon:'자개',peony:'모란',bamboo:'오죽',rubbing:'탁본',bell:'범종',incense:'향로',brush:'흙 털기'};
+export const GAME_N={wheel:'물레',kiln:'가마 불',inlay:'상감',sundial:'앙부일구',crane:'거중기',cannon:'현자총통',tile:'기와 쌓기',row:'노 젓기',najeon:'자개',peony:'모란',bamboo:'오죽',rubbing:'탁본',bell:'범종',incense:'향로',brush:'흙 털기',type:'활자'};
 export const abilText=k=>ABIL[k]?`${KIND_N[k]}는 ${ABIL[k].map(g=>GAME_N[g]).join(', ')} 놀이를 잘해요(품질 +10).`:'기본 무이는 모든 놀이를 조금씩 잘해요(품질 +4).';
 
 /* ---- 주간 의뢰: 월요일마다 바뀌는 세 가지, 하나에 엽전 40 ---- */

@@ -20,12 +20,12 @@ export const ACH=[
  {k:'fest',n:'명절 손님',d:'명절 행사 날에 오기',f:F=>F.fest>=1,t:'명절 손님'},
  {k:'c3',n:'일지 절반',d:'복원단 일지 3장',f:F=>F.ch>=3,t:'숙련 복원가'},
  {k:'s30',n:'별 서른 개',d:'놀이 별 30개',f:F=>F.C.stars>=30,t:'솜씨 좋은 장인'},
- {k:'gall',n:'놀이 박사',d:'유산 마당 놀이 16가지 모두',f:F=>F.games>=16,t:'놀이 박사'},
+ {k:'gall',n:'놀이 박사',d:'유산 마당 놀이 17가지 모두',f:F=>F.games>=17,t:'놀이 박사'},
  {k:'d10',n:'마당 가꾸미',d:'마당 장식 10개',f:F=>F.deco>=10,t:'마당 가꾸미'},
  {k:'day7',n:'한 주 내내',d:'오늘의 놀이 7일',f:F=>F.days>=7,t:''},
  {k:'r4',n:'네 길을 다',d:'테마 랠리 4개 모두',f:F=>F.rally>=4,t:'길 위의 복원가'},
  {k:'c6',n:'일지 완성',d:'복원단 일지 6장 모두',f:F=>F.ch>=6,t:'수석 복원가'},
- {k:'s48',n:'별을 다',d:'놀이 별 48개 모두',f:F=>F.C.stars>=48,t:'별을 다 모은 명장'}];
+ {k:'s48',n:'별을 다',d:'놀이 별 51개 모두',f:F=>F.C.stars>=51,t:'별을 다 모은 명장'}];
 export function achState(){const F=facts();return ACH.map(a=>({...a,on:(()=>{try{return !!a.f(F)}catch(e){return false}})()}))}
 export function myTitle(){const A=achState().filter(a=>a.on&&a.t);return A.length?A[A.length-1].t:''}
 /* 처음 이룬 업적만 돌려주고 본 것으로 적어 둔다 */

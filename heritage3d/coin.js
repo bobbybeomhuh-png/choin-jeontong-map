@@ -14,7 +14,7 @@ export function coinState(){
  const digs=(J('muui3d-stamps',[])||[]).length;
  const earned=quests*PRICE.quest+stars*PRICE.star+rallies*PRICE.rally+days*PRICE.day+digs*PRICE.dig+chapters*PRICE.chapter+weeks*PRICE.week+fests*PRICE.fest;
  const spent=+J('muui-coin-spent',0)||0;
- return{earned,spent,coins:Math.max(0,earned-spent),stars,maxStars:48,quests,rallies,days,digs,chapters,weeks,fests}}
+ return{earned,spent,coins:Math.max(0,earned-spent),stars,maxStars:51,quests,rallies,days,digs,chapters,weeks,fests}}
 export function spendCoins(n){const s=coinState();if(s.coins<n)return false;try{localStorage.setItem('muui-coin-spent',JSON.stringify(s.spent+n))}catch(e){return false}return true}
 /* 엽전 얻는 순간 화면 오른쪽 위에 +숫자를 띄운다 */
 export function coinPop(n,why){if(!n)return;try{dispatchEvent(new CustomEvent('muui-coin',{detail:n}))}catch(e){}try{const d=document.createElement('div');d.style.cssText='position:fixed;right:14px;top:calc(env(safe-area-inset-top) + 64px);z-index:60;pointer-events:none;background:#3b2a1c;color:#f2d27a;border:2px solid #d8a838;border-radius:20px;padding:6px 14px;font:18px "Do Hyeon",sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.35)';d.textContent=`엽전 +${n}`+(why?` · ${why}`:'');document.body.append(d);d.animate([{transform:'translateY(10px)',opacity:0},{transform:'translateY(0)',opacity:1,offset:.15},{transform:'translateY(0)',opacity:1,offset:.8},{transform:'translateY(-14px)',opacity:0}],{duration:2600,easing:'ease-out'}).onfinish=()=>d.remove()}catch(e){}}
