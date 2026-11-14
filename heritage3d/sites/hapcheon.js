@@ -2,6 +2,7 @@
    갱신 2026-11-12. 공개된 실측 3D가 없어 공개 수치로 본떠 지음: 수다라장·법보전 각 정면 15칸(약 60m), 측면 2칸(약 9m), 맞배지붕,
    앞뒤 벽 위아래 크기가 다른 살창, 5단 판가, 경판 한 장 약 70 x 24 x 3cm(81,258장). 경판 수는 판가를 다 채우지 않고 보이는 만큼만 꽂음. */
 import * as THREE from 'three';
+import {stonePagoda,stoneLantern} from './stonekit.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 const MU=(d,k)=>new URL('../models/'+d+'/'+k+'.glb',import.meta.url).href;
@@ -54,7 +55,7 @@ export function buildHapcheon(opts={}){const mini=!!opts.mini;const MT=materials
  spots.push({x:0,y:0,z:Z2+D/2+2.6,r:3,t:'법보전',h:'수다라장 뒤 건물이에요. 수다라장과 똑같은 크기로 마주 보고 서서, 둘 사이 마당으로 바람이 지나가요. 양 옆 작은 집(사간판전)에는 절에서 따로 새긴 경판을 두었어요.'});
  /* ---------- 앞마당 채우기: 석탑, 범종각, 실측 소나무, 연꽃 월문, 판전 안 빛줄기 ---------- */
  const gl=new GLTFLoader();const TOUCH=typeof matchMedia!=='undefined'&&matchMedia('(pointer:coarse)').matches;
- /* 삼층석탑 */{const st=M(0xa8a196,{roughness:.95});const g=new THREE.Group();g.position.set(-12,0,9);G.add(g);let y=0;for(const [w,h] of[[3.4,.5],[3,.6],[2,1.2],[2.6,.36],[1.7,.85],[2.2,.34],[1.4,.62],[1.9,.3]]){const b=box(w,h,w,st);b.position.y=y+h/2;g.add(b);y+=h}const pin=new THREE.Mesh(new THREE.CylinderGeometry(.06,.1,1.3,8),M(0x6a6258));pin.position.y=y+.65;g.add(pin);solids.push({cx:-12,cz:9,r:1.8,y0:0,y1:6});
+ /* 삼층석탑 */{/* 공용 석탑 */const g=stonePagoda(6.6);g.position.set(-12,0,9);G.add(g);solids.push({cx:-12,cz:9,r:2.15,y0:0,y1:7});
   spots.push({x:-12,y:0,z:11.6,r:2,t:'삼층석탑',h:'절 마당 한가운데 서서 부처의 사리를 모신다는 뜻을 지닌 돌탑이에요. 해인사 대적광전 앞에도 신라 때 세운 석탑이 있어요. (본떠 지음)'})}
  /* 범종각: 기둥 넷, 기와지붕, 종(성덕대왕신종 3D를 작게) */{const BX=22,BZ=9;const pil=M(0x8a3a2a);const base=box(6.4,.5,6.4,M(0xb3aa98));base.position.set(BX,.25,BZ);G.add(base);S(BX-3.2,BX+3.2,0,.5,BZ-3.2,BZ+3.2);for(const sx of[-1,1])for(const sz of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,4,10),pil);c.position.set(BX+sx*2.6,2.5,BZ+sz*2.6);c.castShadow=true;G.add(c);solids.push({cx:BX+sx*2.6,cz:BZ+sz*2.6,r:.26,y0:0,y1:9})}
   const bm=box(5.6,.3,.3,M(0x6b4428));bm.position.set(BX,4.3,BZ);G.add(bm);if(!mini){const rf=hipRoof(MT,4.2,4.2,1.2,4.6,6.6,.5,.2,{plain:true,rs:.5});rf.position.set(BX,0,BZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf);

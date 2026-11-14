@@ -2,6 +2,7 @@
    갱신 2026-11-12. 공개 실측 3D가 없어 공개 수치로 본떠 지음(배흘림기둥, 주심포, 무량수전 팔작지붕 정면 5칸 측면 3칸, 수덕사 대웅전 맞배지붕 정면 3칸 측면 4칸).
    실물 사진(위키미디어 공용): 무량수전 Bernard Gagnon(CC0)·Cho Park(CC BY-SA 4.0), 소조여래좌상 tristanskye(CC BY 2.0), 석등 Jjw(CC BY-SA 3.0), 수덕사 대웅전 Jjw(CC BY 4.0). */
 import * as THREE from 'three';
+import {stonePagoda,stoneLantern} from './stonekit.js';
 import {buildHall} from './hallkit.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const T=k=>new URL('../textures/goryeo/'+k+'.jpg',import.meta.url).href;
@@ -15,9 +16,7 @@ function kit(seed,mini){const MT=materials();const G=new THREE.Group();const sol
  /* 배흘림기둥: 아래 1/3에서 가장 굵고 위아래로 가늘어짐 */function column(h,rMax){const pts=[];for(let i=0;i<=12;i++){const t=i/12;const k=t<.33?1-(.33-t)*.12:1-(t-.33)/(.67)*.22;pts.push(new THREE.Vector2(rMax*k,t*h))}return new THREE.LatheGeometry(pts,14)}
  /* 고려 목조 법당 하나: 자세한 한옥 부품(hallkit)으로 짓는다 */function hall({x=0,z=0,nx,nz,W,D,PH,FY,roof,name,open=true,pillar,bracket='jusim',front='door',side='wall'}){const H=buildHall({x,z,W,D,nx,nz,PH,FY,roof,name,pillar:pillar||0x8a6a4a,bracket,front,left:side,right:side,back:'wall',mini,solids,plain:true});G.add(H.group);return H.group}
  /* 먼 산줄기(겹겹이) */function ridges(z0,cols){if(mini)return;cols.forEach((c,i)=>{const pts=[];for(let k=0;k<=40;k++){const x=-260+k*13;pts.push(new THREE.Vector2(x,8+Math.sin(k*.7+i*2)*5+Math.sin(k*.23+i)*7+i*5))}pts.push(new THREE.Vector2(260,-20),new THREE.Vector2(-260,-20));const m=new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape(pts)),new THREE.MeshBasicMaterial({color:c,fog:true}));m.position.set(0,-6,z0-i*40);G.add(m)})}
- /* 석등(8각, 연꽃 받침·화사석 4창·지붕돌) */function lantern(x,z,s=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(s);G.add(g);const st=M(0xa8a196,{roughness:.95});const oct=(r1,r2,h,y)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,8),st);m.position.y=y;m.castShadow=true;g.add(m);return m};
-  oct(.9,.95,.3,.15);oct(.62,.8,.35,.47);oct(.5,.62,.2,.75);oct(.18,.18,1.1,1.4);oct(.62,.4,.3,2.05);oct(.5,.5,.12,2.26);const fire=oct(.42,.42,.9,2.77);const hole=M(0x1d1610);for(let i=0;i<4;i++){const w=box(.26,.5,.02,hole);const a=i*Math.PI/2+Math.PI/8;w.position.set(Math.sin(a)*.41,2.8,Math.cos(a)*.41);w.rotation.y=a;g.add(w)}
-  const roofS=new THREE.Mesh(new THREE.CylinderGeometry(.25,.95,.38,8),st);roofS.position.y=3.41;roofS.castShadow=true;g.add(roofS);oct(.12,.2,.35,3.77);solids.push({cx:x,cz:z,r:.95*s,y0:0,y1:4*s});return g}
+ /* 석등(8각, 연꽃 받침·화사석 4창·지붕돌) */function lantern(x,z,s=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(s);G.add(g);/* 공용 석등(엎은 연꽃 하대석·팔각 간주석·핀 연꽃 상대석·불창 넷 화사석·지붕돌·보주) */g.add(stoneLantern(3.9));solids.push({cx:x,cz:z,r:.95*s,y0:0,y1:4*s});return g}
  return {MT,G,solids,cam,spots,r,S,M,box,photo,hall,ridges,lantern}}
 /* ---------------- 영주 부석사 무량수전 ---------------- */
 export function buildYeongju(opts={}){const mini=!!opts.mini;const K=kit(19,mini);const {G,solids,cam,spots,S,M,box,photo}=K;
@@ -47,7 +46,7 @@ export function buildYeongju(opts={}){const mini=!!opts.mini;const K=kit(19,mini
 export function buildYesan(opts={}){const mini=!!opts.mini;const K=kit(23,mini);const {G,solids,cam,spots,S,M,box,photo}=K;
  {const PT=tex(256,256,(q,w,h)=>{q.fillStyle='#c9b994';q.fillRect(0,0,w,h);noise(q,w,h,6000,['rgba(0,0,0,.07)','rgba(255,255,255,.08)'],2)});PT.wrapS=PT.wrapT=THREE.RepeatWrapping;PT.repeat.set(8,6);const yd=new THREE.Mesh(new THREE.PlaneGeometry(48,36),new THREE.MeshStandardMaterial({map:PT,roughness:1}));yd.rotation.x=-Math.PI/2;yd.position.set(0,.02,-2);yd.receiveShadow=true;G.add(yd)}
  const W=15.7,D=10.7,HZ=-8;K.hall({x:0,z:HZ,nx:3,nz:4,W,D,PH:4.8,FY:1.1,roof:'gable',name:'大雄殿',pillar:0x8a6a4a,side:['wall','window','window','wall']});
- /* 삼층석탑(마당) */{const st=M(0xa8a196,{roughness:.95});const g=new THREE.Group();g.position.set(-7,0,6);G.add(g);let y=0;for(const [w,h] of[[3.2,.5],[2.8,.6],[1.9,1.1],[2.4,.35],[1.6,.8],[2.1,.32],[1.3,.6],[1.8,.3]]){const b=box(w,h,w,st);b.position.y=y+h/2;g.add(b);y+=h}const pin=new THREE.Mesh(new THREE.CylinderGeometry(.06,.1,1.2,8),M(0x6a6258));pin.position.y=y+.6;g.add(pin);solids.push({cx:-7,cz:6,r:1.7,y0:0,y1:6})}
+ /* 삼층석탑(마당) */{/* 공용 석탑(기단 우주·탱주, 층급받침, 상륜부) */const g=stonePagoda(6.2);g.position.set(-7,0,6);G.add(g);solids.push({cx:-7,cz:6,r:2.05,y0:0,y1:7})}
  /* 실물 사진 세 장(마당 안내판) */{const PX=8,PZ=6;photo('sd3',2.6,1.7,PX-1.6,1.8,PZ,-.35,'실물: 수덕사 대웅전 정면(Jjw, CC BY 4.0)');photo('sd2',2.6,1.49,PX+1.6,1.8,PZ+.6,-.6,'실물: 맞배 옆면 가구(Jjw, CC BY 4.0)');for(const dx of[-1.6,1.6]){const p=box(.12,1.4,.12,M(0x3b2414));p.position.set(PX+dx,.7,PZ+(dx>0?.6:0));G.add(p)}S(PX-3,PX+3,0,2.6,PZ-.4,PZ+1)}
  spots.push({x:0,y:0,z:HZ+D/2+4,r:3,t:'대웅전',h:'1308년에 지었다는 먹 글씨(묵서명)가 나와, 지은 해를 정확히 아는 가장 오래된 목조건축 가운데 하나예요(국보). 정면 3칸, 측면 4칸에 맞배지붕을 얹었어요. (본떠 지음)'});
  spots.push({x:W/2+2.6,y:0,z:HZ,r:2.6,t:'맞배 옆면',h:'옆에서 보면 지붕이 사람 인(人) 자처럼 맞붙고, 벽에 기둥과 들보, 굽은 소꼬리 모양 들보(우미량)가 그대로 드러나요. 이 나무 짜임의 선이 수덕사 대웅전의 가장 큰 아름다움이에요.'});
