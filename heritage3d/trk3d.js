@@ -7,3 +7,5 @@ const src=(()=>{try{const q=new URLSearchParams(location.search).get('from');if(
 const dev=(innerWidth<768||matchMedia('(pointer:coarse)').matches)?'mobile':'desktop',lg=(navigator.language||'').slice(0,5),tz=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return''}})().slice(0,32);
 const seen=new Set();
 export function trk(type,x='',once=true){if(!on)return;const k=type+'|'+x;if(once&&seen.has(k))return;seen.add(k);try{fetch(URL0+'/rest/v1/events',{method:'POST',keepalive:true,headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({type,detail:[src,dev,sid,String(x).slice(0,40),lg,tz].join('|').slice(0,120)})}).catch(()=>{})}catch(e){}}
+
+export const SB={url:URL0,key:KEY,sid};

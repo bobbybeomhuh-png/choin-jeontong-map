@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
+<script>/* 메인=전국 지도(2026-11-14): 그냥 들어오면 지도로. 광장은 ?hub, 발굴·유산에서 돌아올 때, 바로가기(go·site)는 그대로 */(function(){var q=new URLSearchParams(location.search);if(q.has('hub')||q.has('go')||q.has('site')||/^(dig3d|heritage)$/.test(q.get('from')||''))return;var f=q.get('from');location.replace('../heritage3d/?site=worldmap'+(f?'&from='+encodeURIComponent(f):''))})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
