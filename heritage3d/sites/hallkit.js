@@ -30,8 +30,8 @@ export function buildHall(spec){const K=kitMats(),{MT,M}=K;const s=Object.assign
  const C=(lx,lz,r,y0,y1)=>{const p=wx(lx,lz);SOL.push({cx:p[0],cz:p[1],r,y0,y1})};
  const LH=s.loft?s.loft.h:0;/* 누각이면 아래층 높이 */const BY=FY+LH;/* 위층 바닥 높이 */
  /* ---------- 기단: 두 단 + 갑석 ---------- */
- const bw=W+2.2,bd=D+2.2;{const b1=box(bw+.5,FY*.5,bd+.5,K.stone);b1.position.y=FY*.25;G.add(b1);const b2=box(bw,FY*.5,bd,K.stone);b2.position.y=FY*.75;G.add(b2);const cap=box(bw+.16,.12,bd+.16,K.stoneTop);cap.position.y=FY-.04;G.add(cap);S(-bw/2-.25,bw/2+.25,-9,FY,-bd/2-.25,bd/2+.25)}
- /* 계단 + 소맷돌 */if(s.stairs!=='none'){const n=Math.max(2,Math.round(FY/.2)),sh=FY/n,sw=Math.min(4,W/nx+.6);for(let i=0;i<n;i++){const st=box(sw,sh*(i+1),.36,K.stoneTop);st.position.set(0,sh*(i+1)/2,bd/2+.25+(n-1-i)*.36+.18);G.add(st);S(-sw/2,sw/2,-9,sh*(i+1),bd/2+.25+(n-1-i)*.36,bd/2+.25+(n-i)*.36)}
+ const bw=W+2.2,bd=D+2.2;if(s.base!==false){const b1=box(bw+.5,FY*.5,bd+.5,K.stone);b1.position.y=FY*.25;G.add(b1);const b2=box(bw,FY*.5,bd,K.stone);b2.position.y=FY*.75;G.add(b2);const cap=box(bw+.16,.12,bd+.16,K.stoneTop);cap.position.y=FY-.04;G.add(cap);S(-bw/2-.25,bw/2+.25,-9,FY,-bd/2-.25,bd/2+.25)}
+ /* 계단 + 소맷돌 */if(s.stairs!=='none'&&s.base!==false){const n=Math.max(2,Math.round(FY/.2)),sh=FY/n,sw=Math.min(4,W/nx+.6);for(let i=0;i<n;i++){const st=box(sw,sh*(i+1),.36,K.stoneTop);st.position.set(0,sh*(i+1)/2,bd/2+.25+(n-1-i)*.36+.18);G.add(st);S(-sw/2,sw/2,-9,sh*(i+1),bd/2+.25+(n-1-i)*.36,bd/2+.25+(n-i)*.36)}
   for(const sx of[-1,1]){const L=n*.36,sm=new THREE.Mesh(new THREE.BoxGeometry(.32,FY+.18,L),K.stone);sm.position.set(sx*(sw/2+.16),(FY+.18)/2,bd/2+.25+L/2);sm.castShadow=true;G.add(sm);const cut=box(.34,.2,L*1.02,K.stoneTop);cut.position.set(sx*(sw/2+.16),FY*.55,bd/2+.25+L/2+.02);cut.rotation.x=Math.atan2(FY,L);G.add(cut)}}
  /* ---------- 기둥 자리 ---------- */
  const XS=[...Array(nx+1)].map((_,i)=>-W/2+i*W/nx),ZS=[...Array(nz+1)].map((_,i)=>-D/2+i*D/nz);const edge=(x,z)=>Math.abs(x)>W/2-.05||Math.abs(z)>D/2-.05;
@@ -39,9 +39,9 @@ export function buildHall(spec){const K=kitMats(),{MT,M}=K;const s=Object.assign
  const pillarM=M(s.pillar,{roughness:.62});const cg=column(PH,pr,s.bae);
  /* 누각 아래층: 돌기둥(네모) */if(s.loft){const lg=s.loft.stone?new THREE.BoxGeometry(pr*2.1,LH,pr*2.1):column(LH,pr,false);const lm=s.loft.stone?K.stoneTop:pillarM;for(const x of XS)for(const z of ZS){const p=new THREE.Mesh(lg,lm);p.position.set(x,FY+LH/2*(s.loft.stone?1:0),z);if(!s.loft.stone)p.position.y=FY;p.castShadow=true;G.add(p);C(x,z,pr+.08,-9,BY+.4)}
   const fl=box(W+.9,.32,D+.9,K.frame);fl.position.y=BY-.16;G.add(fl);S(-W/2-.45,W/2+.45,BY-.32,BY,-D/2-.45,D/2+.45);for(const sz of[-1,1]){const b=box(W+.6,.4,.32,K.dan);b.position.set(0,BY-.5,sz*D/2);G.add(b)}for(const sx of[-1,1]){const b=box(.32,.4,D+.6,K.dan);b.position.set(sx*W/2,BY-.5,0);G.add(b)}}
- /* 주춧돌과 기둥 */for(const x of XS)for(const z of ZS){const outer=edge(x,z);if(!outer&&!s.inner)continue;if(!s.loft){const a=new THREE.Mesh(ju,K.stoneTop);a.position.set(x,FY+.11,z);a.castShadow=true;G.add(a);const b=new THREE.Mesh(ju2,K.stoneTop);b.position.set(x,FY+.27,z);G.add(b)}
+ /* 주춧돌과 기둥 */for(const x of XS)for(const z of ZS){const outer=edge(x,z);if(!outer&&!s.inner)continue;if(!s.loft&&s.base!==false){const a=new THREE.Mesh(ju,K.stoneTop);a.position.set(x,FY+.11,z);a.castShadow=true;G.add(a);const b=new THREE.Mesh(ju2,K.stoneTop);b.position.set(x,FY+.27,z);G.add(b)}
   const c=new THREE.Mesh(cg,pillarM);c.position.set(x,BY+(s.loft?0:.3),z);c.castShadow=true;G.add(c);C(x,z,pr+.05,BY-.2,BY+PH+1)}
- /* 마루 */{const f=box(W+(s.loft?.8:.2),.08,D+(s.loft?.8:.2),K.floor);f.position.y=BY+(s.loft?.04:.32);G.add(f);if(!s.loft)S(-W/2,W/2,FY,FY+.34,-D/2,D/2)}
+ /* 마루 */if(s.floor!==false){const f=box(W+(s.loft?.8:.2),.08,D+(s.loft?.8:.2),K.floor);f.position.y=BY+(s.loft?.04:.32);G.add(f);if(!s.loft)S(-W/2,W/2,FY,FY+.34,-D/2,D/2)}
  const TOP=BY+(s.loft?0:.3)+PH;/* 기둥 머리 높이 */
  /* ---------- 창방·평방(단청) ---------- */
  for(const sz of[-1,1]){const b=box(W+.5,.42,.3,K.dan);b.position.set(0,TOP-.24,sz*D/2);G.add(b);if(s.bracket==='dapo'){const p=box(W+.7,.22,.42,K.grn);p.position.set(0,TOP+.1,sz*D/2);G.add(p)}}

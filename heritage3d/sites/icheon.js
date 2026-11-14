@@ -3,6 +3,7 @@
    분청사기 물고기무늬 병 1962.153, 한국공예디자인문화진흥원 KCDF 백자병(CC BY), 국가유산청 운현궁 백자 병·잔 재현 에셋(CC BY).
    가마·작업장은 조선 오름가마를 본떠 지음(특정 가마 실측 아님). */
 import * as THREE from 'three';
+import {buildHall} from './hallkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const MURL=k=>new URL('../models/icheon/'+k+'.glb',import.meta.url).href;
@@ -35,8 +36,7 @@ export function buildIcheon(opts={}){const mini=!!opts.mini;const MT=materials()
  {const sh=[];const cm=[M(0xf1eee6,{roughness:.3}),M(0xe4e6e2,{roughness:.3}),M(0xdfe5ee,{roughness:.3}),M(0x9a7a5a)];for(let i=0;i<140;i++){const t=new THREE.Mesh(new THREE.BoxGeometry(.15+r()*.2,.025,.1+r()*.15),cm[(r()*4)|0]);const a=r()*6.28,d=Math.sqrt(r())*2.2;t.position.set(KX+5.5+Math.cos(a)*d,.05+Math.max(0,(2.2-d))*.25+r()*.06,-12+Math.sin(a)*d);t.rotation.set(r()*.8,r()*6,r()*.8);t.castShadow=true;G.add(t)}solids.push({cx:KX+5.5,cz:-12,r:2.2,y0:0,y1:1.2});
   spots.push({x:KX+5.5,y:0,z:-9.2,r:2,t:'백자 조각 더미',h:'마음에 차지 않게 구워진 그릇은 깨뜨려 버렸어요. 왕실 그릇을 굽던 경기도 광주 분원 가마터에는 백자 조각이 산처럼 쌓여 있어, 연구자들이 언제 어떤 백자를 구웠는지 알아내요.'})}
  /* ---------- 작업장: 물레, 건조대 ---------- */
- {const WX=9,WZ=0;const wood=M(0x6b4a2e);const fl=box(9,.3,6,M(0x9a7350));fl.position.set(WX,.15,WZ);G.add(fl);S(WX-4.5,WX+4.5,0,.3,WZ-3,WZ+3);for(const[a,b]of[[-4.3,-2.8],[4.3,-2.8],[-4.3,2.8],[4.3,2.8]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,3,10),wood);p.position.set(WX+a,1.8,WZ+b);G.add(p);solids.push({cx:WX+a,cz:WZ+b,r:.2,y0:0,y1:4})}
-  if(!mini){const rf=hipRoof(MT,5.6,4,2.6,3.1,4.6,.4,.2,{plain:true,rs:.5});rf.position.set(WX,0,WZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
+ {const WX=9,WZ=0;const wood=M(0x6b4a2e);const fl=box(9,.3,6,M(0x9a7350));fl.position.set(WX,.15,WZ);G.add(fl);S(WX-4.5,WX+4.5,0,.3,WZ-3,WZ+3);G.add(buildHall({x:WX,z:WZ,W:8.6,D:5.6,nx:2,nz:1,FY:0,PH:2.8,base:false,floor:false,roof:'hip',pillar:0x6b4a2e,bracket:'ik',front:'open',back:'open',left:'open',right:'open',mini,solids,light:false,plain:true,roofScale:.7}).group);
   /* 물레(돌아감) */const wh=new THREE.Group();wh.position.set(WX-1.6,.3,WZ+.6);G.add(wh);const base=new THREE.Mesh(new THREE.CylinderGeometry(.5,.6,.35,20),wood);base.position.y=.17;wh.add(base);const top=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.06,24),M(0x5a3a22));top.position.y=.38;wh.add(top);
   const clayM=M(0xb88a62,{roughness:.6});const pot=new THREE.Mesh(new THREE.LatheGeometry([[.001,0],[.16,0],[.2,.1],[.17,.25],[.08,.34],[.09,.38],[.001,.38]].map(([a,b])=>new THREE.Vector2(a,b)),24),clayM);pot.position.y=.41;wh.add(pot);G.userData.wheel=wh;solids.push({cx:WX-1.6,cz:WZ+.6,r:.6,y0:0,y1:1});
   /* 건조대: 초벌 전 그릇들 */const sh=M(0x7a5634);for(let lv=0;lv<3;lv++){const p=box(3.4,.06,.7,sh);p.position.set(WX+2,.6+lv*.7,WZ-2.3);G.add(p)}for(const sx of[-1,1]){const l=box(.08,2.2,.7,sh);l.position.set(WX+2+sx*1.7,1.4,WZ-2.3);G.add(l)}S(WX+.2,WX+3.8,0,3,WZ-2.7,WZ-1.9);
@@ -44,8 +44,7 @@ export function buildIcheon(opts={}){const mini=!!opts.mini;const MT=materials()
   spots.push({x:WX-1.6,y:.3,z:WZ+2.2,r:1.8,t:'물레',h:'발로 물레를 돌리며 흰 고령토를 빚어 그릇 모양을 잡아요. 달항아리처럼 큰 항아리는 위아래를 따로 빚어 이어 붙여서, 가운데가 살짝 비뚤어진 멋이 생겨요.'});
   spots.push({x:WX+2,y:.3,z:WZ-.4,r:1.6,t:'건조대',h:'빚은 그릇은 그늘에서 말린 뒤 초벌구이를 하고, 푸른 코발트 안료(청화)나 붉은 갈색 철 안료(철화)로 그림을 그린 다음 유약을 입혀 다시 구워요. 청화 안료는 귀해서 왕실 그릇에 주로 썼어요.'})}
  /* ---------- 백자 진열각: 일곱 점을 실제 크기로 ---------- */
- {const DX=0,DZ=12;const pil=M(0x8a3a2a);const fl=box(12,.4,5,M(0xb3aa98));fl.position.set(DX,.2,DZ);G.add(fl);S(DX-6,DX+6,0,.4,DZ-2.5,DZ+2.5);for(const[a,b]of[[-5.6,-2.2],[5.6,-2.2],[-5.6,2.2],[5.6,2.2]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,3,10),pil);p.position.set(DX+a,1.9,DZ+b);G.add(p);solids.push({cx:DX+a,cz:DZ+b,r:.22,y0:0,y1:4})}
-  if(!mini){const rf=hipRoof(MT,7.2,3.6,4.2,3.4,5.1,.5,.2,{plain:true,rs:.5});rf.position.set(DX,0,DZ);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(rf)}
+ {const DX=0,DZ=12;const pil=M(0x8a3a2a);const fl=box(12,.4,5,M(0xb3aa98));fl.position.set(DX,.2,DZ);G.add(fl);S(DX-6,DX+6,0,.4,DZ-2.5,DZ+2.5);G.add(buildHall({x:DX,z:DZ,W:11.2,D:4.4,nx:3,nz:1,FY:.1,PH:3,base:false,floor:false,roof:'hip',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'open',right:'open',mini,solids,light:false,plain:true,roofScale:.75}).group);
   const glass=new THREE.MeshPhysicalMaterial({color:0xffffff,transmission:.9,roughness:.05,transparent:true,opacity:.18,depthWrite:false});const ped=M(0xd9c9a8);
   const items=[['dragonjar','백자 청화 운룡문 항아리',.40],['cloudjar','백자 철화 운룡문 항아리',.36],['jar1983','백자 달항아리',.45],['kcdf_bottle','백자 청화 꽃무늬 병',.28],['unhyun_bottle','운현궁 백자 병',.233],['unhyun_cup','운현궁 백자 잔',.07],['fishbottle','분청사기 물고기무늬 병',.307]];
   items.forEach(([k,n,h],i)=>{const x=DX-4.5+i*1.5,z=DZ-.2;const pd=box(.62,1.0,.62,ped);pd.position.set(x,.4+.5,z);G.add(pd);const gb=new THREE.Mesh(new THREE.BoxGeometry(.6,.62,.6),glass);gb.position.set(x,1.4+.31,z);G.add(gb);S(x-.32,x+.32,0,2.1,z-.32,z+.32);place(k,{x,y:1.42,z,h:Math.min(h*1.0,.55)});
