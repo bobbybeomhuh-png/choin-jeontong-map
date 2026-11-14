@@ -22,12 +22,12 @@ export const HANOK={
 const FOOT={sarang:[16.1,10.1],nongga:[17.7,7.1],hall:[19.4,7.4],wall:[12.3,1.7],gate:[11.8,8.2],choga1:[14.9,14],choga2:[22.6,6.8]};
 export function footOf(k,ry=0,s=1){const[w,d]=FOOT[k];const ax=Math.abs(Math.sin(ry))>.5;return ax?[d*s,w*s]:[w*s,d*s]}
 /* 한 채 세우기. SOL에 충돌 상자(속까지 막음)를 넣는다. hole=true면 대문처럼 가운데를 비움 */
-export function placeHanok(G,SOL,k,x,z,ry=0,{y=0,s=1,solid=true,hole=false,TOUCH=false}={}){const H=HANOK[k];const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;G.add(g);
- getModel(H.f).then(src=>{if(!src)return;const o=src.clone();const b=new THREE.Box3().setFromObject(o),sz=b.getSize(new THREE.Vector3());const sc=(H.h?H.h/sz.y:1)*s;o.scale.setScalar(sc);o.rotation.y=H.fr;o.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(o);o.position.set(-(b2.min.x+b2.max.x)/2,-b2.min.y,-(b2.min.z+b2.max.z)/2);if(TOUCH)o.traverse(e=>{if(e.isMesh)e.castShadow=false});g.add(o)});
+export function placeHanok(G,SOL,k,x,z,ry=0,{y=0,s=1,sx=1,solid=true,hole=false,TOUCH=false}={}){const H=HANOK[k];const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;G.add(g);
+ getModel(H.f).then(src=>{if(!src)return;const o=src.clone();const b=new THREE.Box3().setFromObject(o),sz=b.getSize(new THREE.Vector3());const sc=(H.h?H.h/sz.y:1)*s;o.scale.setScalar(sc);o.scale.x*=sx;/* 담장처럼 길이만 늘이고 높이·두께는 그대로 */o.rotation.y=H.fr;o.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(o);o.position.set(-(b2.min.x+b2.max.x)/2,-b2.min.y,-(b2.min.z+b2.max.z)/2);if(TOUCH)o.traverse(e=>{if(e.isMesh)e.castShadow=false});g.add(o)});
  if(solid&&SOL){const[w,d]=footOf(k,ry,s);const hw=w/2,hd=d/2;if(hole){const ax=Math.abs(Math.sin(ry))>.5;const t=1.4;/* 대문: 양옆 기둥 칸만 막고 가운데 통로는 비움 */if(ax){SOL.push({x0:x-hw,x1:x+hw,y0:-9,y1:20,z0:z-hd,z1:z-hd+t},{x0:x-hw,x1:x+hw,y0:-9,y1:20,z0:z+hd-t,z1:z+hd})}else{SOL.push({x0:x-hw,x1:x-hw+t,y0:-9,y1:20,z0:z-hd,z1:z+hd},{x0:x+hw-t,x1:x+hw,y0:-9,y1:20,z0:z-hd,z1:z+hd})}}
   else SOL.push({x0:x-hw+.3,x1:x+hw-.3,y0:-9,y1:20,z0:z-hd+.3,z1:z+hd-.3})}
  return g}
 /* 담장 한 줄: (x0,z0)에서 (x1,z1)까지 같은 담장을 이어 붙인다(축에 나란한 줄만) */
-export function hanokWall(G,SOL,x0,z0,x1,z1,{TOUCH=false}={}){const L=Math.hypot(x1-x0,z1-z0),n=Math.max(1,Math.round(L/12.3)),s=L/n/12.3,ry=Math.abs(x1-x0)>Math.abs(z1-z0)?0:Math.PI/2;
- for(let i=0;i<n;i++){const t=(i+.5)/n;placeHanok(G,null,'wall',x0+(x1-x0)*t,z0+(z1-z0)*t,ry,{s,solid:false,TOUCH})}
+export function hanokWall(G,SOL,x0,z0,x1,z1,{TOUCH=false,ext=.6}={}){/* 양끝을 담 두께 절반쯤 늘려 모퉁이에서 두 줄이 빈틈 없이 만나게 한다. 높이는 늘이지 않고 길이만 맞춘다 */const L0=Math.hypot(x1-x0,z1-z0),ux=(x1-x0)/L0,uz=(z1-z0)/L0;const ax=x0-ux*ext,az=z0-uz*ext,bx=x1+ux*ext,bz=z1+uz*ext;const L=L0+2*ext,n=Math.max(1,Math.round(L/12.3)),sx=L/n/12.3,ry=Math.abs(x1-x0)>Math.abs(z1-z0)?0:Math.PI/2;
+ for(let i=0;i<n;i++){const t=(i+.5)/n;placeHanok(G,null,'wall',ax+(bx-ax)*t,az+(bz-az)*t,ry,{sx,solid:false,TOUCH})}
  const th=.5;SOL.push({x0:Math.min(x0,x1)-th,x1:Math.max(x0,x1)+th,y0:-9,y1:9,z0:Math.min(z0,z1)-th,z1:Math.max(z0,z1)+th})}
