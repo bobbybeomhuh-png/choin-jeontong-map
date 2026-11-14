@@ -42,9 +42,11 @@ export function buildWorldmap(opts={}){const mini=!!opts.mini;const G=new THREE.
  const CITYF=(x,z)=>{let f=1;for(const [,c] of CITYL){const d=Math.hypot(x-c.x,z-c.z);if(d<17)f=Math.min(f,Math.max(0,(d-9)/8))}return f};
  const HT=(x,z)=>{let h=0;for(const [px,pz,A,sg] of PEAKS){const dx=x-px,dz=z-pz;const q=(dx*dx+dz*dz)/(2*sg*sg);if(q<9)h+=A*Math.exp(-q)}if(h<.05)return 0;return h*CITYF(x,z)};
  /* 성산일출봉: 분화구 둘레만 솟음 */const SEONGSAN=[-38.5,182.5];const HS=(x,z)=>{const d=Math.hypot(x-SEONGSAN[0],z-SEONGSAN[1]);return d<5.5?Math.max(0,4.2*Math.exp(-((d-3.2)**2)/1.3)):0};
- const HALL=(x,z)=>provAt(x,z)?HT(x,z)+HS(x,z):0;
+ /* 바닷가에서는 산이 뚝 끊기지 않게 해안에서 안쪽으로 서서히 솟게(CF는 지형 격자를 만든 뒤 채움) */let CF=()=>1;const HALL=(x,z)=>provAt(x,z)?(HT(x,z)+HS(x,z))*CF(x,z):0;
  if(!mini){const X0=-100,X1=190,Z0=-165,Z1=200,ST=1.6;const nx=Math.ceil((X1-X0)/ST)+1,nz=Math.ceil((Z1-Z0)/ST)+1;const H=new Float32Array(nx*nz),LANDM=new Uint8Array(nx*nz);
   for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const x=X0+i*ST,z=Z0+j*ST;const on=!!provAt(x,z);LANDM[j*nx+i]=on?1:0;H[j*nx+i]=on?HT(x,z)+HS(x,z):0}
+  {/* 바다에서 떨어진 거리(칸) → 해안 10m 안쪽은 높이를 서서히 줄임 */const DI=new Float32Array(nx*nz).fill(1e9),Q=[];for(let k=0;k<nx*nz;k++)if(!LANDM[k]){DI[k]=0;Q.push(k)}for(let qi=0;qi<Q.length;qi++){const k=Q[qi],i=k%nx,j=(k/nx)|0,d=DI[k]+1;for(const[di,dj]of[[1,0],[-1,0],[0,1],[0,-1]]){const a=i+di,b=j+dj;if(a<0||b<0||a>=nx||b>=nz)continue;const kk=b*nx+a;if(DI[kk]>d){DI[kk]=d;Q.push(kk)}}}
+   const fall=d=>{const t=Math.min(1,Math.max(0,(d*ST-1.2)/9));return t*t*(3-2*t)};for(let k=0;k<nx*nz;k++)if(LANDM[k])H[k]*=fall(DI[k]);CF=(x,z)=>{const i=Math.round((x-X0)/ST),j=Math.round((z-Z0)/ST);if(i<0||j<0||i>=nx||j>=nz)return 1;return fall(DI[j*nx+i])}}
   const pos=[],col=[];const cA=new THREE.Color(0x5f9a4a),cB=new THREE.Color(0x3f7a3c),cC=new THREE.Color(0x8a7a5a),cD=new THREE.Color(0xc8c4ba),tc=new THREE.Color();
   const cv=h=>{if(h<3)return tc.copy(cA).lerp(cB,h/3);if(h<9)return tc.copy(cB);if(h<12)return tc.copy(cB).lerp(cC,(h-9)/3);return tc.copy(cC).lerp(cD,Math.min(1,(h-12)/3))};
   const V=(i,j)=>{const h=H[j*nx+i];pos.push(X0+i*ST,TOP+h-.3,Z0+j*ST);const c=cv(h);col.push(c.r,c.g,c.b)};
