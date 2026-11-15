@@ -86,7 +86,7 @@ export function cannonGame(ctx){const ui=overlay('linear-gradient(#c9d8e0 0%,#e8
    if(ship.hp>0&&Math.abs(ball.x-sx)<70*u&&ball.y>sea-90*u&&ball.y<sea+18*u){ship.hp--;hitN++;booms.push({x:ball.x,y:ball.y,l:1});boom(1);ctx.say(ship.hp>0?'명중! 한 번 더!':'왜선이 기울어요!');ball=null;if(ship.hp<=0||shots>=5)fin()}
    else if(ball.y>sea+10*u||ball.x>W+40){booms.push({x:ball.x,y:sea,l:1,w:1});ball=null;if(shots===2&&!hitN)ctx.say('물기둥만 솟았어요. 조금 더 멀리!');if(shots>=5)fin()}}
   for(const b of booms){b.l-=dt*1.4;if(b.w){q.fillStyle=`rgba(230,240,250,${b.l})`;q.fillRect(b.x-6*u,b.y-60*u*(1-b.l),12*u,60*u*(1-b.l))}else{q.fillStyle=`rgba(255,${150+b.l*80|0},60,${b.l})`;q.beginPath();q.arc(b.x,b.y,40*u*(1-b.l)+8,0,7);q.fill()}}for(let i=booms.length-1;i>=0;i--)if(booms[i].l<=0)booms.splice(i,1);
-  q.fillStyle='#2b1d12';q.font='16px "Do Hyeon",sans-serif';q.textAlign='left';q.fillText(`포탄 ${5-shots} / 5`,16,H*.2);
+  q.fillStyle='#2b1d12';q.font='16px "Do Hyeon",sans-serif';q.textAlign='left';q.fillText(`포탄 ${5-shots} / 5`,16,Math.max(H*.2,(ui.top.getBoundingClientRect().bottom||0)+22));
   requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 
 /* ---------- 민화 모란 그리기 ---------- */

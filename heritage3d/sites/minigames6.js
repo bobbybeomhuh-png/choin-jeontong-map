@@ -55,7 +55,7 @@ export function jegiGame(ctx){const ui=overlay('linear-gradient(#3f6680,#8fb3c4 
   /* 무이 */const bx=M.x,by=gy;q.fillStyle='rgba(0,0,0,.15)';q.beginPath();q.ellipse(bx,by+4*u,30*u,7*u,0,0,7);q.fill();q.fillStyle='#f6f1e6';q.beginPath();q.ellipse(bx,by-44*u,30*u,40*u,0,0,7);q.fill();q.fillStyle='#222';q.beginPath();q.arc(bx-9*u,by-58*u,3*u,0,7);q.arc(bx+9*u,by-58*u,3*u,0,7);q.fill();
   const kickUp=J.vy<0&&J.y>foot-90*u;q.strokeStyle='#f6f1e6';q.lineWidth=12*u;q.lineCap='round';q.beginPath();q.moveTo(bx+8*u,by-12*u);q.lineTo(bx+(kickUp?24:10)*u,by-(kickUp?26:2)*u);q.stroke();
   /* 제기: 엽전 + 술 */q.save();q.translate(J.x,J.y);q.rotate(J.r*.3);q.fillStyle='#b88a2a';q.beginPath();q.arc(0,0,9*u,0,7);q.fill();q.fillStyle='#5a4220';q.fillRect(-3*u,-3*u,6*u,6*u);const C=['#d83a3a','#f2c14e','#2f8a5a','#3a6ad8'];for(let i=0;i<9;i++){q.strokeStyle=C[i%4];q.lineWidth=3*u;q.beginPath();q.moveTo(0,-6*u);q.quadraticCurveTo((i-4)*5*u,-26*u,(i-4)*7*u,-40*u-(i%3)*4*u);q.stroke()}q.restore();
-  q.fillStyle='#3b2414';q.font=`bold ${26*u+10}px "Do Hyeon",sans-serif`;q.textAlign='center';q.fillText(started?`${kicks}`:'끌어서 시작',W/2,H*.12+40);if(best)q.font=`${14*u+8}px "Gowun Dodum",sans-serif`,q.fillText(`가장 많이 ${best}번`,W/2,H*.12+66);
+  q.fillStyle='#3b2414';q.font=`bold ${26*u+10}px "Do Hyeon",sans-serif`;q.textAlign='center';q.fillText(started?`${kicks}`:'끌어서 시작',W/2,Math.max(H*.12+40,(ui.top.getBoundingClientRect().bottom||0)+44));if(best)q.font=`${14*u+8}px "Gowun Dodum",sans-serif`,q.fillText(`가장 많이 ${best}번`,W/2,H*.12+66);
   requestAnimationFrame(loop)};loop();ui.again=()=>{reset()};window.__JEGI={state:()=>({kicks,best,ended,started}),J:()=>J,M:()=>M}}
 
 /* ======================= 윷놀이 ======================= */
@@ -85,7 +85,7 @@ export function yutGame(ctx,join){const ui=overlay('radial-gradient(circle at 50
   if(win(side)){ended=true;const Q=side===0?100:40;setTimeout(()=>{if(!alive)return;ctx.done('yut',Q,'윷놀이');finishCard(ui,side===0?'이겼어요! 말 둘이 다 들어왔어요':OPN()+'이 먼저 들어왔어요',side===0?'도 개 걸 윷 모는 각각 돼지, 개, 양, 소, 말을 뜻한다고 해요. 설날에 온 식구가 둘러앉아 하던 놀이예요.':'윷과 모가 나오면 한 번 더, 상대 말을 잡아도 한 번 더 던져요. 한 판 더 해 볼까요?',Q,close)},600);return}
   if(!throws.length){if(r==='cap'&&side===turn){pend=0;return}pend=0;turn=1-turn;head();if(turn===1)ai=1.2}};
  const useNet=(m)=>{const k=P[0].indexOf(m);if(opp)NET.send({t:'mv',to:opp,g:gid,k});use(0,m)};
- const G=()=>{const {W,H}=ui.fit();const oy=Math.max(200,H*.28);const S=Math.max(180,Math.min(W*.86,W-120,H-oy-150));return{W,H,S,ox:W/2-S/2-(W<700?30:0),oy}};
+ const G=()=>{const {W,H}=ui.fit();const oy=Math.max(200,H*.28,(ui.top.getBoundingClientRect().bottom||0)+105)/* 안내 글과 겹치지 않게 */;const S=Math.max(180,Math.min(W*.86,W-120,H-oy-150));return{W,H,S,ox:W/2-S/2-(W<700?30:0),oy}};
  const xy=(n,g)=>{const {S,ox,oy}=g;if(n<20){const side=Math.floor(n/5),k=n%5,t=k/5;/* 0=오른쪽 아래, 반시계: 위로 → 왼쪽 → 아래 → 오른쪽 */const pts=[[1,1],[1,0],[0,0],[0,1]];const a=pts[side],b=pts[(side+1)%4];return[ox+S*(a[0]+(b[0]-a[0])*t),oy+S*(a[1]+(b[1]-a[1])*t)]}
   const D={20:[5/6,1/6],21:[4/6,2/6],22:[.5,.5],23:[2/6,4/6],24:[1/6,5/6],25:[1/6,1/6],26:[2/6,2/6],27:[4/6,4/6],28:[5/6,5/6]}[n];return[ox+S*D[0],oy+S*D[1]]};
  const piecesXY=(g)=>{const L=[];P.forEach((ms,s)=>ms.forEach((m,k)=>{let x,y;if(m.home){x=g.W/2+(s?1:-1)*(g.S/2+30)+(k?14:-14);y=g.oy+g.S+40}else if(m.i<0){x=g.ox+g.S+(s?36:-0)+(k?0:0)+ (s?0:0);[x,y]=[g.ox+g.S+ (s?44:22),g.oy+g.S-20-k*28-(s?0:0)];if(!s)x=g.ox+g.S+22;else x=g.ox+g.S+52}else{[x,y]=xy(posOf(m),g);x+=(s?8:-8);y+=(k?8:-8)}L.push({s,k,m,x,y})}));return L};
