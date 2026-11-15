@@ -85,7 +85,7 @@ export function restoreGame(ctx,key){const A=ART.find(a=>a.k===key)||ART[0];cons
  R.domElement.addEventListener('wheel',e=>{dist=Math.max(1.8,Math.min(8,dist*(1+Math.sign(e.deltaY)*.08)));e.preventDefault()},{passive:false});
  /* 붓질: 닿은 점 둘레 정점 알파를 줄임 */
  const tmpV=new THREE.Vector3();let lastSnd=0;
- function brushAt(h){const m=h.object;const loc=m.worldToLocal(h.point.clone());const P=m.geometry.attributes.position,C=m.geometry.attributes.color;const rad=(step===2?.16:.22)*Math.max(.8,H/1.6);let ch=false;for(let v=0;v<P.count;v++){tmpV.fromBufferAttribute(P,v);const d=tmpV.distanceTo(loc);if(d<rad){const a=C.getW(v),na=Math.max(0,a-(1-d/rad)*.55);if(na!==a){C.setW(v,na);ch=true}}}if(ch)C.needsUpdate=true;
+ function brushAt(h){const m=h.object;const loc=m.worldToLocal(h.point.clone());const P=m.geometry.attributes.position,C=m.geometry.attributes.color;const rad=(step===2?.16:.22)*Math.max(.8,H/1.6)*(R.domElement.clientWidth<520?1.35:1)/* 휴대폰은 붓을 크게 */;let ch=false;for(let v=0;v<P.count;v++){tmpV.fromBufferAttribute(P,v);const d=tmpV.distanceTo(loc);if(d<rad){const a=C.getW(v),na=Math.max(0,a-(1-d/rad)*.55);if(na!==a){C.setW(v,na);ch=true}}}if(ch)C.needsUpdate=true;
   const now=performance.now();if(now-lastSnd>90){lastSnd=now;blip(ac,out,900+Math.random()*400,600,.05,.035,'triangle')}}
  const dirtLeft=()=>{let s=0,n=0;for(const d of dirt){const C=d.geometry.attributes.color,N=d.geometry.attributes.normal;for(let v=0;v<C.count;v+=7){if(N&&N.getY(v)<-.55)continue;s+=C.getW(v);n++}}return n?s/n/.96:0};
  /* 이음매: 조각 경계를 따라 점 몇 개 */
@@ -101,7 +101,7 @@ export function restoreGame(ctx,key){const A=ART.find(a=>a.k===key)||ART[0];cons
   setTimeout(()=>{if(!alive)return;ctx.done('restore_'+A.k,Q,A.n+' 복원');if(isToday)setTimeout(()=>{try{ctx.done('restore_today',100,'오늘의 의뢰');ctx.say('오늘의 의뢰까지 해냈어요! 엽전 덤을 받았어요.')}catch(e){}},1500);finishCard(ui,`${A.n}, 복원 완료!`,A.d+` 진열장에 놓였어요(${restored().size} / ${ART.length}).`,Q,close)},2600)}
  /* ---------- 그리기 ---------- */
  let last=performance.now(),chk=0;
- const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
+ const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);/* 세로 화면: 가로 시야가 넓은 화면(1.4)과 같아지게 세로 시야를 넓힘(흩어진 조각이 화면 밖에 놓이지 않게) */cam.fov=cam.aspect<1.4?Math.min(75,2*Math.atan(Math.tan(19*Math.PI/180)*1.4/cam.aspect)*180/Math.PI):38;cam.updateProjectionMatrix()}
   if(doneAll)yaw+=dt*.35;cam.position.set(tgt.x+Math.sin(yaw)*Math.cos(pitch)*dist,tgt.y+Math.sin(pitch)*dist,tgt.z+Math.cos(yaw)*Math.cos(pitch)*dist);cam.lookAt(tgt);
   for(const g of pieces)if(g.userData.snap){g.position.lerp(g.userData.home,Math.min(1,dt*10));g.rotation.x*=.85;g.rotation.y*=.85;g.rotation.z*=.85;if(g.position.length()<.002){g.position.set(0,0,0);g.rotation.set(0,0,0);g.userData.snap=0}}
   if(ghost)for(const m of ghost.children)m.material.opacity=.07+.06*Math.sin(now/300);
