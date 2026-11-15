@@ -8,15 +8,16 @@ const DPR=()=>Math.min(2,devicePixelRatio||1);
 
 /* ======================= 투호 ======================= */
 export function tuhoGame(ctx){const ui=overlay('linear-gradient(#3f6680,#86aabd 38%,#e6d8b8 62%,#c9b48a 62%)');let alive=true,ended=false,left=10,score=0,arrows=[],drag=null,stuck=[],msgT=0;
- const ac=ctx.ac(),out=softOut(ctx);title(ui.top,'투호','항아리를 향해 화살을 던져요. 화면을 누른 채 뒤로 끌었다 놓으면 날아가요. 열 대 중 몇 대 넣을까요?');
- const G=()=>{const {W,H}=ui.fit();const u=Math.min(W/900,H/600);const gy=H*.62;return{W,H,u,gy,sx:W*.16,sy:gy-70*u,px:W*.74,pr:22*u,ph:120*u}};
+ const ac=ctx.ac(),out=softOut(ctx);title(ui.top,'투호','항아리 쪽으로 화면을 끌었다 놓으면, 끈 방향 그대로 날아가요. 길게 끌수록 세게! 키보드는 ↑↓ 각도, ←→ 힘, 스페이스로 던지기. 열 대 중 몇 대 넣을까요?');
+ const G=()=>{const {W,H}=ui.fit();const u=Math.min(W/900,H/600);const gy=H*.62;return{W,H,u,gy,sx:W*.16,sy:gy-70*u,px:W*.16+Math.min(W*.58,620*u),pr:22*u,ph:120*u}};
  /* 던지는 자리에서 끌기 */
  ui.c.addEventListener('pointerdown',e=>{if(ended||left<=0)return;const R=ui.c.getBoundingClientRect();drag={x0:e.clientX-R.left,y0:e.clientY-R.top,x:e.clientX-R.left,y:e.clientY-R.top};ui.c.setPointerCapture(e.pointerId)});
  ui.c.addEventListener('pointermove',e=>{if(!drag)return;const R=ui.c.getBoundingClientRect();drag.x=e.clientX-R.left;drag.y=e.clientY-R.top});
- ui.c.addEventListener('pointerup',()=>{if(!drag)return;const g=G();const dx=drag.x0-drag.x,dy=drag.y0-drag.y,L=Math.hypot(dx,dy);drag=null;if(L<12)return;const k=Math.min(1,L/(260*g.u));const a=Math.atan2(-dy,dx);const v=(6+k*13)*g.u*60;
-  arrows.push({x:g.sx,y:g.sy,vx:Math.cos(a)*v,vy:-Math.sin(a)*v,live:true,ang:a});left--;blip(ac,out,500,260,.15,.12,'triangle')});
- const vel=(g)=>{if(!drag)return null;const dx=drag.x0-drag.x,dy=drag.y0-drag.y,L=Math.hypot(dx,dy);if(L<12)return null;const k=Math.min(1,L/(260*g.u)),a=Math.atan2(-dy,dx),v=(6+k*13)*g.u*60;return{vx:Math.cos(a)*v,vy:-Math.sin(a)*v,k}};
- const close=()=>{alive=false;ui.o.remove()};ui.x.onclick=close;
+ ui.c.addEventListener('pointerup',()=>{if(!drag)return;const g=G();const V=vel(g);drag=null;if(!V||left<=0)return;aim.a=V.a;aim.k=V.k;fire(V)});
+ const aim={a:.85,k:.25};let kb=false;/* 힘: 항아리까지 거리로 기준 속도를 잡아 화면 크기와 상관없이 k≈.5 근처에서 들어감(들어가는 폭 약 11%) */const vRef=(g)=>{const x=g.px-g.sx,h=g.sy-(g.gy-g.ph),A=.85,c=Math.cos(A);return Math.sqrt(900*g.u*x*x/(2*c*c*(x*Math.tan(A)-h)))};const kv=(g,a,k)=>{const v=vRef(g)*(.85+.3*k);return{vx:Math.cos(a)*v,vy:-Math.sin(a)*v,k,a}};const fire=(V)=>{const g=G();arrows.push({x:g.sx,y:g.sy,vx:V.vx,vy:V.vy,live:true,ang:V.a});left--;blip(ac,out,500,260,.15,.12,'triangle')};
+ const onKey=e=>{if(!alive||ended)return;const K=e.key;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter'].includes(K)){e.preventDefault();e.stopPropagation();kb=true}if(K==='ArrowUp')aim.a=Math.min(1.45,aim.a+.04);if(K==='ArrowDown')aim.a=Math.max(.05,aim.a-.04);if(K==='ArrowRight')aim.k=Math.min(1,aim.k+.025);if(K==='ArrowLeft')aim.k=Math.max(0,aim.k-.025);if((K===' '||K==='Enter')&&left>0)fire(kv(G(),aim.a,aim.k))};window.addEventListener('keydown',onKey,true);
+ const vel=(g)=>{if(!drag)return kb?kv(g,aim.a,aim.k):null;const dx=drag.x-drag.x0,dy=drag.y-drag.y0,L=Math.hypot(dx,dy);if(L<12)return null;const k=Math.min(1,L/(260*g.u)),a=Math.max(.05,Math.min(1.45,Math.atan2(-dy,dx)));return kv(g,a,k)};
+ const close=()=>{alive=false;window.removeEventListener('keydown',onKey,true);ui.o.remove()};ui.x.onclick=close;
  let last=performance.now();
  const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.033,(now-last)/1000);last=now;const g=G(),{W,H,u,gy}=g,q=ui.q,d=DPR();q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);const grav=900*u;
   /* 멍석 */q.fillStyle='#b8995e';q.fillRect(0,gy,W,H-gy);for(let x=0;x<W;x+=14*u){q.fillStyle='rgba(120,90,50,.18)';q.fillRect(x,gy,2,H-gy)}
@@ -24,14 +25,14 @@ export function tuhoGame(ctx){const ui=overlay('linear-gradient(#3f6680,#86aabd 
   q.fillStyle='rgba(255,255,255,.25)';q.beginPath();q.ellipse(px-g.pr*.9,gy-g.ph*.42,g.pr*.35,g.ph*.18,0,0,7);q.fill();q.fillStyle='rgba(0,0,0,.15)';q.beginPath();q.ellipse(px,gy+3,g.pr*2.2,8*u,0,0,7);q.fill();
   /* 들어간 화살 */for(const s of stuck){q.save();q.translate(px+s.ox,top);q.rotate(s.r);q.fillStyle='#7a4a2a';q.fillRect(-2*u,-70*u,4*u,70*u);q.fillStyle='#e8e0cc';q.fillRect(-5*u,-74*u,10*u,12*u);q.restore()}
   /* 무이(던지는 쪽) */q.fillStyle='#f6f1e6';q.beginPath();q.ellipse(g.sx-30*u,gy-38*u,26*u,36*u,0,0,7);q.fill();q.fillStyle='#222';q.beginPath();q.arc(g.sx-22*u,gy-50*u,2.6*u,0,7);q.arc(g.sx-36*u,gy-50*u,2.6*u,0,7);q.fill();
-  /* 겨냥 점선 */const V=vel(g);if(V){let x=g.sx,y=g.sy,vx=V.vx,vy=V.vy;q.fillStyle='rgba(60,40,20,.55)';for(let i=0;i<22;i++){x+=vx*.05;y+=vy*.05;vy+=grav*.05;if(i%2===0){q.beginPath();q.arc(x,y,3*u,0,7);q.fill()}}q.fillStyle='#8e2b20';q.fillRect(16,H-34,(W*.3)*V.k,10);q.strokeStyle='#8e2b20';q.strokeRect(16,H-34,W*.3,10)}
+  /* 겨냥 점선 */const V=vel(g);if(V){let x=g.sx,y=g.sy,vx=V.vx,vy=V.vy;q.fillStyle='rgba(60,40,20,.55)';for(let i=0;i<40;i++){if(y>g.gy)break;x+=vx*.05;y+=vy*.05;vy+=grav*.05;if(i%2===0){q.beginPath();q.arc(x,y,3*u,0,7);q.fill()}}q.fillStyle="#8e2b20";q.fillRect(W*.7-20,g.gy+44*u+30,(W*.3)*V.k,10);q.strokeStyle="#8e2b20";q.strokeRect(W*.7-20,g.gy+44*u+30,W*.3,10)}
   /* 날아가는 화살 */for(const a of arrows){if(!a.live)continue;a.vy+=grav*dt;a.x+=a.vx*dt;a.y+=a.vy*dt;a.ang=Math.atan2(-a.vy,a.vx);
-   /* 입구: 위에서 아래로 지나가면 들어감 */if(a.vy>0&&Math.abs(a.y-top)<a.vy*dt+4&&Math.abs(a.x-px)<g.pr*1.15){a.live=false;score++;stuck.push({ox:(a.x-px)*.6,r:(Math.random()-.5)*.35});blip(ac,out,700,1100,.22,.18);ctx.say(['쏙! 들어갔어요','좋아요, 한 대 더!','명중!'][score%3]);msgT=1}
+   /* 입구: 위에서 아래로 지나가면 들어감 */if(a.vy>0&&Math.abs(a.y-top)<a.vy*dt+4&&Math.abs(a.x-px)<g.pr*2){a.live=false;score++;stuck.push({ox:(a.x-px)*.6,r:(Math.random()-.5)*.35});blip(ac,out,700,1100,.22,.18);ctx.say(['쏙! 들어갔어요','좋아요, 한 대 더!','명중!'][score%3]);msgT=1}
    else if(a.y>top&&Math.abs(a.x-px)<g.pr*2.1&&a.y<gy){a.live=false;blip(ac,out,300,120,.2,.16,'square');ctx.say('챙! 항아리에 맞고 튕겼어요')}
    else if(a.y>gy||a.x>W+40){a.live=false;blip(ac,out,200,90,.15,.1,'sine')}
    if(a.live){q.save();q.translate(a.x,a.y);q.rotate(-a.ang);q.fillStyle='#7a4a2a';q.fillRect(-36*u,-2*u,72*u,4*u);q.fillStyle='#e8e0cc';q.fillRect(-40*u,-5*u,12*u,10*u);q.fillStyle='#3b3b3b';q.beginPath();q.moveTo(36*u,-4*u);q.lineTo(44*u,0);q.lineTo(36*u,4*u);q.fill();q.restore()}}
   arrows=arrows.filter(a=>a.live);
-  q.fillStyle='#3b2414';q.font=`bold ${22*u+8}px "Do Hyeon",sans-serif`;q.textAlign='left';q.fillText(`넣은 화살 ${score}  ·  남은 화살 ${left}`,16,H-48);
+  q.fillStyle='#3b2414';q.font=`bold ${22*u+8}px "Do Hyeon",sans-serif`;q.textAlign='right';q.fillText(`넣은 화살 ${score}  ·  남은 화살 ${left}`,W-20,H*.62+44*u+14);q.textAlign='left';
   if(!ended&&left<=0&&!arrows.length){ended=true;const Q=Math.round(Math.min(100,10+score*15));setTimeout(()=>{if(!alive)return;ctx.done('tuho',Q,'투호');finishCard(ui,`열 대 중 ${score}대 넣었어요`,score>=5?'투호는 병이나 항아리에 화살을 던져 넣는 놀이로, 조선의 궁궐과 양반집에서 즐겼어요.':'힘은 짧게, 각도는 높게 던져 보세요. 투호는 마음을 가다듬는 놀이였대요.',Q,close)},500)}
   requestAnimationFrame(loop)};loop();
  ui.again=()=>{left=10;score=0;arrows=[];stuck=[];ended=false};window.__TUHO={state:()=>({left,score,ended})}}
