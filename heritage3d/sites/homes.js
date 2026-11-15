@@ -5,14 +5,19 @@
    남의 집: 서버 공개 보기(muui_homes_pub)에서 받아 같은 섬에 그린다(읽기만). */
 import * as THREE from 'three';
 import {hipRoof,materials} from './sungnyemun.js';
+import {buildHall} from './hallkit.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {SB} from '../trk3d.js';
 import {myName} from '../net3d.js';
+/* 집 이름: 주인이 마음대로 짓는다(12자). 욕설·연락처는 걸러서 막는다 */
+const BAD=['시발','씨발','ㅅㅂ','ㅆㅂ','병신','ㅂㅅ','개새','새끼','좆','존나','지랄','미친','엿먹','fuck','shit','bitch','sex','섹스','니미','느금','애미','애비'];
+export function cleanHomeName(t){t=String(t||'').replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,12);if(!t)return{ok:false,why:'이름을 한 글자 이상 적어 주세요.'};const z=t.toLowerCase().replace(/[\s._\-]/g,'');if(BAD.some(b=>z.includes(b)))return{ok:false,why:'고운 말로 지어 주세요.'};if(/\d{3,}[- ]?\d{3,}|@|https?:|www\.|\.com|카톡|kakao|insta/i.test(t))return{ok:false,why:'연락처나 주소는 넣을 수 없어요.'};return{ok:true,t}}
 const LV=[0,12,16,20,26,32,38];/* 단계별 집터 한 변(m) */
 const LVCOST=[0,0,[20,20],[45,45],[90,90],[160,160],[260,260]];
 /* 부품: 이름, 아이콘, 크기(가로 w × 세로 d), 값 [나무, 돌] */
 export const PARTS={
- hanokS:{n:'현대 한옥(작은)',i:'🏠',w:7,d:5,c:[20,10]},
- hanokL:{n:'현대 한옥(큰 본채)',i:'🏯',w:11,d:7,c:[45,25]},
+ hanokS:{n:'한옥 사랑채',i:'🏠',w:7,d:5,c:[20,10]},
+ hanokL:{n:'한옥 안채(큰 본채)',i:'🏯',w:11,d:7,c:[45,25]},
  pool:{n:'수영장',i:'🏊',w:7,d:3.6,c:[0,30]},
  sauna:{n:'사우나(한증막)',i:'♨️',w:3.6,d:3.6,c:[12,14]},
  pav:{n:'정자',i:'⛩️',w:3.6,d:3.6,c:[14,4]},
@@ -61,13 +66,14 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  /* ---------- 저장 ---------- */
  const LS='muui3d-home';let me=null;try{me=JSON.parse(localStorage.getItem(LS)||'null')}catch(e){}
  if(!me||!me.v)me={v:1,level:1,wood:12,stone:8,items:[],slot:null};
+ const homeName=()=>me.hname||((myName()||'무이')+'네 집');
  let token=null;try{token=localStorage.getItem('muui3d-home-token');if(!token){token=Array.from(crypto.getRandomValues(new Uint8Array(18)),b=>b.toString(16).padStart(2,'0')).join('');localStorage.setItem('muui3d-home-token',token)}}catch(e){token='t'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)}
  let server='unknown';/* unknown | ok | none */
  /* 함께 놀기 상태: 좋아요 수(slot→n), 서버 준비(social), 모두의 누각 합계 */const LIKES=new Map();let social='unknown';const titleOf=lv=>lv>=5?'대갓집':lv>=3?'기와집':'초가';let PAV={st:-1,T:0,ok:false};const PVX=IX-12,PVZ=IZ;
  const hdr={apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':'application/json'};
  let saveT=null;const saveLocal=()=>{try{localStorage.setItem(LS,JSON.stringify(me))}catch(e){}};
  const save=()=>{saveLocal();clearTimeout(saveT);saveT=setTimeout(saveServer,1500)};
- async function saveServer(){if(server==='none')return;try{const res=await fetch(SB.url+'/rest/v1/rpc/save_home',{method:'POST',headers:hdr,body:JSON.stringify({p_sid:SB.sid,p_token:token,p_name:myName(),p_level:me.level,p_data:{items:me.items,wood:me.wood,stone:me.stone}})});if(!res.ok){if(res.status===404||res.status===400)server='none';return}const slot=await res.json();server='ok';if(typeof slot==='number'&&slot!==me.slot){me.slot=slot;saveLocal();layoutAll()}}catch(e){}}
+ async function saveServer(){if(server==='none')return;try{const res=await fetch(SB.url+'/rest/v1/rpc/save_home',{method:'POST',headers:hdr,body:JSON.stringify({p_sid:SB.sid,p_token:token,p_name:homeName(),p_level:me.level,p_data:{items:me.items,wood:me.wood,stone:me.stone}})});if(!res.ok){if(res.status===404||res.status===400)server='none';return}const slot=await res.json();server='ok';if(typeof slot==='number'&&slot!==me.slot){me.slot=slot;saveLocal();layoutAll()}}catch(e){}}
  /* ---------- 집터 배치: 가운데 섬 둘레 서쪽 반원에 고리로 ---------- */
  const lotPos=i=>{let k=0,n=4,s=i;while(s>=n){s-=n;k++;n=4+3*k}const R=RC+30+k*44;const a=Math.PI/2+(s+.5)/n*Math.PI;return{x:IX+Math.cos(a)*R,z:IZ+Math.sin(a)*R,ry:Math.PI/2-a,ring:k}};
  const lots=new Map();/* slot → {g,plat,data,mine} */
@@ -79,18 +85,16 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
   const items=new THREE.Group();g.add(items);for(const it of (data.items||[]))if(PARTS[it.k])addItem(items,it);
   rects.push({x:p.x,z:p.z,hw:(S+4)/2,hd:(S+4)/2,ry:p.ry,slot});/* 다리 판정 */const bx=p.x+Math.sin(p.ry)*(-(S+4)/2-dist/2),bz=p.z+Math.cos(p.ry)*(-(S+4)/2-dist/2);rects.push({x:bx,z:bz,hw:1.3,hd:dist/2+1,ry:p.ry,slot});
   L={g,items,data,mine,p,S};lots.set(slot,L);return L}
- function layoutAll(){/* 다시 그림: 판정 rects 비우고 모두 */rects.splice(1);for(const [s,L] of [...lots]){root.remove(L.g);lots.delete(s)}for(const o of others)drawLot(o.slot,o,false);const ms=me.slot==null?(others.length?Math.max(...others.map(o=>o.slot))+1:0):me.slot;myLot=drawLot(ms,{name:myName(),level:me.level,items:me.items},true)}
+ function layoutAll(){/* 다시 그림: 판정 rects 비우고 모두 */rects.splice(1);for(const [s,L] of [...lots]){root.remove(L.g);lots.delete(s)}for(const o of others)drawLot(o.slot,o,false);const ms=me.slot==null?(others.length?Math.max(...others.map(o=>o.slot))+1:0):me.slot;myLot=drawLot(ms,{name:homeName(),level:me.level,items:me.items},true)}
  let others=[],myLot=null;
  /* ---------- 부품 모양 ---------- */
  function addItem(par,it){const P=PARTS[it.k];const g=new THREE.Group();g.position.set(it.x,TOP,it.z);g.rotation.y=(it.r||0)*Math.PI/2;g.userData.it=it;par.add(g);buildPart(g,it.k);return g}
- function hanok(g,W,D,H){/* 기단 */box(W+.8,.45,D+.8,mats.stone,0,.22,0,g);
-  /* 기둥(어두운 나무) */const cols=Math.round(W/2.4);for(let i=0;i<=cols;i++)for(const z of[-D/2,D/2]){cyl(.13,.15,H,mats.woodD,-W/2+i*W/cols,.45+H/2,z,g,8)}for(const x of[-W/2,W/2])cyl(.13,.15,H,mats.woodD,x,.45+H/2,0,g,8);
-  /* 앞은 통유리, 옆·뒤는 흰 벽 + 창살 띠 *//* 문 자리(기둥 사이 한 칸)는 비워 드나들게 */const dc=doorX(W),gh=H-.4,gy=.45+gh/2+.05;for(const [a,b] of[[-W/2+.15,dc-.7],[dc+.7,W/2-.15]]){const gl=new THREE.Mesh(new THREE.PlaneGeometry(b-a,gh),mats.glass);gl.position.set((a+b)/2,gy,D/2-.05);g.add(gl)}box(1.6,.16,.16,mats.woodD,dc,.45+2.15,D/2-.05,g);for(const x of[dc-.75,dc+.75])box(.1,2.1,.12,mats.woodD,x,.45+1.05,D/2-.05,g);if(gh>2.3){const tg=new THREE.Mesh(new THREE.PlaneGeometry(1.4,gh-2.2),mats.glass);tg.position.set(dc,.45+2.2+(gh-2.2)/2+.05,D/2-.05);g.add(tg)}for(let i=1;i<cols;i++)box(.06,H-.4,.08,mats.woodD,-W/2+i*W/cols,.45+(H-.4)/2+.05,D/2-.05,g);
-  box(W,H-.4,.15,mats.plaster,0,.45+(H-.4)/2+.05,-D/2+.1,g);for(const x of[-W/2+.1,W/2-.1])box(.15,H-.4,D-.2,mats.plaster,x,.45+(H-.4)/2+.05,0,g);
-  box(W+.1,.22,D+.1,mats.woodD,0,.45+H-.1,0,g);/* 창방 */
-  /* 툇마루 */box(W,.12,1.1,mats.woodL,0,.5,D/2+.6,g);
-  /* 기와 지붕 */try{const rf=hipRoof(MT,W/2+1.2,D/2+1.1,Math.max(.6,W/2-D/2),.45+H+.1,.45+H+D*.36+.6,.35,.15,{plain:true,rs:.5});g.add(rf.group||rf)}catch(e){box(W+2,.4,D+2,mats.woodD,0,.45+H+.4,0,g)}
-  /* 안쪽: 마루와 등 */box(W-.4,.06,D-.4,mats.woodL,0,.48,0,g);const lp=new THREE.Mesh(new THREE.SphereGeometry(.18,10,8),mats.lamp);lp.position.set(0,.45+H-.5,0);g.add(lp)}
+ function hanok(g,W,D,H){/* 공용 한옥 부품(배흘림 기둥, 주심포, 창호 살문, 팔작지붕, 기단·계단). 문 자리는 가운데 칸(SH 부딪힘과 같음) */
+  const cols=Math.round(W/2.4);const hg=buildHall({x:0,z:0,W,D,nx:cols,nz:2,entry:cols%2?(cols-1)/2:cols/2-1,FY:.45,PH:H,roof:'hip',pillar:0x6b4a2e,bae:true,bracket:'jusim',front:'door',back:'window',left:'wall',right:'window',stairs:'front',mini:false,solids:[],light:false}).group;g.add(hg);
+  /* 툇마루와 처마 밑 등 */box(W-.2,.1,.9,mats.woodL,0,.5,D/2+.5,g);const lp=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),mats.lamp);lp.position.set(0,.45+H-.4,0);g.add(lp);mergeByMat(g)}
+ /* 같은 재질끼리 합쳐 그리기(집이 많아도 가볍게). 움직이는 것(anim)은 없는 부품에만 씀 */
+ function mergeByMat(g){g.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(g.matrixWorld).invert();const by=new Map(),kill=[];g.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSprite||!o.geometry||Array.isArray(o.material)||o.userData.keep)return;const gm=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();for(const k of Object.keys(gm.attributes))if(!['position','normal','uv'].includes(k))gm.deleteAttribute(k);if(!gm.attributes.uv)gm.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(gm.attributes.position.count*2),2));if(!gm.attributes.normal)gm.computeVertexNormals();gm.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld));const L=by.get(o.material)||[];L.push(gm);by.set(o.material,L);kill.push(o)});
+  if(kill.length<8)return;for(const o of kill)o.parent.remove(o);for(const[mt,L]of by){try{const m=new THREE.Mesh(mergeGeometries(L,false),mt);m.castShadow=m.receiveShadow=true;g.add(m)}catch(e){}}}
  const doorX=W=>{const cols=Math.round(W/2.4);return cols%2?0:-W/cols/2};
  /* ---------- 부딪힘·바닥: 부품마다 막는 모양(부품 로컬). r=사각 벽, c=둥근 기둥, f=올라서는 바닥, sw=물 ---------- */
  const SH={};{const hk=(W,D)=>{const dc=doorX(W),R=[];R.push([0,-D/2+.1,W/2,.12],[-W/2+.1,0,.12,D/2],[W/2-.1,0,.12,D/2]);const a=-W/2,b=dc-.7,c=dc+.7,e=W/2;R.push([(a+b)/2,D/2-.05,(b-a)/2,.1],[(c+e)/2,D/2-.05,(e-c)/2,.1]);return{r:R,f:[[0,0,(W+.8)/2,(D+.8)/2,.45],[0,D/2+.6,W/2,.55,.56]]}};
@@ -121,7 +125,7 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
   case 'lawn':box(4,.06,4,M(0x5fae3a,{roughness:1}),0,.03,0,g);break;
   case 'path':for(let i=0;i<4;i++)cyl(.45,.5,.1,mats.stone,(i%2?.15:-.15),.05,-1.5+i,g,10);break;
   case 'wall':box(4,1.2,.5,mats.stone,0,.6,0,g);box(4.2,.2,.7,MT&&MT.roof?MT.roof:mats.woodD,0,1.3,0,g);break;
-  case 'gate':for(const x of[-1.3,1.3])box(.25,2.4,.25,mats.woodD,x,1.2,0,g);/* 문짝은 안쪽으로 활짝 열어 둠 */for(const sx of[-1,1]){const h=new THREE.Group();h.position.set(sx*1.18,0,0);h.rotation.y=sx*1.35;g.add(h);box(1.15,1.9,.1,mats.wood,-sx*.58,.95,0,h)}box(3.2,.3,.6,mats.woodD,0,2.5,0,g);break;
+  case 'gate':{/* 기와 맞배지붕 대문: 양 옆 짧은 담, 두 짝 판문은 안으로 열림 */g.add(buildHall({x:0,z:0,W:2.6,D:1,nx:1,nz:1,FY:.18,PH:2.3,roof:'gable',roofScale:.72,pillar:0x5a3a22,bae:false,bracket:'jusim',front:'open',back:'open',left:'wall',right:'wall',stairs:'none',mini:false,solids:[],light:false}).group);for(const sx of[-1,1]){const h=new THREE.Group();h.position.set(sx*1.25,.2,-.1);h.rotation.y=sx*1.3;g.add(h);box(1.15,2.2,.08,mats.wood,-sx*.58,1.1,0,h);for(const y of[.5,1.7])box(1.1,.06,.1,mats.woodD,-sx*.58,y,.02,h);const ring=new THREE.Mesh(new THREE.TorusGeometry(.07,.015,6,12),M(0x3a3a38,{metalness:.6}));ring.position.set(-sx*.95,1.1,.06);h.add(ring)}mergeByMat(g);break}
   case 'pond':{const s=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,.15,24),mats.stone);s.position.y=.07;g.add(s);const w=new THREE.Mesh(new THREE.CylinderGeometry(1.45,1.45,.05,24),mats.water);w.position.y=.16;g.add(w);for(let i=0;i<3;i++){const p=new THREE.Mesh(new THREE.CircleGeometry(.25,10).rotateX(-Math.PI/2),M(0x4f9a3c));p.position.set(Math.cos(i*2)*.7,.2,Math.sin(i*2)*.7);g.add(p);const f=new THREE.Mesh(new THREE.SphereGeometry(.1,8,6),mats.pink);f.position.set(Math.cos(i*2)*.7,.27,Math.sin(i*2)*.7);g.add(f)}break}
   case 'jars':box(2.2,.25,1.6,mats.stone,0,.12,0,g);for(let i=0;i<5;i++){const j=new THREE.Mesh(new THREE.SphereGeometry(.32+(i%2)*.08,12,10),mats.jar);j.scale.y=1.2;j.position.set(-.75+i*.38,.6,(i%2?.35:-.3));j.castShadow=true;g.add(j)}break;
   case 'lantern':cyl(.25,.3,.2,mats.stone,0,.1,0,g,8);cyl(.1,.1,.8,mats.stone,0,.6,0,g,8);box(.45,.4,.45,mats.stone,0,1.2,0,g);box(.3,.25,.3,mats.lamp,0,1.2,0,g);cyl(0,.4,.3,mats.stoneD,0,1.55,0,g,4);break;
@@ -157,10 +161,12 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  const $=s=>ui.querySelector(s);const res=$('.res'),bar=$('.bar'),ctl=$('.ctl'),act=$('.act');
  const draw=()=>{$('#hW').textContent=me.wood;$('#hS').textContent=me.stone;$('#hL').textContent=`집터 ${LV[me.level]}m`};draw();
  let ghost=null,gIt=null,mode=null;/* mode: place | null */
- const openBar=()=>{const next=LVCOST[me.level+1];bar.innerHTML=`<h3><span>무엇을 지을까요?</span><button type="button" data-x="1">닫기 ✕</button></h3>`+Object.entries(PARTS).map(([k,p])=>{const ok=me.wood>=p.c[0]&&me.stone>=p.c[1];return`<button type="button" data-k="${k}" class="${ok?'':'no'}"><i>${p.i}</i>${p.n}<small>${p.c[0]?'🪵'+p.c[0]+' ':''}${p.c[1]?'🪨'+p.c[1]:''}${!p.c[0]&&!p.c[1]?'공짜':''}</small></button>`}).join('')+(next?`<button type="button" data-up="1" class="${me.wood>=next[0]&&me.stone>=next[1]?'':'no'}"><i>📐</i>집터 넓히기 ${LV[me.level]}→${LV[me.level+1]}m<small>🪵${next[0]} 🪨${next[1]}</small></button>`:'')+`<button type="button" data-rm="1"><i>🧹</i>치우기<small>가까운 것 하나</small></button>`;bar.hidden=false};
+ const openBar=()=>{const next=LVCOST[me.level+1];bar.innerHTML=`<h3><span>무엇을 지을까요?</span><button type="button" data-x="1">닫기 ✕</button></h3>`+Object.entries(PARTS).map(([k,p])=>{const ok=me.wood>=p.c[0]&&me.stone>=p.c[1];return`<button type="button" data-k="${k}" class="${ok?'':'no'}"><i>${p.i}</i>${p.n}<small>${p.c[0]?'🪵'+p.c[0]+' ':''}${p.c[1]?'🪨'+p.c[1]:''}${!p.c[0]&&!p.c[1]?'공짜':''}</small></button>`}).join('')+(next?`<button type="button" data-up="1" class="${me.wood>=next[0]&&me.stone>=next[1]?'':'no'}"><i>📐</i>집터 넓히기 ${LV[me.level]}→${LV[me.level+1]}m<small>🪵${next[0]} 🪨${next[1]}</small></button>`:'')+`<button type="button" data-name="1"><i>🏷️</i>집 이름 짓기<small>${String(homeName()).replace(/[<>&"]/g,'')}</small></button>`+`<button type="button" data-rm="1"><i>🧹</i>치우기<small>가까운 것 하나</small></button>`;bar.hidden=false};
  bar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.x){bar.hidden=true;return}
   if(b.dataset.up){const n=LVCOST[me.level+1];if(!n)return;if(me.wood<n[0]||me.stone<n[1]){say(`재료가 모자라요. 🪵${n[0]} 🪨${n[1]}이 필요해요.`);return}me.wood-=n[0];me.stone-=n[1];me.level++;save();draw();layoutAll();bar.hidden=true;say(`집터가 ${LV[me.level]}m로 넓어졌어요!`,4);return}
   if(b.dataset.rm){bar.hidden=true;removeNear();return}
+  if(b.dataset.name){bar.innerHTML=`<h3><span>우리 집 이름 짓기</span><button type="button" data-x="1">닫기 ✕</button></h3><div style="display:flex;gap:6px;margin-top:8px"><input id="hName" maxlength="12" placeholder="예: 달빛 기와집" style="flex:1;min-width:0;padding:10px;border-radius:10px;border:0;font:16px 'Gowun Dodum',sans-serif"><button type="button" data-save="1" style="padding:10px 14px">정하기</button></div><small style="display:block;margin-top:6px;opacity:.8">12자까지. 이름 말뚝과 집 구경 목록에 보여요</small>`;const inp=bar.querySelector('#hName');inp.value=me.hname||'';setTimeout(()=>inp.focus(),50);inp.addEventListener('keydown',ev=>{ev.stopPropagation();if(ev.key==='Enter')bar.querySelector('[data-save]').click()});inp.addEventListener('keyup',ev=>ev.stopPropagation());return}
+  if(b.dataset.save){const r=cleanHomeName(bar.querySelector('#hName').value);if(!r.ok){say(r.why,3);return}me.hname=r.t;save();layoutAll();try{boardDraw()}catch(e){}bar.hidden=true;try{H().act('joy',1.2)}catch(e){}say(`이제 이 집은 「${r.t}」이에요!`,4);return}
   const k=b.dataset.k,p=PARTS[k];if(!p)return;if(me.wood<p.c[0]||me.stone<p.c[1]){say(`재료가 모자라요. 섬 숲에서 나무를, 돌밭에서 돌을 캐 와요.`);return}bar.hidden=true;startPlace(k)});
  const lotLocal=(x,z)=>{const L=myLot;const c=Math.cos(L.p.ry),s=Math.sin(L.p.ry),dx=x-L.p.x,dz=z-L.p.z;return{x:dx*c-dz*s,z:dx*s+dz*c}};
  function startPlace(k){mode='place';gIt={k,x:0,z:0,r:0};ghost=addItem(myLot.items,gIt);ghost.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.55}});ctl.hidden=false;say('무이가 걸어가면 따라와요. 자리를 잡고 ✔ 놓기!',4)}
