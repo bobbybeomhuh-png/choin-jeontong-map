@@ -5,7 +5,7 @@ import {overlay,title,blip,finishCard,softOut} from './minigames.js';
 /* ---------- 앙부일구: 해를 끌어 그림자 끝을 알려 준 시각 줄에 맞춘다 ---------- */
 export function sundialGame(ctx){const ui=overlay('linear-gradient(#f3d9a4,#d9b47a)');let alive=true,sun=.2,drag=false,round=0,scores=[],ended=false,flash=0;
  const ac=ctx.ac(),out=softOut(ctx);const HOURS=['묘시','진시','사시','오시','미시','신시','유시'];const ASK=[3,1,5];
- title(ui.top,'앙부일구 읽기','해를 좌우로 끌어 그림자 끝을 금빛 시각 줄에 맞추고 손을 떼요. 세 번.');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';ui.top.querySelector('b').style.color='#8e2b20';
+ title(ui.top,'앙부일구 읽기','해를 좌우로 끌어(또는 ←→ 키) 그림자 끝을 금빛 시각 줄에 맞추고 손을 떼요(스페이스). 세 번.');ui.top.style.color='#2b1d12';ui.top.style.textShadow='none';ui.top.querySelector('b').style.color='#8e2b20';
  const G=()=>{const {W,H}=ui.fit(),u=Math.min(W/(W<H?560:900),H/600);return{W,H,u,cx:W/2,cy:H*.62,R:200*u}};
  const setSun=e=>{const R=ui.c.getBoundingClientRect(),{W}=G();sun=Math.max(0,Math.min(1,(e.clientX-R.left-W*.1)/(W*.8)))};
  ui.c.addEventListener('pointerdown',e=>{if(ended)return;drag=true;ui.c.setPointerCapture(e.pointerId);setSun(e)});ui.c.addEventListener('pointermove',e=>{if(drag)setSun(e)});
@@ -13,7 +13,8 @@ export function sundialGame(ctx){const ui=overlay('linear-gradient(#f3d9a4,#d9b4
   blip(ac,out,sc>.7?880:440,sc>.7?1320:330,.3,.2);ctx.say(sc>.85?`딱 ${HOURS[ASK[round]]}! 그림자가 줄 위에 섰어요.`:sc>.5?'거의 맞았어요!':`조금 비켜 갔어요. 지금은 ${HOURS[Math.round(sun*6)]}쯤이에요.`);round++;
   if(round>=ASK.length){ended=true;setTimeout(()=>{if(!alive)return;const Q=Math.max(10,Math.round(scores.reduce((a,b)=>a+b,0)/scores.length*100));ctx.done('sundial',Q,'앙부일구 읽기');finishCard(ui,'시각을 잘 읽었어요',Q>=75?'솥 모양 해시계 안 그림자로 시각과 절기를 읽던 조선 사람들처럼요.':'그림자는 해와 반대쪽으로 생겨요. 한 번 더 해 볼까요?',Q,close)},900)}};
  ui.c.addEventListener('pointerup',rel);ui.c.addEventListener('pointercancel',rel);
- const close=()=>{alive=false;ui.o.remove()};ui.x.onclick=close;ui.again=()=>{round=0;scores=[];ended=false;title(ui.top,'앙부일구 읽기','한 번 더! 그림자는 해 반대쪽이에요.');ui.top.querySelector('b').style.color='#8e2b20'};
+ const kd=e=>{if(!alive||ended)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();sun=Math.max(0,Math.min(1,sun+(e.key==='ArrowRight'?.012:-.012)))}else if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();drag=true;rel()}};addEventListener('keydown',kd,true);
+ const close=()=>{alive=false;removeEventListener('keydown',kd,true);ui.o.remove()};ui.x.onclick=close;ui.again=()=>{round=0;scores=[];ended=false;title(ui.top,'앙부일구 읽기','한 번 더! 그림자는 해 반대쪽이에요.');ui.top.querySelector('b').style.color='#8e2b20'};
  const loop=()=>{if(!alive)return;const {W,H,u,cx,cy,R}=G(),q=ui.q;const d=Math.min(2,devicePixelRatio||1);q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);flash=Math.max(0,flash-.03);
   /* 하늘의 해 */const sx=W*.1+sun*W*.8,sy=H*.32-Math.sin(sun*Math.PI)*H*.14;q.fillStyle='rgba(255,220,120,.4)';q.beginPath();q.arc(sx,sy,46*u,0,7);q.fill();q.fillStyle='#f5b83c';q.beginPath();q.arc(sx,sy,26*u,0,7);q.fill();
   /* 솥(오목한 반구) */q.fillStyle='#6b5a3a';q.beginPath();q.ellipse(cx,cy,R*1.12,R*.42,0,0,7);q.fill();q.fillStyle='#e9dcb8';q.beginPath();q.ellipse(cx,cy,R,R*.36,0,0,7);q.fill();

@@ -38,14 +38,15 @@ export function bellGame(ctx){const ui=overlay('radial-gradient(900px 600px at 5
  const ring=k=>{if(!ac||!out)return;const t0=ac.currentTime,base=72,P=[[1,.5,7],[2.01,.28,5],[2.76,.18,4],[5.4,.07,2.5],[8.9,.04,1.5]],M=ac.createGain();M.gain.value=.55*k;M.connect(out);
   for(const[r,g,dur]of P){for(const det of[0,.6]){const o=ac.createOscillator(),G=ac.createGain();o.frequency.value=base*r+det;G.gain.setValueAtTime(.0001,t0);G.gain.exponentialRampToValueAtTime(g*.5,t0+.02);G.gain.exponentialRampToValueAtTime(.0001,t0+dur*(.6+k*.6));o.connect(G).connect(M);o.start(t0);o.stop(t0+dur*1.3)}}
   const n=noiseSrc(ac),f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=600;g.gain.setValueAtTime(.25*k,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.15);n.connect(f).connect(g).connect(out);n.start(t0);n.stop(t0+.2)};
- title(ui.top,'범종 치기','당목(나무 공이)을 뒤로 끌어 당겼다 놓아요. 금빛 칸만큼 당기면 종이 가장 곱게 울려요. 세 번.');
+ title(ui.top,'범종 치기','당목(나무 공이)을 뒤로 끌어 당겼다 놓아요(스페이스를 누르고 있다 떼도 돼요). 금빛 칸만큼 당기면 종이 가장 곱게 울려요. 세 번.');
  const geo=()=>{const {W,H}=ui.fit(),tb=(ui.top.getBoundingClientRect().bottom||0)+8,u=Math.min(W/(W<H?560:900),H/600,(H-tb)/450),by=Math.max(H*.5,tb+250*u);return{W,H,u,bx:W*(W<H?.66:.6),by,lx:W*(W<H?.66:.6)-150*u,ly:by+H*.06}};
  ui.c.addEventListener('pointerdown',e=>{if(ended||swing>0)return;drag=e.clientX;ui.c.setPointerCapture(e.pointerId)});
  ui.c.addEventListener('pointermove',e=>{if(drag==null)return;const {u}=geo();pull=Math.max(0,Math.min(1,(drag-e.clientX)/(260*u)))});
- const rel=()=>{if(drag==null)return;drag=null;if(pull<.08){pull=0;return}swing=pull;sv=0};ui.c.addEventListener('pointerup',rel);ui.c.addEventListener('pointercancel',rel);
- const close=()=>{alive=false;ui.o.remove()};ui.x.onclick=close;ui.again=()=>{hits=[];ended=false;pull=0;swing=0;title(ui.top,'범종 치기','한 번 더! 금빛 칸까지만 당겨요.')};
+ const rel=()=>{if(drag==null)return;drag=null;if(pull<.08){pull=0;return}swing=pull;sv=0};
+ /* 키보드: 스페이스(또는 ←)를 누르고 있으면 당목이 뒤로 당겨지고, 떼면 침 */let kHold=false;const kd=e=>{if(!alive||ended)return;if(e.key===' '||e.key==='ArrowLeft'){e.preventDefault();e.stopPropagation();if(e.type==='keydown'&&!kHold&&swing<=0){kHold=true;drag=0;pull=0}else if(e.type==='keyup'&&kHold){kHold=false;rel()}}};addEventListener('keydown',kd,true);addEventListener('keyup',kd,true);;ui.c.addEventListener('pointerup',rel);ui.c.addEventListener('pointercancel',rel);
+ const close=()=>{alive=false;removeEventListener('keydown',kd,true);removeEventListener('keyup',kd,true);ui.o.remove()};ui.x.onclick=close;ui.again=()=>{hits=[];ended=false;pull=0;swing=0;title(ui.top,'범종 치기','한 번 더! 금빛 칸까지만 당겨요.')};
  const ZONE=[.55,.75];let last=performance.now();
- const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const {W,H,u,bx,by,lx,ly}=geo(),q=ui.q;const d=Math.min(2,devicePixelRatio||1);q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);
+ const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;if(kHold)pull=Math.min(1,pull+dt*.55);const {W,H,u,bx,by,lx,ly}=geo(),q=ui.q;const d=Math.min(2,devicePixelRatio||1);q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);
   if(swing>0){sv+=dt*9;pull=Math.max(0,swing*(1-sv));if(sv>=1){const p=swing,c=(ZONE[0]+ZONE[1])/2,err=Math.abs(p-c),sc=Math.max(0,1-Math.max(0,err-.1)/.45);hits.push(sc);ring(.4+p*.8);glow=1;sway=p*.08;
     ctx.say(p<ZONE[0]?'소리가 조금 작아요. 더 당겨요!':p>ZONE[1]?'쾅! 너무 세요. 종이 놀라겠어요.':['데엥~ 고운 소리!','맥놀이가 길게 울려요.','은은하게 퍼져요.'][hits.length%3]);swing=0;pull=0;
     if(hits.length>=3){ended=true;setTimeout(()=>{if(!alive)return;const Q=Math.max(10,Math.round(hits.reduce((a,b)=>a+b,0)/3*100));ctx.done('bell',Q,'범종 치기');finishCard(ui,'종소리가 산을 넘어가요',Q>=75?'세 번 모두 알맞은 힘으로 쳐서 소리가 곱게 울렸어요.':'힘이 조금 들쭉날쭉했어요. 금빛 칸을 노려 봐요.',Q,close)},2200)}}}
