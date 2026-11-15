@@ -109,7 +109,7 @@ export function buildWorldmap(opts={}){const mini=!!opts.mini;const G=new THREE.
  if(!mini){
   /* 둥근 활엽수: 가을 단풍(빨강·주황·노랑)과 초록이 섞임 */{const N=1500,TL=[];const PAL=[0xe8603c,0xf08c3a,0xf6c04a,0xf2d55a,0xd8503a,0x9cc05a,0xec7a3a,0xfbc94a];let k=0;
    for(let t=0;t<N*8&&k<N;t++){const x=(-170+r()*355)*MS,z=(-165+r()*365)*MS;if(!provAt(x,z)||nearCity(x,z,11)||nearRiver(x,z,2))continue;const s=.7+r()*.8;const hh=HALL(x,z);if(hh>7)continue;TL.push([x,TOP-.12+hh,z,r()*6,.65*s,PAL[(r()*PAL.length)|0]]);solids.push({cx:x,cz:z,r:1.0*s,y0:0,y1:TOP+hh+5});k++}
-   G.userData.broad=plantBroad(G,TL)}
+   G.userData.broad=plantBroad(G,TL,{chunk:80})}
   /* 들판: 누런 논, 코스모스, 메밀꽃, 유채 */{const N=1000,fm=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({roughness:1}),N);const FC=[0xe8c547,0xd9b23a,0xf28fb0,0xf6f2e8,0xf4e04d,0xc98bd8];let k=0;
    for(let t=0;t<N*8&&k<N;t++){const x=(-170+r()*355)*MS,z=(-165+r()*365)*MS;if(!provAt(x,z)||nearCity(x,z,9)||HALL(x,z)>.2||nearRiver(x,z,5))continue;o2.position.set(x,TOP+.02,z);o2.rotation.set(0,r()*3,0);o2.scale.set(3+r()*6,1,2+r()*4);o2.updateMatrix();fm.setMatrixAt(k,o2.matrix);fm.setColorAt(k,col.setHex(FC[(r()*FC.length)|0]));k++}fm.count=k;fm.receiveShadow=true;G.add(fm);G.userData.fields=fm}
   /* 도시 둘레 마을: 흰 벽, 기와 지붕(검은 기와·청기와·붉은 기와), 초가 */{const per=9,N=CITYL.length*per;

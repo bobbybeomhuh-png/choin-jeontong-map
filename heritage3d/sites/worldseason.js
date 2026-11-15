@@ -17,14 +17,14 @@ let _ice=null;const ICE=()=>{if(_ice)return _ice;const c=document.createElement(
 export function buildSeason(G,{TOP,provAt,HALL,mulb,MS=1,scene}){const U=G.userData,r=mulb(1411);const tc=new THREE.Color(),tw=new THREE.Color();
  /* 처음 색을 기억해 두고 계절마다 거기서 바꾼다 */
  const keep=(im)=>{if(!im||!im.instanceColor)return null;return Float32Array.from(im.instanceColor.array)};
- const leafIM=U.broad?U.broad[1]:null,leaf0=keep(leafIM),pine0=keep(U.pines),field0=keep(U.fields);
+ const leafIMs=U.broad?(Array.isArray(U.broad[1])?U.broad[1]:[U.broad[1]]):[],leaf0s=leafIMs.map(keep),pine0=keep(U.pines),field0=keep(U.fields);
  const LM0={};if(U.LM)for(const k in U.LM)LM0[k]=U.LM[k].color.clone();
  const terr=U.terr,terC0=terr?Float32Array.from(terr.geometry.attributes.color.array):null;
  const paddy=U.paddy,paddyMap=paddy?paddy.map:null;const sea=U.sea,sea0=sea?sea.color.clone():null;
  const recolor=(im,src,pal,mix=1)=>{if(!im||!src)return;const a=im.instanceColor.array,rr=mulb(77);for(let i=0;i<im.count;i++){tc.setRGB(src[i*3],src[i*3+1],src[i*3+2]);if(pal){tw.setHex(pal[(rr()*pal.length)|0]);tc.lerp(tw,mix)}a[i*3]=tc.r;a[i*3+1]=tc.g;a[i*3+2]=tc.b}im.instanceColor.needsUpdate=true};
  let cur='autumn';
  function apply(s){cur=s;
-  recolor(leafIM,leaf0,s==='autumn'?null:LEAF[s]);
+  leafIMs.forEach((im,i)=>recolor(im,leaf0s[i],s==='autumn'?null:LEAF[s]));
   recolor(U.fields,field0,s==='autumn'?null:FIELD[s]);
   if(U.pines&&pine0){const a=U.pines.instanceColor.array;for(let i=0;i<U.pines.count;i++){tc.setRGB(pine0[i*3],pine0[i*3+1],pine0[i*3+2]);if(s==='winter')tc.lerp(tw.setHex(0xffffff),.55);else if(s==='summer')tc.multiplyScalar(.9);else if(s==='spring')tc.lerp(tw.setHex(0xc8f0a0),.15);a[i*3]=tc.r;a[i*3+1]=tc.g;a[i*3+2]=tc.b}U.pines.instanceColor.needsUpdate=true}
   if(U.LM)for(const k in U.LM){const c=U.LM[k].color.copy(LM0[k]);if(s==='winter')c.lerp(tw.setHex(0xf2f4f6),.7);else if(s==='spring')c.lerp(tw.setHex(0xb8e07a),.18);else if(s==='summer')c.lerp(tw.setHex(0x5f9e3a),.25)}
