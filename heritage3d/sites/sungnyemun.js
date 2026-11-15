@@ -34,7 +34,7 @@ export function materials(){if(_MT)return _MT;
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const nx=-(ht(x+1,y)-ht(x-1,y))*2.2,ny=(ht(x,y+1)-ht(x,y-1))*2.2,l=Math.hypot(nx,ny,1),i=(y*W+x)*4;im.data[i]=(nx/l*.5+.5)*255;im.data[i+1]=(ny/l*.5+.5)*255;im.data[i+2]=(1/l*.5+.5)*255;im.data[i+3]=255}q.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t})();
  const tile=new THREE.MeshStandardMaterial({map:TILE,normalMap:TILEN,normalScale:new THREE.Vector2(1.1,1.1),roughness:.62,side:THREE.DoubleSide});
  const RAFT=tex(128,128,(q,w,h)=>{q.fillStyle='#2f7a64';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=16){q.fillStyle='#8a5c34';q.fillRect(x,0,10,h);q.fillStyle='#2d4f9a';q.fillRect(x,h-18,10,10)}});
- const raft=new THREE.MeshStandardMaterial({map:RAFT,roughness:.8,side:THREE.DoubleSide});
+ const raft=new THREE.MeshStandardMaterial({map:RAFT,roughness:.8,side:THREE.DoubleSide,emissive:0x8a6040,emissiveMap:RAFT,emissiveIntensity:.32});/* 처마 밑은 아래를 보고 그늘이라 까맣게 죽음 → 나무결이 보이게 은은한 자체 빛 */
  const PLASTER=new THREE.MeshStandardMaterial({color:0xece4d4,roughness:.95,side:THREE.DoubleSide});
  const LATT=tex(128,256,(q,w,h)=>{q.clearRect(0,0,w,h);q.strokeStyle='#5a3218';q.lineWidth=9;q.strokeRect(4,4,w-8,h-8);q.lineWidth=4;for(let x=16;x<w;x+=16){q.beginPath();q.moveTo(x,6);q.lineTo(x,h-6);q.stroke()}for(let y=16;y<h;y+=16){q.beginPath();q.moveTo(6,y);q.lineTo(w-6,y);q.stroke()}});
  const lattice=new THREE.MeshStandardMaterial({map:LATT,transparent:true,alphaTest:.3,side:THREE.DoubleSide,roughness:.7});
