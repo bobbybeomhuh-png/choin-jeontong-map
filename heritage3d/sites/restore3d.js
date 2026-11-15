@@ -12,10 +12,16 @@ export const ART=[
  {k:'hyangro',m:'buyeo/hyangro',n:'백제 금동대향로',kind:'metal',cut:'band',np:3,site:'부여',d:'1993년 부여 능산리 절터에서 나온 백제 향로예요(높이 61.8cm, 국보). 꼭대기 봉황, 뚜껑의 산봉우리와 다섯 악사, 신선과 동물, 몸통의 연꽃, 받침의 용까지 백제의 솜씨가 다 담겼어요. (3D: junhapark1, CC BY)'},
  {k:'moonjar',m:'icheon/jar1983',n:'달항아리',kind:'ceramic',cut:'ring',np:5,site:'이천',d:'보름달처럼 둥글고 하얀 큰 항아리예요(1700년대). 아무 무늬 없이 흰빛과 둥근 모양만으로 아름다워서, 조선 백자를 대표하는 그릇이 되었어요. (클리블랜드 미술관 1983.28, CC0)'},
  {k:'sumaksae',m:'gyeongju/sumaksae',n:'얼굴무늬 수막새',kind:'ceramic',cut:'ring',np:3,site:'경주',d:'"신라의 미소"로 불리는 기와 끝 장식이에요. 실제 지름은 11.5cm예요. 웃는 눈과 입이 손으로 빚은 듯 부드러워요. (3D: 국가유산청)'},
+ {k:'bansa',m:'gyeongju/bansa',n:'금동반가사유상',kind:'metal',cut:'band',np:3,site:'경주',d:'한쪽 다리를 무릎에 얹고 손가락을 뺨에 댄 채 생각에 잠긴 금동 불상이에요(삼국시대, 높이 93.5cm). (3D: 국가유산청)'},
+ {k:'angbu',m:'hanyang/angbu',n:'앙부일구',kind:'metal',cut:'ring',np:4,site:'서울',d:'세종 때 만든 오목한 해시계예요. 솥을 하늘로 향해 놓은 모양이라 "앙부"라 불러요. 바늘 그림자로 시각과 절기를 함께 읽어요(지름 약 35cm). (3D: 국가유산청)'},
+ {k:'dragonjar',m:'icheon/dragonjar',n:'백자 청화 운룡문 항아리',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'푸른 코발트로 구름 속 용을 그린 항아리예요(1700년대). 용무늬 항아리는 왕실 잔치에 썼어요. (클리블랜드 미술관 1986.85, CC0)'},
+ {k:'kundika',m:'gangjin/kundika',n:'청자 정병',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'고려 청자 정병이에요. 강진 같은 고려 가마에서 비색 청자를 구웠어요. (클리블랜드 미술관 1921.631, CC0)'},
+ {k:'unhyun',m:'icheon/unhyun_bottle',n:'운현궁 백자 병',kind:'ceramic',cut:'ring',np:3,site:'서울',d:'흥선대원군의 집 운현궁에서 쓰던 백자 병이에요. (국가유산청 재현 에셋, CC BY)'},
+ {k:'fishbottle',m:'icheon/fishbottle',n:'분청사기 물고기무늬 병',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'회색 흙에 흰 흙을 바르고 긁어 물고기를 그린 분청사기 병이에요(1400년대). (클리블랜드 미술관 1962.153, CC0)'},
  {k:'najeonham',m:'tongyeong/najeonham',n:'나전칠함',kind:'lacquer',cut:'ring',np:4,site:'통영',d:'옻칠한 나무 상자에 얇게 간 전복·조개 껍데기(자개)를 오려 붙여 꽃과 넝쿨을 그렸어요. 통영은 조선 때 통제영 공방(12공방)에서 나전을 만들던 나전칠기의 고장이에요. (3D: KCDF, CC BY)'}];
 const LS='muui-h3-restored';
 export const restored=()=>{try{return new Set(JSON.parse(localStorage.getItem(LS)||'[]'))}catch(e){return new Set()}};
-const markRestored=k=>{try{const s=restored();s.add(k);localStorage.setItem(LS,JSON.stringify([...s]))}catch(e){}};
+const markRestored=k=>{try{const s=restored();s.add(k);localStorage.setItem(LS,JSON.stringify([...s]))}catch(e){}try{window.__CABINET&&window.__CABINET()}catch(e){}};
 
 /* ---------- 공방 고르기 ---------- */
 export function workshopGame(ctx){const ui=overlay('radial-gradient(circle at 50% 30%,#5a3a20,#1a120b)');let alive=true;const R=restored();
@@ -53,7 +59,7 @@ export function restoreGame(ctx,key){const A=ART.find(a=>a.k===key)||ART[0];cons
     /* 흙(녹) 층: 정점 색 알파로 지워 나감 */const dg=g.clone();const P=dg.attributes.position,N=dg.attributes.normal,C=new Float32Array(P.count*4);const col=A.kind==='metal'?[[.33,.45,.36],[.42,.5,.38],[.36,.33,.24]]:A.kind==='lacquer'?[[.42,.38,.33],[.48,.44,.38],[.36,.33,.29]]:[[.45,.33,.22],[.52,.4,.27],[.38,.28,.18]];for(let v=0;v<P.count;v++){P.setXYZ(v,P.getX(v)+N.getX(v)*.006,P.getY(v)+N.getY(v)*.006,P.getZ(v)+N.getZ(v)*.006);const c=col[(Math.sin(P.getX(v)*37+P.getY(v)*53+P.getZ(v)*29)*.5+.5)*col.length|0];C.set([c[0],c[1],c[2],.96],v*4)}dg.setAttribute('color',new THREE.BufferAttribute(C,4));
     const dm=new THREE.Mesh(dg,new THREE.MeshStandardMaterial({vertexColors:true,transparent:true,roughness:1,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));dm.userData.dirt=true;pieces[p].add(dm);dirt.push(dm)})}
   /* 흐린 윤곽(제자리 안내) */ghost=new THREE.Group();for(const sb of subs){const gm=new THREE.Mesh(sb.g,new THREE.MeshBasicMaterial({color:0xf2d27a,transparent:true,opacity:.1,depthWrite:false}));ghost.add(gm)}sc.add(ghost);
-  /* 조각을 둘레로 흩어 놓음 */pieces.forEach((g,i)=>{const a=i/np*Math.PI*2+.6,r=Math.max(1.15,RAD+.85)+Math.random()*.2;g.userData.home=new THREE.Vector3();g.position.set(Math.cos(a)*r,.02+(A.cut==='band'?-i*H/np+.1:0),Math.sin(a)*r);if(A.cut==='band')g.position.y=Math.max(-i*H/np+.02,-H);g.rotation.set((Math.random()-.5)*.6,Math.random()*Math.PI*2,(Math.random()-.5)*.6);g.userData.rot0=g.rotation.clone();g.userData.placed=false});
+  /* 조각을 둘레로 흩어 놓음 */pieces.forEach((g,i)=>{const a=i/np*Math.PI*2+.6,r=Math.max(1.15,RAD+.85)+Math.random()*.2;g.userData.home=new THREE.Vector3();g.position.set(Math.cos(a)*r,.02+(A.cut==='band'?-i*H/np+.1:0),Math.sin(a)*r);g.rotation.set((Math.random()-.5)*.6,Math.random()*Math.PI*2,(Math.random()-.5)*.6);g.userData.rot0=g.rotation.clone();g.userData.placed=false;g.position.y=0;g.updateMatrixWorld(true);const bb2=new THREE.Box3().setFromObject(g);if(isFinite(bb2.min.y))g.position.y=.02-bb2.min.y});
   art=true;setStep(0);ctx.say(`${A.n} 조각이 흩어져 있어요. 하나씩 제자리에 맞춰 봐요.`)})();
  /* ---------- 포인터: 조각 끌기 / 붓질 / 점 누르기 / 돌려 보기 ---------- */
  const ray=new THREE.Raycaster(),mv=new THREE.Vector2();const pick=(e,objs)=>{const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mv,cam);return ray.intersectObjects(objs,true)[0]};
