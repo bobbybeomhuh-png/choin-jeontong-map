@@ -41,7 +41,12 @@ export const PARTS={
  kkotdam:{n:'꽃담',i:'🌺',w:4,d:.6,c:[0,8]},
  corner:{n:'담장 모퉁이',i:'📐',w:2.4,d:2.4,c:[0,6]},
  screen:{n:'병풍',i:'🖼️',w:3.2,d:.8,c:[6,0]},
- chim:{n:'굴뚝',i:'💨',w:.9,d:.9,c:[0,5]}};
+ chim:{n:'굴뚝',i:'💨',w:.9,d:.9,c:[0,5]},
+ hangrang:{n:'행랑채',i:'🏘️',w:9,d:3.6,c:[30,14]},
+ sosul:{n:'솟을대문',i:'⛩️',w:7.4,d:1.8,c:[22,8]},
+ bandaji:{n:'반닫이',i:'🧳',w:1,d:.5,c:[4,0]},
+ mungap:{n:'문갑',i:'🗄️',w:1.6,d:.4,c:[4,0]},
+ soban:{n:'소반과 찻상',i:'🍵',w:.8,d:.8,c:[2,0]}};
 const SQL_MISSING_MSG='서버 표가 아직 없어 이 기기에만 저장돼요.';
 export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  const IX=-250,IZ=48,RC=34;/* 가운데 섬 */const r=mulb(4242);const MT=materials();
@@ -88,9 +93,12 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  function layoutAll(){/* 다시 그림: 판정 rects 비우고 모두 */rects.splice(1);for(const [s,L] of [...lots]){root.remove(L.g);lots.delete(s)}for(const o of others)drawLot(o.slot,o,false);const ms=me.slot==null?(others.length?Math.max(...others.map(o=>o.slot))+1:0):me.slot;myLot=drawLot(ms,{name:homeName(),level:me.level,items:me.items},true)}
  let others=[],myLot=null;
  /* ---------- 부품 모양 ---------- */
- function addItem(par,it){const P=PARTS[it.k];const g=new THREE.Group();g.position.set(it.x,TOP,it.z);g.rotation.y=(it.r||0)*Math.PI/2;g.userData.it=it;par.add(g);buildPart(g,it.k);return g}
- function hanok(g,W,D,H){/* 공용 한옥 부품(배흘림 기둥, 주심포, 창호 살문, 팔작지붕, 기단·계단). 문 자리는 가운데 칸(SH 부딪힘과 같음) */
-  const cols=Math.round(W/2.4);const hg=buildHall({x:0,z:0,W,D,nx:cols,nz:2,entry:cols%2?(cols-1)/2:cols/2-1,FY:.45,PH:H,roof:'hip',pillar:0x6b4a2e,bae:true,bracket:'jusim',front:'door',back:'window',left:'wall',right:'window',stairs:'front',mini:false,solids:[],light:false}).group;g.add(hg);
+ function addItem(par,it){const P=PARTS[it.k];const g=new THREE.Group();g.position.set(it.x,TOP,it.z);g.rotation.y=(it.r||0)*Math.PI/2;g.userData.it=it;par.add(g);buildPart(g,it.k);if(IND.has(it.k))g.position.y=TOP+floorIn(par,it);return g}
+ const IND=new Set(['bandaji','mungap','soban','screen']);
+ /* 가구 자리 바닥 높이: 같은 집터의 집·데크 바닥(SH f) 위면 그 높이 */
+ function floorIn(par,it){let h=0;for(const c of par.children){const o=c.userData.it;if(!o||o===it||IND.has(o.k))continue;const sh=SH[o.k];if(!sh||!sh.f)continue;const a=(o.r||0)*Math.PI/2,ca=Math.cos(a),sa=Math.sin(a),dx=it.x-o.x,dz=it.z-o.z;const ix=dx*ca-dz*sa,iz=dx*sa+dz*ca;for(const[cx,cz,hw,hd,y]of sh.f)if(Math.abs(ix-cx)<hw&&Math.abs(iz-cz)<hd&&y>h)h=y}return h}
+ function hanok(g,W,D,H,roof='hip'){/* 공용 한옥 부품(배흘림 기둥, 주심포, 창호 살문, 팔작지붕, 기단·계단). 문 자리는 가운데 칸(SH 부딪힘과 같음) */
+  const cols=Math.round(W/2.4);const hg=buildHall({x:0,z:0,W,D,nx:cols,nz:2,entry:cols%2?(cols-1)/2:cols/2-1,FY:.45,PH:H,roof:'hip',pillar:0x6b4a2e,bae:true,bracket:'jusim',front:'door',back:'window',left:'wall',right:'window',stairs:'front',mini:false,solids:[],light:false,roof}).group;g.add(hg);
   /* 툇마루와 처마 밑 등 */box(W-.2,.1,.9,mats.woodL,0,.5,D/2+.5,g);const lp=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),mats.lamp);lp.position.set(0,.45+H-.4,0);g.add(lp);mergeByMat(g)}
  /* 같은 재질끼리 합쳐 그리기(집이 많아도 가볍게). 움직이는 것(anim)은 없는 부품에만 씀 */
  function mergeByMat(g){g.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(g.matrixWorld).invert();const by=new Map(),kill=[];g.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSprite||!o.geometry||Array.isArray(o.material)||o.userData.keep)return;const gm=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();for(const k of Object.keys(gm.attributes))if(!['position','normal','uv'].includes(k))gm.deleteAttribute(k);if(!gm.attributes.uv)gm.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(gm.attributes.position.count*2),2));if(!gm.attributes.normal)gm.computeVertexNormals();gm.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld));const L=by.get(o.material)||[];L.push(gm);by.set(o.material,L);kill.push(o)});
@@ -98,7 +106,7 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
  const doorX=W=>{const cols=Math.round(W/2.4);return cols%2?0:-W/cols/2};
  /* ---------- 부딪힘·바닥: 부품마다 막는 모양(부품 로컬). r=사각 벽, c=둥근 기둥, f=올라서는 바닥, sw=물 ---------- */
  const SH={};{const hk=(W,D)=>{const dc=doorX(W),R=[];R.push([0,-D/2+.1,W/2,.12],[-W/2+.1,0,.12,D/2],[W/2-.1,0,.12,D/2]);const a=-W/2,b=dc-.7,c=dc+.7,e=W/2;R.push([(a+b)/2,D/2-.05,(b-a)/2,.1],[(c+e)/2,D/2-.05,(e-c)/2,.1]);return{r:R,f:[[0,0,(W+.8)/2,(D+.8)/2,.45],[0,D/2+.6,W/2,.55,.56]]}};
-  SH.hanokS=hk(6,4);SH.hanokL=hk(10,6);SH.hanokL.f.push([6.6,0,1.5,3,.38]);
+  SH.hanokS=hk(6,4);SH.hangrang=hk(9,3.6);SH.sosul={r:[[-2.5,0,1.25,.5],[2.5,0,1.25,.5]]};SH.bandaji={r:[[0,0,.5,.25]]};SH.mungap={r:[[0,0,.8,.2]]};SH.soban={c:[[0,0,.35]]};SH.hanokL=hk(10,6);SH.hanokL.f.push([6.6,0,1.5,3,.38]);
   SH.sauna={c:[[1.10,1.10,.36],[1.43,0.59,.36],[1.55,0.00,.36],[1.43,-0.59,.36],[1.10,-1.10,.36],[0.59,-1.43,.36],[0.00,-1.55,.36],[-0.59,-1.43,.36],[-1.10,-1.10,.36],[-1.43,-0.59,.36],[-1.55,-0.00,.36],[-1.43,0.59,.36],[-1.10,1.10,.36]]};SH.pav={c:[[-1.4,-1.4,.16],[1.4,-1.4,.16],[-1.4,1.4,.16],[1.4,1.4,.16]],f:[[0,0,1.7,1.7,.35],[0,0,1.5,1.5,.8]]};
   SH.deck={f:[[0,0,2,2,.2]]};SH.wall={r:[[0,0,2,.26]]};SH.gate={c:[[-1.3,0,.2],[1.3,0,.2]]};SH.jars={r:[[0,0,1.1,.8]]};SH.lantern={c:[[0,0,.3]]};
   SH.fire={c:[[0,0,.72]]};SH.pine={c:[[0,0,.2]]};SH.maple={c:[[0,0,.2]]};SH.bench={f:[[0,0,1.1,.7,.51]]};SH.pool={sw:[[0,0,3.1,1.4]]};SH.well={c:[[0,0,.82]]};SH.line={c:[[-1.6,0,.1],[1.6,0,.1]]};SH.kkotdam={r:[[0,0,2,.26]]};SH.corner={r:[[-.1,-1.05,1.1,.25],[-1.05,.1,.25,1.1]]};SH.screen={r:[[0,0,1.6,.3]]};SH.chim={c:[[0,0,.42]]};SH.numaru={c:[[-1.8,-2,.14],[1.8,-2,.14],[-1.8,1.6,.14],[1.8,1.6,.14]],f:[[0,2.25,.7,.2,.4],[0,1.95,.7,.2,.8],[0,-.2,2,1.95,1.2]]};}
@@ -125,6 +133,11 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
   case 'lawn':box(4,.06,4,M(0x5fae3a,{roughness:1}),0,.03,0,g);break;
   case 'path':for(let i=0;i<4;i++)cyl(.45,.5,.1,mats.stone,(i%2?.15:-.15),.05,-1.5+i,g,10);break;
   case 'wall':box(4,1.2,.5,mats.stone,0,.6,0,g);box(4.2,.2,.7,MT&&MT.roof?MT.roof:mats.woodD,0,1.3,0,g);break;
+  case 'hangrang':hanok(g,9,3.6,2.5,'gable');break;
+  case 'sosul':{/* 솟을대문: 가운데 대문칸 지붕이 양 옆 행랑보다 높이 솟음 */g.add(buildHall({x:0,z:0,W:2.6,D:1.6,nx:1,nz:1,FY:.2,PH:2.9,roof:'gable',roofScale:.8,pillar:0x5a3a22,bae:false,bracket:'jusim',front:'open',back:'open',left:'open',right:'open',stairs:'none',mini:false,solids:[],light:false}).group);for(const sx of[-1,1])g.add(buildHall({x:sx*2.5,z:0,W:2.4,D:1.6,nx:1,nz:1,FY:.2,PH:2.1,roof:'gable',roofScale:.8,pillar:0x5a3a22,bae:false,bracket:'jusim',front:'wall',back:'wall',left:'wall',right:'wall',stairs:'none',mini:false,solids:[],light:false}).group);for(const sx of[-1,1]){const h=new THREE.Group();h.position.set(sx*1.2,.22,-.2);h.rotation.y=sx*1.3;g.add(h);box(1.1,2.5,.08,mats.wood,-sx*.55,1.25,0,h);for(const y of[.6,1.9])box(1.05,.06,.1,mats.woodD,-sx*.55,y,.02,h)}mergeByMat(g);break}
+  case 'bandaji':{/* 반닫이: 앞판 위쪽이 열리는 궤, 무쇠 장석 */box(1,.62,.48,mats.woodD,0,.31,0,g);box(1.02,.05,.5,mats.wood,0,.64,0,g);const ir=M(0x2e2c2a,{metalness:.6,roughness:.5});for(const x of[-.32,.32])box(.16,.2,.02,ir,x,.42,.25,g);box(.12,.12,.02,ir,0,.5,.25,g);for(const x of[-.45,.45])box(.08,.62,.02,ir,x,.31,.25,g);break}
+  case 'mungap':{/* 문갑: 낮고 긴 서랍장 */box(1.6,.42,.38,mats.wood,0,.25,0,g);for(const x of[-.55,0,.55]){box(.46,.3,.02,mats.woodL,x,.26,.2,g);const k=new THREE.Mesh(new THREE.SphereGeometry(.025,8,6),M(0xb08a3a,{metalness:.7}));k.position.set(x,.26,.22);g.add(k)}for(const x of[-.75,.75])box(.06,.06,.36,mats.woodD,x,.03,0,g);break}
+  case 'soban':{/* 소반(개다리 소반) + 찻잔 둘 */const top=new THREE.Mesh(new THREE.CylinderGeometry(.36,.36,.04,20),mats.woodD);top.position.y=.32;g.add(top);for(let i=0;i<4;i++){const a=i/4*Math.PI*2+.78;const l=box(.04,.3,.04,mats.woodD,Math.cos(a)*.24,.15,Math.sin(a)*.24,g);l.rotation.z=Math.cos(a)*.2;l.rotation.x=-Math.sin(a)*.2}const cup=M(0xe8efe8,{roughness:.3});for(const x of[-.1,.12]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.045,.035,.06,12),cup);c.position.set(x,.37,.04);g.add(c)}const pot=new THREE.Mesh(new THREE.SphereGeometry(.08,12,10),M(0x8aa89a,{roughness:.3}));pot.scale.y=.8;pot.position.set(0,.4,-.12);g.add(pot);break}
   case 'gate':{/* 기와 맞배지붕 대문: 양 옆 짧은 담, 두 짝 판문은 안으로 열림 */g.add(buildHall({x:0,z:0,W:2.6,D:1,nx:1,nz:1,FY:.18,PH:2.3,roof:'gable',roofScale:.72,pillar:0x5a3a22,bae:false,bracket:'jusim',front:'open',back:'open',left:'wall',right:'wall',stairs:'none',mini:false,solids:[],light:false}).group);for(const sx of[-1,1]){const h=new THREE.Group();h.position.set(sx*1.25,.2,-.1);h.rotation.y=sx*1.3;g.add(h);box(1.15,2.2,.08,mats.wood,-sx*.58,1.1,0,h);for(const y of[.5,1.7])box(1.1,.06,.1,mats.woodD,-sx*.58,y,.02,h);const ring=new THREE.Mesh(new THREE.TorusGeometry(.07,.015,6,12),M(0x3a3a38,{metalness:.6}));ring.position.set(-sx*.95,1.1,.06);h.add(ring)}mergeByMat(g);break}
   case 'pond':{const s=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,.15,24),mats.stone);s.position.y=.07;g.add(s);const w=new THREE.Mesh(new THREE.CylinderGeometry(1.45,1.45,.05,24),mats.water);w.position.y=.16;g.add(w);for(let i=0;i<3;i++){const p=new THREE.Mesh(new THREE.CircleGeometry(.25,10).rotateX(-Math.PI/2),M(0x4f9a3c));p.position.set(Math.cos(i*2)*.7,.2,Math.sin(i*2)*.7);g.add(p);const f=new THREE.Mesh(new THREE.SphereGeometry(.1,8,6),mats.pink);f.position.set(Math.cos(i*2)*.7,.27,Math.sin(i*2)*.7);g.add(f)}break}
   case 'jars':box(2.2,.25,1.6,mats.stone,0,.12,0,g);for(let i=0;i<5;i++){const j=new THREE.Mesh(new THREE.SphereGeometry(.32+(i%2)*.08,12,10),mats.jar);j.scale.y=1.2;j.position.set(-.75+i*.38,.6,(i%2?.35:-.3));j.castShadow=true;g.add(j)}break;
@@ -190,7 +203,7 @@ export function buildHomes(G,{TOP,WATER_Y,MS=1,mulb}){
   near=null;let bd=2.6;for(const n of nodes){if(!n.g.visible)continue;const d=Math.hypot(P.x-n.x,P.z-n.z);if(d<bd){bd=d;near=n}}
   act.hidden=!near||!!mode;if(near)act.textContent=near.kind==='wood'?'🪓 나무 베기':'⛏ 돌 캐기';
   if(myLot){const l=lotLocal(P.x,P.z),S=myLot.S;inMine=Math.abs(l.x)<S/2+1&&Math.abs(l.z)<S/2+1;
-   if(mode==='place'&&ghost){const ahead=lotLocal(P.x+Math.sin(myYaw())*2.8,P.z+Math.cos(myYaw())*2.8);const p=PARTS[gIt.k];const hw=(gIt.r%2?p.d:p.w)/2,hd=(gIt.r%2?p.w:p.d)/2;gIt.x=Math.round(Math.max(-S/2+hw,Math.min(S/2-hw,ahead.x))*2)/2;gIt.z=Math.round(Math.max(-S/2+hd,Math.min(S/2-hd,ahead.z))*2)/2;ghost.position.set(gIt.x,TOP+.02,gIt.z)}}};
+   if(mode==='place'&&ghost){const ahead=lotLocal(P.x+Math.sin(myYaw())*2.8,P.z+Math.cos(myYaw())*2.8);const p=PARTS[gIt.k];const hw=(gIt.r%2?p.d:p.w)/2,hd=(gIt.r%2?p.w:p.d)/2;gIt.x=Math.round(Math.max(-S/2+hw,Math.min(S/2-hw,ahead.x))*2)/2;gIt.z=Math.round(Math.max(-S/2+hd,Math.min(S/2-hd,ahead.z))*2)/2;ghost.position.set(gIt.x,TOP+.02+(IND.has(gIt.k)?floorIn(myLot.items,gIt):0),gIt.z)}}};
  const myYaw=()=>{try{const R=H().me.root;return R.rotation.y}catch(e){return 0}};
 
  /* ---------- 함께 놀기: 집 구경(날아가기), 좋아요, 신고, 인기 집 간판, 모두의 누각 ---------- */
