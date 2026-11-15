@@ -15,7 +15,7 @@ export function buildHapcheon(opts={}){const mini=!!opts.mini;const MT=materials
  /* 살창 텍스처: 나무 살 사이가 뚫림(alphaTest) */
  const LAT=tex(128,128,(q,w,h)=>{q.clearRect(0,0,w,h);q.fillStyle='#5a3e26';for(let x=0;x<w;x+=16)q.fillRect(x,0,7,h);q.fillRect(0,0,w,8);q.fillRect(0,h-8,w,8)});
  const latM=new THREE.MeshStandardMaterial({map:LAT,transparent:true,alphaTest:.5,side:THREE.DoubleSide,roughness:.9});
- const wallM=M(0xefe8d6),pil=M(0x7a5634),stn=M(0xb3aa98);
+ const wallM=new THREE.MeshStandardMaterial({map:(()=>{/* 회벽: 미색 바탕에 잔 얼룩과 아래쪽 빗물 자국 */const t=tex(256,256,(q,w,h)=>{q.fillStyle='#ece4d0';q.fillRect(0,0,w,h);noise(q,w,h,7000,['rgba(120,100,70,.06)','rgba(255,255,255,.1)','rgba(90,80,60,.05)'],2);for(let i=0;i<14;i++){const x=Math.random()*w;const g=q.createLinearGradient(0,h*.55,0,h);g.addColorStop(0,'rgba(140,120,90,0)');g.addColorStop(1,'rgba(140,120,90,.12)');q.fillStyle=g;q.fillRect(x,h*.55,4+Math.random()*10,h*.45)}});t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(.5,.5);return t})(),roughness:.95}),pil=M(0x7a5634),stn=M(0xb3aa98);
  const blockM=M(0x5a4030,{roughness:.8}),blockM2=M(0x6a4c36,{roughness:.8});
  /* 판전 한 동: 가운데 x=0, 앞면 +z. front=true 면 앞벽 아래 살창이 크고 위가 작음(뒤는 반대) */
  const L=60,D=8.8,PH=4.4,FY=.5;
