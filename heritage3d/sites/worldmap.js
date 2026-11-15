@@ -10,6 +10,7 @@ import {buildSeokguram} from './seokguram.js';
 import {buildGeobukseon} from './geobukseon.js';
 import {PROV,CITIES,ITEMS} from './worldmap_data.js';
 import {getModel} from './hanokkit.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {buildScenery,boatRig,buildRoads,buildIceFun} from './worldscenery.js';
 import {buildSeason} from './worldseason.js';
 import {buildHomes} from './homes.js';
@@ -38,9 +39,10 @@ export function buildWorldmap(opts={}){const mini=!!opts.mini;const G=new THREE.
  const bed=new THREE.Mesh(new THREE.PlaneGeometry(2600,2600).rotateX(-Math.PI/2),new THREE.MeshStandardMaterial({color:0x7fd0cf,roughness:1}));bed.position.y=-.02;G.add(bed);
  /* 땅: 시도마다 밀어 올린 판, 권역마다 색 */const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#ffffff';q.fillRect(0,0,w,h);noise(q,w,h,6000,['rgba(0,0,0,.07)','rgba(255,255,255,.1)','rgba(60,80,20,.08)'],2)});GT.wrapS=GT.wrapT=THREE.RepeatWrapping;GT.repeat.set(.08,.08);
  const LM={};for(const k in RCOL){LM[k]=new THREE.MeshStandardMaterial({color:RCOL[k],map:GT,roughness:.95})}G.userData.LM=LM;const SIDE=new THREE.MeshStandardMaterial({color:0xf0dca8,roughness:1});/* 모래 해변 */
- const bord=[];for(const p of PROV){const sh=new THREE.Shape(p.rings[0].map(([x,z])=>new THREE.Vector2(x,-z)));for(const h of p.rings.slice(1))sh.holes.push(new THREE.Path(h.map(([x,z])=>new THREE.Vector2(x,-z))));
-  const g=new THREE.ExtrudeGeometry(sh,{depth:LAND_H,bevelEnabled:true,bevelThickness:.25,bevelSize:.5,bevelSegments:1,curveSegments:1});g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,[LM[p.r]||LM['기타'],SIDE]);m.receiveShadow=true;m.castShadow=false;G.add(m);
+ const bord=[],LANDG={};for(const p of PROV){const sh=new THREE.Shape(p.rings[0].map(([x,z])=>new THREE.Vector2(x,-z)));for(const h of p.rings.slice(1))sh.holes.push(new THREE.Path(h.map(([x,z])=>new THREE.Vector2(x,-z))));
+  const g=new THREE.ExtrudeGeometry(sh,{depth:LAND_H,bevelEnabled:true,bevelThickness:.25,bevelSize:.5,bevelSegments:1,curveSegments:1});g.rotateX(-Math.PI/2);/* 휴대폰 쾌적도(11/16): 시도 판 176개를 따로 그리지 않고 권역 색별 윗면, 해변 옆면 하나로 합침 */const ng=g.index?g.toNonIndexed():g;for(const gr of ng.groups){const sub=new THREE.BufferGeometry();for(const k of['position','normal','uv']){const a=ng.attributes[k];if(a)sub.setAttribute(k,new THREE.BufferAttribute(a.array.slice(gr.start*a.itemSize,(gr.start+gr.count)*a.itemSize),a.itemSize))}const key=gr.materialIndex===1?'@side':(LM[p.r]?p.r:'기타');(LANDG[key]=LANDG[key]||[]).push(sub)}
   const ring=p.rings[0];for(let i=0;i<ring.length;i++){const a=ring[i],b=ring[(i+1)%ring.length];bord.push(a[0],LAND_H+.27,a[1],b[0],LAND_H+.27,b[1])}}
+ for(const k in LANDG){const mg=mergeGeometries(LANDG[k]);if(!mg)continue;const m=new THREE.Mesh(mg,k==='@side'?SIDE:LM[k]);m.receiveShadow=true;m.castShadow=false;G.add(m)}
  {const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.Float32BufferAttribute(bord,3));G.add(new THREE.LineSegments(bg,new THREE.LineBasicMaterial({color:0xf3ead6,transparent:true,opacity:.55})))}
  const TOP=LAND_H+.25;
  /* 산: 강원·경북 동쪽 백두대간 쪽에 낮은 산(막힘), 나머지는 나무 */const CITYL=Object.entries(CITIES);const nearCity=(x,z,d)=>CITYL.some(([,c])=>Math.hypot(x-c.x,z-c.z)<d);
