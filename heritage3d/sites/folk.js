@@ -9,7 +9,8 @@ const EV={
  dano:{n:'단오 그네뛰기',h:'음력 5월 5일 단오에는 창포물에 머리를 감고 높은 그네를 뛰었어요. 씨름도 하며 여름을 맞았어요.'},
  chuseok:{n:'추석 강강술래',h:'음력 8월 15일 추석 보름달 아래, 손을 잡고 둥글게 돌며 노래하는 강강술래를 했어요. 강강술래는 유네스코 인류무형문화유산이에요.'}};
 export function folkKind(){const q=/[?&]folk=(\w+)/.exec(location.search);if(q&&EV[q[1]])return q[1];const m=new Date().getMonth()+1;return m>=11?'dongji':m<=3?'daeboreum':m<=7?'dano':'chuseok'}
-export function buildFolk(G,{CITIES,TOP,landAt,solids}){
+export function buildFolk(G,{CITIES,TOP,landAt,solids,spots=[],riverAt=()=>null}){
+ const dry=(x,z)=>landAt(x,z)&&riverAt(x,z)==null;
  const kind=folkKind(),E=EV[kind];const root=new THREE.Group();root.userData.noBatch=true;G.add(root);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
  const cyl=(r1,r2,h,m,x,y,z,g,seg=16)=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),m);b.position.set(x,y,z);b.castShadow=b.receiveShadow=true;g.add(b);return b};
@@ -17,7 +18,7 @@ export function buildFolk(G,{CITIES,TOP,landAt,solids}){
  const sign=(t,g,y)=>{const c=document.createElement('canvas');c.width=512;c.height=128;const q=c.getContext('2d');q.fillStyle='rgba(120,30,30,.92)';q.beginPath();q.roundRect(6,6,500,116,30);q.fill();q.strokeStyle='#f2d27a';q.lineWidth=6;q.stroke();q.fillStyle='#fff4dc';q.textAlign='center';q.font='bold 56px "Do Hyeon",sans-serif';q.fillText(t,256,84);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx}));s.scale.set(5,1.25,1);s.position.y=y;g.add(s)};
  /* 자리: 도시 셋 둘레 땅 위(도시 마당 12~16m 밖) */
  const want=['서울','경주','전주','부여','안동','강릉','광주','대구'];const sites=[];
- for(const nm of want){const c=CITIES[nm];if(!c||sites.length>=3)continue;for(let k=0;k<16;k++){const a=k/16*Math.PI*2+.4,R=13+(k%3)*1.5;const x=c.x+Math.cos(a)*R,z=c.z+Math.sin(a)*R;let ok=true;try{for(let j=0;j<8;j++){const b=j/8*Math.PI*2;if(!landAt(x+Math.cos(b)*4,z+Math.sin(b)*4)){ok=false;break}}}catch(e){ok=false}if(ok){sites.push({x,z,city:nm});break}}}
+ for(const nm of want){const c=CITIES[nm];if(!c||sites.length>=3)continue;for(let k=0;k<16;k++){const a=k/16*Math.PI*2+.4,R=13+(k%3)*1.5;const x=c.x+Math.cos(a)*R,z=c.z+Math.sin(a)*R;let ok=true;try{for(let j=0;j<8;j++){const b=j/8*Math.PI*2;if(!dry(x+Math.cos(b)*4,z+Math.sin(b)*4)||!dry(x+Math.cos(b)*2,z+Math.sin(b)*2)){ok=false;break}}}catch(e){ok=false}if(ok){sites.push({x,z,city:nm});break}}}
  const anim=[],crew=[];
  for(const S of sites){const g=new THREE.Group();g.position.set(S.x,TOP,S.z);root.add(g);S.g=g;
   if(kind==='dongji'){/* 가마솥 + 아궁이 돌 + 김, 그릇 쌓인 소반 */const stone=M(0x8a8276,{flatShading:true});for(let i=0;i<9;i++){const a=i/9*Math.PI*2;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.32,0),stone);r.position.set(Math.cos(a)*1.05,.25,Math.sin(a)*1.05);g.add(r)}
@@ -37,6 +38,17 @@ export function buildFolk(G,{CITIES,TOP,landAt,solids}){
    anim.push(t=>{sw.rotation.x=Math.sin(t*1.5)*.65});solids&&solids.push({cx:S.x-1.6,cz:S.z,r:.3,y0:0,y1:TOP+6},{cx:S.x+1.6,cz:S.z,r:.3,y0:0,y1:TOP+6});sign(E.n,g,7);crew.push({S,acts:['cheer'],ring:[[2.8,1.6,1.6]],swing:seat})}
   if(kind==='chuseok'){/* 강강술래: 무이 여덟이 둥글게 돎 + 보름달 */const mc=document.createElement('canvas');mc.width=mc.height=128;const mq=mc.getContext('2d');const gr=mq.createRadialGradient(64,64,20,64,64,64);gr.addColorStop(0,'#fff8d8');gr.addColorStop(.7,'#ffe9a0');gr.addColorStop(1,'rgba(255,233,160,0)');mq.fillStyle=gr;mq.fillRect(0,0,128,128);const moon=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(mc),fog:false,depthWrite:false}));moon.scale.set(5,5,1);moon.position.set(0,11,-6);g.add(moon);
    const mat=new THREE.Mesh(new THREE.CircleGeometry(3.4,32).rotateX(-Math.PI/2),M(0xd8c8a0,{roughness:1}));mat.position.y=.02;g.add(mat);sign(E.n,g,4.6);crew.push({S,circle:8})}}
+ /* 민속놀이 판: 행사 자리 옆 땅에 투호 항아리, 윷 멍석, 제기(놀이는 minigames6.js) */
+ for(const S of sites){let ok=null;for(let k=0;k<36&&!ok;k++){const a=k/12*Math.PI*2+1.1,R=7+Math.floor(k/12)*2.5;const x=S.x+Math.cos(a)*R,z=S.z+Math.sin(a)*R;if(!dry(x,z))continue;let land=true;try{for(let j=0;j<6;j++){const b=j/6*Math.PI*2;if(!dry(x+Math.cos(b)*3.5,z+Math.sin(b)*3.5)||!dry(x+Math.cos(b)*1.5,z+Math.sin(b)*1.5)){land=false;break}}}catch(e){land=false}if(land)ok=[x,z]}if(!ok)continue;
+  const [px,pz]=ok;const pg=new THREE.Group();pg.position.set(px,TOP,pz);pg.rotation.y=Math.atan2(S.x-px,S.z-pz);root.add(pg);
+  /* 투호병 */const jar=M(0x3d5a6c,{roughness:.4});const body=new THREE.Mesh(new THREE.SphereGeometry(.34,16,12),jar);body.scale.y=.85;body.position.set(-1.6,.3,0);pg.add(body);cyl(.12,.16,.5,jar,-1.6,.75,0,pg,12);for(const sx of[-1,1])cyl(.05,.05,.22,M(0x4f7488),-1.6+sx*.17,.82,0,pg,8);const ar=M(0x7a4a2a);for(let i=0;i<3;i++){const a=cyl(.012,.012,.9,ar,-1.6+(i-1)*.04,1.2,(i-1)*.03,pg,5);a.rotation.z=(i-1)*.12}for(let i=0;i<5;i++){const a=cyl(.012,.012,.9,ar,-2.3,.03+i*.025,.3-i*.06,pg,5);a.rotation.z=Math.PI/2}solids.push({cx:px+Math.cos(pg.rotation.y)*-1.6,cz:pz-Math.sin(pg.rotation.y)*-1.6,r:.45,y0:0,y1:TOP+2});
+  /* 윷 멍석 + 윷 네 가락 */const mat=box(2.2,.04,2.2,M(0xc8a868,{roughness:1}),.6,.02,0,pg);for(let i=0;i<4;i++){const y=box(.36,.06,.1,M(i%2?0xf2e2b8:0x8a5a2a),.3+i*.2,.08,(i-1.5)*.18,pg);y.rotation.y=(i-1.5)*.3}
+  /* 제기: 기둥에 매단 것 */const pole=cyl(.04,.05,1.6,M(0x6b4a2e),2.3,.8,-.6,pg,6);const jg=new THREE.Group();jg.position.set(2.3,1.55,-.35);pg.add(jg);cyl(.07,.07,.03,M(0xb88a2a),0,0,0,jg,10);const tc=[0xd83a3a,0xf2c14e,0x2f8a5a];for(let i=0;i<6;i++){const t=cyl(.006,.006,.22,M(tc[i%3]),Math.cos(i)*.03,.11,Math.sin(i)*.03,jg,4);t.rotation.z=(i-3)*.12}anim.push(t=>{jg.rotation.y=t*.8;jg.position.y=1.55+Math.sin(t*2)*.03});
+  sign('민속놀이 판',pg,2.6);pg.children[pg.children.length-1].scale.set(2.6,.65,1);
+  const W=(lx,lz)=>{const c=Math.cos(pg.rotation.y),s2=Math.sin(pg.rotation.y);return[px+lx*c+lz*s2,pz-lx*s2+lz*c]};
+  {const[x,z]=W(-1.6,1.4);spots.push({x,y:TOP,z,r:1.8,t:'투호 놀이',h:'항아리에 화살을 던져 넣는 놀이예요. 조선의 궁궐과 양반집에서 즐겼어요.'})}
+  {const[x,z]=W(.6,1.6);spots.push({x,y:TOP,z,r:1.8,t:'윷놀이 판',h:'윷 네 가락을 던져 도 개 걸 윷 모로 말을 옮겨요. 설날에 온 식구가 둘러앉아 하던 놀이예요.'})}
+  {const[x,z]=W(2.3,.6);spots.push({x,y:TOP,z,r:1.6,t:'제기차기',h:'엽전에 종이나 천을 달아 만든 제기를 땅에 떨어뜨리지 않고 차는 놀이예요.'})}}
  /* 무이 불러오기(늦게) */let loading=false,loaded=false;const pals=[];
  const loadCrew=()=>{const H=window.__H3;if(!H||!H.makeMuui||loading)return;loading=true;const kinds=['carpenter','painter','ceramic','science','metal','base'];let ki=0;const jobs=[];
   for(const c of crew){if(c.circle){for(let i=0;i<c.circle;i++)jobs.push({c,i,k:kinds[(ki++)%kinds.length],circle:true})}else c.ring.forEach((r,i)=>jobs.push({c,i,k:kinds[(ki++)%kinds.length],at:r,act:c.acts[i%c.acts.length]}));if(c.swing)jobs.push({c,k:'base',swing:true})}
