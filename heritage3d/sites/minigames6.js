@@ -39,14 +39,15 @@ export function tuhoGame(ctx){const ui=overlay('linear-gradient(#3f6680,#86aabd 
 
 /* ======================= 제기차기 ======================= */
 export function jegiGame(ctx){const ui=overlay('linear-gradient(#3f6680,#8fb3c4 45%,#dfe6d6 70%,#c8b48a 70%)');let alive=true,ended=false,kicks=0,best=0,started=false,mx=null;
- const ac=ctx.ac(),out=softOut(ctx);title(ui.top,'제기차기','화면을 좌우로 끌어 무이를 제기 밑에 두면 발로 차 올려요. 땅에 떨어지지 않게 몇 번 찰 수 있을까요?');
+ const ac=ctx.ac(),out=softOut(ctx);title(ui.top,'제기차기','화면을 좌우로 끌거나 ←→ 방향키로 무이를 제기 밑에 두면 발로 차 올려요. 땅에 떨어지지 않게 몇 번 찰 수 있을까요?');
  const G=()=>{const {W,H}=ui.fit();const u=Math.min(W/700,H/700);return{W,H,u,gy:H*.7}};
  let J=null,M=null;const reset=()=>{const g=G();J={x:g.W/2,y:g.H*.25,vx:0,vy:0,r:0};M={x:g.W/2};kicks=0;started=false;ended=false};reset();
  const mv=e=>{const R=ui.c.getBoundingClientRect();mx=e.clientX-R.left;started=true};ui.c.addEventListener('pointerdown',mv);ui.c.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='mouse')mv(e)});
- const close=()=>{alive=false;ui.o.remove()};ui.x.onclick=close;let last=performance.now();
+ const KD={};const onKey=e=>{if(!alive)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='a'||e.key==='d'){e.preventDefault();e.stopPropagation();KD[e.key]=e.type==='keydown';if(e.type==='keydown')started=true}};window.addEventListener('keydown',onKey,true);window.addEventListener('keyup',onKey,true);
+ const close=()=>{alive=false;window.removeEventListener('keydown',onKey,true);window.removeEventListener('keyup',onKey,true);ui.o.remove()};ui.x.onclick=close;let last=performance.now();
  const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.033,(now-last)/1000);last=now;const g=G(),{W,H,u,gy}=g,q=ui.q,d=DPR();q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);
   q.fillStyle='#c8b48a';q.fillRect(0,gy,W,H-gy);
-  if(mx!=null)M.x+=(mx-M.x)*Math.min(1,dt*14);M.x=Math.max(40*u,Math.min(W-40*u,M.x));
+  {const kd=(KD.ArrowRight||KD.d?1:0)-(KD.ArrowLeft||KD.a?1:0);if(kd){M.x+=kd*520*u*dt;mx=null}}if(mx!=null)M.x+=(mx-M.x)*Math.min(1,dt*14);M.x=Math.max(40*u,Math.min(W-40*u,M.x));
   const foot=gy-24*u;
   if(started&&!ended){const grav=(560+kicks*9)*u;J.vy+=grav*dt;J.x+=J.vx*dt;J.y+=J.vy*dt;J.r+=dt*(J.vx/(40*u));if(J.x<20*u||J.x>W-20*u){J.vx*=-1;J.x=Math.max(20*u,Math.min(W-20*u,J.x))}
    if(J.vy>0&&J.y>=foot-10*u&&J.y<=foot+14*u&&Math.abs(J.x-M.x)<34*u){kicks++;best=Math.max(best,kicks);J.vy=-(560+Math.min(220,kicks*6))*u;J.vx=(Math.random()-.5)*(80+Math.min(260,kicks*14))*u;blip(ac,out,420+Math.min(400,kicks*12),260,.12,.16,'triangle');if(kicks%10===0)ctx.say(`${kicks}번! 잘 차요`)}
