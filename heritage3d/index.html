@@ -312,7 +312,8 @@ if(SITEB.video||SITEB.short){setTimeout(vblob,4000);$('#bShorts').hidden=false;$
 $('#cV').addEventListener('click',()=>{const sp=$('#cV')._sp;$('#card').hidden=true;if(sp)openFull(sp.vt[0],'쇼츠 '+fmtT(sp.vt[0])+' 장면: '+(sp.vn||sp.t))});
 /* ---------- 함께 둘러보는 무이들 ---------- */
 const NPC=[];async function placeNPC(){const L=SITEB.npc;
- for(const[k,path]of L){try{const m=await makeMuui(k,1.3+Math.random()*.2);m.path=path.map(p=>p.length===3?{x:p[0],z:p[2],y:p[1]}:{x:p[0],z:p[1]});m.i=0;m.pos=new THREE.Vector3(m.path[0].x,0,m.path[0].z);m.pos.y=floorAt(m.pos.x,m.pos.z,m.path[0].y||0);NPC.push(m);m.play('walk',0)}catch(e){}}}
+ /* 동행과 같은 장인 무이가 또 걸어 다니지 않게: 겹치면 이 마당에서 안 쓰인 다른 장인으로 */const ck=CREWOF[SITE],used=new Set([ck,...L.map(x=>x[0])]),pool=['carpenter','painter','ceramic','metal','science'];
+ for(let[k,path]of L){if(k===ck&&ck){const alt=pool.find(x=>!used.has(x));if(alt){used.add(alt);k=alt}}try{const m=await makeMuui(k,1.3+Math.random()*.2);m.path=path.map(p=>p.length===3?{x:p[0],z:p[2],y:p[1]}:{x:p[0],z:p[1]});m.i=0;m.pos=new THREE.Vector3(m.path[0].x,0,m.path[0].z);m.pos.y=floorAt(m.pos.x,m.pos.z,m.path[0].y||0);NPC.push(m);m.play('walk',0)}catch(e){}}}
 /* ---- 첨성대 별자리 잇기: 북두칠성 → 삼태성 (천문 무이와) ---- */
 const STARG=[{n:'북두칠성',d:'국자 모양 일곱 별을 손잡이 끝부터 차례로 이어요.',p:[[.78,.36],[.67,.29],[.57,.33],[.46,.38],[.30,.31],[.31,.49],[.45,.53]],o:[0,1,2,3,4,5,6,3],done:'북두칠성 완성! 옛사람들은 칠성님께 오래 살고 복 받기를 빌었어요. 첨성대에서도 이 별을 봤겠죠?'},
  {n:'삼태성',d:'나란히 선 세 형제 별이에요. 왼쪽부터 이어요.',p:[[.42,.52],[.5,.48],[.58,.44]],o:[0,1,2],x:[[.36,.22],[.66,.74],[.62,.2],[.34,.78]],done:'삼태성 완성! 옛이야기에서 세 형제가 하늘로 올라가 별이 되었대요. 별자리 도장을 받았어요.'}];
