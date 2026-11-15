@@ -151,7 +151,7 @@ export function buildGeobukseon(opts={}){const MT=materials();const G=new THREE.
    for(let k=0;k<3;k++)for(const sx of[-1,1]){const pl=bx(.12,.35,LN*.86,Mk(0xa07a50));const a=.55+k*.42;pl.position.set(sx*(1.15+Math.sin(a)*1.4),.9+.3+k*.42,0);pl.rotation.z=sx*(.3+k*.35);g.add(pl)}
    for(let i=0;i<6;i++){const c=bx(4.8,.8,.6,wd2);c.position.set(0,.4,-LN/2+2+i*(LN-4)/5);g.add(c)}
    for(const sx of[-1,1])for(let i=0;i<6;i++){const p=new THREE.Mesh(new THREE.CylinderGeometry(.07,.08,5.6,6),wd);p.position.set(sx*3.8,2.8,-LN/2+2+i*(LN-4)/5);g.add(p)}for(const sx of[-1,1]){const pl=bx(.9,.08,LN-2,wd);pl.position.set(sx*3.8,3.2,0);g.add(pl)}
-   S(X-4.4,X+4.4,0,Y+6,Z-LN/2-.5,Z+LN/2+.5);
+   /* 부딪힘: 배 모양을 따라 마디마다 폭이 달라지는 상자 + 비계 기둥 하나하나(통째 큰 상자는 빈 곳에서 보이지 않는 벽이 됨) */for(let i=0;i<14;i++){const t=(i+.5)/14,zz=-LN/2+t*LN;const hw=Math.max((1-Math.pow(2*t-1,4))*4.2/2+.75,Math.abs(zz)<LN/2-1.4?2.5:0);/* 받침목(폭 4.8) 있는 구간만 넓게 */S(X-hw,X+hw,0,Y+6,Z+zz-LN/28,Z+zz+LN/28)}for(const sx of[-1,1])for(let i=0;i<6;i++)solids.push({cx:X+sx*3.8,cz:Z-LN/2+2+i*(LN-4)/5,r:.25,y0:0,y1:Y+6});
    spots.push({x:X-6,y:Y,z:Z,r:3,t:'판옥선 짓는 선소',h:'거북선과 판옥선은 바닷가 선소에서 지었어요. 바닥에 굵은 용골을 깔고 갈비뼈 같은 뼈대를 세운 다음 소나무 판재를 덧대요. 여수 선소 유적(사적)에는 배를 대던 굴강과 대장간 터가 남아 있어요. (본떠 지음)'})}
   /* 통나무 더미 */{const X=56,Z=22;for(let i=0;i<18;i++){const l=new THREE.Mesh(new THREE.CylinderGeometry(.28,.3,8,8),Mk(0x7a5634));l.rotation.x=Math.PI/2;l.position.set(X-2+(i%6)*.62+Math.floor(i/6)*.3,Y+.3+Math.floor(i/6)*.52,Z);l.castShadow=true;G.add(l)}S(X-2.4,X+2,0,Y+1.8,Z-4.2,Z+4.2);
    spots.push({x:X-4,y:Y,z:Z+5,r:2.4,t:'배 짓는 소나무',h:'조선 수군 배는 단단한 소나무로 지었어요. 나라에서 배 지을 소나무를 따로 기르는 숲(봉산)을 정해 함부로 베지 못하게 지켰어요.'})}
