@@ -19,7 +19,10 @@ export const ART=[
  {k:'unhyun',m:'icheon/unhyun_bottle',n:'운현궁 백자 병',kind:'ceramic',cut:'ring',np:3,site:'서울',d:'흥선대원군의 집 운현궁에서 쓰던 백자 병이에요. (국가유산청 재현 에셋, CC BY)'},
  {k:'fishbottle',m:'icheon/fishbottle',n:'분청사기 물고기무늬 병',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'회색 흙에 흰 흙을 바르고 긁어 물고기를 그린 분청사기 병이에요(1400년대). (클리블랜드 미술관 1962.153, CC0)'},
  {k:'najeonham',m:'tongyeong/najeonham',n:'나전칠함',kind:'lacquer',cut:'ring',np:4,site:'통영',d:'옻칠한 나무 상자에 얇게 간 전복·조개 껍데기(자개)를 오려 붙여 꽃과 넝쿨을 그렸어요. 통영은 조선 때 통제영 공방(12공방)에서 나전을 만들던 나전칠기의 고장이에요. (3D: KCDF, CC BY)'}];
+try{window.__ARTN=Object.fromEntries(ART.map(a=>[a.k,a.n]))}catch(e){}
 const LS='muui-h3-restored';
+/* 오늘의 의뢰: 한국 날짜로 하루 하나. 해내면 엽전 덤 */
+const DAY=()=>Math.floor((Date.now()+9*36e5)/864e5);export const todayArt=()=>ART[DAY()%ART.length];const todayDone=()=>{try{return localStorage.getItem('muui-h3-restore-day')===String(DAY())}catch(e){return false}};
 export const restored=()=>{try{return new Set(JSON.parse(localStorage.getItem(LS)||'[]'))}catch(e){return new Set()}};
 const markRestored=k=>{try{const s=restored();s.add(k);localStorage.setItem(LS,JSON.stringify([...s]))}catch(e){}try{window.__CABINET&&window.__CABINET()}catch(e){}};
 
@@ -27,7 +30,7 @@ const markRestored=k=>{try{const s=restored();s.add(k);localStorage.setItem(LS,J
 export function workshopGame(ctx){const ui=overlay('radial-gradient(circle at 50% 30%,#5a3a20,#1a120b)');let alive=true;const R=restored();
  title(ui.top,'무이 복원 공방','복원할 유물을 골라요. 조각을 맞추고, 흙을 털고, 틈을 메우면 진열장에 놓여요.');ui.c.style.display='none';
  const box=document.createElement('div');box.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-44%);display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;width:min(560px,92vw);z-index:2';
- box.innerHTML=ART.map(a=>`<button type="button" data-k="${a.k}" style="padding:14px 10px;border-radius:14px;border:2px solid ${R.has(a.k)?'#f2d27a':'rgba(255,255,255,.15)'};background:rgba(255,248,232,${R.has(a.k)?.95:.88});color:#2b1d12;font:17px 'Do Hyeon',sans-serif;cursor:pointer;text-align:center">${R.has(a.k)?'✦ ':''}${a.n}<br><small style="font:12px 'Gowun Dodum',sans-serif;opacity:.75">${a.site} · ${a.kind==='metal'?'녹 닦기·광내기':a.kind==='lacquer'?'먼지 털기·광내기':'흙 털기·틈 메우기'}${R.has(a.k)?' · 복원 완료':''}</small></button>`).join('')+`<div style="grid-column:1/-1;text-align:center;color:#e8d6b0;font:14px 'Gowun Dodum',sans-serif;margin-top:6px">진열장 ${R.size} / ${ART.length}</div>`;
+ const TD=todayArt();box.innerHTML=`<div style="grid-column:1/-1;text-align:center;color:#f2d27a;font:16px 'Do Hyeon',sans-serif">오늘의 의뢰 ★ ${TD.n}${todayDone()?' · 완료!':' · 해내면 엽전 덤'}</div>`+ART.map(a=>`<button type="button" data-k="${a.k}" style="padding:14px 10px;border-radius:14px;border:2px solid ${a===TD?'#ff9a5a':R.has(a.k)?'#f2d27a':'rgba(255,255,255,.15)'};background:rgba(255,248,232,${R.has(a.k)?.95:.88});color:#2b1d12;font:17px 'Do Hyeon',sans-serif;cursor:pointer;text-align:center">${a===TD?'★ ':R.has(a.k)?'✦ ':''}${a.n}<br><small style="font:12px 'Gowun Dodum',sans-serif;opacity:.75">${a.site} · ${a.kind==='metal'?'녹 닦기·광내기':a.kind==='lacquer'?'먼지 털기·광내기':'흙 털기·틈 메우기'}${R.has(a.k)?' · 복원 완료':''}</small></button>`).join('')+`<div style="grid-column:1/-1;text-align:center;color:#e8d6b0;font:14px 'Gowun Dodum',sans-serif;margin-top:6px">진열장 ${R.size} / ${ART.length}</div>`;
  ui.o.append(box);box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;alive=false;ui.o.remove();restoreGame(ctx,b.dataset.k)});ui.x.onclick=()=>{alive=false;ui.o.remove()};window.__WS={open:k=>{ui.o.remove();restoreGame(ctx,k)}}}
 
 /* ---------- 유물 하나 복원 ---------- */
@@ -76,7 +79,7 @@ export function restoreGame(ctx,key){const A=ART.find(a=>a.k===key)||ART[0];cons
  R.domElement.addEventListener('wheel',e=>{dist=Math.max(1.8,Math.min(8,dist*(1+Math.sign(e.deltaY)*.08)));e.preventDefault()},{passive:false});
  /* 붓질: 닿은 점 둘레 정점 알파를 줄임 */
  const tmpV=new THREE.Vector3();let lastSnd=0;
- function brushAt(h){const m=h.object;const loc=m.worldToLocal(h.point.clone());const P=m.geometry.attributes.position,C=m.geometry.attributes.color;const rad=step===2?.09:.13;let ch=false;for(let v=0;v<P.count;v++){tmpV.fromBufferAttribute(P,v);const d=tmpV.distanceTo(loc);if(d<rad){const a=C.getW(v),na=Math.max(0,a-(1-d/rad)*.35);if(na!==a){C.setW(v,na);ch=true}}}if(ch)C.needsUpdate=true;
+ function brushAt(h){const m=h.object;const loc=m.worldToLocal(h.point.clone());const P=m.geometry.attributes.position,C=m.geometry.attributes.color;const rad=(step===2?.16:.22)*Math.max(.8,H/1.6);let ch=false;for(let v=0;v<P.count;v++){tmpV.fromBufferAttribute(P,v);const d=tmpV.distanceTo(loc);if(d<rad){const a=C.getW(v),na=Math.max(0,a-(1-d/rad)*.55);if(na!==a){C.setW(v,na);ch=true}}}if(ch)C.needsUpdate=true;
   const now=performance.now();if(now-lastSnd>90){lastSnd=now;blip(ac,out,900+Math.random()*400,600,.05,.035,'triangle')}}
  const dirtLeft=()=>{let s=0,n=0;for(const d of dirt){const C=d.geometry.attributes.color;for(let v=0;v<C.count;v+=7){s+=C.getW(v);n++}}return n?s/n/.96:0};
  /* 이음매: 조각 경계를 따라 점 몇 개 */
@@ -88,8 +91,8 @@ export function restoreGame(ctx,key){const A=ART.find(a=>a.k===key)||ART[0];cons
  /* 광내기용 층(금속·옻칠): 흙 층을 다시 씌우되 흐린 잿빛 */
  function makePolish(){for(const d of dirt){const C=d.geometry.attributes.color;for(let v=0;v<C.count;v++){C.setXYZW(v,.42,.4,.36,.55)}C.needsUpdate=true;d.visible=true}}
  function finishAll(){if(doneAll)return;doneAll=true;for(const d of dirt)d.visible=false;for(const s of seams)if(s.userData.done)s.visible=true;for(const g of pieces)for(const m of g.children)if(m.material&&!m.userData.dirt&&A.kind==='metal'){m.material.metalness=.8;m.material.roughness=.28;m.material.envMapIntensity=1.3}
-  markRestored(A.k);const sec=(performance.now()-t0)/1000;const Q=Math.max(30,Math.min(100,Math.round(100-miss*3-Math.max(0,sec-120)*.2)));blip(ac,out,520,1040,.5,.2);head('복원 완료!','천천히 돌려 보세요');stepTag.textContent='복원 완료';fill.style.width='100%';
-  setTimeout(()=>{if(!alive)return;ctx.done('restore_'+A.k,Q,A.n+' 복원');finishCard(ui,`${A.n}, 복원 완료!`,A.d+` 진열장에 놓였어요(${restored().size} / ${ART.length}).`,Q,close)},2600)}
+  markRestored(A.k);try{window.__NETR&&window.__NETR(A.k)}catch(e){}const isToday=todayArt().k===A.k&&!todayDone();if(isToday){try{localStorage.setItem('muui-h3-restore-day',String(DAY()))}catch(e){}}const sec=(performance.now()-t0)/1000;const Q=Math.max(30,Math.min(100,Math.round(100-miss*3-Math.max(0,sec-120)*.2)));blip(ac,out,520,1040,.5,.2);head('복원 완료!','천천히 돌려 보세요');stepTag.textContent='복원 완료';fill.style.width='100%';
+  setTimeout(()=>{if(!alive)return;ctx.done('restore_'+A.k,Q,A.n+' 복원');if(isToday)setTimeout(()=>{try{ctx.done('restore_today',100,'오늘의 의뢰');ctx.say('오늘의 의뢰까지 해냈어요! 엽전 덤을 받았어요.')}catch(e){}},1500);finishCard(ui,`${A.n}, 복원 완료!`,A.d+` 진열장에 놓였어요(${restored().size} / ${ART.length}).`,Q,close)},2600)}
  /* ---------- 그리기 ---------- */
  let last=performance.now(),chk=0;
  const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}

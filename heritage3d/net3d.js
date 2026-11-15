@@ -24,6 +24,9 @@ export async function initNet({site,THREE,scene,makeMuui,ui}){
  const room=sb.channel('muui3d-'+site,{config:{presence:{key:me},broadcast:{self:false,ack:false}}});
  room.on('broadcast',{event:'p'},({payload:p})=>{if(!p||p.i===me)return;const o=ensure(p.i,p);o.tx=p.x;o.ty=p.y;o.tz=p.z;o.ta=p.a;o.mv=p.m;o.rd=p.r;o.last=performance.now()});
  room.on('broadcast',{event:'g'},({payload:p})=>{if(!p||p.i===me)return;const o=others.get(p.i);if(!o)return;if(typeof p.g==='number'&&GES[p.g]){o.ges=GES[p.g][0];o.gesT=GES[p.g][2]}if(typeof p.s==='number'&&SAYS[p.s]&&o.av)showSay(o.av.root,SAYS[p.s],2.6);o.last=performance.now()});
+ /* 복원 소식: 같은 마당 사람이 유물을 복원하면 알림(이름은 정해진 유물 목록에서만 찾음) */
+ room.on('broadcast',{event:'r'},({payload:p})=>{if(!p||p.i===me)return;const nm=(window.__ARTN||{})[p.k];if(!nm)return;const o=others.get(p.i);const who=String(o&&o.n||'무이').replace(/[<>&"]/g,'').slice(0,12);try{window.__H3.say(`${who}님이 ${nm} 복원을 해냈어요! ✦`,4);if(o&&o.av){o.ges='cheer';o.gesT=2}}catch(e){}});
+ window.__NETR=k=>{try{room.send({type:'broadcast',event:'r',payload:{i:me,k}}).catch(()=>{})}catch(e){}};
  room.on('presence',{event:'sync'},()=>{const st=room.presenceState();const ids=new Set(Object.keys(st));for(const id of [...others.keys()])if(!ids.has(id))drop(id);for(const id of ids){if(id===me)continue;const m=st[id][0];ensure(id,m)}here=ids.size;show()});
  room.subscribe(s=>{if(s==='SUBSCRIBED')room.track({n:name,k:kind})});
  let here=1,all=1;const show=()=>{try{ui&&ui.setNet(all,here)}catch(e){}};
