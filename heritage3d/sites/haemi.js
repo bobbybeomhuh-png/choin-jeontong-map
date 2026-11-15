@@ -15,7 +15,7 @@ export function buildHaemi(opts={}){const mini=!!opts.mini;const MT=materials();
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
  const TOUCH=matchMedia('(pointer:coarse)').matches;
  /* ---------- 성곽 크기: 타원(가로 A, 세로 B), 높이 H, 윗길 폭 TW, 안쪽 흙 비탈 폭 SL ---------- */
- const A=58,B=42,H=4.8,TW=2.6,SL=5,GATE_HALF=.13;/* 진남문 자리 각도 반폭(라디안) */
+ const A=58,B=42,H=5,TW=2.6,SL=5;
  /* ---------- 땅: 성 안 잔디, 바깥 들 ---------- */
  const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#78964a';q.fillRect(0,0,w,h);noise(q,w,h,9000,['#86a656','#6a8a40','#90ae5e','#7a8c48'],2)});GT.wrapS=GT.wrapT=THREE.RepeatWrapping;GT.repeat.set(70,50);
  {const gr=new THREE.Mesh(new THREE.PlaneGeometry(280,200),new THREE.MeshStandardMaterial({map:GT,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
@@ -23,7 +23,7 @@ export function buildHaemi(opts={}){const mini=!!opts.mini;const MT=materials();
  const DT=tex(256,256,(q,w,h)=>{q.fillStyle='#c8b28a';q.fillRect(0,0,w,h);noise(q,w,h,6000,['#b8a07a','#d6c29c','#a8916c','#cdb994'],2);for(let i=0;i<40;i++){q.fillStyle='rgba(120,100,70,.35)';q.beginPath();q.arc(r()*w,r()*h,1+r()*2.5,0,7);q.fill()}});DT.wrapS=DT.wrapT=THREE.RepeatWrapping;
  const pathM=new THREE.MeshStandardMaterial({map:DT,roughness:1,polygonOffset:true,polygonOffsetFactor:-2});
  const road=(x0,z0,x1,z1,w=3.2)=>{const L=Math.hypot(x1-x0,z1-z0);const t=DT.clone();t.needsUpdate=true;t.repeat.set(w/2,L/2);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,L),pathM.clone());m.material.map=t;m.rotation.x=-Math.PI/2;m.rotation.z=-Math.atan2(x1-x0,z1-z0)+Math.PI;m.position.set((x0+x1)/2,.02,(z0+z1)/2);m.receiveShadow=true;G.add(m);/* 꺾이는 곳 둥근 마감 */for(const[x,z]of[[x0,z0],[x1,z1]]){const c=new THREE.Mesh(new THREE.CircleGeometry(w/2,20),m.material);c.rotation.x=-Math.PI/2;c.position.set(x,.021,z);G.add(c)}};
- road(0,B+14,0,B+4,4);road(0,B-4,0,2,4);road(0,2,-6,0,3.2);road(0,8,22,-4,3);road(0,14,20,12,2.6);road(-6,0,-6,-3,3.2);road(-6,-18.3,-6,-16,2.2);road(-6,B-13,0,B-10,2.4);
+ road(0,B+14,0,B+4,4);road(0,B-4,0,2,4);road(0,2,-6,0,3.2);road(0,8,22,-4,3);road(0,14,20,12,2.6);road(-6,0,-6,-3,3.2);road(-6,-18.3,-6,-16,2.2);road(-6,B-13,0,B-10,2.4);road(0,2,A-TW-SL-3,0,3);road(0,2,-(A-TW-SL-3),0,3);
  /* ---------- 성벽 ---------- */
  /* 성돌: 아래는 큰 막돌, 위로 갈수록 작은 돌(해미읍성 바깥 면처럼). 텍스처 한 장 = 성벽 높이 전체, 가로 4m 반복 */
  const WT=tex(512,512,(q,w,h)=>{q.fillStyle='#4a443c';q.fillRect(0,0,w,h);let y=h;let row=0;while(y>0){const rh=Math.max(34,92-row*9)+r()*10;let x=-r()*60;while(x<w){const bw=rh*(1.1+r()*.9);const g=135+(r()*45|0),wa=r()*14;q.fillStyle=`rgb(${g+wa|0},${g-4|0},${g-16|0})`;q.beginPath();q.roundRect(x+3,y-rh+3,bw-6,rh-6,10+r()*8);q.fill();q.fillStyle='rgba(255,255,255,.08)';q.fillRect(x+8,y-rh+6,bw-16,5);q.fillStyle='rgba(0,0,0,.14)';q.fillRect(x+6,y-10,bw-12,5);for(let k=0;k<26;k++){const gv=r()<.5?60:210;q.fillStyle=`rgba(${gv},${gv-4},${gv-10},${.07+r()*.1})`;q.fillRect(x+6+r()*(bw-12),y-rh+6+r()*(rh-12),2+r()*4,2+r()*3)}/* 이끼 */if(row<2&&r()<.35){q.fillStyle='rgba(80,110,50,.25)';q.beginPath();q.ellipse(x+bw/2,y-6,bw*.4,8,0,0,7);q.fill()}x+=bw}y-=rh;row++}});WT.wrapS=THREE.RepeatWrapping;
@@ -32,30 +32,52 @@ export function buildHaemi(opts={}){const mini=!!opts.mini;const MT=materials();
  const slopeM=new THREE.MeshStandardMaterial({map:ST,roughness:1});
  const TOPT=tex(128,128,(q,w,h)=>{q.fillStyle='#a89a80';q.fillRect(0,0,w,h);noise(q,w,h,2500,['#9a8c72','#b6a88c'],2)});TOPT.wrapS=TOPT.wrapT=THREE.RepeatWrapping;const topM=new THREE.MeshStandardMaterial({map:TOPT,roughness:1});
  const ell=t=>[A*Math.cos(t),B*Math.sin(t)];const nrm=t=>{const nx=B*Math.cos(t),nz=A*Math.sin(t),l=Math.hypot(nx,nz);return[nx/l,nz/l]};/* 바깥쪽 단위 법선 */
- const gateT=Math.PI/2;const inGate=t=>{let d=Math.abs(((t-gateT)%(Math.PI*2)+Math.PI*3)%(Math.PI*2)-Math.PI);return d<GATE_HALF};
- {const N=mini?60:220;const pos=[[],[],[]],uv=[[],[],[]],idx=[[],[],[]];let arc=0,prev=null;
-  /* 세 띠: 0 바깥 돌면(수직), 1 윗길, 2 안쪽 흙 비탈. 진남문 자리는 비움 */
-  const T0=gateT+GATE_HALF,T1=gateT+Math.PI*2-GATE_HALF;
+ const spd=t=>Math.hypot(A*Math.sin(t),B*Math.cos(t));/* 각도 1 당 둘레 길이 */
+ /* 문: 남 진남문(큰 문), 동문, 서문. 자료: 동 남 서 세 곳에 문루 */
+ const GATES=[{t:0,GW:12,name:'동문',big:false},{t:Math.PI/2,GW:15,name:'진남문',big:true},{t:Math.PI,GW:12,name:'서문',big:false}];for(const g of GATES)g.half=(g.GW/2)/spd(g.t);
+ const strips=[];for(let k=0;k<GATES.length;k++){const a=GATES[k],b=GATES[(k+1)%GATES.length];strips.push([a.t+a.half,(k+1<GATES.length?b.t:b.t+Math.PI*2)-b.half])}
+ const yj=new THREE.MeshStandardMaterial({map:WT.clone(),roughness:.95});yj.map.repeat.set(.4,.25);yj.map.needsUpdate=true;const capM=M(0x8a8478);
+ for(const[T0,T1]of strips){const N=Math.max(8,Math.round((mini?60:220)*(T1-T0)/(Math.PI*2)));const pos=[[],[],[]],uv=[[],[],[]],idx=[[],[],[]];let arc=0,prev=null;
+  /* 세 띠: 0 바깥 돌면(수직), 1 윗길, 2 안쪽 흙 비탈 */
   for(let i=0;i<=N;i++){const t=T0+(T1-T0)*i/N;const[x,z]=ell(t),[nx,nz]=nrm(t);if(prev)arc+=Math.hypot(x-prev[0],z-prev[1]);prev=[x,z];
    const rows=[[[x+nx*.35,-.3,z+nz*.35],[x,H,z]],[[x,H,z],[x-nx*TW,H,z-nz*TW]],[[x-nx*TW,H,z-nz*TW],[x-nx*(TW+SL),0,z-nz*(TW+SL)]]];
    rows.forEach((rw,k)=>{for(const[j,p]of rw.entries()){pos[k].push(...p);uv[k].push(arc/(k===0?4:2),k===0?(j?1:0):j*(k===1?1.3:2.6))}if(i>0){const b=(i-1)*2,c=i*2;idx[k].push(b,c,b+1,b+1,c,c+1)}})}
   [wallM,topM,slopeM].forEach((m,k)=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos[k],3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv[k],2));g.setIndex(idx[k]);g.computeVertexNormals();const me=new THREE.Mesh(g,m);me.material.side=THREE.DoubleSide;me.castShadow=k!==2;me.receiveShadow=true;G.add(me);if(k===0)cam.push(me)});
-  /* 여장(성가퀴): 바깥 끝에 낮은 담, 사이사이 총 쏘는 틈 */
-  if(!mini){const yj=new THREE.MeshStandardMaterial({map:WT.clone(),roughness:.95});yj.map.repeat.set(.4,.25);yj.map.needsUpdate=true;const L=1.9,gap=.45;const segs=[];let acc=0;prev=null;const NN=900;for(let i=0;i<=NN;i++){const t=T0+(T1-T0)*i/NN;const[x,z]=ell(t);if(prev)acc+=Math.hypot(x-prev[0],z-prev[1]);prev=[x,z];if(acc>=L+gap){acc=0;segs.push(t)}}
-   const im=new THREE.InstancedMesh(new THREE.BoxGeometry(L,1.15,.55),yj,segs.length);const cap=new THREE.InstancedMesh(new THREE.BoxGeometry(L+.08,.12,.66),M(0x8a8478),segs.length);const o=new THREE.Object3D();segs.forEach((t,i)=>{const[x,z]=ell(t),[nx,nz]=nrm(t);o.position.set(x-nx*.28,H+.57,z-nz*.28);o.rotation.set(0,Math.atan2(-nz,nx)+Math.PI/2,0);o.updateMatrix();im.setMatrixAt(i,o.matrix);o.position.y=H+1.2;o.updateMatrix();cap.setMatrixAt(i,o.matrix)});im.castShadow=true;G.add(im);G.add(cap)}
-  /* 부딪힘: 성벽 몸통을 따라 둥근 기둥(비탈 아래쪽 2m 까지) */
-  for(let i=0;i<=360;i++){const t=T0+(T1-T0)*i/360;const[x,z]=ell(t),[nx,nz]=nrm(t);for(const d of[.2,1.8,3.4,5])solids.push({cx:x-nx*d,cz:z-nz*d,r:1.05,y0:0,y1:H+1.4})}}
- /* ---------- 진남문: 홍예(돌 무지개 문) 육축 위 문루 ---------- */
- const GZ=B;{const GW=15,GD=TW+SL+1.2,AW=4.2,AH=3.1;/* 홍예 폭, 홍예 시작 높이 */
-  const sh=new THREE.Shape();sh.moveTo(-GW/2,0);sh.lineTo(GW/2,0);sh.lineTo(GW/2-.25,H+.35);sh.lineTo(-GW/2+.25,H+.35);sh.closePath();const hole=new THREE.Path();hole.moveTo(-AW/2,0);hole.lineTo(-AW/2,AH);hole.absarc(0,AH,AW/2,Math.PI,0,true);hole.lineTo(AW/2,0);hole.closePath();sh.holes.push(hole);
-  const gt=WT.clone();gt.needsUpdate=true;gt.repeat.set(.25,1/(H+.35));gt.wrapT=THREE.RepeatWrapping;const gm=new THREE.MeshStandardMaterial({map:gt,roughness:.95});
-  const geo=new THREE.ExtrudeGeometry(sh,{depth:GD,bevelEnabled:false,curveSegments:28});geo.translate(0,0,-GD/2);const gate=new THREE.Mesh(geo,gm);gate.position.set(0,0,GZ-GD/2+.6);gate.castShadow=gate.receiveShadow=true;G.add(gate);cam.push(gate);
-  /* 홍예 테두리 마름돌(무지개돌) */{const rm=M(0xb8b0a0,{roughness:.85});const n=13;for(let i=0;i<n;i++){const a=Math.PI-i/(n-1)*Math.PI;const k=box(.5,.36,.4,rm);k.position.set(Math.cos(a)*(AW/2+.18),AH+Math.sin(a)*(AW/2+.18),GZ+.62);k.rotation.z=a-Math.PI/2;G.add(k)}for(const sx of[-1,1])for(let y=0;y<AH;y+=.62){const k=box(.42,.58,.4,rm);k.position.set(sx*(AW/2+.18),y+.29,GZ+.62);G.add(k)}}
-  /* 나무 문짝 두 짝(활짝 열림, 쇠 장식) */{const dm=M(0x6a4428,{roughness:.8}),iron=M(0x2b2a28,{metalness:.5,roughness:.5});for(const sx of[-1,1]){const d=box(.14,AH+.4,AW/2,dm);d.position.set(sx*(AW/2-.12),(AH+.4)/2,GZ-1.5+AW/4*0);d.rotation.y=0;G.add(d);for(let y=.4;y<AH;y+=.7){const st=box(.16,.06,AW/2-.1,iron);st.position.set(sx*(AW/2-.12),y,GZ-1.5);G.add(st)}}}
-  /* 육축 몸통 부딪힘(홍예 길만 비움) */S(-GW/2,-AW/2,0,H+2,GZ-GD+.6,GZ+.6);S(AW/2,GW/2,0,H+2,GZ-GD+.6,GZ+.6);S(-AW/2,AW/2,AH,H+2,GZ-GD+.6,GZ+.6);
-  /* 문루: 정면 3칸 측면 2칸, 사방 트임, 팔작지붕 */G.add(buildHall({x:0,z:GZ-GD/2+.6,W:9,D:5,nx:3,nz:2,FY:H+.35,PH:3.1,roof:'hip',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'open',right:'open',rail:true,stairs:'none',mini,solids:[],light:false}).group);
-  spots.push({x:0,y:0,z:GZ+4.2,r:2.6,t:'진남문',h:'해미읍성의 남쪽 정문이에요. 돌을 무지개처럼 둥글게 쌓은 홍예문 위에 나무 문루를 올렸어요. 성 밖에서 들어오는 사람은 모두 이 문을 지났어요.'})}
- spots.push({x:-14,y:0,z:B-8.6,r:2.6,t:'해미읍성 성벽',h:'조선 태종 17년(1417)부터 세종 3년(1421)까지 쌓은 성이에요. 충청도의 군사를 지휘하는 병영이 있던 곳이라 성이 크고 단단해요. 둘레는 약 1.8km, 바깥은 돌로 쌓고 안쪽은 흙으로 비탈지게 다졌어요. 1963년 사적으로 지정됐어요.'});
+  /* 여장(성가퀴): 바깥 끝 낮은 담, 사이사이 총 쏘는 틈 */
+  if(!mini){const L=1.9,gap=.45;const segs=[];let acc=0;prev=null;const NN=Math.round(900*(T1-T0)/(Math.PI*2));for(let i=0;i<=NN;i++){const t=T0+(T1-T0)*i/NN;const[x,z]=ell(t);if(prev)acc+=Math.hypot(x-prev[0],z-prev[1]);prev=[x,z];if(acc>=L+gap&&i<NN-2){acc=0;segs.push(t)}}
+   const im=new THREE.InstancedMesh(new THREE.BoxGeometry(L,1.15,.55),yj,segs.length);const cap=new THREE.InstancedMesh(new THREE.BoxGeometry(L+.08,.12,.66),capM,segs.length);const o=new THREE.Object3D();segs.forEach((t,i)=>{const[x,z]=ell(t),[nx,nz]=nrm(t);o.position.set(x-nx*.28,H+.57,z-nz*.28);o.rotation.set(0,Math.atan2(-nz,nx)+Math.PI/2,0);o.updateMatrix();im.setMatrixAt(i,o.matrix);o.position.y=H+1.2;o.updateMatrix();cap.setMatrixAt(i,o.matrix)});im.castShadow=true;G.add(im);G.add(cap)}
+  /* 부딪힘: 성벽 몸통을 따라 둥근 기둥(비탈 아래쪽까지) */
+  const NC=Math.round(360*(T1-T0)/(Math.PI*2));for(let i=0;i<=NC;i++){const t=T0+(T1-T0)*i/NC;const[x,z]=ell(t),[nx,nz]=nrm(t);for(const d of[.2,1.8,3.4,5])solids.push({cx:x-nx*d,cz:z-nz*d,r:1.05,y0:0,y1:H+1.4})}}
+ /* ---------- 문: 홍예(돌 무지개 문) 육축 위 문루. 그룹 안에서 +z 가 성 밖 ---------- */
+ const GD=TW+SL+1.2;
+ function gateAt(g){const[x,z]=ell(g.t),[nx,nz]=nrm(g.t);const ry=Math.atan2(nx,nz),cs=Math.cos(ry),sn=Math.sin(ry);const gg=new THREE.Group();gg.position.set(x,0,z);gg.rotation.y=ry;G.add(gg);
+  const W2=(lx,lz)=>[x+lx*cs+lz*sn,z-lx*sn+lz*cs];
+  const SL2=(x0,x1,y0,y1,z0,z1)=>{const a=W2(x0,z0),b=W2(x1,z1),c=W2(x0,z1),d=W2(x1,z0);const xs=[a[0],b[0],c[0],d[0]],zs=[a[1],b[1],c[1],d[1]];solids.push({x0:Math.min(...xs),x1:Math.max(...xs),y0,y1,z0:Math.min(...zs),z1:Math.max(...zs)})};
+  const GW=g.GW,AW=g.big?4.2:3.6,AH=g.big?3.1:2.8,TOPY=H+.35;
+  const sh=new THREE.Shape();sh.moveTo(-GW/2,0);sh.lineTo(-AW/2,0);sh.lineTo(-AW/2,AH);sh.absarc(0,AH,AW/2,Math.PI,0,true);sh.lineTo(AW/2,0);sh.lineTo(GW/2,0);sh.lineTo(GW/2-.25,TOPY);sh.lineTo(-GW/2+.25,TOPY);sh.closePath();
+  const gt=WT.clone();gt.needsUpdate=true;gt.repeat.set(.25,1/TOPY);gt.wrapT=THREE.RepeatWrapping;const gm=new THREE.MeshStandardMaterial({map:gt,roughness:.95});
+  const geo=new THREE.ExtrudeGeometry(sh,{depth:GD,bevelEnabled:false,curveSegments:28});geo.translate(0,0,-GD/2);const gate=new THREE.Mesh(geo,gm);gate.position.set(0,0,-GD/2+.6);gate.castShadow=gate.receiveShadow=true;gg.add(gate);cam.push(gate);
+  /* 육축 위 바닥(문루 마루 둘레) */{const tp=box(GW-.5,.12,GD,topM);tp.position.set(0,TOPY+.06,-GD/2+.6);gg.add(tp)}
+  /* 홍예 테두리 무지개돌 + 문설주 돌 */{const rm=M(0xb8b0a0,{roughness:.85});const n=g.big?13:11;for(let i=0;i<n;i++){const a=Math.PI-i/(n-1)*Math.PI;const k=box(.5,.36,.4,rm);k.position.set(Math.cos(a)*(AW/2+.18),AH+Math.sin(a)*(AW/2+.18),.62);k.rotation.z=a-Math.PI/2;gg.add(k)}for(const sx of[-1,1])for(let y=0;y<AH;y+=.62){const k=box(.42,.58,.4,rm);k.position.set(sx*(AW/2+.18),y+.29,.62);gg.add(k)}}
+  /* 나무 문짝 두 짝(활짝 열려 홍예 안 벽에 붙음, 쇠 띠) */if(!mini){const dm=M(0x6a4428,{roughness:.8}),iron=M(0x2b2a28,{metalness:.5,roughness:.5});for(const sx of[-1,1]){const d=box(.14,AH+.4,AW/2,dm);d.position.set(sx*(AW/2-.12),(AH+.4)/2,-1.5);gg.add(d);for(let y=.4;y<AH;y+=.7){const st=box(.16,.06,AW/2-.1,iron);st.position.set(sx*(AW/2-.12),y,-1.5);gg.add(st)}}}
+  /* 육축 부딪힘(홍예 길만 비움) */SL2(-GW/2,-AW/2,0,H+2,-GD+.6,.6);SL2(AW/2,GW/2,0,H+2,-GD+.6,.6);SL2(-AW/2,AW/2,AH,H+2,-GD+.6,.6);
+  /* 문루: 사방 트임, 팔작지붕 */gg.add(buildHall({x:0,z:-GD/2+.6,W:g.big?9:7.4,D:g.big?5:4.4,nx:3,nz:2,FY:TOPY,PH:g.big?3.1:2.8,roof:'hip',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'open',right:'open',rail:true,stairs:'none',mini,solids:[],light:false}).group);
+  return{gg,W2}}
+ const GS=gateAt(GATES[1]),GE=gateAt(GATES[0]),GWs=gateAt(GATES[2]);const GZ=B;
+ {const p=GS.W2(0,4.2);spots.push({x:p[0],y:0,z:p[1],r:2.6,t:'진남문',h:'해미읍성의 남쪽 정문이에요. 돌을 무지개처럼 둥글게 쌓은 홍예문 위에 나무 문루를 올렸어요. 성 밖에서 들어오는 사람은 모두 이 문을 지났어요.'})}
+ {const p=GE.W2(0,-GD-1.6);spots.push({x:p[0],y:0,z:p[1],r:2.4,t:'동문',h:'해미읍성의 동쪽 문이에요. 해미읍성에는 동쪽, 남쪽, 서쪽 세 곳에 문루가 있어요.'})}
+ {const p=GWs.W2(0,-GD-1.6);spots.push({x:p[0],y:0,z:p[1],r:2.4,t:'서문',h:'해미읍성의 서쪽 문이에요. 서문 밖 순교성지에는 천주교 순교자를 기리는 순교현양비가 서 있어요.'})}
+ /* 각자성석: 진남문 양쪽 성돌에 새긴 고을 이름(밖에서 보아 오른쪽 公州, 왼쪽 淸州) */
+ if(!mini){const carve=t=>{const c=document.createElement('canvas');c.width=256;c.height=160;const q=c.getContext('2d');q.fillStyle='#b9b0a0';q.fillRect(0,0,256,160);noise(q,256,160,1800,['#a89e8c','#c6bdae'],2);q.font='bold 96px "Noto Serif KR",serif';q.textAlign='center';q.fillStyle='rgba(255,255,255,.35)';q.fillText(t,130,118);q.fillStyle='#5a5246';q.fillText(t,128,116);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshStandardMaterial({map:tx,roughness:.95})};
+  for(const[sx,t]of[[1,'公州'],[-1,'淸州']]){const st=box(1.15,.72,.12,carve(t));st.position.set(sx*5.2,1.25,.64);GS.gg.add(st)}
+  const p=GS.W2(5.2,2.6);spots.push({x:p[0],y:0,z:p[1],r:2,t:'고을 이름 새긴 성돌',h:'진남문 양쪽 성돌에 공주, 청주 같은 고을 이름이 새겨져 있어요. 고을마다 맡아 쌓은 구간을 표시한 것이라고 해요.'})}
+ /* 탱자나무 울타리: 성벽 바깥 발치 가시 덤불(가을이라 노란 탱자 열매) */
+ if(!mini){const pts=[];for(const[T0,T1]of strips){const L=(T1-T0)*spd((T0+T1)/2);const n=Math.round(L/1.15);for(let i=1;i<n;i++){const t=T0+(T1-T0)*i/n;const[x,z]=ell(t),[nx,nz]=nrm(t);pts.push([x+nx*(1.5+r()*.5),z+nz*(1.5+r()*.5),.7+r()*.35])}}
+  const bm=M(0x3f5a2c,{roughness:1,flatShading:true});const bush=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,1),bm,pts.length);const fm=M(0xe8c23a,{roughness:.6});const fr=new THREE.InstancedMesh(new THREE.SphereGeometry(.07,8,6),fm,pts.length*3);const o=new THREE.Object3D();let fi=0;
+  pts.forEach(([x,z,s],i)=>{o.position.set(x,s*.55,z);o.rotation.set(r(),r()*6,r());o.scale.set(s,s*.8,s);o.updateMatrix();bush.setMatrixAt(i,o.matrix);for(let k=0;k<3;k++){const a=r()*Math.PI*2,e=r()*.9;o.position.set(x+Math.cos(a)*s*.85*Math.cos(e),s*.55+Math.sin(e)*s*.6,z+Math.sin(a)*s*.85*Math.cos(e));o.rotation.set(0,0,0);o.scale.setScalar(1);o.updateMatrix();fr.setMatrixAt(fi++,o.matrix)}});bush.castShadow=true;G.add(bush);G.add(fr);
+  /* 가시: 가는 막대 몇 개씩 */const tm=M(0x2f3f20);const th=new THREE.InstancedMesh(new THREE.CylinderGeometry(.008,.02,.35,4),tm,pts.length*4);let ti=0;pts.forEach(([x,z,s])=>{for(let k=0;k<4;k++){const a=r()*Math.PI*2;o.position.set(x+Math.cos(a)*s*.95,s*(.3+r()*.6),z+Math.sin(a)*s*.95);o.rotation.set(r()*2-1,0,r()*2-1);o.scale.setScalar(1);o.updateMatrix();th.setMatrixAt(ti++,o.matrix)}});G.add(th);
+  {const t=Math.PI/2+.22;const[x,z]=ell(t),[nx,nz]=nrm(t);spots.push({x:x+nx*4.4,y:0,z:z+nz*4.4,r:2.4,t:'탱자나무 울타리',h:'성벽 둘레에 가시가 많은 탱자나무를 심어 적이 다가오지 못하게 막았다고 전해요. 지금은 거의 남아 있지 않아요.'})}}
+ spots.push({x:-14,y:0,z:B-8.6,r:2.6,t:'해미읍성 성벽',h:'조선 초 1417년(태종 17)에 쌓기 시작한 성이에요. 충청도의 군사를 지휘하는 병영이 있던 곳이라 성이 크고 단단해요. 둘레는 약 1.8km, 높이는 약 5m예요. 바깥은 돌로 쌓고 안쪽은 흙으로 비탈지게 다졌어요. 1963년 사적으로 지정됐어요.'});
  /* ---------- 동헌 구역: 담장, 바깥 대문, 동헌 ---------- */
  const DX=-6,DZ=-8;{hanokWall(G,solids,DX-11,DZ+7,DX-2.2,DZ+7,{TOUCH});hanokWall(G,solids,DX+2.2,DZ+7,DX+11,DZ+7,{TOUCH});hanokWall(G,solids,DX-11,DZ+7,DX-11,DZ-9,{TOUCH});hanokWall(G,solids,DX+11,DZ+7,DX+11,DZ-9,{TOUCH});hanokWall(G,solids,DX-11,DZ-9,DX-2,DZ-9,{TOUCH});hanokWall(G,solids,DX+2,DZ-9,DX+11,DZ-9,{TOUCH});
   /* 바깥 대문: 한 칸 맞배 대문(두 짝 문 열림) */{G.add(buildHall({x:DX,z:DZ+7,W:4.2,D:2.2,nx:1,nz:1,FY:.35,PH:2.9,roof:'gable',pillar:0x7a4a2a,bracket:'jusim',front:'open',back:'open',left:'wall',right:'wall',stairs:'none',mini,solids,light:false}).group);const dm=M(0x8a5a34,{roughness:.8});for(const sx of[-1,1]){const d=box(.1,2.5,1.75,dm);d.position.set(DX+sx*1.9,1.6,DZ+7+.9);G.add(d)}}
