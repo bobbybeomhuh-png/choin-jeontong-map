@@ -8,6 +8,7 @@ const ADJ=['씩씩한','느긋한','반짝이는','수줍은','부지런한','�
 export function myName(){let n=null;try{n=localStorage.getItem('muui3d-name')}catch(e){}if(!n){n=ADJ[(Math.random()*ADJ.length)|0]+' 무이 '+(100+((Math.random()*900)|0));try{localStorage.setItem('muui3d-name',n)}catch(e){}}return n}
 export async function initNet({site,THREE,scene,makeMuui,ui}){
  if(/[?&]solo\b/.test(location.search))return null;
+ /* 시험용 따로 된 방: ?netroom=이름(영문 숫자) */const RM=(location.search.match(/[?&]netroom=([a-z0-9]{1,12})/)||[])[1];const RS=RM?'-t'+RM:'';
  let createClient;try{({createClient}=await import(LIB))}catch(e){console.warn('함께 걷기 불러오기 실패',e);return null}
  const sb=createClient(SB.url,SB.key,{auth:{persistSession:false},realtime:{params:{eventsPerSecond:12}}});
  const me=SB.sid+'-'+Math.random().toString(36).slice(2,6),name=myName();let kind='base';try{kind=localStorage.getItem('muui3d-kind')||'base'}catch(e){}
@@ -21,16 +22,23 @@ export async function initNet({site,THREE,scene,makeMuui,ui}){
  const bubble=(t)=>{const c=document.createElement('canvas');c.width=320;c.height=88;const q=c.getContext('2d');q.font='bold 32px "Do Hyeon",sans-serif';const w=Math.min(310,q.measureText(t).width+36);q.fillStyle='#fffaf0';q.strokeStyle='#3b2a1c';q.lineWidth=4;q.beginPath();q.roundRect((320-w)/2,6,w,58,22);q.fill();q.stroke();q.beginPath();q.moveTo(150,62);q.lineTo(160,80);q.lineTo(172,62);q.fill();q.fillStyle='#2b1d12';q.textAlign='center';q.fillText(t,160,46);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,depthTest:false,transparent:true}));sp.scale.set(2,.55,1);sp.renderOrder=10;return sp};
  const showSay=(root,t,y=2.55)=>{if(!root)return;if(root.userData.say){root.remove(root.userData.say)}const b=bubble(t);b.position.y=y;root.add(b);root.userData.say=b;clearTimeout(root.userData.sayT);root.userData.sayT=setTimeout(()=>{root.remove(b);if(root.userData.say===b)root.userData.say=null},4500)};
  const drop=id=>{const o=others.get(id);if(!o)return;if(o.av)scene.remove(o.av.root);others.delete(id)};
- const room=sb.channel('muui3d-'+site,{config:{presence:{key:me},broadcast:{self:false,ack:false}}});
+ const room=sb.channel('muui3d-'+site+RS,{config:{presence:{key:me},broadcast:{self:false,ack:false}}});
  room.on('broadcast',{event:'p'},({payload:p})=>{if(!p||p.i===me)return;const o=ensure(p.i,p);o.tx=p.x;o.ty=p.y;o.tz=p.z;o.ta=p.a;o.mv=p.m;o.rd=p.r;o.last=performance.now()});
  room.on('broadcast',{event:'g'},({payload:p})=>{if(!p||p.i===me)return;const o=others.get(p.i);if(!o)return;if(typeof p.g==='number'&&GES[p.g]){o.ges=GES[p.g][0];o.gesT=GES[p.g][2]}if(typeof p.s==='number'&&SAYS[p.s]&&o.av)showSay(o.av.root,SAYS[p.s],2.6);o.last=performance.now()});
  /* 복원 소식: 같은 마당 사람이 유물을 복원하면 알림(이름은 정해진 유물 목록에서만 찾음) */
  room.on('broadcast',{event:'r'},({payload:p})=>{if(!p||p.i===me)return;const nm=(window.__ARTN||{})[p.k];if(!nm)return;const o=others.get(p.i);const who=String(o&&o.n||'무이').replace(/[<>&"]/g,'').slice(0,12);try{window.__H3.say(`${who}님이 ${nm} 복원을 해냈어요! ✦`,4);if(o&&o.av){o.ges='cheer';o.gesT=2}}catch(e){}});
+ /* 윷놀이 함께 두기 통로(event 'y'): 받는 사람(to)이 있으면 그 사람만. 초대(inv)는 같은 마당 25m 안 사람에게 알림 */
+ const YL=new Set();window.__NETY={me,send:p=>{try{room.send({type:'broadcast',event:'y',payload:Object.assign({i:me},p)}).catch(()=>{})}catch(e){}},on:f=>{YL.add(f);return()=>YL.delete(f)},name:id=>{const o=others.get(id);return o?o.n:'친구'}};
+ room.on('broadcast',{event:'y'},({payload:p})=>{if(!p||p.i===me||typeof p.t!=='string')return;if(p.to&&p.to!==me)return;for(const f of[...YL])try{f(p)}catch(e){}
+  if(p.t==='inv'&&!window.__YUTNET&&typeof p.g==='string'&&p.g.length<12){const o=others.get(p.i);const H=window.__H3;if(!o||!H||!H.P||Math.hypot(o.tx-H.P.x,o.tz-H.P.z)>25)return;const who=String(o.n||'친구').replace(/[<>&"]/g,'').slice(0,12);
+   document.getElementById('yutInv')?.remove();const d=document.createElement('div');d.id='yutInv';d.style.cssText='position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 96px);transform:translateX(-50%);z-index:40;background:rgba(43,29,18,.94);color:#fff4dc;border:2px solid #d8a838;border-radius:16px;padding:12px 14px;font:15px "Gowun Dodum",sans-serif;display:flex;gap:10px;align-items:center;max-width:92vw';
+   const t=document.createElement('span');t.textContent=`${who}님이 윷놀이 한 판 하재요!`;const ok=document.createElement('button');ok.type='button';ok.className='btn';ok.textContent='같이 하기';const no=document.createElement('button');no.type='button';no.className='btn';no.textContent='다음에';d.append(t,ok,no);document.body.append(d);
+   const tm=setTimeout(()=>d.remove(),20000);no.onclick=()=>{clearTimeout(tm);d.remove()};ok.onclick=()=>{clearTimeout(tm);d.remove();try{window.__YUTJOIN&&window.__YUTJOIN({host:p.i,hn:who,g:p.g})}catch(e){}}}});
  window.__NETR=k=>{try{room.send({type:'broadcast',event:'r',payload:{i:me,k}}).catch(()=>{})}catch(e){}};
  room.on('presence',{event:'sync'},()=>{const st=room.presenceState();const ids=new Set(Object.keys(st));for(const id of [...others.keys()])if(!ids.has(id))drop(id);for(const id of ids){if(id===me)continue;const m=st[id][0];ensure(id,m)}here=ids.size;show()});
  room.subscribe(s=>{if(s==='SUBSCRIBED')room.track({n:name,k:kind})});
  let here=1,all=1;const show=()=>{try{ui&&ui.setNet(all,here)}catch(e){}};
- const lobby=sb.channel('muui3d-all',{config:{presence:{key:me}}});lobby.on('presence',{event:'sync'},()=>{all=Object.keys(lobby.presenceState()).length;show()});lobby.subscribe(s=>{if(s==='SUBSCRIBED')lobby.track({s:site})});
+ const lobby=sb.channel('muui3d-all'+RS,{config:{presence:{key:me}}});lobby.on('presence',{event:'sync'},()=>{all=Object.keys(lobby.presenceState()).length;show()});lobby.subscribe(s=>{if(s==='SUBSCRIBED')lobby.track({s:site})});
  let lastSend=0,lx=0,lz=0,la=0;
  const tick=(dt,P,yaw,speed,ride)=>{const now=performance.now();
   if(now-lastSend>(speed>.1?160:2000)&&(Math.abs(P.x-lx)+Math.abs(P.z-lz)+Math.abs(yaw-la)>.03||now-lastSend>2000)){lastSend=now;lx=P.x;lz=P.z;la=yaw;room.send({type:'broadcast',event:'p',payload:{i:me,n:name,k:kind,x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),a:+yaw.toFixed(2),m:+speed.toFixed(1),r:ride?1:0}}).catch(()=>{})}
