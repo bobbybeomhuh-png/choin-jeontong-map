@@ -284,7 +284,7 @@ const gl=new GLTFLoader();async function makeMuui(k,height=1){const g=await new 
 /* 전국 지도의 의뢰판: 예전 여섯 도시 퀘스트 대신 지금 맡은 의뢰 하나(입구에 큰 빛기둥) */
 if(SITE==='worldmap'&&SITEB.spots){try{const ORD=CH_ORDER,D=new Set(JSON.parse(localStorage.getItem('muui-h3-stamps')||'[]')),nk=ORD.find(k=>!D.has(k)),sp=nk&&SITEB.spots.find(x=>x.go===nk);
  if(sp){const lab=sp.t.replace(/ 들어가기$/,'');SITEB.quest={t:'지금 맡은 의뢰',d:`${lab}. 큰 빛기둥이 선 입구로 가서 들어가요. 위쪽 도시로 날아가기로 바로 갈 수도 있어요.`,steps:[[lab,sp.t]],done:'의뢰 장소에 왔어요. 들어가기를 눌러 유산 마당으로 들어가요.'}}else if(nk===undefined){SITEB.quest=null}}catch(e){}}
-/* 의뢰로 전국 지도에 오면 그 유산 입구 바로 앞에서 시작 */let REQ_AT=null;if(SITE==='worldmap'){const ck=qs.get('city');const sp=ck&&SITEB.spots&&SITEB.spots.find(x=>x.go===ck);if(sp){SITEB.spawn.x=sp.x;SITEB.spawn.z=sp.z+.4;REQ_AT=sp}}
+/* 의뢰로 전국 지도에 오면 그 유산 입구 바로 앞에서 시작 */let REQ_AT=null;if(SITE==='worldmap'){const ck=qs.get('city');const sp=ck&&SITEB.spots&&SITEB.spots.find(x=>x.go===ck);if(sp){SITEB.spawn.x=sp.x;SITEB.spawn.z=sp.z+.4;REQ_AT=sp;/* 입구 앞이 강물이면 둘레 4m 안 마른 자리로 */try{const RA=SITEB.group&&SITEB.group.userData.riverAt;if(RA&&RA(SITEB.spawn.x,SITEB.spawn.z)!=null){let best=null;for(let d=1;d<=4&&!best;d+=.5)for(let k=0;k<16&&!best;k++){const a=k/16*Math.PI*2,x=sp.x+Math.cos(a)*d,z=sp.z+Math.sin(a)*d;if(RA(x,z)==null&&RA(x+Math.cos(a)*.8,z+Math.sin(a)*.8)==null)best={x,z}}if(best){SITEB.spawn.x=best.x;SITEB.spawn.z=best.z}}}catch(e){}}}
 const P=new THREE.Vector3(SITEB.spawn.x,SITEB.spawn.y||0,SITEB.spawn.z);let yaw=SITEB.spawn.yaw,camYaw=0,camPitch=.32,camDist=6,speed=0,vy=0,FP=false,me=null;const keys={};
 camYaw=yaw+Math.PI;
 const cv=$('#c'),ptr=new Map();let pinch=null,stickV={x:0,y:0},stickId=null;
