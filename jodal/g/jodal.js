@@ -5,7 +5,7 @@
    index.html 이 window.__JDX 로 필요한 것을 내준다. */
 const X=window.__JDX,THREE=X.THREE;
 const CREW={metal:'금속 장인',ceramic:'도공',science:'과학 장인',carpenter:'소목장',painter:'화공'};
-const FACE=k=>'../world3d/media/crew_'+k+'.jpg',THUMB=k=>'textures/thumb/'+k+'.webp';
+/* 한 파일 판(제출용)에서는 파일 안에 넣어 둔 그림 주소로 바로 바꿈(window.__JDR). 웹 판에서는 그대로 */const RS=u=>{try{return window.__JDR?window.__JDR(new URL(u,document.baseURI).href):u}catch(e){return u}};const FACE=k=>RS('../world3d/media/crew_'+k+'.jpg'),THUMB=k=>RS('textures/thumb/'+k+'.webp');
 /* 다섯 고을의 깨진 국보: 고을, 유물 키, 필요한 장인, 방에 적는 사연 */
 const JOBS=[
  {city:'경주',k:'crown',need:'metal',n:'천마총 금관',why:'금으로 만든 관이에요. 쇠붙이를 다루는 장인이 필요해요.'},
