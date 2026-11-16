@@ -700,3 +700,29 @@ loadSave();refreshUI();if(mods.size>0||found.some(Boolean)){setI($('#enter'),'co
 frame();$('#enter').addEventListener('click',()=>{audio();$('#gate').hidden=true;gateOpen=false;dist=tdist=baseD();netStart();TRK.start();guideTick();if(route&&route[0]){const ax=route[0][0]-you.x,az=route[0][1]-you.z;yaw=Math.atan2(-ax,-az);you.dir=Math.atan2(ax,az);camT.set(you.x+Math.sin(yaw)*dist,you.y+2.4,you.z+Math.cos(yaw)*dist)}setI($('#enter'),'again')});$('#help').addEventListener('click',()=>{gateOpen=true;for(const k in keys)keys[k]=false;autoWalk=false;$('#gate').hidden=false});
 })();
 </script>
+<script>/* 출처·저작권 창 (2026-11-16): 메뉴의 설명 단추 옆에 '출처' 단추. 한국어·영어 */(function(){try{
+ var help=document.getElementById('help');if(!help)return;var b=document.createElement('button');b.className='mini';b.id='cred';b.type='button';help.parentNode.insertBefore(b,help.nextSibling);
+ var ko=function(){var l=document.getElementById('lang');return !l||/English/.test(l.textContent)};
+ var paint=function(){var s=ko()?'출처':'Credits';if(b.textContent!==s)b.textContent=s};paint();setInterval(paint,1200);
+ b.addEventListener('click',function(){var o=document.getElementById('credOv');if(o){o.remove();return}o=document.createElement('div');o.id='credOv';o.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(10,7,4,.74);display:grid;place-items:center;padding:14px';
+  var K=ko();var rows=K?[
+   ['무이 캐릭터, 세계, 놀이 구성, 소리','© 초인 스튜디오. 무단 사용을 금합니다.'],
+   ['천마총 금관 사진','국립중앙박물관, 공공누리 제1유형'],
+   ['청자 사진','메트로폴리탄미술관, CC0'],
+   ['연꽃무늬 수막새 사진','Daderot, CC0 · 스웨덴 동아시아박물관 소장'],
+   ['광장 영상 「헤이와둥둥」','초인 스튜디오 작품'],
+   ['제작','초인 스튜디오 · AI 도구(Claude)와 함께 만들었어요'],
+   ['기술','three.js (MIT), Supabase, 글꼴은 구글 글꼴(SIL OFL)']
+  ]:[
+   ['MUUI characters, world, game design, sound','© CHOIN STUDIO. All rights reserved.'],
+   ['Photo of the Cheonmachong gold crown','National Museum of Korea, KOGL Type 1'],
+   ['Photo of the celadon','The Metropolitan Museum of Art, CC0'],
+   ['Photo of the lotus roof-end tile','Daderot, CC0 · Museum of Far Eastern Antiquities, Sweden'],
+   ['Plaza film "Heiwa Dungdung"','A work by CHOIN STUDIO'],
+   ['Made by','CHOIN STUDIO, built with an AI tool (Claude)'],
+   ['Tech','three.js (MIT), Supabase, Google Fonts (SIL OFL)']];
+  var h='<div style="background:#f3ead6;color:#2b1d12;border:4px solid #d8a838;border-radius:16px;padding:16px 18px;width:min(560px,94vw);max-height:86vh;overflow:auto;font:14px/1.65 sans-serif;box-sizing:border-box"><b style="display:block;font-size:22px;text-align:center;margin-bottom:8px">'+(K?'출처와 저작권':'Credits')+'</b><ul style="margin:0;padding-left:18px">';
+  for(var i=0;i<rows.length;i++)h+='<li style="margin:3px 0"><b>'+rows[i][0]+'</b> '+rows[i][1]+'</li>';
+  h+='</ul><p style="margin:10px 0 0;font-size:12.5px;color:#6b4a26">'+(K?'표기가 빠졌거나 틀린 곳이 있으면 알려 주세요. 바로 고칠게요.':'If a credit is missing or wrong, please tell us and we will fix it.')+'</p><div style="text-align:center;margin-top:10px"><button type="button" style="font-size:15px;padding:7px 18px;border-radius:10px;border:0;background:#3b2a1c;color:#fff4dc;cursor:pointer">'+(K?'닫기':'Close')+'</button></div></div>';
+  o.innerHTML=h;document.body.appendChild(o);o.addEventListener('click',function(e){if(e.target===o||e.target.tagName==='BUTTON')o.remove()})});
+}catch(e){}})();</script>
