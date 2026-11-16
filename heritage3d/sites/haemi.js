@@ -7,7 +7,7 @@ import {tex,noise,mulb,materials} from './sungnyemun.js';
 import {buildHall} from './hallkit.js';
 import {placeHanok,hanokWall,getModel} from './hanokkit.js';
 import {plantBroad} from './treekit.js';
-import {chogaHut} from './vernacular.js';
+import {chogaHut} from './vernacular.js';import {buildMarket} from './market.js';
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 export function buildHaemi(opts={}){const mini=!!opts.mini;const MT=materials();const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(417);
  const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
@@ -116,6 +116,17 @@ export function buildHaemi(opts={}){const mini=!!opts.mini;const MT=materials();
  if(!mini){for(const[x,z,ry,w]of[[-30,14,.3,5],[-36,6,-.2,4.4],[-24,22,.1,4.6]]){const h=chogaHut(w,2.6,2);h.position.set(x,0,z);h.rotation.y=ry;G.add(h);solids.push({cx:x,cz:z,r:w*.5+.2,y0:0,y1:3.4})}
   spots.push({x:-30,y:0,z:18.4,r:2.4,t:'민속가옥',h:'읍성 안에 옛 모습대로 다시 지은 초가예요. 병영 둘레에 살던 사람들의 살림집 모습을 보여 줘요.'})}
  /* 뒷동산 소나무 숲 */if(!mini){const L=[];for(let i=0;i<14;i++){const a=r()*Math.PI*2,d=8+r()*9;const x=QX-10+Math.cos(a)*d*1.3,z=QZ+2+Math.sin(a)*d*.6;if(Math.hypot(x-QX,z-QZ)<QR+1||Math.abs(x-QX)<2.4&&z>QZ)continue;if((x/(A-8))**2+(z/(B-8))**2>1)continue;L.push([x,0,z,r()*6,.9+r()*.35,0x4a7034])}plantBroad(G,L)}
+/* ---------- 성 안 장터와 민가 (2026-11-16): 남문 길 동쪽에 장터 거리, 서남·동남에 초가 살림집 ---------- */
+ if(!mini){try{buildMarket(G,solids,[],[{x:8.6,z0:13,z1:30,face:-1,k:4}],{seed:19})}catch(e){console.warn('해미 장터',e)}
+  const jar=M(0x5a3420,{roughness:.35}),fence=M(0x7a6448,{roughness:1}),stn=M(0x9a948a,{roughness:1});
+  const yard=(x,z,ry,w)=>{const h=chogaHut(w,2.4,1.9);h.position.set(x,0,z);h.rotation.y=ry;G.add(h);solids.push({cx:x,cz:z,r:w*.5+.2,y0:0,y1:3.4});
+   const c=Math.cos(ry),s=Math.sin(ry),P=(lx,lz)=>[x+lx*c+lz*s,z-lx*s+lz*c];
+   /* 장독대: 낮은 돌단 위 크고 작은 독 */{const [jx,jz]=P(w*.5+1.2,-.6);const bd=box(1.4,.25,1,stn);bd.position.set(jx,.12,jz);bd.rotation.y=ry;G.add(bd);for(const[dx,dz,sc]of[[-.4,-.2,1],[.15,-.25,.85],[.45,.2,.7],[-.2,.25,.75]]){const [px,pz]=P(w*.5+1.2+dx,-.6+dz);const o=new THREE.Mesh(new THREE.SphereGeometry(.26*sc,12,8),jar);o.scale.y=1.15;o.position.set(px,.25+.27*sc,pz);o.castShadow=true;G.add(o);const lid=new THREE.Mesh(new THREE.CylinderGeometry(.17*sc,.2*sc,.06,12),jar);lid.position.set(px,.25+.56*sc,pz);G.add(lid)}solids.push({cx:jx,cz:jz,r:.8,y0:0,y1:1})}
+   /* 싸리 울타리: 앞마당 둘레(앞쪽은 사립문 자리 비움) */for(const[lx0,lz0,lx1,lz1]of[[-w*.5-.8,1.6,-w*.5-.8,4.2],[w*.5+.8,1.6,w*.5+.8,4.2],[-w*.5-.8,4.2,-.9,4.2],[.9,4.2,w*.5+.8,4.2]]){const L=Math.hypot(lx1-lx0,lz1-lz0),n=Math.max(2,Math.round(L/.18));for(let i=0;i<=n;i++){const u=i/n,[px,pz]=P(lx0+(lx1-lx0)*u,lz0+(lz1-lz0)*u);const st=new THREE.Mesh(new THREE.CylinderGeometry(.025,.03,.85+((i*7)%5)*.04,5),fence);st.position.set(px,.43,pz);G.add(st)}const [ax,az]=P((lx0+lx1)/2,(lz0+lz1)/2);const rail=box(L,.04,.04,fence);rail.position.set(ax,.6,az);rail.rotation.y=ry+Math.atan2(-(lz1-lz0),lx1-lx0);G.add(rail);const [bx0,bz0]=P(lx0,lz0),[bx1,bz1]=P(lx1,lz1);S(Math.min(bx0,bx1)-.08,Math.max(bx0,bx1)+.08,0,1,Math.min(bz0,bz1)-.08,Math.max(bz0,bz1)+.08)}
+   /* 마당 빨랫줄과 멍석 */{const [mx,mz]=P(-.6,2.6);const ms=box(1.6,.03,1.1,M(0xb89a62,{roughness:1}));ms.position.set(mx,.02,mz);ms.rotation.y=ry+.2;G.add(ms)}};
+  for(const[x,z,ry,w]of[[-40,25,.5,4.6],[-31,31,.25,4.2],[22,28,-.3,4.6],[37,27,-.5,4.2]])yard(x,z,ry,w);
+  spots.push({x:2.6,y:0,z:21.5,r:2.6,t:'읍성 장터',h:'읍성 안에는 관아만 있지 않았어요. 성 안팎 백성이 모여 쌀, 소금, 옹기, 피륙을 사고팔았어요. 해미 장은 내포 지방 사람들이 모이는 큰 장이었다고 해요. (본떠 지은 연출)'});
+  spots.push({x:28,y:0,z:22.5,r:2.4,t:'초가 살림집',h:'흙벽에 볏짚 지붕을 얹은 초가예요. 앞마당에 장독대와 싸리 울타리를 두고, 멍석을 펴 곡식을 말렸어요. (본떠 지은 연출)'})}
 /* ---------- 나무: 성 안 몇 그루 ---------- */
  if(!mini)plantBroad(G,[[-24,0,8,1,1,0x5a8a40],[-30,0,-2,2,1.1,0x4f7a38],[30,0,-2,3,.95,0x5f8a3e],[34,0,8,4,1,0x56843c],[-20,0,16,5,.9,0x5a8a40],[8,0,-26,6,1,0x4f7a38],[22,0,-22,1,1.1,0x5a8a40],[-26,0,-24,2,1,0x4a7034]]);
  const tick=()=>{};
