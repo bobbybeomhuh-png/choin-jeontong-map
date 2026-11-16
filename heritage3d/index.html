@@ -62,6 +62,9 @@ var i=Math.floor(Math.random()*L.length);S.textContent=L[i];window.__LDT=setInte
 <section id="card" hidden><div class="in"><h2 id="cT"></h2><p id="cP"></p><button class="btn" id="cV" type="button" hidden>쇼츠 속 이 장면 보기</button> <button class="btn" id="cX" type="button">닫기</button></div></section>
 <script type="module">
 import * as THREE from 'three';
+import {GLYPHS} from './glyphs.js';
+/* 글꼴 미리 받기: 표지판·엽서처럼 캔버스에 그리는 글자가 글꼴 조각이 덜 온 채 다른 글꼴로 찍히던 것(예: '엽' 한 글자만 다른 글꼴) 막기. 쓰이는 글자 전부를 미리 요청하고 잠깐(길어야 2.5초) 기다린다. 목록은 tools/mkglyphs.py 가 만든다 */
+try{const FL=f=>document.fonts.load(f,GLYPHS);window.__FONTS=Promise.all([FL('400 20px "Do Hyeon"'),FL('400 20px "Gowun Dodum"')]);FL('500 20px "Noto Serif KR"');FL('700 20px "Noto Serif KR"');await Promise.race([window.__FONTS,new Promise(r=>setTimeout(r,2500))])}catch(e){}
 /* 압축 모델(Draco) 풀기: 모든 모델 로더에 같은 해독기를 붙인다 */{const DL=new DRACOLoader();DL.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');const _l=GLTFLoader.prototype.load;let READY=false;const Q=[];window.__h3Ready=()=>{if(READY)return;READY=true;const q=Q.splice(0);q.forEach(f=>f())};setTimeout(()=>window.__h3Ready(),12000);/* 느린 데이터: 캐릭터를 먼저 받고 큰 모형은 그 뒤에 */GLTFLoader.prototype.load=function(url,...a){if(!this.dracoLoader)this.setDRACOLoader(DL);if(READY||/muui_|horse/.test(String(url)))return _l.call(this,url,...a);Q.push(()=>_l.call(this,url,...a))}}
 
 const VSRC=()=>SITEB&&SITEB.video?'../world3d/media/full_'+SITEB.video+'.mp4':SITEB&&SITEB.short?'media/shorts/'+SITEB.short+'.mp4':null;let pipS=null,VBLOB=null;
@@ -107,8 +110,8 @@ function snapShot(){const pc=cam.clone();let undo=[];try{if(me&&!(window.__CAMFN
 function photoCard(){audioOn();try{weekPop(weekBump('photo'))}catch(e){}try{trk('h3_photo',SITE,false)}catch(e){}const qd=document.getElementById('qdone');if(qd)qd.hidden=true;let shot;try{shot=snapShot()}catch(e){return}
   try{shutterSnd()}catch(e){}const fl=document.createElement('div');fl.style.cssText='position:fixed;inset:0;background:#fff;z-index:40;opacity:.85;transition:opacity .45s;pointer-events:none';document.body.append(fl);requestAnimationFrame(()=>requestAnimationFrame(()=>fl.style.opacity='0'));setTimeout(()=>fl.remove(),600);
   const im=new Image();im.onload=async()=>{const ttl=(document.getElementById('ttl')||{}).textContent||'';const now=new Date(),ds=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-    /* 진짜 우편엽서 꼴: 왼쪽 찍은 장면, 오른쪽 실제 유물 우표·소인·손글씨·출처(sites/postcard.js) */let def=null,simg=null;try{def=stampFor(SITE,spotNow&&spotNow.t);simg=await Promise.race([stampImage(def),new Promise(r=>setTimeout(()=>r(null),6000))])}catch(e){}
-    const place=ttl.split('·')[0].trim();const c=drawPostcard(im,{title:place,place:place.split(' ').slice(0,2).join(' '),date:ds,def,simg});
+    /* 진짜 우편엽서 꼴: 왼쪽 찍은 장면, 오른쪽 실제 유물 우표·소인·손글씨·출처(sites/postcard.js) */let def=null,simg=null;try{def=stampFor(SITE,spotNow&&spotNow.t);simg=await Promise.race([stampImage(def,900,820),new Promise(r=>setTimeout(()=>r(null),6000))])}catch(e){}
+    const place=ttl.split('·')[0].trim();try{await postcardFonts([place,ds,def&&def.n,def&&def.e,def&&def.msg,def&&def.c])}catch(e){}const c=drawPostcard(im,{title:place,place:place.split(' ').slice(0,2).join(' '),date:ds,def,hero:simg});
     const url=c.toDataURL('image/jpeg',.9);try{const tc=document.createElement('canvas');tc.width=360;tc.height=240;tc.getContext('2d').drawImage(c,0,0,360,240);const PC=JSON.parse(localStorage.getItem('muui-postcards')||'[]');PC.push({s:SITE,t:ttl.split('·')[0].trim(),d:ds,u:tc.toDataURL('image/jpeg',.78)});while(PC.length>12)PC.shift();localStorage.setItem('muui-postcards',JSON.stringify(PC))}catch(e){}try{const st=new Set(JSON.parse(localStorage.getItem('muui3d-stamps')||'[]'));if(!st.has('photo')){st.add('photo');localStorage.setItem('muui3d-stamps',JSON.stringify([...st]))}}catch(e){}let n=0;try{n=+(localStorage.getItem('muui-h3-photos')||0)+1;localStorage.setItem('muui-h3-photos',n)}catch(e){}
     const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:35;background:rgba(20,14,8,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px';
     ov.innerHTML=`<img src="${url}" style="max-width:min(92vw,900px);max-height:72vh;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5);transform:rotate(-1.5deg) scale(.9);transition:transform .35s cubic-bezier(.2,1.5,.4,1)"><div><a class="btn" download="muui_${SITE}_${ds.replace(/\./g,'')}.jpg" href="${url}" style="text-decoration:none;background:#d8a838;color:#1d1408;margin-right:8px">엽서 저장</a><button class="btn" type="button" style="background:#3b2a1c;color:#fff4dc">닫기</button></div>`;
@@ -184,7 +187,7 @@ import {buildYeongju,buildYesan} from './sites/goryeo.js';
 import {buildNaju,buildMungyeong} from './sites/najumg.js';
 import {buildHaemi} from './sites/haemi.js';
 import {tuhoGame,jegiGame,yutGame} from './sites/minigames6.js';
-import {workshopGame,restoreGame,rushGame,ART as RART,restored as rDone} from './sites/restore3d.js';import {stampFor,stampImage,drawPostcard} from './sites/postcard.js';
+import {workshopGame,restoreGame,rushGame,ART as RART,restored as rDone} from './sites/restore3d.js';import {stampFor,stampImage,drawPostcard,postcardFonts} from './sites/postcard.js';
 import {buildCheongju} from './sites/cheongju.js';
 import {finishScene,skyEnv,aoSetup} from './finish.js';
 let POST=null;
