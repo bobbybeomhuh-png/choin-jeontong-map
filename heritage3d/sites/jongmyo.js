@@ -32,7 +32,7 @@ export function buildJongmyo(opts={}){const mini=!!opts.mini;const MT=materials(
   /* 계단 셋: 가운데(신로가 닿는 곳)와 동·서 */for(const sx of[-14,0,14]){const w=sx?3.2:4.4;for(let i=0;i<3;i++){const st=box(w,WH*(i+1)/3,.42,jds(2));st.position.set(sx,WH*(i+1)/6,14+(3-i)*.42-.21);G.add(st);S(sx-w/2,sx+w/2,0,WH*(i+1)/3,14+(2-i)*.42,14+(3-i)*.42)}}
   /* 월대 가장자리 돌 띠 */const ed=box(80.4,.12,.5,M(0x8e887c));ed.position.set(0,WH+.06,13.8);G.add(ed)}
  /* ---------- 정전: 신실 19칸, 맞배지붕, 붉은 기둥 ---------- */
- G.add(buildHall({x:0,z:HZ,W:HW,D:HD,nx:19,nz:2,FY:WH-.02,PH:4.4,base:false,stairs:'none',roof:'gable',name:'宗廟',pillar:0x8a2a22,bracket:'ik',front:'door',back:'wall',left:'wall',right:'wall',roofScale:1,mini,solids,light:false}).group);
+ G.add(buildHall({x:0,z:HZ,W:HW,D:HD,nx:19,nz:2,FY:WH-.02,PH:4.4,base:false,stairs:'none',roof:'gable',name:'宗廟',pillar:0x8a2a22,bracket:'ik',front:'door',panmun:true,back:'wall',left:'wall',right:'wall',roofScale:1,mini,solids,light:false}).group);
  /* ---------- 동·서 월랑: 정전 양옆에서 앞으로 뻗은 날개 건물. 동월랑은 벽, 서월랑은 기둥만 ---------- */
  for(const sx of[-1,1]){G.add(buildHall({x:sx*37,z:2,W:16,D:4.6,ry:sx<0?Math.PI/2:-Math.PI/2,nx:5,nz:1,FY:WH-.02,PH:3.4,base:false,stairs:'none',roof:'gable',pillar:0x8a2a22,bracket:'ik',front:sx<0?'open':'wall',back:'wall',left:'wall',right:'wall',roofScale:.85,mini,solids,light:false,plain:true}).group)}
  /* ---------- 신로: 가운데 조금 높은 길(신이 다니는 길)과 양옆 길 ---------- */
