@@ -20,7 +20,7 @@ let ST=load();const save=()=>{try{localStorage.setItem(LS,JSON.stringify(ST))}ca
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const josa=(w,a,b)=>((w.charCodeAt(w.length-1)-0xac00)%28)?a:b;
 const css=document.createElement('style');css.textContent=`
-#bVisit,#bHome,#bStamp,#bShorts,#bStory,#bBack,#bNet,#bGreet,#wmSeason,#quest,#credChip{display:none!important}
+#bVisit,#bHome,#bStamp,#bShorts,#bStory,#bBack,#bNet,#bGreet,#wmSeason,#quest,#credChip,#homeUI,#lvl{display:none!important}
 .jd-ov{position:fixed;inset:0;z-index:28;background:rgba(10,7,4,.78);display:grid;place-items:center;padding:12px;font:15px/1.6 "Gowun Dodum",sans-serif;color:#2b1d12}
 .jd-card{background:#f3ead6;border:4px solid #d8a838;border-radius:18px;padding:16px 18px;width:min(760px,96vw);max-height:94vh;overflow:auto;box-sizing:border-box;text-align:center}
 .jd-card h2{font:26px "Do Hyeon",sans-serif;color:#8e2b20;margin:0 0 4px}.jd-card h3{font:18px "Do Hyeon",sans-serif;color:#3b2a1c;margin:12px 0 6px;text-align:left}
@@ -55,7 +55,7 @@ function boardAt(job,sp){const g=new THREE.Group(),M=(c,o={})=>new THREE.MeshSta
  const lamp=new THREE.PointLight(0xffd27a,0,9,1.6);lamp.position.set(0,2.8,.6);g.add(lamp);
  g.position.set(sp.x-2.6,sp.y,sp.z-.4);g.rotation.y=.35;X.scene.add(g);
  const paint=()=>{const q=cv.getContext('2d'),dn=ST.done[job.k];q.fillStyle=dn?'#f6ecd0':'#fbf3dc';q.fillRect(0,0,320,220);q.strokeStyle='#3b2a1c';q.lineWidth=6;q.strokeRect(5,5,310,210);q.fillStyle='#8e2b20';q.textAlign='center';q.font='bold 58px serif';q.fillText('榜',160,74);q.fillStyle='#2b1d12';q.font='bold 30px sans-serif';q.fillText(job.n,160,124,290);q.font='24px sans-serif';q.fillText(dn?'되살렸음 '+starStr(dn.stars):'장인을 구하오',160,168,290);if(dn){q.strokeStyle='#b8322a';q.lineWidth=7;q.beginPath();q.arc(262,64,38,0,7);q.stroke();q.fillStyle='#b8322a';q.font='bold 26px sans-serif';q.fillText('완료',262,74)}tx.needsUpdate=true;beam.visible=!dn;lamp.intensity=dn?9:0};paint();boards.set(job.k,{g,paint})}
-function setupMap(){const SP=X.SPOTS;let n=0;for(const s of SP){if(s.go){/* 조달청판에는 유산 마당이 없으므로 들어가기를 끔 */s.go=null;s.t=String(s.t).split(' · ')[0]}}
+function setupMap(){const SP=X.SPOTS;let n=0;/* 무이 월드에서 딸려 온 볼거리 정리: 쇼츠 화면 단추, 복원 공방·집짓기 안내는 조달청판에서 쓰지 않음 */for(let i=SP.length-1;i>=0;i--){const tt=String(SP[i].t||'');if(/쇼츠 크게 보기|무이 복원 공방|집짓기|내 집|누각/.test(tt)||SP[i].play||SP[i].vt)SP.splice(i,1)}try{const pn=document.getElementById('wmPanel');if(pn){for(const b of [...pn.querySelectorAll('button')])if(/집짓기/.test(b.textContent))b.remove();const h=pn.querySelector('h3');if(h)h.textContent='어느 고을로 날아갈까요?'}const wb=document.getElementById('wmBtn');if(wb)wb.dataset.raw='고을로 날아가기'}catch(e){}for(const s of SP){if(s.go){/* 조달청판에는 유산 마당이 없으므로 들어가기를 끔 */s.go=null;s.t=String(s.t).split(' · ')[0]}}
  for(const job of JOBS){const s=SP.find(q=>q.t===job.city||String(q.t).startsWith(job.city+' '))||SP.find(q=>String(q.t).startsWith(job.city));if(!s){console.warn('고을 없음',job.city);continue}s.jodal=job.k;s.r=Math.max(s.r||3,3.4);job.sp=s;boardAt(job,s);n++}
  return n}
 
@@ -94,7 +94,7 @@ function pickArtisan(job,pick){const u=ov();const C=candidates(job,pick);let sel
   u.c.querySelector('[data-ok]').onclick=()=>{const a=C.L.find(x=>x.id===sel);if(ST.coins<a.cost){X.hint('곳간의 냥이 모자라요.',2500);return}/* 수결 도장 */const s=document.createElement('div');s.textContent='手決';s.style.cssText='position:fixed;left:50%;top:44%;z-index:40;margin:-70px 0 0 -70px;width:140px;height:140px;border:8px solid #b8322a;border-radius:14px;color:#b8322a;display:grid;place-items:center;font:700 54px "Noto Serif KR",serif;background:rgba(255,250,240,.9);animation:jdStamp .5s ease-out forwards';document.body.append(s);setTimeout(()=>{s.remove();u.close();startRestore(job,pick,a,C.wrong)},1100)}};draw()}
 
 /* ---------- 3 복원 ---------- */
-function startRestore(job,pick,a,wrong){ST.coins-=a.cost;save();hudDraw();const npAdd=(a.npAdd||0)+(wrong?2:0);
+function startRestore(job,pick,a,wrong){ST.coins-=a.cost;save();hudDraw();window.__JDFACE=pick.crew;const npAdd=(a.npAdd||0)+(wrong?2:0);
  X.mgOpen(function restore(ctx){X.restoreGame(ctx,job.k,{jodal:{npAdd,done:(Q,miss,sec)=>ledger(job,pick,a,wrong,Q)}});setTimeout(()=>{try{ctx.say(a.id==='real'&&!wrong?'솜씨 좋은 장인이 조각을 곱게 다듬어 왔어요. 맞추기만 하면 돼요!':wrong?'전공이 다른 장인이라 조각이 더 잘게 부서졌어요. 그래도 끝까지 맞춰 봐요.':'서툰 손이 거들다가 조각이 더 깨졌어요. 조심조심 맞춰요.')}catch(e){}},1600)})}
 
 /* ---------- 4 의궤 한 장 ---------- */
