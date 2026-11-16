@@ -4,7 +4,7 @@
 const J=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 export const starOf=q=>q>=90?3:q>=70?2:q>0?1:0;
 export const starStr=n=>'★'.repeat(n)+'☆'.repeat(Math.max(0,3-n));
-export const PRICE={quest:30,star:10,rally:50,day:10,dig:5,chapter:100,week:40,fest:50};
+export const PRICE={quest:30,star:10,rally:50,day:10,dig:5,chapter:100,week:40,fest:50,req:15,set:60};
 export function gameStars(){const gq=J('muui-h3-gameq',{}),played=J('muui-h3-games',[]);const out={};for(const k in gq)out[k]=starOf(gq[k]);if(played.includes('stars'))out.stars=3;return out}
 export function coinState(){
  const st=gameStars();let stars=0;for(const k in st)stars+=st[k];
@@ -12,7 +12,8 @@ export function coinState(){
  const EV=J('muui-ev-stamps',[]),rallies=EV.filter(e=>e&&String(e.k||'').startsWith('rally_')).length,chapters=EV.filter(e=>e&&String(e.k||'').startsWith('ch_')).length,fests=EV.filter(e=>e&&String(e.k||'').startsWith('fest_')).length,weeks=(J('muui-week-log',[])||[]).length;
  const days=Object.keys(J('muui-daily',{})).length;
  const digs=(J('muui3d-stamps',[])||[]).length;
- const earned=quests*PRICE.quest+stars*PRICE.star+rallies*PRICE.rally+days*PRICE.day+digs*PRICE.dig+chapters*PRICE.chapter+weeks*PRICE.week+fests*PRICE.fest;
+ /* 복원 공방: 하루 의뢰서와 유물 세트 */const reqs=(J('muui-h3-reqs',[])||[]).length,sets=(J('muui-h3-sets',[])||[]).length;
+ const earned=reqs*PRICE.req+sets*PRICE.set+quests*PRICE.quest+stars*PRICE.star+rallies*PRICE.rally+days*PRICE.day+digs*PRICE.dig+chapters*PRICE.chapter+weeks*PRICE.week+fests*PRICE.fest;
  const spent=+J('muui-coin-spent',0)||0;
  return{earned,spent,coins:Math.max(0,earned-spent),stars,maxStars:51,quests,rallies,days,digs,chapters,weeks,fests}}
 export function spendCoins(n){const s=coinState();if(s.coins<n)return false;try{localStorage.setItem('muui-coin-spent',JSON.stringify(s.spent+n))}catch(e){return false}return true}
