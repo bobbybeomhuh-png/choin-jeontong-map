@@ -83,7 +83,7 @@ export function drawPostcard(shot,o){const W=1500,H=1000,c=document.createElemen
 export async function postcardFonts(texts){const s=texts.filter(Boolean).join('')+'우편엽서무이복원단우체국대한민국유산받는사람을아끼친구에게캐릭터초스튜디오과함께서';try{await Promise.race([Promise.all(['400 30px "Do Hyeon"','400 30px "Gowun Dodum"','700 30px "Noto Serif KR"'].map(f=>document.fonts.load(f,s))),new Promise(r=>setTimeout(r,3000))])}catch(e){}}
 
 /* 복원한 유물로 엽서 만들기: 큰 그림은 유물, 우표는 복원단 무이 초상 */
-const ERA={crown:'신라 5~6세기',maebyeong:'고려',hyangro:'백제 · 국보',moonjar:'조선 1700년대',sumaksae:'신라 · 보물',bansa:'삼국시대 · 국보',angbu:'조선',dragonjar:'조선 1700년대',kundika:'고려',unhyun:'조선',fishbottle:'조선 1400년대',eobo:'조선',bell:'통일신라 771년 · 국보',scrollbox:'조선',jikjitype:'고려',haetae:'조선',najeonham:'조선'};
+const ERA={crown:'신라 5~6세기',maebyeong:'고려',hyangro:'백제 · 국보',moonjar:'조선 1700년대',sumaksae:'신라 · 보물',bansa:'삼국시대 · 국보',angbu:'조선',dragonjar:'조선 1700년대',kundika:'고려',unhyun:'조선',fishbottle:'조선 1400년대',eobo:'조선',bell:'통일신라 771년 · 국보',scrollbox:'조선',jikjitype:'고려',haetae:'조선',najeonham:'조선',pitcher:'고려 1100년대',lion:'고려',kettle:'고려',gamsari:'통일신라 682년 무렵',dujeonggap:'조선',cannon:'조선',hongipo:'조선 17세기',geojunggi:'조선 정조 때'};
 const CREW={science:'과학 무이',metal:'금속 무이',ceramic:'도예 무이',painter:'화공 무이',carpenter:'목수 무이'};
 export async function artPostcard(key,o={}){const a=ART.find(x=>x.k===key);if(!a)return null;const sd=Object.values(STAMPS).find(s=>s.m===a.m);const def={m:a.m,n:a.n,e:ERA[a.k]||(sd?sd.e:a.site),c:credOf(a.d)||'공개 자료'};
  const ck=o.crew&&CREW[o.crew]?o.crew:(a.kind==='metal'?'metal':a.kind==='ceramic'?'ceramic':a.kind==='lacquer'?'carpenter':'science');
