@@ -33,6 +33,9 @@ export const ART=[
  {k:'gamsari',m:'gyeongju/gam_outer',n:'감은사 사리장엄',kind:'metal',cut:'band',np:3,site:'경주',d:'경주 감은사 터 서쪽 삼층석탑 안에서 나온 사리 그릇이에요(통일신라, 682년 무렵). 사천왕을 두드려 새긴 금동 바깥 함 안에, 난간과 악사·승려 조각을 두른 집 모양 안쪽 함이 들어 있었어요. (3D: 국가유산청, CC BY)'},
  {k:'dujeonggap',m:'jinju/dujeonggap',n:'두정갑',kind:'lacquer',cut:'band',np:3,site:'진주',d:'조선 장수가 입던 갑옷이에요. 천 안쪽에 쇠 미늘을 대고 겉에 둥근 못(두정)을 박아 "두정갑"이라 해요. 투구와 함께 붉은 비단으로 지어 위엄이 있었어요. (3D: Heat Of Fusion, CC BY)'},
  {k:'cannon',m:'jinju/cannon',n:'현자총통',kind:'metal',cut:'ring',np:3,site:'진주',d:'조선의 화포 가운데 하나로, 길이 약 79cm예요(천자·지자·현자·황자 순으로 작아져요). 큰 화살(차대전)이나 쇠 탄환을 쏘았어요. 임진왜란 때 성과 배에서 크게 쓰였어요. (3D: 국가유산청 재현 에셋)'},
+ {k:'tukjong',m:'jongmyo/tukjong',n:'종묘제례 특종',kind:'metal',cut:'band',np:3,site:'서울',d:'종묘제례악에 쓰는 악기로, 쇠종 하나를 틀에 매달아 쳐요. 몸에 둥근 돌기가 줄지어 있어요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'jagyeok',m:'hanyang/jagyeok',n:'자격루 물그릇',kind:'metal',cut:'band',np:3,site:'서울',d:'세종 때 장영실이 만든 자동 물시계 자격루를 1536년(중종 31)에 다시 만든 것 가운데 남은 물그릇들이에요(국보). 위 그릇에서 흘러내린 물이 아래 긴 통에 차오르면 시각을 알렸어요. (3D: 국가유산청, CC BY)'},
+ {k:'toad',m:'gangjin/toad',n:'청자 두꺼비 모양 벼루',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'두꺼비가 엎드린 모양으로 빚은 고려 청자 벼루예요. (3D: 국가유산청 재현 에셋, CC BY)'},
  {k:'hongipo',m:'suwon/hongipo',n:'홍이포',kind:'metal',cut:'ring',np:4,site:'수원',d:'17세기에 네덜란드식 대포를 본떠 만든 큰 대포예요. 나무 수레에 얹어 옮기고 쇠공을 멀리 쏘았어요. 화성 같은 큰 성에 두어 성을 지켰어요. (3D: 한국문화정보원 KCISA, CC BY)'}];
 try{window.__ARTN=Object.fromEntries(ART.map(a=>[a.k,a.n]))}catch(e){}
 /* 미리 찍어 둔 유물 그림(textures/thumb, 만드는 법: 작업 기록 참고) */const THUMB=k=>new URL('../textures/thumb/'+k+'.webp',import.meta.url).href;
@@ -45,7 +48,7 @@ export const TOOLS=[{k:'brush',n:'넓은 붓',d:'붓질이 한 번에 넓게 닦
 export const hasTool=k=>{try{return (JSON.parse(localStorage.getItem('muui-h3-tools')||'[]')).includes(k)}catch(e){return false}};
 const buyTool=k=>{const T=TOOLS.find(x=>x.k===k);if(!T||hasTool(k))return false;if(!spendCoins(T.p))return false;try{const L=JSON.parse(localStorage.getItem('muui-h3-tools')||'[]');L.push(k);localStorage.setItem('muui-h3-tools',JSON.stringify(L))}catch(e){}return true};
 /* 유물 세트: 다 복원하면 엽전 덤 */
-export const SETS=[{id:'silla',n:'신라의 빛',k:['crown','bansa','bell','sumaksae','gamsari']},{id:'celadon',n:'고려 청자와 백제 향로',k:['maebyeong','kundika','pitcher','lion','kettle','hyangro']},{id:'joseon',n:'조선 백자와 분청',k:['moonjar','dragonjar','unhyun','fishbottle']},{id:'royal',n:'왕실과 과학',k:['angbu','eobo','haetae']},{id:'craft',n:'장인의 솜씨',k:['najeonham','scrollbox','jikjitype']},{id:'fort',n:'성을 지킨 것들',k:['dujeonggap','cannon','hongipo']}];
+export const SETS=[{id:'silla',n:'신라의 빛',k:['crown','bansa','bell','sumaksae','gamsari']},{id:'celadon',n:'고려 청자와 백제 향로',k:['maebyeong','kundika','pitcher','lion','kettle','toad','hyangro']},{id:'joseon',n:'조선 백자와 분청',k:['moonjar','dragonjar','unhyun','fishbottle']},{id:'royal',n:'왕실과 과학',k:['angbu','eobo','haetae','jagyeok','tukjong']},{id:'craft',n:'장인의 솜씨',k:['najeonham','scrollbox','jikjitype']},{id:'fort',n:'성을 지킨 것들',k:['dujeonggap','cannon','hongipo']}];
 const LJ=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},LS_=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 /* 새로 완성된 세트를 기록하고 돌려줌 */const checkSets=()=>{const R=restored(),got=LJ('muui-h3-sets',[]),out=[];for(const s of SETS)if(!got.includes(s.id)&&s.k.every(k=>R.has(k))){got.push(s.id);out.push(s)}if(out.length)LS_('muui-h3-sets',got);return out};
 /* 의뢰서: 한국 날짜로 하루 석 장. 0 오늘의 유물 복원, 1 다른 유물을 실수 없이, 2 긴급 출동 몇 점 이상 */
@@ -132,7 +135,7 @@ export function restoreGame(ctx,key,opt={}){const A=ART.find(a=>a.k===key)||ART[
  R.domElement.addEventListener('wheel',e=>{dist=Math.max(1.8,Math.min(8,dist*(1+Math.sign(e.deltaY)*.08)));e.preventDefault()},{passive:false});
  /* 붓질: 닿은 점 둘레 정점 알파를 줄임 */
  const tmpV=new THREE.Vector3();let lastSnd=0,lastFx=0;
- function brushAt(h){const m=h.object;const loc=m.worldToLocal(h.point.clone());const P=m.geometry.attributes.position,C=m.geometry.attributes.color;const rad=(step===2?.16:.22)*Math.max(.8,H/1.6)*(R.domElement.clientWidth<520?1.35:1)*(WIDE?1.45:1)/* 휴대폰은 붓을 크게 */;let ch=false;for(let v=0;v<P.count;v++){tmpV.fromBufferAttribute(P,v);const d=tmpV.distanceTo(loc);if(d<rad){const a=C.getW(v),na=Math.max(0,a-(1-d/rad)*.55);if(na!==a){C.setW(v,na);ch=true}}}if(ch)C.needsUpdate=true;
+ function brushAt(h){const m=h.object;const loc=m.worldToLocal(h.point.clone());const P=m.geometry.attributes.position,C=m.geometry.attributes.color;const rad=(step===2?.16:.22)*Math.max(.8,H/1.6)*(R.domElement.clientWidth<520?1.35:1)*(WIDE?1.45:1)/* 휴대폰은 붓을 크게 */;/* 붓 반경은 세상 크기 기준: 모델마다 단위가 달라(cm 단위 스캔 등) 메쉬 크기로 나눠 맞춤 */const wsc=m.getWorldScale(new THREE.Vector3());const radL=rad/Math.max(1e-6,(wsc.x+wsc.y+wsc.z)/3);let ch=false;for(let v=0;v<P.count;v++){tmpV.fromBufferAttribute(P,v);const d=tmpV.distanceTo(loc);if(d<radL){const a=C.getW(v),na=Math.max(0,a-(1-d/radL)*.55);if(na!==a){C.setW(v,na);ch=true}}}if(ch)C.needsUpdate=true;
   const now=performance.now();if(ch&&now-lastFx>45){lastFx=now;puff(h.point,step===2&&!CER?WHITE:DUSTC,step===2&&!CER?2:3,.55,.35,1.1)}if(now-lastSnd>80){lastSnd=now;sndBrush(ac,out)}}
  const dirtLeft=()=>{let s=0,n=0;for(const d of dirt){const C=d.geometry.attributes.color,N=d.geometry.attributes.normal;for(let v=0;v<C.count;v+=7){if(N&&N.getY(v)<-.55)continue;s+=C.getW(v);n++}}return n?s/n/.96:0};
  /* 이음매: 조각 경계를 따라 점 몇 개 */
