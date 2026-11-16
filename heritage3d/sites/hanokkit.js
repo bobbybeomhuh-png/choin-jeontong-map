@@ -8,7 +8,9 @@ import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 const U=p=>new URL('../models/'+p+'.glb',import.meta.url).href;
 const gl=new GLTFLoader();{const d=new DRACOLoader();d.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(d)}
 const CACHE={};
-export function getModel(p){if(!CACHE[p])CACHE[p]=new Promise(res=>gl.load(U(p),m=>{const s=m.scene;s.traverse(e=>{if(e.isMesh){e.castShadow=true;e.receiveShadow=true;const mm=e.material;if(mm&&mm.map)mm.map.anisotropy=8}});s.updateMatrixWorld(true);res(s)},undefined,()=>res(null)));return CACHE[p]}
+/* 뼈대가 든 정지 모델(정병·두루마리 상자 등)을 보통 물체로 굳힘: 뼈대가 있으면 복사본의 크기·자리 조절이 먹지 않아 진열장·엽서에서 작게 나오던 것 막기 */
+function bakeSkinned(s){s.updateMatrixWorld(true);const L=[];s.traverse(e=>{if(e.isSkinnedMesh)L.push(e)});const v=new THREE.Vector3();for(const e of L){try{e.skeleton.update();const g=e.geometry.clone(),P=g.attributes.position;for(let i=0;i<P.count;i++){v.fromBufferAttribute(P,i);e.applyBoneTransform(i,v);P.setXYZ(i,v.x,v.y,v.z)}g.deleteAttribute('skinIndex');g.deleteAttribute('skinWeight');g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();const n=new THREE.Mesh(g,e.material);n.name=e.name;n.position.copy(e.position);n.quaternion.copy(e.quaternion);n.scale.copy(e.scale);n.userData=e.userData;e.parent.add(n);e.parent.remove(e)}catch(err){console.warn('굳히기 실패',err)}}s.updateMatrixWorld(true)}
+export function getModel(p){if(!CACHE[p])CACHE[p]=new Promise(res=>gl.load(U(p),m=>{const s=m.scene;/* 이 로더로 받은 모델은 움직임을 틀지 않으므로 늘 굳힘 */bakeSkinned(s);s.traverse(e=>{if(e.isMesh){e.castShadow=true;e.receiveShadow=true;const mm=e.material;if(mm&&mm.map)mm.map.anisotropy=8}});s.updateMatrixWorld(true);res(s)},undefined,()=>res(null)));return CACHE[p]}
 /* 종류별 원본 정보: f=파일, h=세울 높이(m), fr=앞면을 +z로 돌리는 각도, n=이름 */
 export const HANOK={
  sarang:{f:'hanok/giwa_sarangchae',h:6.6,fr:-Math.PI/2,n:'기와 사랑채'},
