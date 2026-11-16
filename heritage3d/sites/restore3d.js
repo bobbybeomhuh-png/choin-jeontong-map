@@ -7,6 +7,7 @@ import {getModel} from './hanokkit.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,finishCard,softOut} from './minigames.js';
 import {coinPop,PRICE,coinState,spendCoins} from '../coin.js';
+import {SB} from '../trk3d.js';
 export const ART=[
  {k:'crown',m:'gyeongju/crown',n:'천마총 금관',kind:'metal',cut:'ring',np:3,site:'경주',d:'경주 천마총에서 나온 신라 금관(5~6세기)이에요. 높이 32.5cm, 나뭇가지 모양 세움장식 셋과 사슴뿔 모양 둘에 곱은옥과 달개가 주렁주렁 달려 있어요. (3D: 국가유산청)'},
  {k:'maebyeong',m:'gangjin/maebyeong',n:'청자 매병',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'어깨가 넓고 입이 좁은 고려 청자 매병이에요. (3D: 클리블랜드 미술관 공개, CC0)'},
@@ -214,6 +215,11 @@ export function artViewer(key,opt={}){let A=ART.find(a=>a.k===key);if(!A)return;
  window.__AV={state:()=>({k:A.k,loaded:!!art,yaw,dist,star:starOfArt(A.k)}),close,nav};return{close}}
 
 
+/* 오늘의 순위(서버 표 muui_rush, tools/muui_rush_rank.sql). 표가 아직 없거나 통신이 안 되면 조용히 건너뜀. 시험(from=test)은 올리지 않음 */
+const KDAY=()=>new Date(Date.now()+9*36e5).toISOString().slice(0,10);
+const isTest=()=>{try{return new URLSearchParams(location.search).get('from')==='test'}catch(e){return false}};
+let RANK_OFF=false;/* 표가 없으면(404) 이번 방문에는 다시 묻지 않음 */async function rushRank(){if(RANK_OFF)return null;try{const r=await fetch(`${SB.url}/rest/v1/muui_rush_pub?day=eq.${KDAY()}&select=nick,score&order=score.desc,created_at.asc&limit=5`,{headers:{apikey:SB.key,Authorization:'Bearer '+SB.key}});if(!r.ok){if(r.status===404)RANK_OFF=true;return null}const j=await r.json();return Array.isArray(j)?j:null}catch(e){return null}}
+async function rushSubmit(score){if(isTest()||score<1)return null;try{let nick='';try{nick=localStorage.getItem('muui3d-name')||''}catch(e){}const r=await fetch(`${SB.url}/rest/v1/rpc/rush_submit`,{method:'POST',headers:{apikey:SB.key,Authorization:'Bearer '+SB.key,'Content-Type':'application/json'},body:JSON.stringify({p_sid:String(SB.sid||'').slice(0,40),p_nick:nick||'복원단원',p_score:Math.min(40,score)})});if(!r.ok)return null;return await r.json()}catch(e){return null}}
 /* ---------- 긴급 출동 60초 (2026-11-16) ----------
    깨진 유물이 줄줄이 들어온다. 조각 셋만 맞추면 바로 다음 유물. 한 점 고칠 때마다 시간 +3초.
    끝나면 몇 점 고쳤는지와 내 최고 기록. 짧고 여러 번 하기 좋게 */
@@ -226,6 +232,7 @@ export function rushGame(ctx){const list=RUSH_ART.slice().sort(()=>Math.random()
   const ui=overlay('radial-gradient(circle at 50% 35%,#5a3020,#140c08)');ui.c.style.display='none';title(ui.top,'긴급 출동 끝!','');const Q=Math.min(100,n*17);try{if(n>0)ctx.done('restore_rush',Q,'긴급 출동 '+n+'점')}catch(e){}
   const card=document.createElement('div');card.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:min(440px,90vw);background:#f3ead6;border:4px solid #d8a838;border-radius:18px;padding:20px 22px;text-align:center;color:#2b1d12;font:15px/1.6 "Gowun Dodum",sans-serif';
   card.innerHTML=`<div style="font:60px 'Do Hyeon',sans-serif;color:#8e2b20;line-height:1">${n}<small style="font-size:24px">점</small></div><b style="display:block;font:22px 'Do Hyeon',sans-serif;margin:6px 0">${n>=8?'전설의 복원 장인!':n>=5?'손이 빠른 복원가!':n>=3?'든든한 복원단원!':n>=1?'첫 출동 성공!':'다음엔 더 빨리!'}</b>${rec?'<div style="color:#a8602a;font:17px \'Do Hyeon\',sans-serif">★ 내 최고 기록!</div>':`<div style="color:#6b4a26">내 최고 ${Math.max(best,n)}점</div>`}<div style="margin:8px 0;font-size:13.5px;color:#6b4a26">${done.length?'고친 유물: '+[...new Set(done)].join(', '):'조각 셋을 흐린 자리에 끌어다 놓으면 한 점이에요.'}</div>${reqMsg}<div style="display:flex;gap:8px;justify-content:center;margin-top:10px"><button type="button" data-a="again" style="font:17px 'Do Hyeon',sans-serif;padding:9px 18px;border-radius:11px;border:0;background:#8e2b20;color:#fff4dc;cursor:pointer">한 번 더</button><button type="button" data-a="shop" style="font:17px 'Do Hyeon',sans-serif;padding:9px 18px;border-radius:11px;border:2px solid #3b2a1c;background:#fff4dc;color:#3b2a1c;cursor:pointer">공방으로</button></div>`;ui.o.append(card);
+  /* 오늘의 순위: 점수 올리고 위 다섯 줄 보여 줌(서버 표가 있을 때만) */{const rk=document.createElement('div');rk.style.cssText='margin-top:10px;font-size:13.5px;color:#3b2a1c;text-align:left;display:none';card.insertBefore(rk,card.lastElementChild);(async()=>{const L0=await rushRank();if(RANK_OFF)return;const mine=await rushSubmit(n);const L=mine?await rushRank():L0;if(!L||!L.length)return;const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));rk.innerHTML=`<b style="display:block;text-align:center;font:16px 'Do Hyeon',sans-serif;color:#8e2b20;margin-bottom:2px">오늘의 순위${mine?` · 나는 ${mine}등`:''}</b>`+L.map((x,i)=>`<div style="display:flex;justify-content:space-between;padding:2px 10px;border-bottom:1px dashed rgba(60,40,20,.25)"><span>${i+1}. ${esc(x.nick)}</span><b>${x.score}점</b></div>`).join('');rk.style.display='block'})()}
   card.querySelector('[data-a=again]').onclick=()=>{ui.o.remove();rushGame(ctx)};card.querySelector('[data-a=shop]').onclick=()=>{ui.o.remove();workshopGame(ctx)};ui.x.onclick=()=>ui.o.remove();window.__RUSH={n,ended:true}};
  st.abort=()=>end(true);
  let last=performance.now();const iv=setInterval(()=>{const now=performance.now();if(on)t-=(now-last)/1000;last=now;tEl.textContent=Math.max(0,t).toFixed(1);tEl.style.background=t<10?'rgba(200,40,30,.95)':'rgba(142,43,32,.92)';if(t<=0)end(false)},100);
