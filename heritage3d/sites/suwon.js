@@ -72,9 +72,18 @@ export function buildSuwon(opts={}){const mini=!!opts.mini;const MT=materials();
   spots.push({x:bx+10,y:0,z:bz,r:2.6,t:'별주',h:'화성행궁 안 건물로, 임금이 행차했을 때 잔치에 쓸 술과 음식을 마련하던 곳이에요. 1795년 혜경궁 홍씨 회갑 잔치도 이곳에서 준비했어요. (3D: 한국문화정보원 KCISA, CC BY)'})}
  /* ---------- 성벽 쌓는 현장: 비계와 오르는 경사로, 성돌 ---------- */
  {const SX=-20,SZ0=1.6;const wd=M(0x8a6a44);for(let i=0;i<5;i++)for(let k=0;k<2;k++){const p=new THREE.Mesh(new THREE.CylinderGeometry(.08,.09,6.2,6),wd);p.position.set(SX-6+i*3,3.1,SZ0+.4+k*1.6);p.castShadow=true;G.add(p)}
-  for(let lv=1;lv<=3;lv++){const pl=box(12.4,.08,1.9,wd);pl.position.set(SX,lv*1.8,SZ0+1.2);G.add(pl);for(const k of[0,1]){const rl=box(12.4,.06,.06,wd);rl.position.set(SX,lv*1.8+.9,SZ0+.4+k*1.6);G.add(rl)}}
-  for(let i=0;i<5;i++){const d=box(.08,.08,1.9,wd);d.position.set(SX-6+i*3,1,SZ0+1.2);d.rotation.x=.9;G.add(d)}
-  const ramp=box(1.4,.12,8,wd);ramp.position.set(SX+8,1.2,SZ0+5);ramp.rotation.x=.32;G.add(ramp);S(SX-6.3,SX+6.3,0,6.4,SZ0,SZ0+2.4);S(SX+7.2,SX+8.8,0,2.6,SZ0+1,SZ0+9);
+  /* 발판: 한 장짜리 판 대신 결 있는 널판 여러 장(길이·폭 조금씩 다르고 엇갈려 깔림), 밑 가로대, 기둥과 난간 묶은 새끼줄 */
+  const GR=tex(256,64,(q,w,h)=>{q.fillStyle='#9a7650';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=2){q.strokeStyle=`rgba(${70+r()*30},${48+r()*20},28,${.18+r()*.2})`;q.lineWidth=1;q.beginPath();q.moveTo(0,y);for(let x=0;x<=w;x+=16)q.lineTo(x,y+Math.sin(x*.05+y)*1.4);q.stroke()}q.fillStyle='rgba(60,40,22,.5)';for(let k=0;k<3;k++){const x=r()*w,y=r()*h;q.beginPath();q.ellipse(x,y,5,2.4,0,0,7);q.fill()}q.fillStyle='rgba(40,26,14,.55)';q.fillRect(0,0,3,h);q.fillRect(w-3,0,3,h)});
+  const pm=[0xffffff,0xe8dccb,0xf4e6d0].map(c=>new THREE.MeshStandardMaterial({map:GR,color:c,roughness:.92}));
+  const rope=M(0x6a5a3c,{roughness:1});
+  for(let lv=1;lv<=3;lv++){const y=lv*1.8;
+   for(let i=0;i<5;i++){const lg=box(.1,.1,1.9,wd);lg.position.set(SX-6+i*3,y-.09,SZ0+1.2);G.add(lg)}
+   for(let row=0;row<6;row++){let x=SX-6.2-(row%2)*.7;while(x<SX+6.2){const Lp=Math.min(2.2+r()*1.4,SX+6.2-x);if(Lp<.6)break;const x0=Math.max(x,SX-6.2),Lc=x+Lp-x0;const pl=box(Lc-.04,.05,.27+r()*.03,pm[Math.floor(r()*3)]);pl.position.set(x0+Lc/2,y-.01+(r()-.5)*.01,SZ0+.45+row*.3);pl.rotation.y=(r()-.5)*.02;pl.castShadow=pl.receiveShadow=true;G.add(pl);x+=Lp}}
+   for(const k of[0,1]){const rl=new THREE.Mesh(new THREE.CylinderGeometry(.04,.045,12.4,6),wd);rl.rotation.z=Math.PI/2;rl.position.set(SX,y+.9,SZ0+.4+k*1.6);G.add(rl);
+    for(let i=0;i<5;i++)for(const yy of[y+.9,y-.09]){const kn=new THREE.Mesh(new THREE.TorusGeometry(.1,.025,5,10),rope);kn.position.set(SX-6+i*3,yy,SZ0+.4+k*1.6);kn.rotation.x=Math.PI/2;G.add(kn)}}}
+  /* 버팀대: 앞면에 X자로 */for(let i=0;i<4;i++)for(const sg of[-1,1]){const Lb=Math.hypot(3,1.8);const d=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,Lb,5),wd);d.position.set(SX-4.5+i*3,.9+1.8*(i%2),SZ0+.32);d.rotation.z=sg*Math.atan2(3,1.8);G.add(d)}
+  /* 경사로: 널판 넷을 나란히, 발 디딤 가로대 */{const g=new THREE.Group();g.position.set(SX+8,1.2,SZ0+5);g.rotation.x=.32;G.add(g);for(let k=0;k<4;k++){const pl=box(.33,.06,8,pm[k%3]);pl.position.set(-.51+k*.34,0,0);pl.castShadow=pl.receiveShadow=true;g.add(pl)}for(let z=-3.6;z<=3.6;z+=.45){const c=box(1.36,.05,.07,wd);c.position.set(0,.055,z);g.add(c)}}
+  S(SX-6.3,SX+6.3,0,6.4,SZ0,SZ0+2.4);S(SX+7.2,SX+8.8,0,2.6,SZ0+1,SZ0+9);
   const stn=M(0xbab3a6);for(let i=0;i<14;i++){const b=box(.9+r()*.4,.45,.6,stn);b.position.set(SX-5+(i%7)*1.6,1.8+.3+Math.floor(i/7)*1.8,SZ0+1.2);b.rotation.y=(r()-.5)*.2;G.add(b)}
   spots.push({x:SX,y:0,z:SZ0+4.4,r:2.8,t:'성벽 공사',h:'성벽은 비계(나무 발판)를 세우고 다듬은 돌을 한 단씩 올려 쌓았어요. 화성 축성에는 장인 1,800여 명이 이름과 일한 날까지 의궤에 기록되었고, 품삯을 날마다 제대로 주어 일꾼이 몰려들었다고 해요.'})}
  const meta={quest:{t:'화성 축성 순례',d:'정조와 정약용이 쌓은 화성의 여덟 곳을 찾아 보세요.',steps:[['장안문','장안문'],['옹성','옹성'],['거중기','거중기'],['유형거','유형거'],['홍이포','홍이포'],['화성능행도','화성능행도'],['성벽 공사','성벽 공사'],['별주','별주']],done:'화성 축성 순례를 마쳤어요. 거중기와 유형거, 그리고 모든 걸 적어 둔 의궤 덕분에 화성은 지금도 그대로 다시 지을 수 있어요.'},
