@@ -13,6 +13,7 @@ export const STAMPS={
  buyeo:{m:'buyeo/hyangro',n:'백제 금동대향로',e:'백제 · 국보',c:'3D junhapark1, CC BY',msg:'능산리 절터에서 나온 백제 금동대향로를 봤어요. 꼭대기에 봉황이 앉아 있어요.'},
  gangjin:{m:'gangjin/maebyeong',n:'청자 매병',e:'고려',c:'3D 클리블랜드 미술관, CC0',msg:'고려 청자의 고향 강진에서 비색 매병을 만났어요.'},
  icheon:{m:'icheon/jar1983',n:'달항아리',e:'조선 1700년대',c:'클리블랜드 미술관 1983.28, CC0',msg:'보름달을 닮은 조선 백자 달항아리를 봤어요.'},
+ jongmyo:{m:'jongmyo/tukjong',n:'종묘제례 악기',e:'조선 · 유네스코 인류무형유산',c:'3D 국가유산청',msg:'종묘 월대에서 제례악 악기를 차례로 울려 봤어요.'},
  hanyang:{m:'hanyang/angbu',n:'앙부일구',e:'조선',c:'3D 국가유산청',msg:'오목한 해시계 앙부일구로 그림자 시간을 읽어 봤어요.'},
  cheongju:{m:'cheongju/jikji_type',n:'금속활자',e:'고려 1377년 직지',c:'3D 한국문화정보원, CC BY',msg:'1377년 흥덕사에서 직지를 찍어 낸 금속활자를 봤어요.'},
  tongyeong:{m:'tongyeong/najeonham',n:'나전칠함',e:'조선',c:'3D KCDF, CC BY',msg:'자개로 꽃과 넝쿨을 놓은 통영 나전칠함이 반짝였어요.'},
