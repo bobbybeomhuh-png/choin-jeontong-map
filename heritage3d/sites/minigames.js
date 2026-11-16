@@ -57,7 +57,7 @@ export function wheelGame(ctx){const ui=overlay('radial-gradient(900px 600px at 
   if(Math.min(...prof.slice(4,N-4))<.07&&!collapse){collapse=1;blip(ac,out,300,90,.5,.18);ctx.say('어이쿠, 너무 얇았어요! 다시 빚어요.')}};
  ui.c.addEventListener('pointerdown',e=>{down=true;lastP=null;ui.c.setPointerCapture(e.pointerId);pull(e)});ui.c.addEventListener('pointermove',e=>{if(down)pull(e)});const up=()=>{down=false;if(sq)sq.gain.setTargetAtTime(0,ac.currentTime,.05)};ui.c.addEventListener('pointerup',up);ui.c.addEventListener('pointercancel',up);
  const fire=document.createElement('button');fire.type='button';fire.className='btn main';fire.textContent='가마에 넣기';fire.style.cssText='position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);font:18px "Do Hyeon",sans-serif;z-index:3';ui.o.append(fire);
- const score=()=>{let e=0;for(let i=0;i<N;i++)e+=Math.abs(prof[i]-target[i]);return Math.max(0,Math.min(100,Math.round(100-e/N*420)))};
+ const score=()=>{let e=0;for(let i=0;i<N;i++)e+=Math.abs(prof[i]-target[i]);return Math.max(0,Math.min(100,Math.round(100-e/N*420)))};/* 시험용 */window.__WHEEL={geo,target,N,score,c:ui.c,fire};
  fire.onclick=()=>{if(done||collapse)return;done=true;fire.remove();const Q=score();blip(ac,out,200,120,.6,.12);setTimeout(()=>blip(ac,out,1400,1800,.5,.06,'triangle'),700);ctx.done('wheel',Q,'달항아리');finishCard(ui,'달항아리 완성!',Q>=70?'보름달처럼 둥글게 잘 빚었어요.':'조금 삐뚤어도 내 손으로 빚은 항아리예요.',Q,close)};
  const close=()=>{alive=false;try{hum&&hum.stop();ui.n2&&ui.n2.stop()}catch(e){}ui.o.remove()};ui.x.onclick=close;ui.again=()=>{reset();done=false;ui.o.append(fire)};
  const loop=()=>{if(!alive)return;t+=1/60;const {W,H,cx,y0,y1,h,R}=geo(),{d}=ui.fit(),q=ui.q;q.setTransform(d,0,0,d,0,0);q.clearRect(0,0,W,H);

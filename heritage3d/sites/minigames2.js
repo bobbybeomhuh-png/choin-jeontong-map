@@ -63,6 +63,7 @@ export function traceGame(ctx,o){const ui=overlay(o.bg);let alive=true,si=0,cur=
  const ac=ctx.ac(),out=softOut(ctx);let ns=null,ng=null;if(ac&&out){ns=noiseSrc(ac);const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=o.sfxF||1800;f.Q.value=1;ng=ac.createGain();ng.gain.value=0;ns.connect(f).connect(ng).connect(out);ns.start()}
  title(ui.top,o.title,o.sub);const S=o.strokes;
  const rect=()=>{const {W,H}=ui.fit(),s=Math.min(W*.92/PW,H*.64/PH);return{s,x0:(W-PW*s)/2,y0:H*.19}};
+ /* 시험용: 따라 그릴 획과 화면 자리 */window.__TRACE={S,rect,c:ui.c,get si(){return si},get done(){return done}};
  const toP=e=>{const R=ui.c.getBoundingClientRect(),{s,x0,y0}=rect();return[(e.clientX-R.left-x0)/s,(e.clientY-R.top-y0)/s]};
  const near=(p,path)=>{let m=1e9;for(let i=0;i<path.length-1;i++){const [ax,ay]=path[i],[bx,by]=path[i+1],dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let k=((p[0]-ax)*dx+(p[1]-ay)*dy)/l;k=Math.max(0,Math.min(1,k));m=Math.min(m,Math.hypot(p[0]-ax-k*dx,p[1]-ay-k*dy))}return m};
  let missN=0;const TOL=()=>{const {s}=rect();return Math.max(26,34/s)*(missN>=3?1.6:1)};const cover=(pts,path)=>{const R=TOL();let n=0;for(const q of path){if(pts.some(p=>Math.hypot(p[0]-q[0],p[1]-q[1])<R))n++}return n/path.length};
