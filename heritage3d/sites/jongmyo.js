@@ -45,6 +45,9 @@ export function buildJongmyo(opts={}){const mini=!!opts.mini;const MT=materials(
  /* ---------- 공신당(동쪽)·칠사당(서쪽): 정전 담장 안 남쪽, 낮은 기단 위 맞배 건물 ---------- */
  for(const[x,z,W,nx,nm]of[[33,24,20,6,'功臣堂'],[-35,24,9,3,'七祀堂']]){const bs=box(W+1.6,.45,6.2,jds(W/4));bs.position.set(x,.225,z);G.add(bs);S(x-W/2-.8,x+W/2+.8,0,.45,z-3.1,z+3.1);
   G.add(buildHall({x,z,W,D:4,ry:Math.PI,nx,nz:1,FY:.43,PH:3,base:false,stairs:'none',roof:'gable',name:nm,pillar:0x8a2a22,bracket:'ik',front:'door',back:'wall',left:'wall',right:'wall',roofScale:.8,mini,solids,light:false,plain:true}).group)}
+ /* ---------- 남신문 밖 동쪽: 망묘루(임금이 머물며 선왕을 추모), 향대청(향·축문·폐백 보관). 서쪽 신로를 바라봄 ---------- */
+ for(const[x,z,W,nx,nm,FY]of[[18,46,10,3,'望廟樓',.9],[26,61,14,4,'香大廳',.5]]){const bs=box(5.6,FY+.02,W+1.6,jds(W/4));bs.position.set(x,(FY+.02)/2,z);G.add(bs);S(x-2.8,x+2.8,0,FY+.02,z-W/2-.8,z+W/2+.8);
+  G.add(buildHall({x,z,W,D:4,ry:-Math.PI/2,nx,nz:1,FY,PH:3,base:false,stairs:'none',roof:nm==='望廟樓'?'hip':'gable',name:nm,pillar:0x8a2a22,bracket:'ik',front:nm==='望廟樓'?'open':'door',back:'wall',left:'wall',right:'wall',roofScale:.8,mini,solids,light:false,plain:true}).group)}
  /* ---------- 영녕전 가는 길(흙길) ---------- */
  {const seg=(x0,z0,x1,z1)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(Math.abs(x1-x0)+3.2,Math.abs(z1-z0)+3.2),M(0xb5a888));p.rotation.x=-Math.PI/2;p.position.set((x0+x1)/2,.012,(z0+z1)/2);p.receiveShadow=true;G.add(p)};seg(-60,0,-46,0);seg(-60,0,-60,11);seg(-96,11,-60,11)}
  /* ---------- 영녕전: 국가유산청 실측 3D(가운데 네 칸 지붕이 높음) ---------- */
@@ -110,11 +113,13 @@ export function buildJongmyo(opts={}){const mini=!!opts.mini;const MT=materials(
  spots.push({x:-6,y:WH,z:11.2,r:2.6,t:'제례악 악기',h:'종묘제례악은 제사 때 연주하는 음악이에요. 악기 소리와 노래, 춤(일무)이 함께해요. 2001년 종묘제례와 함께 유네스코 인류무형유산이 되었어요. 악기를 눌러 소리를 들어 보세요. (3D: 국가유산청 종묘제례 에셋)'});
  spots.push({x:28,y:0,z:19.6,r:2.4,t:'공신당',h:'나라에 큰 공을 세운 신하(공신)의 신주를 모신 건물이에요. 정전 담장 안 남쪽 동편에 길게 서 있어요.'});
  spots.push({x:-35,y:0,z:19.6,r:2.4,t:'칠사당',h:'궁궐과 백성의 살림을 돌본다고 믿은 일곱 신(칠사)에게 제사 지내던 작은 건물이에요.'});
+ spots.push({x:13.6,y:0,z:46,r:2.4,t:'망묘루',h:'제사 때 임금이 머물며 먼저 떠난 왕들을 그리워하던(망묘) 곳이에요. 종묘 정문 가까이 동쪽에 있어요.'});
+ spots.push({x:21.6,y:0,z:61,r:2.4,t:'향대청',h:'제사에 쓸 향과 축문, 폐백을 보관하고 제관들이 기다리던 건물이에요.'});
  spots.push({x:-33,y:WH,z:6,r:2.4,t:'월랑',h:'정전 양옆에서 앞으로 뻗은 날개 건물(월랑)이에요. 동쪽 월랑은 벽으로 막혀 있고, 서쪽 월랑은 기둥만 서 있어 트여 있어요.'});
  spots.push({x:YX,y:0,z:YZ+18,r:3.2,t:'영녕전',h:'정전에서 모시지 못하게 된 왕과 왕비의 신주를 옮겨 모신 사당이에요. 세종 3년(1421)에 지었어요. 가운데 네 칸은 지붕이 양옆보다 높아요. 국가유산청이 3D로 기록한 실제 영녕전이에요. (3D: 국가유산청)'});
  const meta={quest:{t:'종묘 제례 순례',d:'종묘의 볼거리 여덟을 찾아 살펴보세요.',steps:[['남신문','남신문'],['신로','신로'],['월대','월대'],['정전','정전'],['제례악 악기','제례악 악기'],['월랑','월랑'],['공신당','공신당'],['영녕전','영녕전']]},
   title:'종묘 마당',hint:'조선 왕실의 사당 종묘예요. 남신문으로 들어가 신로 옆길을 따라 월대에 오르고, 제례악 악기를 눌러 소리를 들어 보세요. 서쪽 문으로 나가면 영녕전이 있어요. (3D: 국가유산청 KHS, CC BY · 정전은 배치를 본떠 지음)',
-  env:{plaza:null,beds:false,trees:true,sign:{x:9,z:42,lines:['종묘 마당','정전 · 월대 · 신로','제례악 악기 · 영녕전','배치를 본떠 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<50&&z<34&&z>-34)||(x<-44&&x>-63&&z>-3&&z<14)||(x<-58&&x>-100&&z>8&&z<14)||(x<-64&&x>-128&&z>-26&&z<22)||(Math.abs(x)<5&&z>26)},
+  env:{plaza:null,beds:false,trees:true,sign:{x:9,z:42,lines:['종묘 마당','정전 · 월대 · 신로','제례악 악기 · 영녕전','배치를 본떠 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<50&&z<34&&z>-34)||(x<-44&&x>-63&&z>-3&&z<14)||(x<-58&&x>-100&&z>8&&z<14)||(x<-64&&x>-128&&z>-26&&z<22)||(Math.abs(x)<5&&z>26)||(x>10&&x<34&&z>36&&z<72)},
   npc:[['painter',[[-4,38],[-4,20]]],['carpenter',[[20,8],[20,4]]]],
   level:P=>P.y>WH-.1&&Math.abs(P.x)<40&&P.z<14&&P.z>-22?'월대':P.x<-46?'영녕전':P.z>30?'남신문 밖':'정전 마당',
   camCap:()=>Infinity,
