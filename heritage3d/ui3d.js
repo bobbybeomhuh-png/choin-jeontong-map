@@ -1,8 +1,8 @@
 /* 윗줄 단추를 아이콘으로 묶기 + 소리 켜고 끄기. 갱신 2026-11-14
    기존 단추(id)는 그대로 두고 겉모양만 아이콘+짧은 이름으로 바꾼다. 덜 쓰는 단추는 ☰ 펼침 메뉴로 옮긴다.
    글자가 바뀌는 단추(말 타기↔내리기, 계절)는 바뀔 때마다 다시 그린다. */
-const IC={bRide:['🐴','말 타기'],bShorts:['🎬','쇼츠'],bStamp:['📜','도장첩'],bStory:['📖','이야기'],bCall:['🙋','무이 부르기'],bView:['👀','시점'],bBack:['🏠','월드로'],wmBtn:['✈️','날아가기'],wmSeason:[null,'계절'],bHome:['🔨','집짓기'],bGreet:['👋','인사'],bVisit:['🏡','집 구경'],bNet:['👥','함께']};
-const MORE=new Set(['bShorts','bStory','bCall','bView']);
+const IC={bRide:['🐴','말 타기'],bShorts:['🎬','쇼츠'],bStamp:['📜','도장첩'],bStory:['📖','이야기'],bCall:['🙋','무이 부르기'],bView:['👀','시점'],bBack:['🏠','월드로'],wmBtn:['✈️','날아가기'],wmSeason:[null,'계절'],bHome:['🔨','집짓기'],bGreet:['👋','인사'],bVisit:['🏡','집 구경'],bNet:['👥','함께'],bCred:['©️','출처']};
+const MORE=new Set(['bShorts','bStory','bCall','bView','bCred']);
 export function initUI(){const top=document.getElementById('top');if(!top)return;
  const st=document.createElement('style');st.textContent=`
 #top .btn.ic{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:52px;padding:3px 7px 2px;line-height:1.05;border-radius:12px;background:rgba(22,16,11,.78);backdrop-filter:blur(4px)}
