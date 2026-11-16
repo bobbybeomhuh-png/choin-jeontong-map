@@ -1,0 +1,21 @@
+/* 무이 나라 조달청: 「사진첩」. 만든 날 2026-11-17
+   지도에서 「사진」 단추(또는 K)를 누르면 지금 장면을 찍어 한지 액자에 넣는다(고을 이름·날짜·붉은 도장).
+   사진첩에 최근 12장(작게 줄여 브라우저에 저장), 크게 보기와 내려받기. 놀이 화면이 열려 있으면 찍지 않는다.
+   jodal.js 가 setupAlbum(env) 로 부른다. env={JOBS,ST,save,ov,SND,esc} */
+const KEY='jodal-album-v1';
+export function setupAlbum(E){const H=window.__H3;
+ const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}};const keep=L=>{try{localStorage.setItem(KEY,JSON.stringify(L.slice(-12)))}catch(e){try{localStorage.setItem(KEY,JSON.stringify(L.slice(-6)))}catch(_){}}};
+ const busy=()=>!!document.querySelector('.jd-ov,body>div[data-mg]');
+ const near=()=>{const P=H.P;let b=null,bd=1e9;for(const j of E.JOBS){if(!j.sp)continue;const d=Math.hypot(P.x-j.sp.x,P.z-j.sp.z);if(d<bd){bd=d;b=j}}return b?(bd<40?`${b.city} 고을에서`:`${b.city} 고을 둘레에서`):'무이 나라에서'};
+ /* 액자에 넣기: 한지 바탕, 사진, 아래 글씨, 붉은 도장 */
+ const frame=(src,cap,done)=>{const img=new Image();img.onload=()=>{const W=960,Hh=Math.round(W*img.height/img.width);const c=document.createElement('canvas');c.width=W+80;c.height=Hh+150;const q=c.getContext('2d');q.fillStyle='#f3ead6';q.fillRect(0,0,c.width,c.height);for(let i=0;i<900;i++){q.fillStyle=`rgba(120,90,50,${Math.random()*.05})`;q.fillRect(Math.random()*c.width,Math.random()*c.height,2,2)}q.drawImage(img,40,40,W,Hh);q.strokeStyle='#3b2a1c';q.lineWidth=4;q.strokeRect(40,40,W,Hh);
+  q.fillStyle='#2b1d12';q.font='bold 34px "Do Hyeon",sans-serif';q.fillText('무이 나라 조달청',48,Hh+96);q.font='26px "Gowun Dodum",sans-serif';q.fillStyle='#5a3a12';q.fillText(cap,48,Hh+132);
+  q.save();q.translate(c.width-120,Hh+100);q.rotate(-.12);q.strokeStyle='#b8322a';q.lineWidth=6;q.strokeRect(-46,-46,92,92);q.fillStyle='#b8322a';q.font='bold 38px serif';q.textAlign='center';q.fillText('調達',0,-4);q.fillText('寫眞',0,38);q.restore();
+  const big=c.toDataURL('image/jpeg',.88);const t=document.createElement('canvas');t.width=360;t.height=Math.round(360*c.height/c.width);t.getContext('2d').drawImage(c,0,0,t.width,t.height);done(big,t.toDataURL('image/jpeg',.78))};img.src=src};
+ const shoot=()=>{if(busy()||!H.R||!H.scene||!H.CAM)return;try{H.R.render(H.scene,H.CAM);const src=H.R.domElement.toDataURL('image/jpeg',.9);E.SND.paper();
+  /* 셔터 번쩍 */const f=document.createElement('div');f.style.cssText='position:fixed;inset:0;z-index:60;background:#fff;opacity:.85;transition:opacity .45s;pointer-events:none';document.body.append(f);requestAnimationFrame(()=>{f.style.opacity='0'});setTimeout(()=>f.remove(),500);
+  const d=new Date(),cap=`${near()} · ${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;frame(src,cap,(big,small)=>{const L=load();L.push({s:small,c:cap});keep(L);show(big,cap)})}catch(e){console.warn('사진',e)}};
+ const show=(big,cap)=>{const u=E.ov();u.c.style.width='min(900px,96vw)';u.c.innerHTML=`<h2>찰칵! 사진첩에 넣었어요</h2><img src="${big}" alt="" style="width:100%;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.35)"><div style="margin-top:10px;display:flex;gap:8px;justify-content:center"><a class="jd-btn" style="text-decoration:none" download="무이나라조달청_사진.jpg" href="${big}">내려받기</a><button type="button" class="jd-btn g" data-al>사진첩 보기</button><button type="button" class="jd-btn g" data-x>닫기</button></div>`;u.c.querySelector('[data-x]').onclick=u.close;u.c.querySelector('[data-al]').onclick=()=>{u.close();album()}};
+ const album=()=>{const L=load();const u=E.ov();u.c.style.width='min(980px,96vw)';u.c.innerHTML=`<h2>무이 사진첩 (${L.length}장)</h2>${L.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:8px">${L.map((p,i)=>`<figure style="margin:0"><img src="${p.s}" alt="" style="width:100%;border-radius:6px;cursor:zoom-in" data-i="${i}"><figcaption style="font-size:12.5px;color:#5a3a12">${E.esc(p.c)}</figcaption></figure>`).reverse().join('')}</div>`:'<div style="margin:12px">아직 사진이 없어요. 지도에서 「사진」 단추나 K를 눌러 찍어요.</div>'}<div style="margin-top:12px"><button type="button" class="jd-btn g" data-x>닫기</button></div>`;u.c.querySelector('[data-x]').onclick=u.close;u.c.querySelectorAll('[data-i]').forEach(im=>im.onclick=()=>{const w=window.open();if(w)w.document.write(`<img src="${im.src}" style="max-width:100%">`)})};
+ addEventListener('keydown',e=>{if(e.code==='KeyK'&&!busy()&&!e.repeat)shoot()});
+ return{shoot,album,count:()=>load().length}}
