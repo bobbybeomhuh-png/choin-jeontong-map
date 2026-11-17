@@ -9,6 +9,7 @@ import {setupPost} from './post.js';
 import {volPines,plantBroad} from './sites/treekit.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
+const _js=(w,a,b)=>{w=String(w==null?'':w);const c=w.charCodeAt(w.length-1)-0xac00;return(c>=0&&c<11172&&c%28)?a:b};/* 11/18 D33 받침 따라 조사 */
 export function runBridge(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,70);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
@@ -51,7 +52,7 @@ export function runBridge(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c
  say('감리 무이: 「설계서대로 지어 주세요. 먼저 <b>교각</b>부터!」 부품을 눌러 치수를 확인해요.');
  const fly=(p,to,h,after,rot)=>{p.anim={from:p.g.position.clone(),to:to.clone(),t:0,h,after,r0:p.g.rotation.y,r1:rot==null?p.g.rotation.y:rot}};
  const pick=p=>{if(p.placed||p.anim||done)return;if(sel&&sel!==p)fly(sel,sel.home,.4);sel=p;E.SND&&E.SND.paper&&E.SND.paper();const S=SPEC[p.kind];fly(p,new T.Vector3(p.home.x,1.2,p.home.z-.6),.3);say(`<b>${S.n}</b> · ${p.bad?S.bad:S.ok}<br>지금 놓을 차례: <b>${SPEC[stage()].n}</b> · 빛나는 자리를 눌러요.`)};
- const put=s=>{if(!sel||sel.anim||s.item||done)return;const p=sel;if(s.kind!==p.kind){blip(ac,out,200,140,.12,.08,'square');say(`${SPEC[p.kind].n}은(는) 그 자리에 맞지 않아요. ${SPEC[s.kind].n} 자리예요.`,true);return}
+ const put=s=>{if(!sel||sel.anim||s.item||done)return;const p=sel;if(s.kind!==p.kind){blip(ac,out,200,140,.12,.08,'square');say(`${SPEC[p.kind].n}${_js(SPEC[p.kind].n,'은','는')} 그 자리에 맞지 않아요. ${SPEC[s.kind].n} 자리예요.`,true);return}
   if(p.kind!==stage()){fall++;sel=null;const to=new T.Vector3(s.m.position.x,-1.2,s.m.position.z);fly(p,to,1,()=>{splash(to.x,to.z);blip(ac,out,120,60,.3,.14,'sine');p.g.position.copy(p.home);p.g.rotation.y=p.kind==='pier'?0:Math.PI/2},p.g.rotation.y);say(`풍덩! ${stage()==='pier'?'교각이':'보가'} 먼저예요. 받칠 것 없이 올리면 무너져 물에 빠져요. 부품은 건져 둑에 다시 놓았어요.`,true);return}
   if(p.bad){miss++;sel=null;fly(p,p.home,.5);blip(ac,out,200,140,.14,.1,'square');boss&&boss.play('wave');say(`감리 무이: 「잠깐! ${SPEC[p.kind].why} 설계서와 다른 자재는 받을 수 없어요.」`,true);return}
   s.item=p;p.placed=s;sel=null;E.SND&&E.SND.coin&&E.SND.coin();const pos=s.m.position.clone();let rot=0;if(p.kind==='pier'){pos.y=-1.0;rot=0}else if(p.kind==='beam'){pos.y=1.2;rot=0}else{pos.y=1.25;rot=0}
