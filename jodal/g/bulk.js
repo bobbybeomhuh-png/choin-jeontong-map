@@ -1,0 +1,55 @@
+/* 무이 나라 조달청: 「고을 공동 구매」(G33, 단가 계약·수요 모으기). 만든 날 2026-11-17
+   관아 창 「공동 구매」 단추로 연다. 관아 안 3D 지도 탁자 위 고을 다섯에서 서당 물품 주문(먹·붓·종이)이 상자로 떠오른다.
+   물품마다 주문 넷: 상자를 눌러 「같이 사기」(가운데 공동 구매 수레로 날아감) 또는 「따로 사기」. 스무 묶음 넘게 모이면 한 묶음 값이 내려간다.
+   단, 「급함(사흘 안)」 주문은 같이 사면 늦으니 따로. 물품 셋을 다 하면 아낀 냥에 따라 별, 「단가 계약」 카드.
+   runBulk(ctx,{ST,save,hudDraw,SND}) · window.__BULK */
+import * as T from 'three';
+import {setupPost} from './post.js';
+import {hallBack} from './sites/dress.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {overlay,title,blip,softOut} from './sites/minigames.js';
+const TOWN=[['경주',2.2,1.4],['강진',-1.6,2.2],['서울',-.6,-2.2],['통영',1.2,2.6],['이천',.2,-1.2]];
+const ITEMS=[{n:'먹',col:0x1a1a1e,one:10,bulk:8,orders:[[0,7,0],[1,6,0],[2,9,0],[3,4,1]]},
+ {n:'붓',col:0xc8a070,one:6,bulk:5,orders:[[2,9,0],[4,3,1],[1,6,0],[0,7,0]]},
+ {n:'한지',col:0xf4ecd8,one:4,bulk:3,orders:[[4,10,0],[3,6,0],[2,5,0],[0,4,0]]}];
+const MIN=20;
+export function runBulk(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+ const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.85));const sun=new T.DirectionalLight(0xffe2b8,1.7);sun.position.set(4,10,6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sc.add(sun);
+ const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.7},o));
+ const cv=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t};
+ const fl=new T.Mesh(new T.PlaneGeometry(30,30),M(0x7a5a3a));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);try{hallBack(sc,{z:-6,w:26,h:7,y0:0})}catch(e){}
+ /* 지도 탁자: 다리 넷, 나무 테, 한반도 지도 그림 */const tb=new T.Group();sc.add(tb);{const top=new T.Mesh(new T.BoxGeometry(7.6,.25,7),M(0x5a3a22));top.position.y=1.1;top.castShadow=true;top.receiveShadow=true;tb.add(top);for(const[x,z]of[[-3.5,-3.2],[3.5,-3.2],[-3.5,3.2],[3.5,3.2]]){const l=new T.Mesh(new T.BoxGeometry(.3,1.1,.3),M(0x4a2a18));l.position.set(x,.55,z);tb.add(l)}
+  const map=new T.Mesh(new T.PlaneGeometry(7,6.4),new T.MeshStandardMaterial({roughness:.9,map:cv(700,640,q=>{q.fillStyle='#8ab4c8';q.fillRect(0,0,700,640);q.fillStyle='#d8c890';q.beginPath();const P=[[300,40],[380,30],[430,90],[470,170],[500,260],[520,350],[500,440],[470,520],[420,590],[340,610],[260,590],[220,520],[250,450],[230,380],[270,300],[250,220],[230,150],[260,90]];P.forEach(([x,y],i)=>i?q.lineTo(x,y):q.moveTo(x,y));q.closePath();q.fill();q.strokeStyle='#7a5a3a';q.lineWidth=5;q.stroke();q.fillStyle='rgba(90,130,70,.5)';for(let k=0;k<40;k++){q.beginPath();q.arc(260+Math.random()*220,80+Math.random()*480,10+Math.random()*16,0,7);q.fill()}q.strokeStyle='#3b2a1c';q.lineWidth=6;q.strokeRect(3,3,694,634)})}));map.rotation.x=-Math.PI/2;map.position.y=1.235;tb.add(map)}
+ /* 고을 깃발 */TOWN.forEach(([n,x,z])=>{const p=new T.Mesh(new T.CylinderGeometry(.03,.03,.7,6),M(0x5a3a22));p.position.set(x,1.6,z);sc.add(p);const f=new T.Mesh(new T.PlaneGeometry(.9,.36),new T.MeshBasicMaterial({toneMapped:false,side:T.DoubleSide,map:cv(180,72,q=>{q.fillStyle='#8e2b20';q.fillRect(0,0,180,72);q.fillStyle='#fff4dc';q.font='bold 40px sans-serif';q.textAlign='center';q.fillText(n,90,52)})}));f.position.set(x+.47,1.8,z);sc.add(f)});
+ /* 가운데 공동 구매 수레 */const cart=new T.Group();{const b=new T.Mesh(new T.BoxGeometry(1.4,.5,.9),M(0x8a5a2a));b.position.y=.25;cart.add(b);for(const sx of[-1,1]){const w=new T.Mesh(new T.CylinderGeometry(.32,.32,.08,16),M(0x3b2a1c));w.rotation.x=Math.PI/2;w.position.set(sx*.5,.1,.5);cart.add(w)}const sg=new T.Mesh(new T.PlaneGeometry(1.4,.4),new T.MeshBasicMaterial({toneMapped:false,map:cv(280,80,q=>{q.fillStyle='#2a1a10';q.fillRect(0,0,280,80);q.fillStyle='#f2d27a';q.font='bold 36px sans-serif';q.textAlign='center';q.fillText('공동 구매',140,54)})}));sg.position.set(0,.85,.1);cart.add(sg)}cart.position.set(4.9,0,1.6);sc.add(cart);
+ const cam=new T.PerspectiveCamera(46,1,.05,80);cam.position.set(1.2,8.2,8.4);cam.lookAt(1,1,0);
+ title(ui.top,'고을 공동 구매','고을 상자를 눌러 같이 살지 따로 살지 골라요 · 스무 묶음 넘게 모으면 값이 내려가요 · 급한 주문은 따로');
+ const hud=document.createElement('div');hud.style.cssText='position:absolute;left:16px;top:70px;z-index:3;padding:10px 14px;border-radius:12px;background:rgba(20,14,10,.78);color:#f2d27a;font:16px "Do Hyeon",sans-serif;line-height:1.7';ui.o.append(hud);
+ const bar=document.createElement('div');bar.style.cssText='position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;max-width:min(800px,94vw);padding:8px 14px;border-radius:12px;background:rgba(243,234,214,.97);border:2px solid #d8a838;font:15px/1.6 "Gowun Dodum",sans-serif;color:#2b1d12;text-align:center';ui.o.append(bar);
+ const BTN="font:16px 'Do Hyeon',sans-serif;padding:8px 14px;border-radius:12px;border:0;cursor:pointer";
+ const say=(h,bad)=>{bar.style.borderColor=bad?'#b8322a':'#d8a838';bar.innerHTML=h};
+ let ix=0,boxes=[],sel=null,saved=0,base=0,mist=0,phase='pick';const tw=[];
+ const load=i=>{ix=i;phase='pick';for(const b of boxes)sc.remove(b.m);boxes=[];const it=ITEMS[i];
+  it.orders.forEach(([t,q,urg],k)=>{const[tn,x,z]=TOWN[t];const lab=cv(200,150,c=>{c.fillStyle=urg?'#f6d8c8':'#fbf3dc';c.fillRect(0,0,200,150);c.strokeStyle=urg?'#b8322a':'#3b2a1c';c.lineWidth=8;c.strokeRect(4,4,192,142);c.fillStyle='#2b1d12';c.font='bold 40px sans-serif';c.textAlign='center';c.fillText(`${it.n} ${q}`,100,62);c.font='bold 30px sans-serif';c.fillStyle=urg?'#b8322a':'#5a7a4a';c.fillText(urg?'급함 사흘':'보통 한 달',100,116)});
+   const mt=new T.MeshStandardMaterial({map:lab,roughness:.6});const m=new T.Mesh(new T.BoxGeometry(1.05,.5,.8),[M(it.col),M(it.col),mt,M(it.col),mt,M(it.col)]);m.position.set(x-.62,1.65,z+.1);m.castShadow=true;m.userData.bx=k;sc.add(m);boxes.push({m,t,q,urg,res:null,y0:1.65})});
+  say(`<b>${it.n}</b> 주문이 고을 넷에서 올라왔어요. 따로 사면 한 묶음 ${it.one}냥, 함께 <b>${MIN}묶음 넘게</b> 사면 ${it.bulk}냥이에요. 상자를 눌러 정해요.`)};
+ const choose=(b,v)=>{b.res=v;sel=null;const ok=v===(b.urg?0:1);if(!ok)mist++;blip(ac,out,ok?600:220,ok?800:140,.1,.07,ok?'triangle':'square');
+  if(v){const from=b.m.position.clone(),to=new T.Vector3(cart.position.x-.4+boxes.filter(x=>x.res===1).length*.2,.75+boxes.filter(x=>x.res===1).length*.05,cart.position.z);tw.push({m:b.m,from,to,t:0})}else{b.m.position.y=1.42;b.m.scale.setScalar(.8)}
+  say(ok?(v?`<b>같이 사기</b>로 수레에 실었어요.`:`<b>따로 사기</b>. 급한 주문은 함께 모을 때까지 기다릴 수 없어요.`):(v?`<b>앗!</b> 급한 주문(사흘 안)을 모아 사면 그 고을은 늦게 받아요.`:`<b>아까워요.</b> 보통 주문은 같이 모아 사면 더 싸요.`),!ok);if(boxes.every(x=>x.res!=null))setTimeout(settle,1300)};
+ const settle=()=>{phase='settle';const it=ITEMS[ix];const G=boxes.filter(b=>b.res===1),S=boxes.filter(b=>b.res===0);const gq=G.reduce((a,b)=>a+b.q,0);const price=gq>MIN?it.bulk:it.one;const cost=gq*price+S.reduce((a,b)=>a+b.q*it.one,0);const all=boxes.reduce((a,b)=>a+b.q,0)*it.one;const sv=all-cost;saved+=sv;base+=all;
+  say(`<b>${it.n} 정산</b> · 함께 산 것 ${gq}묶음 × ${price}냥${gq>MIN?' (묶음 값)':` (${MIN}묶음을 못 넘어 그대로)`} · 따로 ${S.length}건<br>모두 따로 샀으면 ${all}냥 → 이번엔 ${cost}냥, <b>${sv}냥</b> 아꼈어요.<div style="margin-top:8px"><button type="button" data-nx style="${BTN};background:#3b2a1c;color:#f2d27a">${ix<ITEMS.length-1?'다음 물품':'결과 보기'}</button></div>`);bar.querySelector('[data-nx]').onclick=()=>{for(const b of boxes)sc.remove(b.m);if(ix<ITEMS.length-1)load(ix+1);else finish()}};
+ const finish=()=>{phase='done';const stars=mist===0?3:mist<=2?2:1;const coins=6+stars*7;E.ST.coins+=coins;E.ST.cards=E.ST.cards||{};E.ST.cards.unit=1;E.ST.bulk=Math.max(E.ST.bulk||0,stars);try{E.save&&E.save();E.hudDraw&&E.hudDraw();E.SND&&E.SND.fan&&E.SND.fan()}catch(e){}
+  say(`<b>공동 구매 끝! ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</b> 모두 따로 샀으면 ${base}냥, 함께 모아 <b>${saved}냥</b>을 아꼈어요(잘못 고름 ${mist}번) · 엽전 ${coins}냥.<br>여러 기관이 자주 사는 물건은 조달청이 수요를 모아 미리 값을 정해 두고(단가 계약) 기관마다 필요할 때 그 값에 사요. 많이 모아 살수록 나라 돈을 아껴요. 「단가 계약」 카드가 열렸어요.<div style="margin-top:8px"><button type="button" data-x style="${BTN};background:#8e2b20;color:#fff4dc">마치기</button></div>`);bar.querySelector('[data-x]').onclick=close};
+ const ray=new T.Raycaster(),mv=new T.Vector2();R.domElement.addEventListener('pointerdown',e=>{if(phase!=='pick')return;const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(boxes.filter(b=>b.res==null).map(b=>b.m))[0];if(!h)return;pickBox(boxes[h.object.userData.bx])});
+ const pickBox=b=>{if(!b||b.res!=null)return;sel=b;const it=ITEMS[ix];try{E.SND&&E.SND.paper&&E.SND.paper()}catch(e){}say(`<b>${TOWN[b.t][0]} 서당</b> · ${it.n} ${b.q}묶음 · ${b.urg?'<b style="color:#b8322a">급함(사흘 안)</b>':'보통(한 달 안)'}<div style="margin-top:8px;display:flex;gap:8px;justify-content:center"><button type="button" data-y style="${BTN};background:#2f6a4a;color:#fff">같이 사기</button><button type="button" data-n style="${BTN};background:#8e2b20;color:#fff4dc">따로 사기</button></div>`);bar.querySelector('[data-y]').onclick=()=>choose(b,1);bar.querySelector('[data-n]').onclick=()=>choose(b,0)};
+ load(0);
+ let last=performance.now();const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
+  for(const b of boxes)if(b.res==null){b.m.position.y=b.y0+Math.sin(now/400+b.t)*.06+(sel===b?.2:0);b.m.rotation.y=Math.sin(now/900+b.t)*.12}
+  for(let i=tw.length-1;i>=0;i--){const w=tw[i];w.t=Math.min(1,w.t+dt*1.6);const p=w.from.clone().lerp(w.to,w.t);p.y+=Math.sin(w.t*Math.PI)*1.6;w.m.position.copy(p);w.m.scale.setScalar(1-.35*w.t);if(w.t>=1)tw.splice(i,1)}
+  const G=boxes.filter(b=>b.res===1).reduce((a,b)=>a+b.q,0);hud.innerHTML=`물품 ${ix+1} / 3 · ${ITEMS[ix].n}<br>수레에 모은 묶음 ${G} / ${MIN}+ · 아낀 냥 ${saved}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
+ const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const scr=i=>{const b=boxes[i];if(!b)return null;const v=b.m.position.clone().project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
+ window.__BULK={state:()=>({ix,phase,saved,base,mist,boxes:boxes.map(b=>({t:b.t,q:b.q,urg:b.urg,res:b.res}))}),scr,close};
+ return{close}}
