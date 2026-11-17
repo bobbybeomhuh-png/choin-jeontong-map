@@ -21,7 +21,7 @@ export const COURTS={
  suwon:{x0:-44,x1:42,z0:-2,z1:52,wall:'none',gate:0,hillGap:78},
  naju:{x0:-32,x1:32,z0:-34,z1:24,wall:'none',gate:0},
  buyeo:{x0:-40,x1:40,z0:-40,z1:30,wall:'none',gate:0},
- hanyang:{x0:-40,x1:40,z0:-52,z1:34,wall:'none',gate:0},
+ hanyang:{x0:-40,x1:40,z0:-78,z1:34,wall:'none',gate:0},
  sungnyemun:{x0:-48,x1:48,z0:-40,z1:40,wall:'none',gate:0},
  seokguram:{x0:-22,x1:22,z0:-12,z1:34,wall:'none',gate:0,noHills:true}};
 export function buildEnvKit(scene,SITE,EV,SOL,TOUCH,SP=[]){const C=COURTS[SITE];if(!C||EV.noKit)return;const r=mulb(SITE.length*97+13);const MT=materials();const G=new THREE.Group();scene.add(G);const gy=C.y||0;
