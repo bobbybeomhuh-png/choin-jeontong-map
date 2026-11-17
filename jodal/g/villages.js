@@ -13,7 +13,7 @@ import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {hipRoof,materials} from './sites/sungnyemun.js';
 import {volPines,plantBroad} from './sites/treekit.js';
 const TOWN={crown:'gyeongju',maebyeong:'gangjin',angbu:'seoul',najeonham:'tongyeong',moonjar:'icheon'};
-const FOCUS=[];let rs=7;const R=()=>(rs=(rs*16807)%2147483647)/2147483647;
+const FOCUS=[];export const HOUSES=[];let rs=7;const R=()=>(rs=(rs*16807)%2147483647)/2147483647;
 const CV=(w,h,f,rep)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;if(rep)t.repeat.set(rep[0],rep[1]);return t};
 let MAT=null;function mats(){if(MAT)return MAT;
  const stone=CV(256,128,(q,w,h)=>{q.fillStyle='#cfc7b4';q.fillRect(0,0,w,h);for(let y=2;y<h;y+=16+R()*6)for(let x=-10+R()*10;x<w;x+=20+R()*14){const v=105+(R()*75|0),ww=17+R()*12,hh=12+R()*6;q.fillStyle=`rgb(${v+8},${v},${v-12})`;q.beginPath();q.ellipse(x+ww/2,y+hh/2,ww/2,hh/2,(R()-.5)*.4,0,7);q.fill();q.fillStyle='rgba(255,255,255,.14)';q.beginPath();q.ellipse(x+ww/2-2,y+hh/2-2,ww/3,hh/4,0,0,7);q.fill();if(R()<.25){q.fillStyle='rgba(80,110,50,.3)';q.fillRect(x+R()*ww,y+hh-4,7,3)}}});
@@ -94,7 +94,7 @@ export function setupVillages(scene,JOBS){const H=window.__H3;if(!H||!H.floorAt|
   const at=(lx,lz,nudge=true)=>{for(const[dx,dz]of(nudge?NUD:[[0,0]])){const r=at0(lx+dx,lz+dz,dx||dz);if(r)return r}T.miss.push(lx+' '+lz);return null};
   const at0=(lx,lz,quiet)=>{const x=T.x+lx,z=T.z+lz;const y=H.floorAt(x,z,base+3);const rv=window.__RIVER&&window.__RIVER(x,z);if(!isFinite(y)||Math.abs(y-base)>.9||rv)return null;/* 이미 세운 집과 겹치면 다른 자리 */if(USED.some(([ux,uz,ur])=>Math.hypot(ux-x,uz-z)<ur))return null;return[x,y-.02,z]};const USED=[];
   const face=(lx,lz)=>Math.atan2(-lx,-lz);/* 집 앞이 고을 가운데를 보게 */
-  const H1=(lx,lz,o,ry)=>{const p=at(lx,lz);if(!p)return;const r=house(bag,M,p[0],p[1],p[2],ry==null?face(p[0]-T.x,p[2]-T.z):ry,o);addSolid(p[0],p[2],Math.max(1,r*.85),p[1]);USED.push([p[0],p[2],r+1.2])};
+  const H1=(lx,lz,o,ry)=>{const p=at(lx,lz);if(!p)return;const r=house(bag,M,p[0],p[1],p[2],ry==null?face(p[0]-T.x,p[2]-T.z):ry,o);addSolid(p[0],p[2],Math.max(1,r*.85),p[1]);USED.push([p[0],p[2],r+1.2]);HOUSES.push([p[0],p[1],p[2],ry==null?face(p[0]-T.x,p[2]-T.z):ry,o.w||3,o.d||2])};
   const tree=(lx,lz,pine,s=1)=>{const p=at(lx,lz);if(!p)return;if(pine)PINES.push([p[0],p[1],p[2],s]);else BROAD.push([p[0],p[1],p[2],R()*6,.5*s,[0xe8603c,0xf08c3a,0xf6c04a,0x9cc05a,0xd8503a][(R()*5)|0]])};
   if(T.kind==='gyeongju'){/* 토담 두른 반가: 남쪽 가운데 솟을대문 */const cx=0,cz=-16,hw=7,hd=4.6;const p0=at(cx,cz,false);const yy=p0?p0[1]:base;
    const C=[[cx-hw,cz-hd],[cx+hw,cz-hd],[cx+hw,cz+hd],[cx-hw,cz+hd]];for(let i=0;i<4;i++){const[a,b]=[C[i],C[(i+1)%4]];if(i===2){wallSeg(bag,M,T.x+a[0],T.z+a[1],T.x+1.1,T.z+b[1],yy);wallSeg(bag,M,T.x-1.1,T.z+a[1],T.x+b[0],T.z+b[1],yy)}else wallSeg(bag,M,T.x+a[0],T.z+a[1],T.x+b[0],T.z+b[1],yy)}

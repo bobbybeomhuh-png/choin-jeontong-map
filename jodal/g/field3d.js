@@ -10,6 +10,8 @@
    시험용 문: window.__FD = {dbg, auto} */
 import * as THREE from 'three';
 import {setupPost} from './post.js';
+import {volPines,plantBroad} from './sites/treekit.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
@@ -55,7 +57,16 @@ export function fieldGame(ctx,job,opt={}){const S=SITES[job.k];if(!S){opt.done&&
   /* 구덩이 자리만 비움: 바닥 판은 둘레 벽 위에만 */const hole=new THREE.Shape();hole.moveTo(-30,-30);hole.lineTo(30,-30);hole.lineTo(30,30);hole.lineTo(-30,30);hole.lineTo(-30,-30);const hp=new THREE.Path();hp.moveTo(-W/2,-D/2);hp.lineTo(-W/2,D/2);hp.lineTo(W/2,D/2);hp.lineTo(W/2,-D/2);hp.lineTo(-W/2,-D/2);hole.holes.push(hp);ground.geometry=new THREE.ShapeGeometry(hole);sc.add(ground);
   /* 구덩이 테두리 줄과 말뚝 */const pegM=mat(0x8a6a44);for(const[x,z]of[[-W/2,-D/2],[W/2,-D/2],[W/2,D/2],[-W/2,D/2]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.5,6),pegM);p.position.set(x,.25,z);sc.add(p)}const rope=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([[-W/2,-D/2],[W/2,-D/2],[W/2,D/2],[-W/2,D/2]].map(([x,z])=>new THREE.Vector3(x,.42,z))),new THREE.LineBasicMaterial({color:0xe8d8a0}));sc.add(rope)}
 
- /* ---------- 현장마다 둘레 꾸밈 ---------- */
+ /* 11/17 P7: 현장 바닥 손질(카메라가 구덩이를 내려다보므로 화면에 잡히는 바닥 위주). 구덩이 둘레 다져진 흙 자국, 빽빽한 풀숲(바람에 흔들림), 덤불 무더기, 먼 둘레 나무. 바닷속은 뺌 */if(!S.water){let rq=31;const rr=()=>(rq=(rq*16807)%2147483647)/2147483647;const W0=NX*CS/2,D0=NZ*CS/2;
+  {const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');const g=q.createRadialGradient(128,128,40,128,128,128);g.addColorStop(0,S.mud?'rgba(70,58,44,.75)':'rgba(120,92,58,.8)');g.addColorStop(.7,S.mud?'rgba(70,58,44,.35)':'rgba(120,92,58,.35)');g.addColorStop(1,'rgba(120,92,58,0)');q.fillStyle=g;q.fillRect(0,0,256,256);for(let k=0;k<70;k++){q.fillStyle='rgba(60,44,28,.25)';q.beginPath();q.ellipse(rr()*256,rr()*256,6,3.5,rr()*3,0,7);q.fill()}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+   const tp=new THREE.Mesh(new THREE.PlaneGeometry(W0*2+4.2,D0*2+3.6),new THREE.MeshStandardMaterial({map:t,transparent:true,depthWrite:false,roughness:1}));tp.rotation.x=-Math.PI/2;tp.position.y=.012;tp.renderOrder=1;sc.add(tp)}
+  {const c=document.createElement('canvas');c.width=c.height=128;const q=c.getContext('2d');for(let k=0;k<40;k++){const x=6+rr()*116,h=40+rr()*70,l=(rr()-.5)*26;const g=q.createLinearGradient(0,128,0,128-h);const base=S.kiln?['#6f7a3a','#9aa850']:S.mud?['#6a6a44','#8a8a5a']:['#5f8f36','#a4c860'];g.addColorStop(0,base[0]);g.addColorStop(1,base[1]);q.fillStyle=g;q.beginPath();q.moveTo(x-3,128);q.quadraticCurveTo(x+l*.4,128-h*.6,x+l,128-h);q.quadraticCurveTo(x+l*.4+1,128-h*.6,x+3,128);q.fill()}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+   const a=new THREE.PlaneGeometry(.7,.5).translate(0,.25,0),b=a.clone().rotateY(Math.PI/2);const g=mergeGeometries([a,b]);const m=new THREE.MeshStandardMaterial({map:t,alphaTest:.5,side:THREE.DoubleSide,roughness:1});const N=S.mud?500:1600;const im=new THREE.InstancedMesh(g,m,N);const o=new THREE.Object3D();let k=0;
+   for(let t2=0;t2<N*4&&k<N;t2++){const x=(rr()-.5)*22,z=(rr()-.5)*18-1;if(Math.abs(x)<W0+1.4&&Math.abs(z)<D0+1.3)continue;if(job.k==='crown'&&Math.hypot(x,z+6)<5.2)continue;o.position.set(x,0,z);o.rotation.set(0,rr()*3,0);const s2=.6+rr()*.7;o.scale.set(s2,s2*(.7+rr()*.6),s2);o.updateMatrix();im.setMatrixAt(k++,o.matrix)}im.count=k;im.receiveShadow=true;sc.add(im)}
+  {let bg=new THREE.IcosahedronGeometry(1,2);const p=bg.attributes.position,v=new THREE.Vector3();for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);v.multiplyScalar(1+.15*Math.sin(v.x*5+v.z*4));v.y=Math.max(v.y,-.2)*.6;p.setXYZ(i,v.x,v.y,v.z)}bg.computeVertexNormals();const bm=new THREE.MeshStandardMaterial({color:S.kiln?0x7a7a3a:S.mud?0x6a6a48:0x4f7a38,roughness:.95});
+   for(let k=0;k<12;k++){const a2=rr()*6.283,d=4.6+rr()*3.4;const x=Math.cos(a2)*d*1.2,z=Math.sin(a2)*d-1;if(z>3.2)continue;if(job.k==='crown'&&Math.hypot(x,z+6)<5.5)continue;const b=new THREE.Mesh(bg,bm);b.position.set(x,0,z);b.scale.set(.6+rr()*.5,.5+rr()*.3,.6+rr()*.5);b.castShadow=true;sc.add(b)}}
+  {const PN=volPines(24),o=new THREE.Object3D(),cc=new THREE.Color();let np=0;for(let k=0;k<24;k++){const a2=Math.PI*(.15+rr()*.7),d=11+rr()*6;o.position.set(Math.cos(a2)*d*1.4,0,-Math.sin(a2)*d);o.rotation.set(0,rr()*6,0);const s2=1.6+rr()*.8;o.scale.set(s2*1.1,s2,s2*1.1);o.updateMatrix();PN.setMatrixAt(np,o.matrix);PN.setColorAt(np,cc.setHSL(.25,.3,.85));np++}PN.count=np;sc.add(PN)}}
+/* ---------- 현장마다 둘레 꾸밈 ---------- */
  const deco=new THREE.Group();sc.add(deco);const decoT=[];
  if(job.k==='crown'){/* 봉분: 뒤쪽에 반쯤 갈라진 큰 흙무덤 + 작업등 */const mound=new THREE.Mesh(new THREE.SphereGeometry(5,40,20,0,Math.PI*2,0,Math.PI/2),mat(0x5a7a3a,{map:tex(0x5a7a3a,0x7a9a4a,3000,512,3)}));mound.scale.set(1.3,.55,1);mound.position.set(0,0,-6.2);mound.castShadow=mound.receiveShadow=true;deco.add(mound);
   const cut=new THREE.Mesh(new THREE.CircleGeometry(2.6,32,0,Math.PI),mat(0x8a6a44));cut.position.set(0,0,-3.6);deco.add(cut);
