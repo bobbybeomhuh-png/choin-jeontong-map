@@ -6,7 +6,7 @@ import {SB} from './trk3d.js';
 const LIB='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
 const ADJ=['씩씩한','느긋한','반짝이는','수줍은','부지런한','졸린','신난','꼼꼼한','용감한','다정한'];
 export function myName(){let n=null;try{n=localStorage.getItem('muui3d-name')}catch(e){}if(!n){n=ADJ[(Math.random()*ADJ.length)|0]+' 무이 '+(100+((Math.random()*900)|0));try{localStorage.setItem('muui3d-name',n)}catch(e){}}return n}
-export async function initNet({site,THREE,scene,makeMuui,ui}){
+export async function initNet({site,THREE,scene,makeMuui,ui}){return null;/* 11/17 조달청판: 온라인 함께 걷기 없음(혼자 하는 공모 게임, 무이 월드와 분리) */
  if(/[?&]solo\b/.test(location.search))return null;
  /* 시험용 따로 된 방: ?netroom=이름(영문 숫자) */const RM=(location.search.match(/[?&]netroom=([a-z0-9]{1,12})/)||[])[1];const RS=RM?'-t'+RM:'';
  let createClient;try{({createClient}=await import(LIB))}catch(e){console.warn('함께 걷기 불러오기 실패',e);return null}

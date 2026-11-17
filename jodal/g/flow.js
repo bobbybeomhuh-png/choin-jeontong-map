@@ -2,7 +2,7 @@
    국보 하나를 되살리는 동안 화면 오른쪽에 세로 다섯 칸으로 지금 어느 조달 단계인지 늘 보여 준다.
    ① 방 붙이기 = 입찰 공고 → ② 장인 고르기 = 적격 심사 → ③ 수결 = 계약(계약대로 발굴) → ④ 조각 살피기 = 검수(복원·마지막 손질) → ⑤ 의궤 = 계약 정보 공개
    단계 판정은 떠 있는 창의 글로 함(0.5초마다). 해당 창이 없으면 숨김. setupFlow() 한 번. window.__FLOW() = 지금 단계 */
-const STEPS=[['방 붙이기','입찰 공고'],['장인 고르기','적격 심사'],['수결','계약'],['조각 살피기','검수'],['의궤에 적기','정보 공개']];
+/* 11/17 개편: 실제 열 단계를 다섯 칸에 묶어 굵은 글씨로 */const STEPS=[['방 붙이기','요청·규격·공고'],['장인 고르기','개찰·적격 심사'],['수결과 발굴','계약·이행 감독'],['조각 살피기','검사·검수'],['의궤에 적기','대금·정보 공개']];
 export function setupFlow(){if(window.__FLOWON)return;window.__FLOWON=1;
  const st=document.createElement('style');st.textContent=`#jdFlow{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:40;display:none;flex-direction:column;gap:4px;font:13px "Gowun Dodum",sans-serif;pointer-events:none}
 #jdFlow .t{font:14px "Do Hyeon",sans-serif;color:#f2d27a;text-align:center;text-shadow:0 1px 2px #000;margin-bottom:2px}
