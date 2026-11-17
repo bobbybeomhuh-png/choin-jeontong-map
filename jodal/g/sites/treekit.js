@@ -1,6 +1,6 @@
 /* 공용 나무 세트: 넓은잎나무(잎 판 묶음) + 소나무(가벼운 실측판). 한 번에 많이 그리기(Instanced) */
 import * as THREE from 'three';
-import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {mergeGeometries,mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';
 let LEAFTEX=null,BROAD=null;
 /* 11/17 R2: 바람. 재질의 정점 계산에 흔들림을 끼워 넣음(나무 수천 그루에도 가벼움). 높을수록 크게, 나무마다 박자 다르게 */
 export const WIND={t:{value:0}};let windLoop=false;
@@ -45,6 +45,16 @@ function paintedPineTex(){if(PPT)return PPT;/* 11/17: 층층 전나무 판 → �
  PPT=new THREE.CanvasTexture(c);PPT.colorSpace=THREE.SRGBColorSpace;PPT.anisotropy=4;return PPT}
 export function paintedPines(N){/* 판 세 장(60도씩)으로 어느 쪽에서 봐도 납작하지 않게 */const a=new THREE.PlaneGeometry(1.1,2.2).translate(0,1.1,0),b=a.clone().rotateY(Math.PI/3),c2=a.clone().rotateY(-Math.PI/3);const geo=mergeGeometries([a,b,c2]);
  const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:1});addWind(m,.1,.8);return new THREE.InstancedMesh(geo,m,N)}
+/* 11/17 R2: 입체 소나무(지도용). 굽은 붉은 줄기 + 층층이 납작하게 뭉친 솔잎 덩이 서너 개(한국 소나무 모양). 크기는 그림판 소나무와 같은 칸(폭 1.1, 높이 2.2) */
+export function volPines(N){const parts=[];const R=rng(41);const col=(g,f)=>{const p=g.attributes.position,c=new Float32Array(p.count*3);for(let i=0;i<p.count;i++){const v=f(p.getX(i),p.getY(i),p.getZ(i));c[i*3]=v[0];c[i*3+1]=v[1];c[i*3+2]=v[2]}g.setAttribute('color',new THREE.BufferAttribute(c,3));return g};
+ const bend=x=>.07*Math.sin(x*2.2);
+ {const t=new THREE.CylinderGeometry(.03,.065,1.62,7,6).translate(0,.81,0);const p=t.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i);p.setX(i,p.getX(i)+bend(y))}t.computeVertexNormals();parts.push(col(t,(x,y,z)=>{const k=.8+.35*Math.max(0,x)/.06;return[.3*k,.11*k,.06*k]}))}
+ const pads=[[1.12,.36,.2,.06],[1.34,.48,-.12,-.08],[1.58,.54,.13,.05],[1.8,.42,-.1,.11],[2.0,.3,.03,-.04]];
+ for(const[y,r,ox,oz]of pads){{const len=Math.hypot(ox,oz)+.18;const br=new THREE.CylinderGeometry(.012,.02,len,5).rotateZ(Math.PI/2).translate(len/2,0,0).rotateY(-Math.atan2(oz,ox)).translate(bend(y-.12),y-.12,0);parts.push(col(br,()=>[.24,.09,.05]))}
+  const DN=[];let g=new THREE.IcosahedronGeometry(1,3);g.deleteAttribute('uv');g.deleteAttribute('normal');g=mergeVertices(g);const p=g.attributes.position,v=new THREE.Vector3();const k1=R()*6,k2=R()*6;for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);const n=1+.16*Math.sin(v.x*4.3+k1)*Math.cos(v.z*3.7+k2)+.1*Math.sin(v.y*5+k1)+.07*Math.sin(v.x*11+v.z*9+k2);v.multiplyScalar(n);DN.push(n);v.y=v.y>0?v.y*.42:v.y*.22;p.setXYZ(i,v.x*r+ox+bend(y),v.y*r+y,v.z*r*.88+oz)}g.computeVertexNormals();
+  {let vi=0;parts.push(col(g,(x,yy,z)=>{const t=Math.max(0,Math.min(1,(yy-y+r*.15)/(r*.55)));const d=Math.max(.35,Math.min(1.25,(DN[vi++]-.8)*2.2));const c=[.025+.1*t*t,.075+.17*t*t,.03+.045*t];return c.map(q=>q*d)}))}}
+ const geo=mergeGeometries(parts.map(g=>{const q=g.index?g.toNonIndexed():g;for(const k of Object.keys(q.attributes))if(!['position','normal','color'].includes(k))q.deleteAttribute(k);return q}));
+ const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,flatShading:false});addWind(m,.07,1.1);const im=new THREE.InstancedMesh(geo,m,N);im.userData.vol=1;return im}
 /* 울퉁불퉁한 산: 반구에 잔물결 능선과 아래 어둡고 위 밝은 색 */
 export function lumpyHill(rr,h,col,seed=1){const r=rng(seed*7+3),g=new THREE.SphereGeometry(rr,64,20,0,Math.PI*2,0,Math.PI/2),p=g.attributes.position,c=new Float32Array(p.count*3),base=new THREE.Color(col),hi=base.clone().offsetHSL(.02,-.05,.08),lo=base.clone().offsetHSL(-.02,0,-.1),k1=r()*6,k2=r()*6,tmp=new THREE.Color();
  for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),t=y/rr;const n=1+.07*Math.sin(a*5+k1)*Math.sin(t*4+k2)+.04*Math.sin(a*11+k2*2)*(1-t);p.setXYZ(i,x*n,y*(1+.12*Math.sin(a*3+k1))*h/rr,z*n);tmp.copy(lo).lerp(hi,Math.min(1,t*1.3));c[i*3]=tmp.r;c[i*3+1]=tmp.g;c[i*3+2]=tmp.b}
