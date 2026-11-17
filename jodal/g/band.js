@@ -9,12 +9,12 @@ export const SCENES=[{n:'방 붙이기',on:[0,1,2],say:'원님이 요청한 일�
  {n:'조각 맞추기',on:[7],say:'다 된 국보가 약속한 규격대로인지 하나하나 검수해요.'},
  {n:'의궤에 적기',on:[8,9],say:'품삯을 치르고, 누가 무엇을 얼마에 했는지 의궤에 남겨 모두에게 알려요.'}];
 let el=null,tm=null;
-function css(){if(document.getElementById('jd-band-css'))return;const st=document.createElement('style');st.id='jd-band-css';st.textContent=`#jdBand{position:fixed;left:50%;top:14px;transform:translate(-50%,-140%);z-index:80;max-width:min(980px,96vw);padding:10px 14px 12px;border-radius:14px;background:linear-gradient(#fbf3dc,#f1e2bd);border:3px solid #8e2b20;box-shadow:0 10px 30px rgba(0,0,0,.45);font:14px/1.45 "Gowun Dodum",sans-serif;color:#2b1d12;transition:transform .45s cubic-bezier(.2,.9,.3,1.2);cursor:pointer;text-align:center}
-#jdBand.on{transform:translate(-50%,0)}#jdBand .t{font:16px "Do Hyeon",sans-serif;color:#8e2b20;margin-bottom:6px}#jdBand .t b{color:#2b1d12}
-#jdBand .row{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}#jdBand .c{font:13px "Do Hyeon",sans-serif;padding:5px 7px;border-radius:8px;background:#e6d8b8;color:#9a8a6a;border:2px solid transparent;white-space:nowrap}
-#jdBand .c.on{background:#8e2b20;color:#fff4dc;border-color:#f2d27a;transform:scale(1.06)}#jdBand .a{color:#b8a888;font-size:12px;align-self:center}#jdBand .s{margin-top:6px}`;document.head.append(st)}
+function css(){if(document.getElementById('jd-band-css'))return;const st=document.createElement('style');st.id='jd-band-css';st.textContent=`#jdBand{position:fixed;left:50%;top:14px;transform:translate(-50%,-140%);z-index:80;max-width:min(1100px,98vw);padding:6px 10px 7px;border-radius:12px;background:linear-gradient(#fbf3dc,#f1e2bd);border:3px solid #8e2b20;box-shadow:0 10px 30px rgba(0,0,0,.45);font:12.5px/1.35 "Gowun Dodum",sans-serif;color:#2b1d12;transition:transform .45s cubic-bezier(.2,.9,.3,1.2);cursor:pointer;text-align:center}
+#jdBand.on{transform:translate(-50%,0)}#jdBand .t{font:14px "Do Hyeon",sans-serif;color:#8e2b20;margin-bottom:3px}#jdBand .t b{color:#2b1d12}
+#jdBand .row{display:flex;gap:3px;justify-content:center;flex-wrap:nowrap}#jdBand .c{font:12px "Do Hyeon",sans-serif;padding:3px 5px;border-radius:8px;background:#e6d8b8;color:#9a8a6a;border:2px solid transparent;white-space:nowrap}
+#jdBand .c.on{background:#8e2b20;color:#fff4dc;border-color:#f2d27a;transform:scale(1.06)}#jdBand .a{color:#b8a888;font-size:12px;align-self:center}#jdBand .s{margin-top:3px}`;document.head.append(st)}
 export function showBand(i,ST,save,force){try{const S=SCENES[i];if(!S)return;ST.band=ST.band||{};const seen=ST.band[i]||0;if(!force&&seen>=2)return;ST.band[i]=seen+1;try{save&&save()}catch(e){}css();
  if(!el){el=document.createElement('div');el.id='jdBand';el.onclick=()=>hide();document.body.append(el)}
  el.innerHTML=`<div class="t">실제 조달청에서는 이 열 단계를 거쳐요 · 지금 <b>「${S.n}」</b>은 빨간 칸</div><div class="row">${REAL.map((r,k)=>`${k?'<span class="a">›</span>':''}<span class="c ${S.on.includes(k)?'on':''}">${k+1} ${r}</span>`).join('')}</div><div class="s">${S.say}</div>`;
- clearTimeout(tm);requestAnimationFrame(()=>el.classList.add('on'));tm=setTimeout(hide,4200)}catch(e){}}
+ clearTimeout(tm);requestAnimationFrame(()=>el.classList.add('on'));tm=setTimeout(hide,3300)}catch(e){}}
 function hide(){if(el)el.classList.remove('on')}
