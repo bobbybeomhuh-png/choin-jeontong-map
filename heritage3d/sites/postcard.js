@@ -20,6 +20,8 @@ export const STAMPS={
  jinju:{m:'jinju/cannon',n:'현자총통',e:'조선',c:'3D 국가유산청 재현 에셋',msg:'진주성을 지키던 현자총통 앞에 서 봤어요.'},
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
+ hoeamsa:{m:'hoeamsa/scan',n:'회암사 터',e:'고려 말 조선 초',c:'드론 실측 3D lacomi1975, CC BY 4.0',msg:'층층이 쌓은 돌축대 위에 옛 전각을 되살려 봤어요.'},
+ gongsan:{m:'gongsan/scan',n:'공산성',e:'백제 웅진 시기 · 세계유산',c:'드론 실측 3D lacomi1975, CC BY 4.0',msg:'금강을 끼고 산등성이를 두른 공산성을 내려다봤어요.'},
  haemi:{m:'haemi/scan_mini',n:'해미읍성',e:'조선',c:'드론 실측 3D lacomi1975, CC BY 4.0',msg:'해미읍성 성벽을 따라 한 바퀴 걸었어요.'},
  gangneung:{p:'gangneung/cc_1.jpg',n:'초충도',e:'조선 · 신사임당 전',c:'사진 국립중앙박물관, 공공누리 제1유형',msg:'풀과 벌레를 그린 초충도를 가까이서 봤어요.'},
  minhwa:{p:'minhwa/tiger1.jpg',n:'까치호랑이',e:'조선 민화',c:'사진 퍼블릭 도메인',msg:'까치와 호랑이가 웃고 있는 민화를 봤어요.'},
