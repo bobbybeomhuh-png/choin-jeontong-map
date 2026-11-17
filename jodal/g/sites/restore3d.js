@@ -3,6 +3,7 @@
    순서: 1 조각 맞추기(흩어진 조각을 끌어 흐린 윤곽 자리에) → 2 흙·녹 털기(붓질) → 3 도자기는 이음매 메우기 / 금속은 광내기
    끝나면 localStorage muui-h3-restored 에 남아 진열장에 놓인다. 설명 문장은 각 마당 파일의 정본 그대로. */
 import * as THREE from 'three';
+import {setupPost} from '../post.js';
 import {getModel} from './hanokkit.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,finishCard,softOut} from './minigames.js';
@@ -65,7 +66,7 @@ export function workshopGame(ctx){const ui=overlay('radial-gradient(circle at 50
 export function restoreGame(ctx,key,opt={}){const A=ART.find(a=>a.k===key)||ART[0];/* 긴급 출동(60초 판)에서는 조각 셋, 발굴·닦기 없이 맞추기만 */const RUSH=opt.rush||null;/* 조달청판: 고른 장인에 따라 조각 수가 늘고, 끝나면 의궤로 넘어감 */const JD=opt.jodal||null;const WIDE=hasTool('brush'),KNIFE=hasTool('knife'),GOLDF=hasTool('gold');/* 조각 수는 할 때마다 조금씩 다르게(기본+0~2, 가장 많아야 7) */const NP=RUSH?3:JD?Math.max(3,Math.min(8,A.np+(JD.npAdd||0))):Math.max(3,Math.min(7,A.np+((Math.random()*3)|0)));const ui=overlay('radial-gradient(circle at 50% 35%,#4a3828,#120c08)');let alive=true;ui.c.style.display='none';
  const ac=ctx.ac(),out=softOut(ctx);
  const R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new THREE.Scene();try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}sc.add(new THREE.HemisphereLight(0xfff4e0,0x3a2a1a,1.6));const dl=new THREE.DirectionalLight(0xffffff,2.2);dl.position.set(2,4,3);sc.add(dl);const fl=new THREE.DirectionalLight(0xffd8a0,.8);fl.position.set(-3,1.5,-2);sc.add(fl);
+ const sc=new THREE.Scene();try{setupPost(R,sc)}catch(e){console.warn('공방 후처리',e)}try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}sc.add(new THREE.HemisphereLight(0xfff4e0,0x3a2a1a,1.6));const dl=new THREE.DirectionalLight(0xffffff,2.2);dl.position.set(2,4,3);sc.add(dl);const fl=new THREE.DirectionalLight(0xffd8a0,.8);fl.position.set(-3,1.5,-2);sc.add(fl);
  const cam=new THREE.PerspectiveCamera(38,1,.05,50);let yaw=.5,pitch=.32,dist=4.2;const tgt=new THREE.Vector3(0,.8,0);
  /* 손맛: 먼지·반짝이 입자, 화면 흔들림, 떠오르는 글자 */
  const FXN=320,fxP=new Float32Array(FXN*3).fill(-99),fxC=new Float32Array(FXN*3),fxV=new Float32Array(FXN*3),fxL=new Float32Array(FXN),fxGr=new Float32Array(FXN);let fxI=0,shake=0,combo=0,RADg=1;
@@ -175,7 +176,7 @@ export const starOfArt=k=>{try{const q=JSON.parse(localStorage.getItem('muui-h3-
 export const STAR_COL=[0x8a7a66,0xb0703a,0xc8ccd4,0xe8b840];
 export function artViewer(key,opt={}){let A=ART.find(a=>a.k===key);if(!A)return;const ui=overlay('radial-gradient(circle at 50% 38%,#3e2e20,#0e0906)');let alive=true;ui.c.style.display='none';
  const R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:grab';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new THREE.Scene();try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new THREE.Scene();try{setupPost(R,sc)}catch(e){console.warn('공방 후처리',e)}try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new THREE.HemisphereLight(0xfff4e0,0x2a1a10,1.2));const key1=new THREE.SpotLight(0xfff0d8,40,0,.5,.6);key1.position.set(1.6,4.2,2.4);sc.add(key1);const rim=new THREE.DirectionalLight(0xffc888,1.4);rim.position.set(-2.5,1.8,-2.6);sc.add(rim);
  /* 받침: 나무 대 + 별 색 금속 테 + 바닥 빛 웅덩이 */
  const ped=new THREE.Group();sc.add(ped);{const pd=new THREE.Mesh(new THREE.CylinderGeometry(.95,1.05,.34,56),new THREE.MeshStandardMaterial({color:0x4a2e1a,roughness:.55}));pd.position.y=-.17;ped.add(pd)}
