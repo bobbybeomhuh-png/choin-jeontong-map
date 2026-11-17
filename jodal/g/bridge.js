@@ -6,6 +6,7 @@
    runBridge(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {volPines,plantBroad} from './sites/treekit.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 export function runBridge(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
@@ -20,7 +21,7 @@ export function runBridge(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c
  const bed=new T.Mesh(new T.PlaneGeometry(9,40),M(0x3a4a3a));bed.rotation.x=-Math.PI/2;bed.position.y=-1.4;sc.add(bed);
  for(const s of[-1,1]){const b=new T.Mesh(new T.BoxGeometry(14,2,40),M(0x6a9a4a));b.position.set(s*(4.5+7),-.5,0);b.receiveShadow=true;sc.add(b);const cut=new T.Mesh(new T.BoxGeometry(.4,2,40),M(0x7a6a4a));cut.position.set(s*4.6,-.5,0);sc.add(cut)}
  /* 앞 둑(부품 놓는 곳): 강 앞쪽에 모래톱 */
- for(let k=0;k<8;k++){const tr=new T.Group();const t=new T.Mesh(new T.CylinderGeometry(.15,.2,1.4,6),M(0x6a4a2c));t.position.y=.7;tr.add(t);const c=new T.Mesh(new T.ConeGeometry(1,2.4,7),M(k%3?0x3a6a3a:0xb85a2a));c.position.y=2.3;c.castShadow=true;tr.add(c);tr.position.set((k%2?1:-1)*(7+Math.random()*4),.5,-6+k*1.2);sc.add(tr)}
+ /* 11/17 R8: 원뿔 나무 → 지도와 같은 입체 소나무와 단풍 활엽수 */{const PN=volPines(10),o=new T.Object3D(),cc=new T.Color();let np=0;const BL=[];for(let k=0;k<14;k++){const x=(k%2?1:-1)*(8.6+Math.random()*3.6),z=-9+k*1.1+Math.random()*.6;if(k%3===2){BL.push([x,.5,z,Math.random()*6,.4+Math.random()*.12,[0xe8603c,0xf08c3a,0xf6c04a,0xd8503a][k%4]])}else{const sc2=1.0+Math.random()*.35;o.position.set(x,.48,z);o.rotation.set(0,Math.random()*6,0);o.scale.set(sc2*1.1,sc2,sc2*1.1);o.updateMatrix();PN.setMatrixAt(np,o.matrix);PN.setColorAt(np,cc.setHSL(.26,.25,.85));np++}}PN.count=np;PN.castShadow=true;sc.add(PN);if(BL.length)plantBroad(sc,BL)}
  /* 설계서 판(감리 옆) */const plan=new T.Mesh(new T.PlaneGeometry(2.6,1.8),new T.MeshBasicMaterial({toneMapped:false,map:cv(520,360,q=>{q.fillStyle='#1a3a6a';q.fillRect(0,0,520,360);q.strokeStyle='#cfe0ff';q.lineWidth=3;q.strokeRect(8,8,504,344);q.fillStyle='#fff';q.font='bold 34px sans-serif';q.textAlign='center';q.fillText('설 계 서',260,50);q.font='26px sans-serif';q.textAlign='left';q.fillText('① 교각 셋 · 굵기 30cm',36,110);q.fillText('② 보 넷 · 길이 3m',36,160);q.fillText('③ 난간 둘 · 소나무',36,210);q.fillText('순서: 교각 → 보 → 난간',36,270);q.strokeStyle='#cfe0ff';q.beginPath();q.moveTo(40,320);q.lineTo(480,320);q.stroke();for(const x of[150,260,370]){q.strokeRect(x-6,300,12,40)}})}));plan.position.set(-6.8,2.5,-3.8);plan.rotation.y=.45;sc.add(plan);{const leg=new T.Mesh(new T.BoxGeometry(.08,1.6,.08),M(0x5a3a22));leg.position.set(-6.8,.85,-3.85);sc.add(leg)}
  /* 감리 무이 */let boss=null;const H=window.__H3;if(H&&H.makeMuui)H.makeMuui('science',1.3).then(m=>{m.root.position.set(-5.4,.5,-2.6);m.root.rotation.y=.7;sc.add(m.root);m.play('idle');boss=m}).catch(()=>{});
  /* 자리: 교각(강 속, x -2.25·0·2.25), 보(구간 넷), 난간(앞·뒤) */const PX=[-2.25,0,2.25];const SPANS=[[-4.6,-2.25],[-2.25,0],[0,2.25],[2.25,4.6]];
