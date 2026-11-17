@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,mulb,materials,hipRoof} from './sungnyemun.js';
+import {stoneLantern} from './stonekit.js';
 const MURL=k=>new URL('../models/hoeamsa/'+k+'.glb',import.meta.url).href;
 /* 되살릴 건물 터(모형 좌표 x,z, 폭, 깊이, 회전, 높이): 위에서 본 사진의 큰 바닥 자리를 골라 둠 */
 const HALLS=[[-1.6,2.6,2.2,1.4,0,1.5],[-1.2,-.2,2.6,1.5,0,1.7],[1.4,1,1.6,1.1,0,1.2],[3.4,3.2,1.4,1,0,1.05],[-5.1,2.4,4,1,Math.PI/2,1],[.2,5,1.8,.9,0,1]];
@@ -36,6 +37,11 @@ export function buildHoeamsa(opts={}){const mini=!!opts.mini;const MT=materials(
   for(const x of[-6.6,-2.2,2.2,6.6])for(const z of[DZ0+.2,DZ1-.2]){const p=box(.24,DH,.24,pil);p.position.set(x,DH/2,z);G.add(p)}
   for(const[x0,z0,x1,z1]of[[-7,DZ0,7,DZ0],[-7,DZ0,-7,DZ1],[7,DZ0,7,DZ1]]){const L=Math.hypot(x1-x0,z1-z0),a=Math.atan2(z1-z0,x1-x0);const rl=box(L,.08,.08,wd);rl.position.set((x0+x1)/2,DH+.9,(z0+z1)/2);rl.rotation.y=-a;G.add(rl);const n=Math.round(L/.6);for(let i=0;i<=n;i++){const t=i/n,pp=box(.06,.9,.06,wd);pp.position.set(x0+(x1-x0)*t,DH+.45,z0+(z1-z0)*t);G.add(pp)}if(z0===z1)S(x0,x1,DH,DH+1,z0-.1,z0+.1);else S(x0-.1,x0+.1,DH,DH+1,z0,z1)}
   const n=8;for(let i=0;i<n;i++){const h=DH*(i+1)/n,z1=DZ1+(n-i)*.42,z0=z1-.42;const st=box(2.4,h,.42,M(0x9a9282));st.position.set(0,h/2,(z0+z1)/2);G.add(st);S(-1.2,1.2,0,h,z0,z1)}}
+ /* ---------- 마당 둘레: 낮은 돌담(남쪽 가운데 트임), 계단 앞 석등 한 쌍, 쉼터 의자 ---------- */
+ {const HX=22,HZ=22;const st=M(0x9a9282),cp=M(0x5a5248,{roughness:.8});const wall=(x0,z0,x1,z1)=>{const L=Math.hypot(x1-x0,z1-z0),a=Math.atan2(z1-z0,x1-x0);const w=box(L,.7,.5,st);w.position.set((x0+x1)/2,.35,(z0+z1)/2);w.rotation.y=-a;G.add(w);const c=box(L+.1,.14,.66,cp);c.position.set((x0+x1)/2,.77,(z0+z1)/2);c.rotation.y=-a;G.add(c);if(Math.abs(z1-z0)<.01)S(x0,x1,0,.9,z0-.25,z0+.25);else S(x0-.25,x0+.25,0,.9,z0,z1)};
+  wall(-HX,-HZ,HX,-HZ);wall(-HX,-HZ,-HX,HZ);wall(HX,-HZ,HX,HZ);wall(-HX,HZ,-3,HZ);wall(3,HZ,HX,HZ);
+  for(const sx of[-1,1]){const L=stoneLantern(2.2);L.position.set(sx*2.6,0,DZ1+4.4);G.add(L);solids.push({cx:sx*2.6,cz:DZ1+4.4,r:.45,y0:0,y1:2.3});
+   const bw=M(0x6a4a2e,{roughness:.7});const bn=new THREE.Group();bn.position.set(sx*(HX-5),0,HZ-6);bn.rotation.y=Math.PI;G.add(bn);const seat=box(2.2,.1,.5,bw);seat.position.y=.45;bn.add(seat);for(const lx of[-.9,.9]){const lg=box(.12,.45,.42,bw);lg.position.set(lx,.22,0);bn.add(lg)}solids.push({cx:sx*(HX-5),cz:HZ-6,r:.9,y0:0,y1:.5,nt:1})}}
  /* ---------- 볼거리 ---------- */
  spots.push({x:0,y:0,z:-10,r:3,t:'회암사 터 모형',h:'고려 말 나옹 스님이 크게 고쳐 지은 큰 절이 있던 자리예요. 조선 태조 이성계도 이곳에 머물렀다고 해요. 지금은 산비탈에 여러 단으로 쌓은 돌축대와 건물 주춧돌만 남아 있어요. 드론으로 찍은 실제 절터를 모형처럼 줄여 놓았어요. (3D: lacomi1975 드론 실측, CC BY)'});
  spots.push({x:0,y:DH,z:(DZ0+DZ1)/2,r:2.6,t:'절터 전망대',h:'위에서 내려다보면 돌축대가 층층이 이어지고, 건물이 서 있던 자리에 주춧돌이 줄지어 있어요. 무이와 함께 옛 모습을 되살려 보세요. (되살린 건물은 터를 보고 상상해 본 모습이에요)'});
