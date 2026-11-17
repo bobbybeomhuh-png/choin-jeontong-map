@@ -1,5 +1,5 @@
 /* 무이 나라 조달청: 「도감 카드 문양」(퀄리티 P20). 만든 날 2026-11-17
-   카드 스물두 장마다 그 조달 제도를 나타내는 작은 문양(옻칠 바탕 원판, 금빛 테, 먹·금빛 그림)을 캔버스로 그려 그림 주소로 돌려준다.
+   카드 스물세 장마다 그 조달 제도를 나타내는 작은 문양(옻칠 바탕 원판, 금빛 테, 먹·금빛 그림)을 캔버스로 그려 그림 주소로 돌려준다.
    cardIcon(key, on) : on=false 면 흐린 회색(아직 못 모은 카드). */
 const CACHE={};
 const D={
@@ -23,6 +23,7 @@ const D={
  narajangteo:q=>{q.beginPath();q.moveTo(-28,-10);q.lineTo(0,-24);q.lineTo(28,-10);q.closePath();q.fill();for(const x of[-20,-7,7,20])q.fillRect(x-2,-10,4,30);q.fillRect(-28,20,56,4)},
  fraud:q=>{q.fillRect(-16,-10,32,26);q.lineWidth=6;q.strokeStyle='#e8603c';q.beginPath();q.moveTo(-24,-24);q.lineTo(24,24);q.moveTo(24,-24);q.lineTo(-24,24);q.stroke()},
  emergency:q=>{q.beginPath();q.moveTo(6,-28);q.lineTo(-16,4);q.lineTo(0,4);q.lineTo(-6,28);q.lineTo(18,-6);q.lineTo(2,-6);q.closePath();q.fill()},
+ reserve:q=>{q.lineWidth=4;q.beginPath();q.moveTo(-28,-20);q.lineTo(-14,-6);q.lineTo(-2,-16);q.lineTo(10,0);q.lineTo(26,-24);q.stroke();q.beginPath();q.moveTo(26,-24);q.lineTo(26,-12);q.moveTo(26,-24);q.lineTo(14,-24);q.stroke();for(let i=0;i<3;i++)ingot(q,(i-1)*20,22);ingot(q,-10,12);ingot(q,10,12)},
  direct:q=>{q.beginPath();q.moveTo(-28,-2);q.lineTo(-10,-16);q.lineTo(8,-2);q.closePath();q.fill();q.fillRect(-24,-2,28,22);q.fillStyle='#2a140a';q.fillRect(-14,8,8,12);q.strokeStyle='#f2d27a';q.lineWidth=5;q.beginPath();q.arc(12,6,11,0,7);q.stroke();q.lineWidth=6;q.beginPath();q.moveTo(20,14);q.lineTo(30,26);q.stroke()},
  moonjar:q=>{fig(q,-18,2);fig(q,0,-4);fig(q,18,2);q.lineWidth=3;q.beginPath();q.moveTo(-18,18);q.lineTo(18,18);q.stroke()}};
 function fig(q,x,y){q.beginPath();q.arc(x,y-12,7,0,7);q.fill();q.beginPath();q.moveTo(x-10,y+16);q.quadraticCurveTo(x,y-10,x+10,y+16);q.closePath();q.fill()}
