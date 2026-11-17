@@ -1,0 +1,19 @@
+/* 무이 나라 조달청: 관아 「오늘의 업무」 두루마리(G37). 만든 날 2026-11-17
+   곁놀이가 스무 가지로 늘어 무엇부터 할지 길잡이가 필요해서: 관아 창 맨 위에 아직 안 해 본 곁놀이 하나를 「오늘의 업무」로 펼쳐 보이고
+   (바로 가기 단추), 해내면 덤 엽전 10냥과 「완료」 도장. 도감 진행 띠(모은 카드 / 전체)도 함께.
+   setupDaily(E) 한 번(완료 감시), addDaily(u,E,CARDS) 는 관아 창을 그릴 때마다. ST.daily = {k, done:{}} */
+const LIST=[['data-qc','품질 검사','qc'],['data-srv','현장 실사','survey'],['data-mall','책상 장보기','mall'],['data-blk','공동 구매','bulk'],['data-pri','우선 구매','prio'],['data-rsv','비축 물자 풀기','reserve'],['data-saf','안전 점검','safety'],['data-ned','고을 고민','needs'],
+ ['data-auc','역경매','auction'],['data-fair','조달 박람회','fair'],['data-esc','순회 전시 호송','escort'],['data-rly','파발 레이스','relay'],['data-exp','해외 조달 시장','export'],['data-snk','암행 감찰','sneak'],['data-gb','조달 골든벨','bell'],['data-brg','다리 공사','bridge']];
+const played=(ST,k)=>{const v=ST[k];return !!(v&&(typeof v==='object'?(v.stars||Object.keys(v).length):v))};
+let ENV=null;
+export function setupDaily(E){ENV=E;if(window.__DAILY)return;window.__DAILY=1;
+ setInterval(()=>{try{const ST=E.ST,d=ST.daily;if(!d||!d.k||(d.done||{})[d.k])return;if(played(ST,d.k)){d.done=d.done||{};d.done[d.k]=1;ST.coins+=10;E.save();try{E.hudDraw()}catch(e){}try{E.SND&&E.SND.coin&&E.SND.coin()}catch(e){}toast(`오늘의 업무 「${(LIST.find(x=>x[2]===d.k)||[,'곁놀이'])[1]}」 완료! 덤 엽전 10냥`)}}catch(e){}},1500)}
+function toast(t){const el=document.createElement('div');el.textContent=t;el.style.cssText='position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:60;padding:10px 18px;border-radius:14px;background:#8e2b20;color:#fff4dc;font:18px "Do Hyeon",sans-serif;border:3px solid #f2d27a;box-shadow:0 6px 18px rgba(0,0,0,.4);pointer-events:none;transition:opacity .6s';document.body.append(el);setTimeout(()=>el.style.opacity='0',3200);setTimeout(()=>el.remove(),4000)}
+export function addDaily(u,E,CARDS){try{const ST=E.ST;ST.daily=ST.daily||{done:{}};const d=ST.daily;
+ /* 아직 안 끝낸 업무가 있으면 그대로, 끝냈거나 없으면 안 해 본 것 가운데 다음 하나 */if(!d.k||(d.done||{})[d.k]){const nx=LIST.find(x=>!played(ST,x[2])&&!(d.done||{})[x[2]]);d.k=nx?nx[2]:null;E.save()}
+ const it=LIST.find(x=>x[2]===d.k);const nC=Object.keys(CARDS||{}).length,got=Object.keys(CARDS||{}).filter(k=>(ST.cards||{})[k]).length;
+ const box=document.createElement('div');box.className='jd-daily';box.innerHTML=`<style>.jd-daily{position:relative;margin:8px auto 4px;max-width:640px;padding:10px 64px 10px 16px;border-radius:6px;background:linear-gradient(#f9f0d8,#efe0bc);border-top:7px solid #6a3a1a;border-bottom:7px solid #6a3a1a;box-shadow:0 3px 8px rgba(0,0,0,.25);text-align:left;font-size:14px}.jd-daily b.t{font:17px 'Do Hyeon',sans-serif;color:#8e2b20}.jd-daily .bar{height:9px;border-radius:5px;background:#d8c8a0;margin-top:6px;overflow:hidden}.jd-daily .bar i{display:block;height:100%;background:linear-gradient(90deg,#d8a838,#f2d27a)}.jd-daily .go{font:14px 'Do Hyeon',sans-serif;padding:4px 10px;border-radius:9px;border:0;background:#2f6a4a;color:#fff;cursor:pointer;margin-left:6px}.jd-daily .stamp{position:absolute;right:10px;top:50%;transform:translateY(-50%) rotate(-10deg);width:46px;height:46px;border:3px solid #c8352a;border-radius:6px;color:#c8352a;font:15px/40px serif;text-align:center;font-weight:bold;opacity:.85}</style>
+  <b class="t">오늘의 업무</b> ${it?`「${it[1]}」을 해 보세요. 해내면 덤 엽전 10냥.<button type="button" class="go" data-daily>바로 가기</button>`:'곁놀이를 모두 해 봤어요. 훌륭한 사무관이에요!'}
+  <div style="margin-top:4px;color:#5a4a3a">조달 도감 ${got} / ${nC}장</div><div class="bar"><i style="width:${nC?Math.round(got/nC*100):0}%"></i></div>${!it?'<div class="stamp">完了</div>':''}`;
+ const grp=u.c.querySelector('.ofc-groups')||u.c.querySelector('.ofc-btns');if(grp)grp.before(box);else u.c.append(box);
+ const go=box.querySelector('[data-daily]');if(go&&it)go.onclick=()=>{const b=u.c.querySelector('['+it[0]+']');if(b)b.click()}}catch(e){console.warn('오늘의 업무',e)}}
