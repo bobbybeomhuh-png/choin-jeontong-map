@@ -21,7 +21,7 @@ export function setupTime(scene,R){if(!scene||!R||scene.userData.tod)return null
  let hemi=null,amb=null,sun=null,sky=null,glow=[],lamp=null,cloud=null;const oth=[];
  scene.traverse(o=>{if(o.isHemisphereLight&&!hemi)hemi=o;else if(o.isAmbientLight&&!amb)amb=o;else if(o.isDirectionalLight&&o.castShadow&&!sun)sun=o;
   else if(o.isMesh&&o.geometry&&o.geometry.parameters&&o.geometry.parameters.radius===600&&o.material&&o.material.isShaderMaterial)sky=o.material;
-  if(o.userData&&o.userData.houseGlow)glow=o.userData.houseGlow;if(o.userData&&o.userData.lampGlow)lamp=o.userData.lampGlow;if(o.userData&&o.userData.cloudMat)cloud=o.userData.cloudMat});
+  if(o.userData&&o.userData.houseGlow)glow=glow.concat(o.userData.houseGlow);if(o.userData&&o.userData.houseGlow2)glow=glow.concat(o.userData.houseGlow2);if(o.userData&&o.userData.lampGlow)lamp=o.userData.lampGlow;if(o.userData&&o.userData.cloudMat)cloud=o.userData.cloudMat});
  if(!hemi||!sun)return null;scene.traverse(o=>{if((o.isDirectionalLight||o.isHemisphereLight||o.isAmbientLight)&&o!==hemi&&o!==amb&&o!==sun&&!o.userData.night&&!o.userData.lantern)oth.push([o,o.intensity])});
  const SH=C(0xd9e6ee),SZ=C(0x4f8fd6);
  const day={hemi:hemi.intensity,hs:hemi.color.getHex(),hg:hemi.groundColor.getHex(),amb:amb?amb.intensity:0,sun:sun.intensity,sc:sun.color.getHex(),fog:scene.fog?scene.fog.color.getHex():0xc9dbe6,near:scene.fog?scene.fog.near:150,far:scene.fog?scene.fog.far:620,exp:R.toneMappingExposure,
@@ -41,7 +41,7 @@ export function setupTime(scene,R){if(!scene||!R||scene.userData.tod)return null
  const busy=()=>!!document.querySelector('.jd-ov,body>div[data-mg]');
  const snap=()=>({cl:cloud?cloud.color.getHex():0xffffff,oth:from&&t<1?lerpN(from.oth,to.oth,t):to.oth,hemi:hemi.intensity,hs:hemi.color.getHex(),hg:hemi.groundColor.getHex(),amb:amb?amb.intensity:0,sun:sun.intensity,sc:sun.color.getHex(),fog:scene.fog?scene.fog.color.getHex():day.fog,near:scene.fog?scene.fog.near:day.near,far:scene.fog?scene.fog.far:day.far,exp:R.toneMappingExposure,
   hz:U.uHz.value.toArray(),zn:U.uZn.value.toArray(),sunc:U.uSunC.value.toArray(),sund:U.uSunD.value.toArray(),star:U.uStar.value,moon:U.uMoon.value,win:glow[0]?glow[0].emissiveIntensity:0,lamp:to.lamp});
- const set=(name,instant)=>{if(!MODES[name])return cur;if(busy()&&!instant)return cur;from=instant?MODES[name]:snap();to=MODES[name];t=instant?1:0;if(instant)put(mix(to,to,1));cur=name;
+ const set=(name,instant)=>{if(!MODES[name])return cur;/* 마을(villages)은 늦게 세워지므로 바꿀 때마다 불빛 대상을 다시 모음 */{const G2=[];scene.traverse(o=>{if(o.userData&&o.userData.houseGlow)G2.push(...o.userData.houseGlow);if(o.userData&&o.userData.houseGlow2)G2.push(...o.userData.houseGlow2)});if(G2.length)glow=G2}if(busy()&&!instant)return cur;from=instant?MODES[name]:snap();to=MODES[name];t=instant?1:0;if(instant)put(mix(to,to,1));cur=name;
   scene.traverse(o=>{if(o.isLight&&o.userData){delete o.userData.base;delete o.userData.lbase}});if(btn)btn.textContent='하늘: '+to.lab;return cur};
  let btn=null;const addBtn=()=>{const top=document.getElementById('top');if(!top){setTimeout(addBtn,400);return}if(document.getElementById('jd-tod'))return;btn=document.createElement('button');btn.id='jd-tod';btn.className='btn';btn.textContent='하늘: 낮';btn.title='낮 · 노을 · 달밤';
   btn.onclick=()=>{set(ORDER[(ORDER.indexOf(cur)+1)%ORDER.length])};top.appendChild(btn)};addBtn();
