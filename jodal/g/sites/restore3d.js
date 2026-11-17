@@ -38,7 +38,7 @@ export const ART=[
  {k:'hongipo',m:'suwon/hongipo',n:'홍이포',kind:'metal',cut:'ring',np:4,site:'수원',d:'17세기에 네덜란드식 대포를 본떠 만든 큰 대포예요. 나무 수레에 얹어 옮기고 쇠공을 멀리 쏘았어요. 화성 같은 큰 성에 두어 성을 지켰어요. (3D: 한국문화정보원 KCISA, CC BY)'}];
 try{window.__ARTN=Object.fromEntries(ART.map(a=>[a.k,a.n]))}catch(e){}
 /* 미리 찍어 둔 유물 그림(textures/thumb, 만드는 법: 작업 기록 참고) */const THUMB=k=>new URL('../textures/thumb/'+k+'.webp',import.meta.url).href;
-const LS='muui-h3-restored';
+const LS='jodal-h3-restored';/* 11/18 D37: 조달청판은 무이 월드 진열장 기록과 섞이지 않게 따로 */
 /* 오늘의 의뢰: 한국 날짜로 하루 하나. 해내면 엽전 덤 */
 const DAY=()=>Math.floor((Date.now()+9*36e5)/864e5);export const todayArt=()=>ART[DAY()%ART.length];const todayDone=()=>{try{return localStorage.getItem('muui-h3-restore-day')===String(DAY())}catch(e){return false}};
 export const restored=()=>{try{return new Set(JSON.parse(localStorage.getItem(LS)||'[]'))}catch(e){return new Set()}};
