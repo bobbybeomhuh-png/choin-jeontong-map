@@ -129,3 +129,4 @@ export function setupVillages(scene,JOBS){const H=window.__H3;if(!H||!H.floorAt|
  if(BROAD.length){plantBroad(root,BROAD);for(const b of BROAD)addSolid(b[0],b[2],.7,b[1])}
  for(const c of CHIM)smoke(root,c);
  window.__VILMS=Math.round(performance.now()-t0);window.__VIL={towns:towns.map(t=>[t.k,+t.x.toFixed(1),+t.z.toFixed(1),t.off]),miss:Object.fromEntries(towns.map(t=>[t.k,t.miss])),focus:FOCUS.map(f=>[f[0],+f[1].toFixed(1),+f[2].toFixed(2),+f[3].toFixed(1)]),root};return root}
+export {house,gate,wallSeg,haechi,mats,Bag,roofParts,shed};

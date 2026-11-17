@@ -16,7 +16,7 @@ export function setupGrass(scene,JOBS,extra=[]){const H=window.__H3;if(!H||!H.fl
  const centers=JOBS.filter(j=>j.sp).map(j=>({x:j.sp.x,z:j.sp.z,y:j.sp.y||0,r0:7.5,r1:30,n:4500})).concat(extra);const N=centers.reduce((s,c)=>s+c.n,0);
  const im=new THREE.InstancedMesh(g,m,N),o=new THREE.Object3D(),col=new THREE.Color();let k=0;let s=91;const R=()=>(s=(s*16807)%2147483647)/2147483647;im.count=0;im.receiveShadow=true;im.frustumCulled=false;scene.add(im);let busyMs=0;
  /* 고을 하나씩 틈틈이(시작할 때 몇 초씩 멈추지 않게) */const one=(c)=>{const t1=performance.now();const base=H.floorAt(c.x,c.z,(c.y||0)+4);for(let i=0;i<c.n*1.6&&k<N;i++){const a2=R()*6.283,rr=c.r0+Math.sqrt(R())*(c.r1-c.r0),x=c.x+Math.cos(a2)*rr,z=c.z+Math.sin(a2)*rr;
-   if(window.__RIVER&&window.__RIVER(x,z))continue;const y=H.floorAt(x,z,base+3);if(!isFinite(y)||Math.abs(y-base)>.6)continue;
+   if(window.__RIVER&&window.__RIVER(x,z))continue;if(window.__GRASS_EXCL&&window.__GRASS_EXCL.some(([ex,ez,hw,hd])=>Math.abs(x-ex)<hw&&Math.abs(z-ez)<hd))continue;const y=H.floorAt(x,z,base+3);if(!isFinite(y)||Math.abs(y-base)>.6)continue;
    o.position.set(x,y-.02,z);o.rotation.set(0,R()*3.14,0);const sc=.6+R()*.6;o.scale.set(sc,sc*(.7+R()*.5),sc);o.updateMatrix();im.setMatrixAt(k,o.matrix);im.setColorAt(k,col.setHSL(.22+R()*.08,.25,.78+R()*.2));k++}
   im.count=k;im.instanceMatrix.needsUpdate=true;if(im.instanceColor)im.instanceColor.needsUpdate=true;busyMs=Math.max(busyMs,performance.now()-t1)};
  const L=centers.slice();const step=()=>{const c=L.shift();if(!c){window.__GRASSMS=Math.round(busyMs);window.__GRASSN=k;return}one(c);setTimeout(step,120)};setTimeout(step,0);return im}
