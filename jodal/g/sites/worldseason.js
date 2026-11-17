@@ -47,10 +47,10 @@ export function buildSeason(G,{TOP,provAt,HALL,mulb,MS=1,scene}){const U=G.userD
  const NF=500,fp=new Float32Array(NF*3),fv=[];for(let i=0;i<NF;i++){fp[i*3]=(r()-.5)*70;fp[i*3+1]=r()*26;fp[i*3+2]=(r()-.5)*70;fv.push(r()*6.28)}
  const fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.BufferAttribute(fp,3));const FL=new THREE.Points(fg,new THREE.PointsMaterial({size:.75,map:PT.autumn,transparent:true,depthWrite:false,alphaTest:.05}));FL.frustumCulled=false;FL.renderOrder=3;G.add(FL);
  /* 비구름 4개: 땅 위를 천천히 돈다. 40초 비 → 20초 갬(무지개) */
- const cm=new THREE.MeshStandardMaterial({color:0x8a929c,roughness:1,transparent:true,opacity:.95});const lm=new THREE.LineBasicMaterial({color:0xe4f0fa,transparent:true,opacity:.85});
+ const cm=new THREE.MeshStandardMaterial({color:0x8a929c,roughness:1,transparent:true,opacity:.95});const lm=new THREE.LineBasicMaterial({color:0xc8d6e4,transparent:true,opacity:.42});
  const sm=new THREE.PointsMaterial({size:.5,map:PT.winter,transparent:true,depthWrite:false});
  const RBC=[0xe84a3a,0xf08c3a,0xf6d04a,0x7cc85a,0x4aa0e0,0x4a5ac8,0x9a5ac8];
- const homes=[[-30,-60],[60,-110],[-20,40],[40,20],[-50,90],[80,-30]].map(([a,b])=>[a*MS,b*MS]).filter(([x,z])=>provAt(x,z)).slice(0,4);
+ const homes=[[-30,-60],[60,-110],[-20,40],[40,20],[-50,90],[80,-30]].map(([a,b])=>[a*MS,b*MS]).filter(([x,z])=>provAt(x,z)).slice(0,2);/* 11/17 R6: 넷 → 둘(하늘이 어수선하지 않게) */
  const CL=homes.map(([hx,hz],ci)=>{const g=new THREE.Group();const n=6;for(let j=0;j<n;j++){const b=new THREE.Mesh(new THREE.SphereGeometry(4+r()*2.5,10,8),cm);b.position.set(j*3.6-n*1.8,r()*1.6,(r()-.5)*5);b.scale.y=.62;g.add(b)}
   const NR=650,rp=new Float32Array(NR*6);const RH=28;for(let i=0;i<NR;i++){const a=r()*6.28,d=Math.sqrt(r())*13,x=Math.cos(a)*d,z=Math.sin(a)*d,y=-r()*RH;rp.set([x,y,z,x+.18,y-2.2,z],i*6)}
   const rg=new THREE.BufferGeometry();rg.setAttribute('position',new THREE.BufferAttribute(rp,3));const rain=new THREE.LineSegments(rg,lm);rain.frustumCulled=false;g.add(rain);
@@ -61,18 +61,18 @@ export function buildSeason(G,{TOP,provAt,HALL,mulb,MS=1,scene}){const U=G.userD
  let rainG=null;const rainSound=()=>{if(rainG)return rainG;try{const AC=window.__H3&&window.__H3.AC;if(!AC)return null;const len=AC.sampleRate*2,b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;const s=AC.createBufferSource();s.buffer=b;s.loop=true;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=1800;f.Q.value=.6;const gn=AC.createGain();gn.gain.value=0;s.connect(f);f.connect(gn);gn.connect(AC.destination);s.start();rainG=gn}catch(e){}return rainG};
  const say=(t,s=4)=>{try{window.__H3&&window.__H3.say(t,s)}catch(e){}};
  let lastRainbowSay=-99;
- const tick=(P,dt,t)=>{if(!P)return;const cyc=60;let wet=0;
+ const tick=(P,dt,t)=>{if(!P)return;const cyc=150;let wet=0;
   /* 흩날림: 무이를 따라다님 */{const a=fg.attributes.position.array;FL.position.set(P.x,TOP,P.z);const s=cur;for(let i=0;i<NF;i++){const k=i*3;fv[i]+=dt*(s==='summer'?.6:1.4);
     if(s==='summer'){a[k]+=Math.sin(fv[i])*dt*.8;a[k+1]+=Math.cos(fv[i]*.7)*dt*.4;a[k+2]+=Math.cos(fv[i]*1.3)*dt*.8;if(a[k+1]<0.3)a[k+1]=3;if(a[k+1]>6)a[k+1]=.5}
     else{const fall=s==='winter'?1.6:s==='spring'?1.1:1.3;a[k+1]-=fall*dt;a[k]+=Math.sin(fv[i])*dt*(s==='winter'?.4:1.2)+dt*.5;a[k+2]+=Math.cos(fv[i]*.8)*dt*.6;if(a[k+1]<0){a[k+1]=24+Math.random()*4;a[k]=(Math.random()-.5)*70;a[k+2]=(Math.random()-.5)*70}}
     if(a[k]>35)a[k]-=70;if(a[k]<-35)a[k]+=70;if(a[k+2]>35)a[k+2]-=70;if(a[k+2]<-35)a[k+2]+=70}fg.attributes.position.needsUpdate=true;
    /* 여름 반딧불은 낮게 깔리게: 높이 0.3~6 안에서만 */FL.visible=!(window.__SEASON_OFF)}
   for(const C of CL){C.a+=dt*.015;const x=C.hx+Math.cos(C.a)*C.rad,z=C.hz+Math.sin(C.a)*C.rad;C.g.position.x=x;C.g.position.z=z;
-   const ph=((t+C.ph)%cyc+cyc)%cyc,on=ph<40;const was=C.raining;C.raining=on;
+   const ph=((t+C.ph)%cyc+cyc)%cyc,on=ph<30;const was=C.raining;C.raining=on;
    const far=Math.hypot(P.x-x,P.z-z);const show=far<260;C.rain.visible=on&&show&&!C.isSnow;C.snow.visible=on&&show&&C.isSnow;
    if(show&&on){const sp=C.isSnow?2.2:26;if(!C.isSnow){const a=C.rp;for(let i=0;i<C.NR;i++){const k=i*6;a[k+1]-=sp*dt;a[k+4]-=sp*dt;if(a[k+1]<-C.RH){a[k+1]+=C.RH;a[k+4]+=C.RH}}C.rain.geometry.attributes.position.needsUpdate=true}
     else{const a=C.sp;for(let i=0;i<C.NR;i++){const k=i*3;a[k+1]-=sp*dt;a[k]+=Math.sin(t*1.3+i)*dt*.3;if(a[k+1]<-C.RH)a[k+1]+=C.RH}C.snow.geometry.attributes.position.needsUpdate=true}}
-   /* 갬: 구름 옆에 무지개(무이 쪽을 보게) */const rbA=on?0:Math.min(1,(ph-40)/3)*Math.min(1,(60-ph)/3);C.rb.visible=rbA>0.01&&show&&!C.isSnow;if(C.rb.visible){C.rb.position.set(x,TOP-1.5,z);C.rb.rotation.y=Math.atan2(P.x-x,P.z-z);C.rb.children.forEach(m=>m.material.opacity=rbA*.55)}
+   /* 갬: 구름 옆에 무지개(무이 쪽을 보게) */const rbA=on?0:Math.max(0,Math.min(1,(ph-30)/3)*Math.min(1,(45-ph)/3));C.rb.visible=rbA>0.01&&show&&!C.isSnow;if(C.rb.visible){C.rb.position.set(x,TOP-1.5,z);C.rb.rotation.y=Math.atan2(P.x-x,P.z-z);C.rb.children.forEach(m=>m.material.opacity=rbA*.38)}
    cm.opacity=.95;
    const inside=far<15;if(inside&&on)wet=Math.max(wet,1-far/15);
    if(inside&&on&&!C.inside){say(C.isSnow?'눈이 펑펑 와요! 하얗다~':'앗, 소나기예요! 금방 그칠 거예요.')}
