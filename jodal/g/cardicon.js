@@ -1,5 +1,5 @@
 /* 무이 나라 조달청: 「도감 카드 문양」(퀄리티 P20). 만든 날 2026-11-17
-   카드 스물한 장마다 그 조달 제도를 나타내는 작은 문양(옻칠 바탕 원판, 금빛 테, 먹·금빛 그림)을 캔버스로 그려 그림 주소로 돌려준다.
+   카드 스물두 장마다 그 조달 제도를 나타내는 작은 문양(옻칠 바탕 원판, 금빛 테, 먹·금빛 그림)을 캔버스로 그려 그림 주소로 돌려준다.
    cardIcon(key, on) : on=false 면 흐린 회색(아직 못 모은 카드). */
 const CACHE={};
 const D={
@@ -23,6 +23,7 @@ const D={
  narajangteo:q=>{q.beginPath();q.moveTo(-28,-10);q.lineTo(0,-24);q.lineTo(28,-10);q.closePath();q.fill();for(const x of[-20,-7,7,20])q.fillRect(x-2,-10,4,30);q.fillRect(-28,20,56,4)},
  fraud:q=>{q.fillRect(-16,-10,32,26);q.lineWidth=6;q.strokeStyle='#e8603c';q.beginPath();q.moveTo(-24,-24);q.lineTo(24,24);q.moveTo(24,-24);q.lineTo(-24,24);q.stroke()},
  emergency:q=>{q.beginPath();q.moveTo(6,-28);q.lineTo(-16,4);q.lineTo(0,4);q.lineTo(-6,28);q.lineTo(18,-6);q.lineTo(2,-6);q.closePath();q.fill()},
+ direct:q=>{q.beginPath();q.moveTo(-28,-2);q.lineTo(-10,-16);q.lineTo(8,-2);q.closePath();q.fill();q.fillRect(-24,-2,28,22);q.fillStyle='#2a140a';q.fillRect(-14,8,8,12);q.strokeStyle='#f2d27a';q.lineWidth=5;q.beginPath();q.arc(12,6,11,0,7);q.stroke();q.lineWidth=6;q.beginPath();q.moveTo(20,14);q.lineTo(30,26);q.stroke()},
  moonjar:q=>{fig(q,-18,2);fig(q,0,-4);fig(q,18,2);q.lineWidth=3;q.beginPath();q.moveTo(-18,18);q.lineTo(18,18);q.stroke()}};
 function fig(q,x,y){q.beginPath();q.arc(x,y-12,7,0,7);q.fill();q.beginPath();q.moveTo(x-10,y+16);q.quadraticCurveTo(x,y-10,x+10,y+16);q.closePath();q.fill()}
 function ingot(q,x,y){q.beginPath();q.moveTo(x-10,y+5);q.lineTo(x-7,y-5);q.lineTo(x+7,y-5);q.lineTo(x+10,y+5);q.closePath();q.fill()}
@@ -36,5 +37,6 @@ export function cardIcon(k,on=true){const key=k+(on?1:0);if(CACHE[key])return CA
 export function watchCardUnlocks(CARDS){if(window.__CARDWATCH)return;window.__CARDWATCH=1;const names=Object.entries(CARDS).map(([k,v])=>[k,v.n]).sort((a,b)=>b[1].length-a[1].length);
  if(!document.getElementById('jd-cardpop')){const st=document.createElement('style');st.id='jd-cardpop';st.textContent='@keyframes jdpop{0%{transform:scale(.2) rotate(-20deg);opacity:0}60%{transform:scale(1.15) rotate(6deg);opacity:1}100%{transform:scale(1) rotate(0)}}.jd-cicon{width:64px;height:64px;display:block;margin:4px auto 6px;animation:jdpop .6s ease-out;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4))}';document.head.append(st)}
  const scan=root=>{const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;const hits=[];while((n=w.nextNode())){if(n.nodeValue&&n.nodeValue.indexOf('카드가 열렸')>=0)hits.push(n)}
-  for(const t of hits){let el=t.parentElement;if(!el||el.closest('[data-cicon]'))continue;const box=el.closest('.jd-tip,.f3-card,div')||el;if(box.dataset.cicon)continue;const txt=box.textContent||'';const f=names.find(([k,nm])=>txt.indexOf(nm)>=0);if(!f)continue;box.dataset.cicon=1;const img=new Image();img.className='jd-cicon';img.alt='';img.src=cardIcon(f[0],true);box.insertBefore(img,box.firstChild)}};
- new MutationObserver(ms=>{for(const m of ms)for(const a of m.addedNodes)if(a.nodeType===1&&(a.textContent||'').indexOf('카드가 열렸')>=0)scan(a)}).observe(document.body,{childList:true,subtree:true})}
+  for(const t of hits){let el=t.parentElement;if(!el||el.closest('[data-cicon]'))continue;const box=el.closest('.jd-tip,.f3-card,div')||el;if(box.dataset.cicon)continue;const txt=box.textContent||'';const qm=txt.match(/「([^」]+)」\s*카드가 열렸/)||txt.match(/카드가 열렸어요\s*·\s*([^\s<]+(?:\s[^\s<]+)?)/);const f=(qm&&names.find(([k,nm])=>qm[1].trim()===nm||qm[1].indexOf(nm)===0))||names.find(([k,nm])=>txt.indexOf(nm)>=0);if(!f)continue;box.dataset.cicon=1;const img=new Image();img.className='jd-cicon';img.alt='';img.src=cardIcon(f[0],true);box.insertBefore(img,box.firstChild)}};
+ /* 11/17 C9: 이미 떠 있는 알림 상자의 글만 바뀌는 놀이(역경매·박람회 등)도 잡도록, 바뀐 상자(target)까지 살핌 */
+ new MutationObserver(ms=>{const seen=new Set();for(const m of ms){const cands=[m.target,...m.addedNodes];for(const a of cands){const el=a&&(a.nodeType===1?a:a.parentElement);if(!el||el===document.body||seen.has(el))continue;seen.add(el);const tx=el.textContent||'';if(tx.length<3000&&tx.indexOf('카드가 열렸')>=0)scan(el)}}}).observe(document.body,{childList:true,subtree:true,characterData:true})}
