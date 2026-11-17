@@ -7,6 +7,7 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {addWorkroom} from './sites/workroom.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const CL={
  forge:{n:'화덕',sus:0,see:'화덕 안에 숯불이 빨갛게 살아 있고, 둘레에 쇠 부스러기가 떨어져 있어요.',why:'오늘도 불을 피워 쇠를 달군 흔적이에요. 여기서 직접 만든다는 증거예요.'},
@@ -21,7 +22,7 @@ const ROUNDS=[{n:'놋쇠 경첩 공방',who:'metal',real:1,mat:0xb87333,clues:['
  {n:'급식 그릇 공방',who:'ceramic',real:0,mat:0x8a6a4a,clues:['cold','boxes','mats','newt']},
  {n:'옻칠 책상 공방',who:'painter',real:1,mat:0x5a2a1a,clues:['lacq','tools','half','mats']}];
 const SPOT=[[-3.6,-2.6,.75],[3.6,-2.6,-.75],[-3.8,2.4,2.2],[3.8,2.4,-2.2]];
-export function runSurvey(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runSurvey(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'site');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x1a120c);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff2dc,0x4a3a2a,.9));const sun=new T.DirectionalLight(0xffe8c8,1.6);sun.position.set(-4,9,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sc.add(sun);
@@ -77,6 +78,6 @@ export function runSurvey(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c
    const tgt=new T.Vector3(p.x*.55,p.y+4.6,p.z*.55+4.2);const dd=Math.hypot(tgt.x,tgt.z);if(dd>6.4){tgt.x*=6.4/dd;tgt.z*=6.4/dd}camPos.lerp(tgt,Math.min(1,dt*3));cam.position.copy(camPos);cam.lookAt(p.x,p.y+.7,p.z-1)}
   hud.innerHTML=`공방 ${RD+1} / ${ROUNDS.length} · 살핀 단서 ${rings.filter(x=>x.res!=null).length} / 4<br>맞힌 판단 ${score}`;
   R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;removeEventListener('keydown',kd);removeEventListener('keyup',ku);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}removeEventListener('keydown',kd);removeEventListener('keyup',ku);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  window.__SURV={state:()=>({rd:RD,phase,score,total,me:me&&[me.root.position.x,me.root.position.z],near:near&&near.k,talking:talking&&talking.k,rings:rings.map(g=>({k:g.k,sus:CL[g.k].sus,res:g.res,x:g.x,z:g.z})),real:round.real,ready:!!me&&!!owner}),key,close};
  return{close}}

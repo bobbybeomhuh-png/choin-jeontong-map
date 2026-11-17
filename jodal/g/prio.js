@@ -7,6 +7,7 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const ROUNDS=[{n:'서당 한지 백 묶음',limit:45,need:'상',ans:1,b:[
   {who:'한양 종이 상회',k:'carpenter',p:40,q:'상',doc:null,why:'값과 솜씨는 좋지만 우선 구매 대상이 아니에요. 비슷한 조건의 우선 구매 대상이 있어요.'},
@@ -18,7 +19,7 @@ const ROUNDS=[{n:'서당 한지 백 묶음',limit:45,need:'상',ans:1,b:[
   {who:'큰 상단 붓',k:'carpenter',p:28,q:'상',doc:null,why:'값과 솜씨는 좋지만 우선 구매 대상이 아니에요.'},
   {who:'솔바람 붓방',k:'ceramic',p:29,q:'상',doc:['여성 기업 확인서',1],why:''},
   {who:'새봄 붓 일터',k:'metal',p:28,q:'상',doc:['장애인 표준사업장 「신청 중」 (인증서 없음)',0],why:'아직 인증을 받지 못했어요. 인증서가 나온 뒤에야 우선 구매 대상이에요.'}]}];
-export function runPrio(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runPrio(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.85));const sun=new T.DirectionalLight(0xffe2b8,1.7);sun.position.set(4,10,6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-9,right:9,top:9,bottom:-9});sc.add(sun);
@@ -52,7 +53,7 @@ export function runPrio(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.s
  load(0);
  let last=performance.now();const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
   for(const s of seats)s.m&&s.m.mx.update(dt);hud.innerHTML=`입찰 ${Math.min(rd+1,2)} / 2<br>한 번에 맞힘 ${score}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=j=>{const s=seats[j];if(!s)return null;const v=new T.Vector3(0,.9,.6).add(s.g.position).project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__PRIO={state:()=>({rd,phase,score,ans:ROUNDS[rd]&&ROUNDS[rd].ans,ready:seats.every(s=>s.m)}),scr,close};
  return{close}}

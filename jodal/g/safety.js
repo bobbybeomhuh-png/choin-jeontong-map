@@ -6,9 +6,10 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {outdoorSky,groundTex} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const TIME=60;
-export function runSafety(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runSafety(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'site');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,70);try{outdoorSky(sc,{R:48})}catch(e){}try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x6a5a40,.6));const sun=new T.DirectionalLight(0xfff0d0,2.3);sun.position.set(-8,14,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-14,right:14,top:14,bottom:-14});sc.add(sun);
@@ -55,7 +56,7 @@ export function runSafety(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c
   for(const m of folk)m.mx.update(dt);for(const m of marks){m.t-=dt;m.s.lookAt(cam.position);if(m.t<0&&m.s.parent)sc.remove(m.s)}
   if(live){t+=dt;if(t>=TIME){finish()}}hud.innerHTML=`찾은 위험 ${found.size} / 5<br>남은 시간 ${Math.max(0,TIME-t).toFixed(0)}초 · 잘못 짚음 ${wrong}`;
   R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;removeEventListener('keydown',kd);removeEventListener('keyup',ku);removeEventListener('pointerup',pu);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}removeEventListener('keydown',kd);removeEventListener('keyup',ku);removeEventListener('pointerup',pu);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  /* 시험용: 이름으로 물건의 화면 자리 */const scr=k=>{let o=null;sc.traverse(m=>{if(!o&&m.isMesh&&m.userData.pick===k)o=m});if(!o)return null;const v=new T.Vector3();o.getWorldPosition(v);v.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__SAFE={state:()=>({live,done,found:[...found],wrong,t,yaw,ready:folk.length===4}),scr,setYaw:a=>{yaw=a},close};
  return{close}}

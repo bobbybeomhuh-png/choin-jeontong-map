@@ -6,11 +6,12 @@
 import * as T from 'three';
 import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 import {groundTex,hallBack} from './sites/dress.js';
 const MAT=[{n:'구리',col:0xb87333,who:'metal',css:'#c8743a'},{n:'주석',col:0xb8bcc4,who:'science',css:'#7a8a9a'},{n:'옻',col:0x3a1a10,who:'painter',css:'#6a2a1a'}];
 const LINE=100,ROUND=25,TRIES=4;
-export function runReserve(ctx,E){const ui=overlay('#100c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runReserve(ctx,E){const ui=overlay('#100c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.8));const sun=new T.DirectionalLight(0xffe2b8,1.8);sun.position.set(5,10,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10});sc.add(sun);
@@ -54,6 +55,6 @@ export function runReserve(ctx,E){const ui=overlay('#100c08');let alive=true;ui.
   hud.innerHTML=`판 ${Math.min(rd+1,3)} / 3 · 지킨 판 ${wins}<br>남은 풀기 ${left}번 · 낭비 ${waste}`;
   R.render(sc,cam);requestAnimationFrame(loop)};
  say(`관아 비축 창고예요. 공방들이 쓰는 <b>구리·주석·옻</b> 값이 들쭉날쭉해요. 값이 <b style="color:#c8352a">붉은 선</b>을 넘으면 공방이 일을 못 해요. 그때 창고 물자를 풀어 값을 눌러 주세요.<div style="margin-top:8px"><button type="button" data-go style="${BTN};background:#8e2b20">시작</button></div>`);bar.querySelector('[data-go]').onclick=start;draw();loop();
- const close=()=>{if(!alive)return;alive=false;removeEventListener('keydown',kd);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}removeEventListener('keydown',kd);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  window.__RSV={state:()=>({rd,t,live,price:price.map(v=>Math.round(v)),left,waste,wins,results,ready:folk.filter(Boolean).length===3}),release,close};
  return{close}}

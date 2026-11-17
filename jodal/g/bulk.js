@@ -7,13 +7,14 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const TOWN=[['경주',2.2,1.4],['강진',-1.6,2.2],['서울',-.6,-2.2],['통영',1.2,2.6],['이천',.2,-1.2]];
 const ITEMS=[{n:'먹',col:0x1a1a1e,one:10,bulk:8,orders:[[0,7,0],[1,6,0],[2,9,0],[3,4,1]]},
  {n:'붓',col:0xc8a070,one:6,bulk:5,orders:[[2,9,0],[4,3,1],[1,6,0],[0,7,0]]},
  {n:'한지',col:0xf4ecd8,one:4,bulk:3,orders:[[4,10,0],[3,6,0],[2,5,0],[0,4,0]]}];
 const MIN=20;
-export function runBulk(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runBulk(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.85));const sun=new T.DirectionalLight(0xffe2b8,1.7);sun.position.set(4,10,6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sc.add(sun);
@@ -49,7 +50,7 @@ export function runBulk(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.s
   for(const b of boxes)if(b.res==null){b.m.position.y=b.y0+Math.sin(now/400+b.t)*.06+(sel===b?.2:0);b.m.rotation.y=Math.sin(now/900+b.t)*.12}
   for(let i=tw.length-1;i>=0;i--){const w=tw[i];w.t=Math.min(1,w.t+dt*1.6);const p=w.from.clone().lerp(w.to,w.t);p.y+=Math.sin(w.t*Math.PI)*1.6;w.m.position.copy(p);w.m.scale.setScalar(1-.35*w.t);if(w.t>=1)tw.splice(i,1)}
   const G=boxes.filter(b=>b.res===1).reduce((a,b)=>a+b.q,0);hud.innerHTML=`물품 ${ix+1} / 3 · ${ITEMS[ix].n}<br>수레에 모은 묶음 ${G} / ${MIN}+ · 아낀 냥 ${saved}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=i=>{const b=boxes[i];if(!b)return null;const v=b.m.position.clone().project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__BULK={state:()=>({ix,phase,saved,base,mist,boxes:boxes.map(b=>({t:b.t,q:b.q,urg:b.urg,res:b.res}))}),scr,close};
  return{close}}

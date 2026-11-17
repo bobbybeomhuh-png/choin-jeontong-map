@@ -7,6 +7,7 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack,boardFloor} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const DESK=[{k:'a',who:'한양 목공방',h:30,round:1,price:22,days:20,col:0x9a6a3a,ok:1},
  {k:'b',who:'큰 상단 가구',h:72,round:1,price:30,days:10,col:0x6a4a2a,ok:0,why:'서서 쓰는 높은 책상(72cm)이에요. 바닥에 앉는 서당엔 안 맞아요.'},
@@ -14,7 +15,7 @@ const DESK=[{k:'a',who:'한양 목공방',h:30,round:1,price:22,days:20,col:0x9a
  {k:'d',who:'남도 소목장',h:28,round:1,price:18,days:45,col:0x8a5a2a,ok:0,why:'납품까지 45일이라 한 달 안에 못 받아요.'},
  {k:'e',who:'이천 나무 공방',h:31,round:1,price:26,days:14,col:0x7a4a22,ok:1}];
 const RE={a:{price:21,days:28,note:'값을 1냥 깎고 납기는 28일'},e:{price:19,days:14,note:'값을 7냥 깎고 납기는 그대로 14일'}};
-export function runMall(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runMall(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'market');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x20160e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff2dc,0x4a3a2a,.85));const sun=new T.DirectionalLight(0xffe8c8,1.7);sun.position.set(-5,10,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-12,right:12,top:12,bottom:-12});sc.add(sun);
@@ -59,6 +60,6 @@ export function runMall(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.s
    if(near&&!talking&&phase==='look'&&!msg.querySelector('[data-talk]'))say(`<b>${near.who}</b>의 진열대예요. <button type="button" data-talk style="${BTN};background:#3b2a1c;color:#f2d27a">E 살피기</button>`),msg.querySelector('[data-talk]').onclick=()=>talk(near);
    camPos.lerp(new T.Vector3(p.x*.7,4.6,p.z+6.5),Math.min(1,dt*3));cam.position.copy(camPos);cam.lookAt(p.x*.85,1.2,p.z-3)}
   hud.innerHTML=`살핀 진열대 ${booths.filter(b=>b.res!=null).length} / 5<br>맞힌 판단 ${score}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;removeEventListener('keydown',kd);removeEventListener('keyup',ku);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}removeEventListener('keydown',kd);removeEventListener('keyup',ku);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  window.__MALL={state:()=>({phase,score,total,me:me&&[me.root.position.x,me.root.position.z],near:near&&near.k,booths:booths.map(b=>({k:b.k,ok:b.ok,res:b.res,x:b.sx,z:b.sz})),ready:!!me&&!!boss}),close};
  return{close}}

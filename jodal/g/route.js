@@ -7,10 +7,11 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const MAP=['MM..R..1','W...R...','..M.B..M','..M.R.2.','3...R...','...MR.4.'];
 const GW=8,GH=6,BUDGET=18,LIMIT=12;const COST={'.':1,M:2,B:3},TIME={'.':1,M:2,B:2};const TN={1:'경주',2:'강진',3:'서울',4:'통영'};
-export function runRoute(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runRoute(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.85));const sun=new T.DirectionalLight(0xffe2b8,1.7);sun.position.set(3,10,6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sc.add(sun);
@@ -58,7 +59,7 @@ export function runRoute(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.
  let last=performance.now();const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
   for(const c of carts){c.t=Math.min(c.path.length-1,c.t+dt*3.2);const i=Math.floor(c.t),f=c.t-i;const a=pos(...c.path[i]),b=pos(...c.path[Math.min(i+1,c.path.length-1)]);c.m.position.copy(a.lerp(b,f));c.m.position.y+=.06;if(i<c.path.length-1)c.m.rotation.y=Math.atan2(b.x-a.x,b.z-a.z)}
   hud.innerHTML=`길 값 ${spent()} / ${BUDGET}냥<br>보낸 횟수 ${tries}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=(x,y)=>{const v=pos(x,y);v.y+=.1;v.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__ROUTE={state:()=>({phase,tries,spent:spent(),road:[...road],result}),scr,close};
  return{close}}

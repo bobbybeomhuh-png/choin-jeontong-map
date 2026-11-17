@@ -6,6 +6,7 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {groundTex} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const N=[{t:'경주 서당 붓 서른 자루',who:'한양 붓방',how:'공개 경쟁',p:'60냥',d:'공고 7일',bad:0},
  {t:'강진 가마 장작',who:'큰 상단',how:'수의계약 세 건(같은 날)',p:'19냥 · 19냥 · 19냥',d:'공고 없음',bad:1,why:'한 번에 57냥짜리 일을 20냥 아래로 쪼개 같은 업체와 수의계약을 세 번 했어요. 경쟁을 피하려는 쪼개기 계약이에요.'},
@@ -17,7 +18,7 @@ const N=[{t:'경주 서당 붓 서른 자루',who:'한양 붓방',how:'공개 �
  {t:'서울 우물 정비',who:'새 상단',how:'공개 경쟁',p:'95냥',d:'공고 1일 만에 마감',bad:1,why:'공고하고 하루 만에 마감하면 다른 업체는 알지도 못해 들어올 수 없어요. 미리 정한 곳을 위한 공고일 수 있어요.'},
  {t:'통영 구호 물자(큰비)',who:'남도 조합',how:'긴급 입찰',p:'70냥',d:'공고 2일(긴급)',bad:0,ok:'큰비 때문에 공고를 줄인 긴급 입찰이라 괜찮아요.'},
  {t:'이천 가마 땔나무',who:'이천 산판',how:'공개 경쟁(지역 업체 우대)',p:'15냥',d:'공고 7일',bad:0}];
-export function runBoard(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runBoard(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'yard');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,70);/* 뒤 돌담과 소나무(구름 대신) */{const MM=c=>new T.MeshStandardMaterial({color:c,roughness:.85});const wm=MM(0x8a8478),cap=MM(0x3a3a3e);for(let k=-6;k<=6;k++){const w=new T.Mesh(new T.BoxGeometry(2.4,1.4,.5),wm);w.position.set(k*2.4,.7,-9);sc.add(w);const c=new T.Mesh(new T.BoxGeometry(2.5,.2,.8),cap);c.position.set(k*2.4,1.5,-9);sc.add(c)}for(let k=0;k<9;k++){const tr=new T.Group();const tk=new T.Mesh(new T.CylinderGeometry(.16,.24,2.4,8),MM(0x6a4a2c));tk.position.y=1.2;tr.add(tk);for(let l=0;l<3;l++){const cn=new T.Mesh(new T.ConeGeometry(1.4-l*.35,1.3,10),MM(0x2f5a3a));cn.position.y=2.4+l*.8;tr.add(cn)}tr.position.set(-14+k*3.5,0,-11-(k%2)*1.5);sc.add(tr)}}try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x6a5a40,.65));const sun=new T.DirectionalLight(0xfff0d0,2.1);sun.position.set(-6,12,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-12,right:12,top:12,bottom:-12});sc.add(sun);
@@ -46,7 +47,7 @@ export function runBoard(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.
  const ray=new T.Raycaster(),mv=new T.Vector2();R.domElement.addEventListener('pointerdown',e=>{const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(wall.children,false).find(x=>x.object.userData.note!=null);if(h)open(h.object.userData.note)});
  let last=performance.now();const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
   for(const f of folk)f.mx.update(dt);hud.innerHTML=`살핀 공고 ${notes.filter(x=>x.res!=null).length} / 10`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=i=>{const v=notes[i].m.position.clone();v.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__BOARD={state:()=>({phase,right,bad:N.map(n=>n.bad),res:notes.map(x=>x.res),ready:folk.length===3}),scr,close};
  return{close}}

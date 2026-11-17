@@ -6,6 +6,7 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const TIME=40;
 const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.5},o));
@@ -27,7 +28,7 @@ const BUILD={
 const ROUNDS=[{k:'bowl',n:'놋그릇 한 벌',d:{crack:'그릇 한쪽에 금이 갔어요.',color:'놋쇠가 아니라 구리 빛이 도는 그릇이 섞였어요.',spoon:'견본에 있는 놋숟가락이 빠졌어요.'}},
  {k:'box',n:'나전 칠함',d:{inlay:'자개 한 조각이 빠졌어요.',hinge:'금빛 경첩이 아니라 싼 쇠 경첩이에요.',scratch:'뚜껑에 긁힌 자국이 있어요.'}},
  {k:'vase',n:'청자 병',d:{crane:'학 무늬 하나가 빠졌어요.',chip:'입술에 이가 빠졌어요.',glaze:'몸통 한쪽 유약 빛이 누렇게 떴어요.'}}];
-export function runInspect(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runInspect(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.05).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.9));const sun=new T.DirectionalLight(0xfff0dc,1.9);sun.position.set(2,8,6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-5,right:5,top:5,bottom:-5});sc.add(sun);
@@ -61,7 +62,7 @@ export function runInspect(ctx,E){const ui=overlay('#120c08');let alive=true;ui.
   if(key.KeyA||key.ArrowLeft)yaw-=dt*1.4;if(key.KeyD||key.ArrowRight)yaw+=dt*1.4;if(A)A.rotation.y=yaw;if(B)B.rotation.y=yaw;
   for(const m of marks){m.t-=dt;m.s.quaternion.copy(cam.quaternion);if(B)m.s.quaternion.premultiply(B.quaternion.clone().invert());if(m.t<0&&m.s.parent)m.s.parent.remove(m.s)}
   if(live){t+=dt;if(t>=TIME)endRound(true)}hud.innerHTML=`납품 ${Math.min(rd+1,3)} / 3 · 찾은 곳 ${found.size} / 3<br>남은 시간 ${Math.max(0,TIME-t).toFixed(0)}초 · 엉뚱한 곳 ${wrong}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;removeEventListener('keydown',kd);removeEventListener('keyup',ku);removeEventListener('pointerup',pu);removeEventListener('pointermove',pm);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}removeEventListener('keydown',kd);removeEventListener('keyup',ku);removeEventListener('pointerup',pu);removeEventListener('pointermove',pm);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=k=>{let o=null;if(!B)return null;B.traverse(m=>{if(!o&&m.userData.diff===k)o=m});if(!o)return null;const v=new T.Vector3();o.getWorldPosition(v);v.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height,v.z]};
  window.__INSP={state:()=>({rd,live,found:[...found],wrong,t,keys:rd<3?Object.keys(ROUNDS[rd].d):[]}),scr,setYaw:a=>{yaw=a},close};
  return{close}}

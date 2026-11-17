@@ -7,11 +7,12 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const DS=[{k:'a',n:'갑',cost:92,south:1,low:1,col:0xece4d2},{k:'b',n:'을',cost:84,south:0,low:1,col:0xe8dcc8},{k:'c',n:'병',cost:128,south:1,low:0,col:0xf0e6d4}];
 const CR=[['south','해 드는 남쪽에 큰 창이 있나요?'],['low','아이가 오르기 쉬운 낮은 계단인가요?'],['cost','공사비가 예산 100냥 안인가요?']];
 const truth=(d,c)=>c==='cost'?(d.cost<=100?1:0):d[c];
-export function runDesign(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runDesign(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.7));const sun=new T.DirectionalLight(0xffe8b0,2.2);sun.position.set(12,9,2);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10});sc.add(sun);
@@ -52,7 +53,7 @@ export function runDesign(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c
  let last=performance.now();const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
   if(key.KeyA||key.ArrowLeft)yaw-=dt*1.3;if(key.KeyD||key.ArrowRight)yaw+=dt*1.3;for(const p of pods)p.turn.rotation.y=yaw;
   hud.innerHTML=`매긴 설계안 ${pods.filter(p=>Object.keys(p.ans).length===3).length} / 3`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;removeEventListener('keydown',kd);removeEventListener('keyup',ku);removeEventListener('pointerup',pu);removeEventListener('pointermove',pm);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}removeEventListener('keydown',kd);removeEventListener('keyup',ku);removeEventListener('pointerup',pu);removeEventListener('pointermove',pm);try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=i=>{const v=new T.Vector3(0,1.6,0).add(pods[i].g.position).project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__DSN={state:()=>({phase,right,total,win,ans:pods.map(p=>p.ans),truth:pods.map(p=>Object.fromEntries(CR.map(([c])=>[c,truth(p.d,c)])))}),scr,setYaw:a=>{yaw=a},close};
  return{close}}

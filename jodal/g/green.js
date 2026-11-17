@@ -6,13 +6,14 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const IT=[{k:'paper',n:'재활용 한지 묶음',lab:'real',no:'제 0213호'},{k:'lamp',n:'기름 덜 먹는 등잔',lab:'fake'},{k:'ink',n:'콩기름 먹',lab:'real',no:'제 1187호'},{k:'cloth',n:'무명 책상보',lab:'none'},{k:'bucket',n:'대나무 물통',lab:'real',no:'제 0546호'},{k:'brush',n:'새 붓통',lab:'fake'}];
 const labelCanvas=(it)=>{const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#fbf3dc';q.fillRect(0,0,256,256);
  if(it.lab==='real'){q.fillStyle='#2f8a4a';q.beginPath();q.arc(128,112,84,0,7);q.fill();q.strokeStyle='#fff';q.lineWidth=6;q.beginPath();q.arc(128,112,72,0,7);q.stroke();q.fillStyle='#fff';q.beginPath();q.moveTo(128,62);q.bezierCurveTo(176,82,170,140,128,162);q.bezierCurveTo(86,140,80,82,128,62);q.fill();q.strokeStyle='#2f8a4a';q.lineWidth=4;q.beginPath();q.moveTo(128,72);q.lineTo(128,156);q.stroke();q.fillStyle='#1d5a30';q.font='bold 26px sans-serif';q.textAlign='center';q.fillText('환경표지 인증',128,222);q.font='20px sans-serif';q.fillText(it.no,128,246)}
  else if(it.lab==='fake'){q.strokeStyle='#5aa040';q.lineWidth=5;q.beginPath();q.moveTo(100,70);q.quadraticCurveTo(170,50,160,130);q.quadraticCurveTo(110,150,100,70);q.stroke();q.fillStyle='#e05a2a';q.font='bold 40px sans-serif';q.textAlign='center';q.save();q.translate(128,200);q.rotate(-.12);q.fillText('친환경!!',0,0);q.restore();q.fillStyle='#7a6a5a';q.font='18px sans-serif';q.fillText('(번호 없음)',128,240)}
  else{q.fillStyle='#7a6a5a';q.font='bold 30px sans-serif';q.textAlign='center';q.fillText('표지 없음',128,136)}return c};
-export function runGreen(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runGreen(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'market');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.85));const sun=new T.DirectionalLight(0xffe2b8,1.6);sun.position.set(3,9,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-8,right:8,top:8,bottom:-8});sc.add(sun);
@@ -48,7 +49,7 @@ export function runGreen(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.
  const ray=new T.Raycaster(),mv=new T.Vector2();R.domElement.addEventListener('pointerdown',e=>{const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(shelf.children,false).find(x=>x.object.userData.it!=null);if(h)open(h.object.userData.it)});
  let last=performance.now();const loop=()=>{if(!alive)return;const now=performance.now();last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);cam.updateProjectionMatrix()}
   items.forEach((o,i)=>{if(o.res==null)o.g.rotation.y=Math.sin(now/900+i)*.3});hud.innerHTML=`살핀 물건 ${items.filter(x=>x.res!=null).length} / 6`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=i=>{const v=items[i].g.position.clone();v.y+=.3;v.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__GREEN={state:()=>({phase,right,lab:IT.map(x=>x.lab),res:items.map(x=>x.res)}),scr,close};
  return{close}}

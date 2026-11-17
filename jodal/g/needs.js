@@ -7,10 +7,11 @@ import * as T from 'three';
 import {setupPost} from './post.js';
 import {hallBack} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {startAmb} from './amb.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const PROB=[{k:'ice',n:'경주 · 빙판 언덕',d:'겨울마다 서당 가는 언덕이 얼어 아이들이 미끄러져요.',fix:'sand'},{k:'dark',n:'통영 · 캄캄한 골목',d:'밤이면 골목이 깜깜해 다니기 무서워요. 기름 등은 자꾸 꺼져요.',fix:'firefly'},{k:'leak',n:'이천 · 비 새는 지붕',d:'서당 기와 틈으로 비가 새서 책이 젖어요.',fix:'seal'}];
 const PROD=[{k:'sand',n:'모래 뿌리개 수레',d:'밀고 가면 고운 모래를 고르게 뿌려요.'},{k:'firefly',n:'반딧불 등',d:'낮에 햇빛을 모았다가 밤새 은은하게 빛나요.'},{k:'seal',n:'기와 틈막이',d:'기와 사이 틈을 메워 빗물을 막아요.'},{k:'gold',n:'금칠 장식 문고리',d:'번쩍번쩍 예쁘지만 고민을 풀어 주진 않아요.',bad:'예쁘지만 고민과 상관없어요. 나라 돈은 필요한 데 써야 해요.'},{k:'stove',n:'커다란 쇠 난로',d:'방을 덥혀 주지만 무겁고 비싸요.',bad:'방은 따뜻해지지만 그 고민을 풀진 못해요.'}];
-export function runNeeds(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
+export function runNeeds(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);const stopAmb=startAmb(ctx,'hall');
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none;cursor:pointer';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
  const sc=new T.Scene();try{setupPost(R,sc)}catch(e){}sc.background=new T.Color(0x1c140e);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x3a2a1a,.8));const sun=new T.DirectionalLight(0xffe2b8,1.6);sun.position.set(3,10,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-9,right:9,top:9,bottom:-9});sc.add(sun);
@@ -57,7 +58,7 @@ export function runNeeds(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.
   if(anim.drops&&!done.leak)anim.drops.forEach((d,k)=>{d.position.y=1.1-(((now/600)+k*.25)%1)*1.0});
   for(const[k,p]of Object.entries(prods)){p.g.position.y=p.y0+(selP&&!p.g.userData.x?Math.sin(now/300+p.g.position.x)*.05:0)}
   hud.innerHTML=`푼 고민 ${Object.keys(done).length} / 3<br>안 맞는 짝 ${wrong}`;R.render(sc,cam);requestAnimationFrame(loop)};loop();
- const close=()=>{if(!alive)return;alive=false;try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
+ const close=()=>{if(!alive)return;alive=false;try{stopAmb()}catch(e){}try{R.dispose()}catch(e){}ui.o.remove()};ui.x.onclick=close;
  const scr=(type,k)=>{const o=type==='d'?dio[k].g:prods[k].g;const v=new T.Vector3();o.getWorldPosition(v);v.y+=type==='d'?1.3:.3;v.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(v.x+1)/2*r.width,r.top+(1-v.y)/2*r.height]};
  window.__NEEDS={state:()=>({phase,done:Object.keys(done),wrong,sel:selP,ready:!!(dio.ice&&dio.ice.m)}),scr,close};
  return{close}}
