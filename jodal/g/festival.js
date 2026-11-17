@@ -4,12 +4,13 @@
    맞히면 무이들이 신나서 춤추고 불꽃이 터진다. 32박이 끝나면 별과 엽전, 다 함께 단체 사진을 찍어 사진첩(jodal-album-v1)에 넣는다.
    runFestival(ctx,{ST,save,hudDraw,SND,JOBS}) */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const CREW=['metal','ceramic','science','painter','carpenter'];
 export function runFestival(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0x1a2240);sc.fog=new T.Fog(0x1a2240,18,40);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x1a2240);sc.fog=new T.Fog(0x1a2240,18,40);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffe8c8,0x2a1a10,.55));const moon=new T.DirectionalLight(0xc8d8ff,.8);moon.position.set(-6,10,4);sc.add(moon);
  const cam=new T.PerspectiveCamera(46,1,.05,80);cam.position.set(0,4.4,9.6);cam.lookAt(0,1.2,0);
  title(ui.top,'고을 잔치','장단 구슬이 북 고리에 닿을 때 스페이스(또는 화면 누르기)');

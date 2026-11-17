@@ -5,11 +5,12 @@
    다 놓으면 감리 무이가 다리를 건너며 준공 검사, 「시설 공사」 카드.
    runBridge(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 export function runBridge(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,70);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,70);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x5a7a4a,.6));const sun=new T.DirectionalLight(0xfff0d0,2.3);sun.position.set(-6,12,8);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-12,right:12,top:12,bottom:-8});sc.add(sun);
  const cam=new T.PerspectiveCamera(44,1,.05,120);cam.position.set(0,8.6,15.2);cam.lookAt(0,.6,.6);
  title(ui.top,'다리 공사','부품을 눌러 치수를 보고, 설계서대로 빛나는 자리를 눌러 놓아요');

@@ -5,6 +5,7 @@
    다 쌓으면 실수 수에 따라 별, 엽전, 「물자 관리」 카드.
    runStock(ctx,{ST,save,hudDraw,SND}) */
 import * as THREE from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const ITEMS=[['옻칠 통',60,'oil'],['유약 단지',52,'jar'],['장작 묶음',45,'wood'],['구리 덩이',70,'copper'],
@@ -13,7 +14,7 @@ const ITEMS=[['옻칠 통',60,'oil'],['유약 단지',52,'jar'],['장작 묶음'
 const tierOf=w=>w>40?0:w>=15?1:2;const TN=['아래 칸','가운데 칸','위 칸'];
 export function runStock(ctx,E){const ui=overlay('#120d08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new THREE.Scene();sc.background=new THREE.Color(0x1a120b);sc.fog=new THREE.Fog(0x1a120b,10,22);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new THREE.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new THREE.Color(0x1a120b);sc.fog=new THREE.Fog(0x1a120b,10,22);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new THREE.HemisphereLight(0xfff0d8,0x2a1a10,.55));const sun=new THREE.DirectionalLight(0xffe2b0,2.2);sun.position.set(-4,6,4);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-6,right:6,top:6,bottom:-3});sc.add(sun);
  const cam=new THREE.PerspectiveCamera(44,1,.05,40);cam.position.set(0,2.8,6.6);cam.lookAt(0,1.1,-.2);
  title(ui.top,'비축 창고','물자를 눌러 저울에 올리고, 무게에 맞는 선반 칸을 눌러 쌓아요');

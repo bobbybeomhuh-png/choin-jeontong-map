@@ -9,6 +9,7 @@
    조각은 붓으로 흙을 털고 눌러 바구니에 담는다. 스캔(E 또는 단추)하면 땅속 조각이 금빛으로 비친다.
    시험용 문: window.__FD = {dbg, auto} */
 import * as THREE from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
@@ -35,7 +36,7 @@ export function fieldGame(ctx,job,opt={}){const S=SITES[job.k];if(!S){opt.done&&
  const ui=overlay(`radial-gradient(circle at 50% 30%,${S.sky[0]},${S.sky[1]})`);let alive=true;ui.c.style.display='none';
  const ac=ctx.ac(),out=softOut(ctx);const say=t=>{try{ctx.say(t)}catch(e){}};
  const R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=.92;R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new THREE.Scene();sc.fog=new THREE.FogExp2(S.fog,S.water?.09:.045);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new THREE.Scene();sc.fog=new THREE.FogExp2(S.fog,S.water?.09:.045);if(!S.water)try{setupPost(R,sc)}catch(e){console.warn('발굴 후처리',e)}try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new THREE.HemisphereLight(S.water?0x6fb8e8:0xffe8c8,0x1a120a,S.light*.75));const sun=new THREE.DirectionalLight(S.water?0x9ad8ff:0xfff0d0,S.light*2.6);sun.position.set(3,8,4);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-6,right:6,top:6,bottom:-6});sc.add(sun);
  const cam=new THREE.PerspectiveCamera(42,1,.05,80);let yaw=.5,pitch=.66,dist=6.0;const tgt=new THREE.Vector3(.3,-.25,.2);
  const head=(a,b)=>title(ui.top,S.name,a+(b?' · '+b:''));

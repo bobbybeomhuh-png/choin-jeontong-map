@@ -4,13 +4,14 @@
    W A S D 로 걷고 마우스로 끌어 둘러본다. 진열장 앞에 서면 설명 판(고을, 맡은 이, 품삯, 솜씨, 출처)이 뜬다.
    jodal.js 의 HUD 「보물 곳간」 단추로 연다. openMuseum(ctx,{JOBS,ST,CARDS}) */
 import * as THREE from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 import {ART} from './sites/restore3d.js';
 import {getModel} from './sites/hanokkit.js';
 export function openMuseum(ctx,E){const ui=overlay('#120c08');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new THREE.Scene();sc.background=new THREE.Color(0x1a120b);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new THREE.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new THREE.Color(0x1a120b);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new THREE.HemisphereLight(0xfff0d8,0x2a1a10,.7));
  const cam=new THREE.PerspectiveCamera(60,1,.05,80);const me={x:0,z:9.5,yaw:0,pitch:-.05};const keys={};
  title(ui.top,'보물 곳간','되살린 국보를 모아 둔 나라 전시관 · W A S D 걷기, 마우스로 끌어 둘러보기');

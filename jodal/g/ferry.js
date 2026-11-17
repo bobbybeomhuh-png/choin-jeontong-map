@@ -5,6 +5,7 @@
    도착하면 남은 짐·시간으로 별, 엽전, 「납품 운송」 카드.
    jodal.js 가 setupFerry(env) 로 부른다. env={X,THREE,JOBS,ST,save,hudDraw,ov,SND,esc} */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 export function setupFerry(E){const {X,THREE,JOBS}=E;const H=window.__H3;let site=null,btn=null,tried=false;
  const busy=()=>!!document.querySelector('.jd-ov,body>div[data-mg]');
@@ -31,7 +32,7 @@ export function setupFerry(E){const {X,THREE,JOBS}=E;const H=window.__H3;let sit
 /* 강줄기 운송 놀이 */
 export function runFerry(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,40,120);
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,40,120);
  sc.add(new T.HemisphereLight(0xffffff,0x5a7a4a,.9));const sun=new T.DirectionalLight(0xfff0d0,2.2);sun.position.set(20,40,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30,far:120});sc.add(sun,sun.target);
  const cam=new T.PerspectiveCamera(55,1,.1,200);
  title(ui.top,'나룻배 운송','A·D 키 돌리기 · W 노 젓기 · 바위와 통나무를 피해 공방 나루까지');

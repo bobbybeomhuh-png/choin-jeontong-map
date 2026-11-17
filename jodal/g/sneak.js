@@ -5,12 +5,13 @@
    망꾼 시야에 들면 경계 막대가 차고, 다 차면 들켜서 처음 자리로. 성공하면 엽전과 「공정 조달 감시」 카드.
    runSneak(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const TALK=['「이번 금실 입찰은 우리 셋이 값을 미리 맞추세.」','「자네는 일부러 비싸게 써내고, 이번엔 내가 받겠네.」','「다음 번엔 자네 차례일세. 아무도 모를 걸세.」','「…그럼 셋이 똑같이 나누는 걸로 하지.」'];
 export function runSneak(ctx,E){const ui=overlay('#05070f');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0x0a1022);sc.fog=new T.Fog(0x0a1022,14,34);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x0a1022);sc.fog=new T.Fog(0x0a1022,14,34);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  R.toneMappingExposure=.75;sc.add(new T.HemisphereLight(0x8090c0,0x1a1410,.35));const moon=new T.DirectionalLight(0xa0b8ff,.7);moon.position.set(-8,14,6);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);Object.assign(moon.shadow.camera,{left:-16,right:16,top:16,bottom:-16});sc.add(moon);
  const cam=new T.PerspectiveCamera(50,1,.05,80);
  title(ui.top,'암행 감찰','WASD로 걷기 · 노란 시야를 피해 통·상자 뒤로 · 업체 무이 곁에서 엿듣기');

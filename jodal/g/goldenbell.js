@@ -4,6 +4,7 @@
    맞히면 단상이 오르고 객석이 환호, 틀리면 해설과 함께 기회 하나가 준다(기회 둘). 열 문제를 다 넘기면 금빛 종이 내려와 울린다.
    runGoldenBell(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const QS=[['bid','입찰에 나온 업체끼리 미리 짜고 값을 정해도 괜찮다.',0,'미리 짜고 값을 정하는 건 담합이에요. 걸리면 나라 입찰에 못 나와요.'],
@@ -26,7 +27,7 @@ const QS=[['bid','입찰에 나온 업체끼리 미리 짜고 값을 정해도 �
  [null,'계약한 내용은 의궤처럼 기록해 두고 공개한다.',1,'계약 정보 공개예요. 누가 무엇을 얼마에 했는지 남겨요.']];
 export function runGoldenBell(ctx,E){const ui=overlay('#120c18');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0x1a1430);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x1a1430);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0e0,0x2a1a30,.5));const spot=new T.SpotLight(0xfff2d0,60,30,.45,.5,1.2);spot.position.set(0,12,6);spot.castShadow=true;sc.add(spot,spot.target);
  const cam=new T.PerspectiveCamera(44,1,.05,80);
  title(ui.top,'조달 골든벨','O·X 판을 누르거나 키보드 O·X(1·2) · 열 문제를 넘기면 골든벨!');

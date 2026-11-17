@@ -4,6 +4,7 @@
    「우수조달물품 추천」 또는 「보류」. 서류가 다 갖춰진 셋만 추천이 맞다. 다섯 곳을 다 보면 결과, 엽전, 「우수조달물품」 카드.
    runFair(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const BOOTHS=[{k:'metal',n:'녹슬지 않는 놋쇠 경첩',who:'금속 장인',col:0xb8322a,good:1,docs:[1,1,1],why:'시험 성적서·품질 인증·납품 실적이 다 있어요.'},
@@ -14,7 +15,7 @@ const BOOTHS=[{k:'metal',n:'녹슬지 않는 놋쇠 경첩',who:'금속 장인',
 const DOC=['시험 성적서','품질 인증','납품 실적'];
 export function runFair(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,60);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,60);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x6a5a40,.6));const sun=new T.DirectionalLight(0xfff0d0,2.3);sun.position.set(-8,14,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-16,right:16,top:16,bottom:-16});sc.add(sun);
  const cam=new T.PerspectiveCamera(50,1,.05,80);
  title(ui.top,'공공조달 박람회','WASD로 걷기 · 천막 앞에서 E로 상담 · 서류를 보고 우수조달물품을 추천해요');

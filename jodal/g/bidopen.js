@@ -4,12 +4,13 @@
    맞히면 엽전 20냥과 설명, 틀리면 왜 아닌지 알려 주고 다시 고르게. 판마다 숫자는 새로 섞인다.
    runBidOpen(ctx,{ST,save,hudDraw,SND,ov}) */
 import * as THREE from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const NAMES=['한양 목공방','큰 상단','작은 칠기 공방','떠돌이 장사꾼','남도 장인 조합','서라벌 공방'];
 export function runBidOpen(ctx,E){const ui=overlay('#140e0a');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new THREE.WebGLRenderer({antialias:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new THREE.Scene();sc.background=new THREE.Color(0x1a120b);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new THREE.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new THREE.Color(0x1a120b);try{const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new THREE.HemisphereLight(0xfff0d8,0x2a1a10,.6));const sp=new THREE.SpotLight(0xfff2d8,30,14,.7,.5,1.4);sp.position.set(0,6,2);sp.castShadow=true;sc.add(sp,sp.target);
  const cam=new THREE.PerspectiveCamera(42,1,.05,40);cam.position.set(0,3.9,4.8);cam.lookAt(0,1.3,-.4);
  title(ui.top,'개찰식','봉투를 눌러 하나씩 열고, 다 열면 낙찰자를 골라요');

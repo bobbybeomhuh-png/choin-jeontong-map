@@ -5,13 +5,14 @@
    세 판(금실·유약·자개). 끝나면 별, 엽전, 「역경매」 카드.
    runAuction(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
+import {setupPost} from './post.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const ROUNDS=[{n:'금실 열 타래',start:120},{n:'청자 유약 다섯 단지',start:90},{n:'자개 백 장',start:150}];
 const NAMES=['한양 금방','큰 상단','남도 조합','떠돌이 상인','서라벌 공방','통영 자개방','장터 잡화상'];
 export function runAuction(ctx,E){const ui=overlay('#1a1008');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();sc.background=new T.Color(0x24160c);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x24160c);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xfff0d8,0x2a1a10,.55));const sp=new T.SpotLight(0xfff2d8,70,30,.6,.5,1.2);sp.position.set(0,12,8);sp.castShadow=true;sc.add(sp,sp.target);
  const cam=new T.PerspectiveCamera(44,1,.05,80);cam.position.set(0,5.2,12.5);cam.lookAt(0,2.2,0);
  title(ui.top,'역경매 장터','업체들이 값을 낮춰 불러요 · 품질 「하」 업체를 눌러 실격시키고, 끝까지 남은 가장 낮은 값이 낙찰');
