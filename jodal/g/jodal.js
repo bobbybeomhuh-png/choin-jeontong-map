@@ -249,7 +249,7 @@ function keysHelp(){const u=ov();u.c.innerHTML=`<h2>조작 안내</h2>${KEYS_HTM
 function credits(){const u=ov();const L=(h,rows)=>`<h3>${h}</h3><ul style="text-align:left;margin:0;padding-left:18px;font-size:14px;line-height:1.7">${rows.map(r=>`<li><b>${r[0]}</b> ${r[1]}</li>`).join('')}</ul>`;
  u.c.innerHTML=`<h2>출처와 만든 방법</h2>`+L('다섯 국보 3D',[['천마총 금관','국가유산청 공개 3D'],['청자 매병','클리블랜드 미술관 공개 3D, CC0'],['앙부일구','국가유산청 공개 3D'],['나전칠함','한국공예디자인문화진흥원(KCDF) 공개 3D, CC BY'],['달항아리','클리블랜드 미술관 1983.28 공개 3D, CC0']])
  +L('지도와 마을',[['전국 지도','전통스토리지도(초인 스튜디오)'],['한옥·기와집 3D','chrishong (Sketchfab), CC BY'],['전통 건축 3D','한국문화정보원(KCISA), CC BY'],['말 3D','flairetic (Sketchfab), CC BY']])
- +L('캐릭터와 이야기',[['무이 캐릭터, 복원단 장인 다섯','© 초인 스튜디오'],['무이 나라 이야기, 방·장인·의궤 놀이 구성','© 초인 스튜디오']])
+ +L('캐릭터와 이야기',[['무이 캐릭터, 장인 무이 다섯','© 초인 스튜디오'],['무이 나라 이야기, 방·장인·의궤 놀이 구성','© 초인 스튜디오']])
  +L('AI 활용',[['게임 코드와 놀이 구성','AI(Claude)와 함께 만들고 사람이 시험하며 다듬음'],['조각이 깨지는 모양, 소리','코드로 그때그때 만들어 냄(파일 없음)'],['발굴 현장 다섯 곳과 마지막 손질 장면','지형·지층·돌·배·가마·장식을 코드로 직접 만든 3D(초인 스튜디오), 현장 환경 소리도 코드로 합성'],['조달 도감','조달청의 실제 제도(나라장터, 적격 심사, 비축사업, 품질 검사, 혁신제품 시범구매, 중소기업 우선구매, 공동수급, 담합 금지)를 쉬운 말로 풀어 씀'],['문구','AI와 함께 쓰고 사람이 고침']])
  +L('기술',[['three.js','MIT 라이선스'],['글꼴','도현체, 고운돋움(SIL Open Font License)']])
  +`<p style="margin:10px 0 0;font-size:12.5px;color:#6b4a26">CC BY 자료는 원작자를 밝히고 크기 조절·압축을 해서 썼어요.</p><div style="margin-top:10px"><button type="button" class="jd-btn g" data-x>닫기</button></div>`;
