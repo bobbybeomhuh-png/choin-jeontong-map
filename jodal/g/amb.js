@@ -11,7 +11,7 @@ export function startAmb(ctx,kind){let a=null,out=null;try{a=ctx.ac();out=ctx.ou
  const tap=(f,v,t=0,q=2)=>{const s=a.createBufferSource();s.buffer=noise(.2);const fl=a.createBiquadFilter();fl.type='bandpass';fl.frequency.value=f;fl.Q.value=q;const g=a.createGain();const t0=a.currentTime+t;g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.12);s.connect(fl);fl.connect(g);g.connect(master);s.start(t0)};
  const nodes=[];let timer=null;const every=(ms,fn)=>{const go=()=>{try{fn()}catch(e){}timer=setTimeout(go,ms*(.6+Math.random()*.8))};timer=setTimeout(go,ms*.5)};
  if(kind==='hall'){nodes.push(...bed(420,.8,.018));every(5200,()=>{tap(3200,.05);tap(2600,.035,.09)})}
- else if(kind==='site'){nodes.push(...bed(300,.5,.012,'lowpass'));every(2600,()=>{for(let i=0;i<2+(Math.random()*2|0);i++){tap(900,.16,i*.32,3);tone(220,.09,.05,i*.32,'triangle')}})}
+ else if(kind==='site'){nodes.push(...bed(300,.5,.012,'lowpass'));every(2600,()=>{for(let i=0;i<2+(Math.random()*2|0);i++){tap(900,.09,i*.32,3);tone(220,.09,.035,i*.32,'triangle')}})}
  else if(kind==='market'){nodes.push(...bed(520,.7,.024));every(3600,()=>{tone(1568,.14,.03);tone(2093,.18,.025,.06)})}
  else{nodes.push(...bed(800,.4,.008,'lowpass'));every(4200,()=>{const f=2400+Math.random()*900;for(let i=0;i<3;i++)tone(f+(i%2?300:0),.09,.025,i*.11)})}
  let stopped=false;return()=>{if(stopped)return;stopped=true;clearTimeout(timer);try{master.gain.cancelScheduledValues(a.currentTime);master.gain.setValueAtTime(master.gain.value,a.currentTime);master.gain.linearRampToValueAtTime(0,a.currentTime+.4)}catch(e){}setTimeout(()=>{for(const n of nodes)try{n.stop()}catch(e){}try{master.disconnect()}catch(e){}},600)}}
