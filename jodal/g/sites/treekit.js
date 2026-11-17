@@ -25,12 +25,19 @@ export function plantBroad(parent,list,{shadow=true,chunk=0}={}){
  b.castShadow=l.castShadow=shadow;b.receiveShadow=l.receiveShadow=true;parent.add(b,l);return [b,l]}
 /* 먼 산 소나무: 그린 소나무 판 두 장을 십자로(멀리서 보는 용, 아주 가벼움) */
 let PPT=null;
-function paintedPineTex(){if(PPT)return PPT;const W=128,H=256,c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d'),r=rng(23);
- q.strokeStyle='#4a3020';q.lineWidth=7;q.lineCap='round';q.beginPath();q.moveTo(64,H-2);q.bezierCurveTo(58,H-70,72,H-120,62,60);q.stroke();
- const tiers=5;for(let t=0;t<tiers;t++){const y=H-90-t*30,wd=56-t*6+(r()-.5)*8,cx=64+(r()-.5)*10;q.fillStyle='rgba(40,80,40,.55)';q.beginPath();q.ellipse(cx,y-2,wd*.92,11,0,0,7);q.fill();for(let i=0;i<300;i++){const a=r()*6.28,rr=Math.sqrt(r()),x=cx+Math.cos(a)*wd*rr,yy=y+Math.sin(a)*12*rr-(1-rr)*7;const g=80+(r()*80|0);q.strokeStyle=`rgb(${g*.45|0},${g+28},${g*.5|0})`;q.lineWidth=2.2;q.beginPath();q.moveTo(x,yy);q.lineTo(x+(r()-.5)*8,yy-3-r()*4);q.stroke()}}
- PPT=new THREE.CanvasTexture(c);PPT.colorSpace=THREE.SRGBColorSpace;return PPT}
-export function paintedPines(N){const a=new THREE.PlaneGeometry(1,2).translate(0,1,0),b=a.clone().rotateY(Math.PI/2);const geo=mergeGeometries([a,b]);
- const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.4,side:THREE.DoubleSide,roughness:1});return new THREE.InstancedMesh(geo,m,N)}
+function paintedPineTex(){if(PPT)return PPT;/* 11/17: 층층 전나무 판 → 우리 소나무(적송): 휘어 오른 붉은 줄기, 위쪽에 옆으로 퍼진 솔잎 구름 덩어리 */const W=256,H=512,c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d'),r=rng(23);
+ /* 줄기: 붉은 갈색, 거북등 껍질 */const tx=[128,118,134,124,140];const path=()=>{q.beginPath();q.moveTo(126,H-2);q.bezierCurveTo(108,H-150,150,H-260,126,150)};
+ q.lineCap='round';q.strokeStyle='#5a2e1c';q.lineWidth=22;path();q.stroke();q.strokeStyle='#9a4a2a';q.lineWidth=15;path();q.stroke();q.strokeStyle='rgba(200,110,70,.55)';q.lineWidth=5;q.beginPath();q.moveTo(122,H-6);q.bezierCurveTo(104,H-150,146,H-260,122,152);q.stroke();
+ for(let i=0;i<70;i++){const t=r(),y=H-10-t*(H-170),x=126+Math.sin(t*3.2)*12+(r()-.5)*8;q.strokeStyle='rgba(50,22,12,.6)';q.lineWidth=1.5;q.beginPath();q.moveTo(x-5,y);q.lineTo(x+5,y+(r()-.5)*3);q.stroke()}
+ /* 가지 */const tufts=[];const br=(x0,y0,x1,y1,w)=>{q.strokeStyle='#5a2e1c';q.lineWidth=w;q.beginPath();q.moveTo(x0,y0);q.quadraticCurveTo((x0+x1)/2,y1+10,x1,y1);q.stroke();tufts.push([x1,y1])};
+ br(124,230,48,196,7);br(132,200,212,170,7);br(126,170,70,120,6);br(128,150,190,108,6);br(126,160,128,70,6);br(120,260,30,262,5);br(134,250,226,236,5);
+ /* 솔잎 구름: 아래 어둡게, 위 밝게, 바늘 획 */for(const[tx2,ty2]of tufts){const wd=46+r()*26,ht=22+r()*10;
+  q.fillStyle='rgba(22,52,36,.92)';q.beginPath();q.ellipse(tx2,ty2+4,wd,ht,0,0,7);q.fill();
+  for(let i=0;i<520;i++){const a=r()*6.28,rr=Math.sqrt(r()),x=tx2+Math.cos(a)*wd*rr,y=ty2+Math.sin(a)*ht*rr*.9;const up=(ty2+ht-y)/(ht*2);const g=70+(up*90|0)+(r()*30|0);q.strokeStyle=`rgb(${g*.38|0},${g+16},${g*.62|0})`;q.lineWidth=1.6;q.beginPath();q.moveTo(x,y);const an=-1.6+(r()-.5)*1.6;q.lineTo(x+Math.cos(an)*6,y+Math.sin(an)*6);q.stroke()}
+  q.fillStyle='rgba(210,235,170,.18)';q.beginPath();q.ellipse(tx2-6,ty2-ht*.45,wd*.6,ht*.35,0,0,7);q.fill()}
+ PPT=new THREE.CanvasTexture(c);PPT.colorSpace=THREE.SRGBColorSpace;PPT.anisotropy=4;return PPT}
+export function paintedPines(N){/* 판 세 장(60도씩)으로 어느 쪽에서 봐도 납작하지 않게 */const a=new THREE.PlaneGeometry(1.1,2.2).translate(0,1.1,0),b=a.clone().rotateY(Math.PI/3),c2=a.clone().rotateY(-Math.PI/3);const geo=mergeGeometries([a,b,c2]);
+ const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:1});return new THREE.InstancedMesh(geo,m,N)}
 /* 울퉁불퉁한 산: 반구에 잔물결 능선과 아래 어둡고 위 밝은 색 */
 export function lumpyHill(rr,h,col,seed=1){const r=rng(seed*7+3),g=new THREE.SphereGeometry(rr,64,20,0,Math.PI*2,0,Math.PI/2),p=g.attributes.position,c=new Float32Array(p.count*3),base=new THREE.Color(col),hi=base.clone().offsetHSL(.02,-.05,.08),lo=base.clone().offsetHSL(-.02,0,-.1),k1=r()*6,k2=r()*6,tmp=new THREE.Color();
  for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),t=y/rr;const n=1+.07*Math.sin(a*5+k1)*Math.sin(t*4+k2)+.04*Math.sin(a*11+k2*2)*(1-t);p.setXYZ(i,x*n,y*(1+.12*Math.sin(a*3+k1))*h/rr,z*n);tmp.copy(lo).lerp(hi,Math.min(1,t*1.3));c[i*3]=tmp.r;c[i*3+1]=tmp.g;c[i*3+2]=tmp.b}
