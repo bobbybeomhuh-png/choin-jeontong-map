@@ -1,0 +1,16 @@
+/* 무이 나라 조달청: 「원님 무이(수요기관)」(G47). 만든 날 2026-11-17
+   조달 요청을 하는 쪽(수요기관)이 화면에 보이도록, 고을마다 방 게시판 곁에 붉은 관복과 사모 차림의 원님 무이를 세운다.
+   가까이 가면 한마디(되살리기 전: 부탁, 되살린 뒤: 고마움). 되살린 고을의 원님은 기뻐하는 몸짓.
+   setupWonnim(E) 한 번. E={X,THREE,JOBS,ST}. window.__WONNIM */
+const jo=(w,a,b)=>{const c=(w||'').charCodeAt((w||'').length-1)-0xac00;return w+((c>=0&&c<11172&&c%28)?a:b)};
+export function setupWonnim(E){if(window.__WONNIM)return;const{X,THREE,JOBS}=E;const H=window.__H3;let built=false;const W=[];
+ const dress=(m,T)=>{try{m.root.updateMatrixWorld(true);const wb=new T.Box3().setFromObject(m.root);const rp=m.root.position;const top=wb.max.y-rp.y,bot=wb.min.y-rp.y,Hh=top-bot;const r=Math.min(wb.max.x-wb.min.x,wb.max.z-wb.min.z)/2;
+   /* 붉은 관복(아래로 퍼지는 옷자락)과 각대(허리띠) */const pts=[];for(let i=0;i<=8;i++){const t=i/8;pts.push(new T.Vector2(r*(.86+.26*t),-t*Hh*.34))}const robe=new T.Mesh(new T.LatheGeometry(pts,32),new T.MeshStandardMaterial({color:0x9a2a1a,roughness:.8,side:T.DoubleSide}));robe.position.y=bot+Hh*.42;const belt=new T.Mesh(new T.TorusGeometry(r*.88,.03*Hh,8,36),new T.MeshStandardMaterial({color:0xd8a838,metalness:.6,roughness:.35}));belt.rotation.x=Math.PI/2;belt.position.y=bot+Hh*.42;
+   /* 흉배(가슴 네모 수) */const hb=new T.Mesh(new T.PlaneGeometry(r*.7,r*.6),new T.MeshStandardMaterial({color:0x2a4a7a,roughness:.7}));hb.position.set(0,bot+Hh*.32,r*1.0);
+   /* 사모 */const bk=new T.MeshStandardMaterial({color:0x15151a,roughness:.45});const hat=new T.Group();const cr=new T.Mesh(new T.SphereGeometry(r*.42,18,10,0,Math.PI*2,0,Math.PI/2),bk);cr.scale.set(1,.8,1);hat.add(cr);const back=new T.Mesh(new T.CylinderGeometry(r*.28,r*.32,r*.42,14),bk);back.position.set(0,r*.2,-r*.12);hat.add(back);for(const sx of[-1,1]){const w=new T.Mesh(new T.BoxGeometry(r*.55,r*.2,.012),bk);w.position.set(sx*r*.62,r*.24,-r*.16);w.rotation.z=sx*.12;hat.add(w)}hat.position.y=top-r*.15;
+   for(const o of[robe,belt,hb,hat])o.traverse(e=>{if(e.isMesh)e.castShadow=true});m.root.add(robe,belt,hb,hat)}catch(e){}};
+ const build=()=>{if(built||!H||!H.makeMuui||!X.scene)return;const js=JOBS.filter(j=>j.sp);if(js.length<JOBS.length)return;built=true;
+  for(const j of js){H.makeMuui('base',1.15).then(m=>{let x=j.sp.x+2.4,z=j.sp.z+.6,y=j.sp.y||0;try{y=H.floorAt(x,z,60)}catch(e){}m.root.position.set(x,y,z);m.root.rotation.y=Math.PI*.15;X.scene.add(m.root);m.play('idle');dress(m,THREE);W.push({j,m,said:0,last:''})}).catch(()=>{})}};
+ let last=performance.now();const loop=()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;try{build();const P=H&&H.P;for(const w of W){w.m.mx.update(dt);const done=!!(E.ST.done||{})[w.j.k];const st=done?'cheer':'idle';if(w.last!==st){w.last=st;w.m.play(st)}
+   if(P){const d=Math.hypot(P.x-w.m.root.position.x,P.z-w.m.root.position.z);w.m.root.rotation.y=Math.atan2(P.x-w.m.root.position.x,P.z-w.m.root.position.z);if(d<3.6&&now-w.said>14000&&!document.querySelector('.jd-ov,body>div[data-mg]')){w.said=now;try{H.say(done?`${w.j.city} 원님: 고맙소! ${jo(w.j.n,'이','가')} 다시 빛나니 고을이 환하오.`:`${w.j.city} 원님: 우리 고을 보물 ${jo(w.j.n,'을','를')} 부탁하오. 조달청에 요청서를 냈소.`,5)}catch(e){}}}}}catch(e){}requestAnimationFrame(loop)};requestAnimationFrame(loop);
+ window.__WONNIM={list:()=>W.map(w=>({k:w.j.k,x:w.m.root.position.x,z:w.m.root.position.z}))}}
