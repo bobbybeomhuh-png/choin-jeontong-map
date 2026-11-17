@@ -2,7 +2,7 @@
    곁놀이가 스무 가지로 늘어 무엇부터 할지 길잡이가 필요해서: 관아 창 맨 위에 아직 안 해 본 곁놀이 하나를 「오늘의 업무」로 펼쳐 보이고
    (바로 가기 단추), 해내면 덤 엽전 10냥과 「완료」 도장. 도감 진행 띠(모은 카드 / 전체)도 함께.
    setupDaily(E) 한 번(완료 감시), addDaily(u,E,CARDS) 는 관아 창을 그릴 때마다. ST.daily = {k, done:{}} */
-const LIST=[['data-qc','품질 검사','qc'],['data-srv','현장 실사','survey'],['data-mall','책상 장보기','mall'],['data-blk','공동 구매','bulk'],['data-pri','우선 구매','prio'],['data-rsv','비축 물자 풀기','reserve'],['data-saf','안전 점검','safety'],['data-ned','고을 고민','needs'],['data-dsn','설계 공모','design'],['data-rte','수송 길','route'],['data-brd','계약 공개판','board'],
+const LIST=[['data-qc','품질 검사','qc'],['data-srv','현장 실사','survey'],['data-mall','책상 장보기','mall'],['data-blk','공동 구매','bulk'],['data-pri','우선 구매','prio'],['data-rsv','비축 물자 풀기','reserve'],['data-saf','안전 점검','safety'],['data-ned','고을 고민','needs'],['data-dsn','설계 공모','design'],['data-rte','수송 길','route'],['data-brd','계약 공개판','board'],['data-grn','녹색 구매','green'],
  ['data-auc','역경매','auction'],['data-fair','조달 박람회','fair'],['data-esc','순회 전시 호송','escort'],['data-rly','파발 레이스','relay'],['data-exp','해외 조달 시장','export'],['data-snk','암행 감찰','sneak'],['data-gb','조달 골든벨','bell'],['data-brg','다리 공사','bridge']];
 const played=(ST,k)=>{const v=ST[k];return !!(v&&(typeof v==='object'?(v.stars||Object.keys(v).length):v))};
 let ENV=null;
