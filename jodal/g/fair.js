@@ -5,6 +5,7 @@
    runFair(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {outdoorSky,groundTex} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const BOOTHS=[{k:'metal',n:'녹슬지 않는 놋쇠 경첩',who:'금속 장인',col:0xb8322a,good:1,docs:[1,1,1],why:'시험 성적서·품질 인증·납품 실적이 다 있어요.'},
@@ -15,13 +16,13 @@ const BOOTHS=[{k:'metal',n:'녹슬지 않는 놋쇠 경첩',who:'금속 장인',
 const DOC=['시험 성적서','품질 인증','납품 실적'];
 export function runFair(ctx,E){const ui=overlay('#0d1424');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,60);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,30,60);try{outdoorSky(sc,{R:52})}catch(e){console.warn('바깥 배경',e)}try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x6a5a40,.6));const sun=new T.DirectionalLight(0xfff0d0,2.3);sun.position.set(-8,14,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-16,right:16,top:16,bottom:-16});sc.add(sun);
  const cam=new T.PerspectiveCamera(50,1,.05,80);
  title(ui.top,'공공조달 박람회','WASD로 걷기 · 천막 앞에서 E로 상담 · 서류를 보고 우수조달물품을 추천해요');
  const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
  const cv=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'));const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t};
- /* 마당과 관아 */const gr=new T.Mesh(new T.PlaneGeometry(50,50),M(0xc8b080));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;sc.add(gr);
+ /* 마당과 관아 */const gr=new T.Mesh(new T.PlaneGeometry(50,50),M(0xb4ac9c,{map:groundTex('pave',15)}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;sc.add(gr);
  const hall=new T.Group();{const w=new T.Mesh(new T.BoxGeometry(10,3,3),M(0xece4d2));w.position.y=1.5;hall.add(w);const rf=new T.Mesh(new T.ConeGeometry(7,2.2,4),M(0x3a3a3e));rf.rotation.y=Math.PI/4;rf.scale.set(1.4,1,.6);rf.position.y=4.1;hall.add(rf);const sg=new T.Mesh(new T.PlaneGeometry(4.6,1.1),new T.MeshBasicMaterial({toneMapped:false,map:cv(512,128,q=>{q.fillStyle='#1a2a4a';q.fillRect(0,0,512,128);q.strokeStyle='#d8a838';q.lineWidth=8;q.strokeRect(4,4,504,120);q.fillStyle='#f2d27a';q.font='bold 58px sans-serif';q.textAlign='center';q.fillText('공공조달 박람회',256,84)})}));sg.position.set(0,2.4,1.52);hall.add(sg)}hall.position.set(0,0,-11);sc.add(hall);
  /* 깃발 줄 */for(let k=0;k<12;k++){const f=new T.Mesh(new T.PlaneGeometry(.5,.6),new T.MeshStandardMaterial({color:[0xb8322a,0x2a5a9a,0xf2c14e,0x2f6a4a][k%4],side:T.DoubleSide}));f.position.set(-11+k*2,4.2,-6);sc.add(f)}
  /* 천막 다섯(반원) */const booths=[];const H=window.__H3;

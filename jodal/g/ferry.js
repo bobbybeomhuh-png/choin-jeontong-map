@@ -6,6 +6,8 @@
    jodal.js 가 setupFerry(env) 로 부른다. env={X,THREE,JOBS,ST,save,hudDraw,ov,SND,esc} */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {outdoorSky} from './sites/dress.js';
+import {volPines,plantBroad} from './sites/treekit.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 export function setupFerry(E){const {X,THREE,JOBS}=E;const H=window.__H3;let site=null,btn=null,tried=false;
  const busy=()=>!!document.querySelector('.jd-ov,body>div[data-mg]');
@@ -32,7 +34,7 @@ export function setupFerry(E){const {X,THREE,JOBS}=E;const H=window.__H3;let sit
 /* 강줄기 운송 놀이 */
 export function runFerry(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,40,120);
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0xa8d0ec);sc.fog=new T.Fog(0xa8d0ec,40,120);try{outdoorSky(sc,{R:110})}catch(e){console.warn('바깥 배경',e)}
  sc.add(new T.HemisphereLight(0xffffff,0x5a7a4a,.9));const sun=new T.DirectionalLight(0xfff0d0,2.2);sun.position.set(20,40,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30,far:120});sc.add(sun,sun.target);
  const cam=new T.PerspectiveCamera(55,1,.1,200);
  title(ui.top,'나룻배 운송','A·D 키 돌리기 · W 노 젓기 · 바위와 통나무를 피해 공방 나루까지');
@@ -41,8 +43,9 @@ export function runFerry(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.
  /* 강물 */{const g=new T.PlaneGeometry(W+1,LEN+40,8,160);g.rotateX(-Math.PI/2);const p=g.attributes.position;for(let i=0;i<p.count;i++){const z=p.getZ(i)-LEN/2+10;p.setZ(i,z);p.setX(i,p.getX(i)+cx(z))}g.computeVertexNormals();const w=new T.Mesh(g,M(0x3a7aa8,{roughness:.15,metalness:.1,transparent:true,opacity:.92}));w.receiveShadow=true;sc.add(w)
   const bed=new T.Mesh(new T.PlaneGeometry(400,400),M(0x2a4a5a));bed.rotation.x=-Math.PI/2;bed.position.y=-1.2;sc.add(bed)}
  /* 강둑(양옆 풀 언덕) */for(const s of[-1,1]){const g=new T.PlaneGeometry(40,LEN+40,6,160);g.rotateX(-Math.PI/2);const p=g.attributes.position;for(let i=0;i<p.count;i++){const z=p.getZ(i)-LEN/2+10,u=p.getX(i)+20;p.setZ(i,z);p.setX(i,cx(z)+s*(W/2+u));p.setY(i,-.6+Math.min(2.2,u*.9)+(u>3?Math.sin(z*.2+u)*.4:0))}g.computeVertexNormals();const b=new T.Mesh(g,M(0x6a9a4a));b.material.side=T.DoubleSide;b.receiveShadow=true;sc.add(b)}
- /* 둑 위 나무·초가 */const tree=(x,z)=>{const g=new T.Group();const t=new T.Mesh(new T.CylinderGeometry(.15,.2,1.6,6),M(0x6a4a2c));t.position.y=.8;g.add(t);const c=new T.Mesh(new T.ConeGeometry(1.1+Math.random()*.5,2.6,7),M([0x3a6a3a,0x4a7a3a,0xb85a2a][(Math.random()*3)|0]));c.position.y=2.6;c.castShadow=true;g.add(c);g.position.set(x,1.6,z);sc.add(g)};
+ /* 둑 위 나무·초가 */const TRS=[];const tree=(x,z)=>TRS.push([x,z]);
  for(let z=-5;z>-LEN-10;z-=6){for(const s of[-1,1])if(Math.random()<.75)tree(cx(z)+s*(W/2+3+Math.random()*9),z+Math.random()*3)}
+ /* 11/17 P10: 원뿔 나무 → 지도와 같은 입체 소나무·단풍 */{const PN=volPines(TRS.length),o=new T.Object3D(),cc=new T.Color();let np=0;const BL=[];for(const[x,z]of TRS){if(Math.random()<.55){const s2=1.7+Math.random()*.7;o.position.set(x,1.5,z);o.rotation.set(0,Math.random()*6,0);o.scale.set(s2*1.1,s2,s2*1.1);o.updateMatrix();PN.setMatrixAt(np,o.matrix);PN.setColorAt(np,cc.setHSL(.25,.3,.85));np++}else BL.push([x,1.5,z,Math.random()*6,.75+Math.random()*.25,[0xe8603c,0xf08c3a,0xf6c04a,0x9cc05a,0xd8503a][(Math.random()*5)|0]])}PN.count=np;PN.castShadow=true;sc.add(PN);if(BL.length)plantBroad(sc,BL)}
  for(let k=0;k<5;k++){const z=-30-k*48,s=k%2?1:-1;const h=new T.Group();const wl=new T.Mesh(new T.BoxGeometry(3,1.6,2.4),M(0xece4d2));wl.position.y=.8;h.add(wl);const rf=new T.Mesh(new T.ConeGeometry(2.6,1.4,4),M(0xc8a858));rf.rotation.y=Math.PI/4;rf.position.y=2.2;h.add(rf);h.position.set(cx(z)+s*(W/2+7),1.6,z);sc.add(h)}
  /* 바위(물속) */const rocks=[];const rg=new T.DodecahedronGeometry(1,0);for(let z=-22;z>-LEN+15;z-=12+Math.random()*7){const k=Math.random()<.7?1:2;for(let i=0;i<k;i++){const r=.6+Math.random()*.6;const x=cx(z)+(Math.random()-.5)*(W-2.5);const m=new T.Mesh(rg,M(0x6a6a66,{roughness:1}));m.scale.set(r,r*.8,r);m.position.set(x,0,z+(Math.random()-.5)*3);m.rotation.set(Math.random(),Math.random(),0);m.castShadow=true;sc.add(m);rocks.push({m,r:r*.95})}}
  /* 통나무(떠내려옴) */const logs=[];for(let k=0;k<3;k++){const m=new T.Mesh(new T.CylinderGeometry(.25,.25,2.4,8),M(0x7a5232));m.rotation.z=Math.PI/2;m.castShadow=true;sc.add(m);logs.push({m,z:-60-k*55,x:0,ph:Math.random()*6})}

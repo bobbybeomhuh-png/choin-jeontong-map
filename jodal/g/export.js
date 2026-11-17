@@ -5,6 +5,7 @@
    runExport(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {outdoorSky} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const ORD=[{who:'바다 건너 박물관',col:0x2a6a9a,want:'전시용 청자 매병',spec:'비색이 맑고 금 간 곳이 없을 것',kind:'vase',
@@ -15,7 +16,7 @@ const ORD=[{who:'바다 건너 박물관',col:0x2a6a9a,want:'전시용 청자 �
   cands:[{v:50,n:'50도 앙부일구',why:'영침이 50도로 기울었어요. 북쪽 나라에 맞는 해시계예요.'},{v:37.5,n:'37.5도 앙부일구',why:'서울(37.5도)에 맞춘 해시계라 그 나라에선 시각이 어긋나요.'},{v:35,n:'35도 앙부일구',why:''}]}];
 export function runExport(ctx,E){const ui=overlay('#0d1a24');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x9cc8e8);sc.fog=new T.Fog(0x9cc8e8,30,80);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x9cc8e8);sc.fog=new T.Fog(0x9cc8e8,30,80);try{outdoorSky(sc,{R:72})}catch(e){console.warn('바깥 배경',e)}try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x4a6a7a,.6));const sun=new T.DirectionalLight(0xfff0d0,2.3);sun.position.set(8,14,6);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-14,right:14,top:14,bottom:-10});sc.add(sun);
  const cam=new T.PerspectiveCamera(42,1,.05,120);const CAM0={p:new T.Vector3(0,6.2,11.5),l:new T.Vector3(0,1.4,-1)};cam.position.copy(CAM0.p);cam.lookAt(CAM0.l);
  title(ui.top,'해외 조달 시장','주문 규격을 읽고, 상자에서 후보를 꺼내 돌려 보며 맞는 걸 실어요');

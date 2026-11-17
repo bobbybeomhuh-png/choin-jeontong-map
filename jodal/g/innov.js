@@ -6,6 +6,7 @@
    jodal.js 가 setupInnov(env) 로 부른다. env={X,THREE,JOBS,ST,save,hudDraw,ov,SND,esc,anchor:()=>Vector3|null} */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {outdoorSky,groundTex} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const TOOLS=[{k:'fan',n:'바람 풀무 붓',rate:2.6,rad:.55,hurt:0,pitch:'풀무 바람으로 흙을 날리고 부드러운 털로 쓸어요. 처음 보는 새 기술이에요.',
@@ -34,12 +35,12 @@ export function setupInnov(E){const {X,THREE,JOBS}=E;const H=window.__H3;let npc
 /* 시험장: 흙덩이 덮인 청자 조각을 도구로 털기 */
 export function runTrial(ctx,E,onDone){const ui=overlay('#14100b');let alive=true;ui.c.style.display='none';const ac=ctx.ac(),out=softOut(ctx);
  const R=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=T.SRGBColorSpace;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;z-index:1;touch-action:none';ui.o.insertBefore(R.domElement,ui.o.firstChild.nextSibling);
- const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x9cc4e4);try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
+ const sc=new T.Scene();try{setupPost(R,sc)}catch(e){console.warn('후처리',e)}sc.background=new T.Color(0x9cc4e4);try{outdoorSky(sc,{R:34})}catch(e){console.warn('바깥 배경',e)}try{const pm=new T.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;pm.dispose()}catch(e){}
  sc.add(new T.HemisphereLight(0xffffff,0x6a5a40,.7));const sun=new T.DirectionalLight(0xfff0d0,2.4);sun.position.set(3,6,2);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-3,right:3,top:3,bottom:-3});sc.add(sun);
  const cam=new T.PerspectiveCamera(40,1,.05,40);cam.position.set(0,3.6,3.1);cam.lookAt(0,.2,.1);
  title(ui.top,'혁신제품 시험장','도구를 고르고, 마우스를 누른 채 끌어 흙을 털어 봐요');
  const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
- /* 마당, 시험 판 */const gr=new T.Mesh(new T.PlaneGeometry(14,10),M(0x7a9a5a));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;sc.add(gr);
+ /* 마당, 시험 판 */const gr=new T.Mesh(new T.PlaneGeometry(14,10),M(0xffffff,{map:groundTex('grass',3)}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;sc.add(gr);
  const slab=new T.Mesh(new T.BoxGeometry(3.4,.3,2.3),M(0x8a6a44));slab.position.y=.15;slab.receiveShadow=true;slab.castShadow=true;sc.add(slab);
  const rim=new T.Mesh(new T.BoxGeometry(3.6,.36,2.5),M(0x5a3a22));rim.position.y=.12;sc.add(rim);
  /* 청자 조각: 상감 학 무늬가 든 오목한 대접 밑 조각(깨진 가장자리) */const shTex=(()=>{const c=document.createElement('canvas');c.width=512;c.height=256;const q=c.getContext('2d');q.fillStyle='#86ae98';q.fillRect(0,0,512,256);for(let i=0;i<500;i++){q.fillStyle=`rgba(40,80,60,${Math.random()*.08})`;q.fillRect(Math.random()*512,Math.random()*256,3,3)}
