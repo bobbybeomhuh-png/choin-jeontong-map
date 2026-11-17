@@ -6,6 +6,7 @@
    runSneak(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {groundTex} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const TALK=['「이번 금실 입찰은 우리 셋이 값을 미리 맞추세.」','「자네는 일부러 비싸게 써내고, 이번엔 내가 받겠네.」','「다음 번엔 자네 차례일세. 아무도 모를 걸세.」','「…그럼 셋이 똑같이 나누는 걸로 하지.」'];
@@ -16,8 +17,10 @@ export function runSneak(ctx,E){const ui=overlay('#05070f');let alive=true;ui.c.
  const cam=new T.PerspectiveCamera(50,1,.05,80);
  title(ui.top,'암행 감찰','WASD로 걷기 · 노란 시야를 피해 통·상자 뒤로 · 업체 무이 곁에서 엿듣기');
  const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
- /* 바닥과 담 */const fl=new T.Mesh(new T.PlaneGeometry(30,30),M(0x4a4038));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);
- const blocks=[];const box=(x,z,w,d,h,c)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),M(c));m.position.set(x,h/2,z);m.castShadow=m.receiveShadow=true;sc.add(m);blocks.push({x,z,w,d,h,m});return m};
+ /* 바닥과 담 */const fl=new T.Mesh(new T.PlaneGeometry(30,30),M(0x8a8478,{map:groundTex('pave',9)}));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);
+ /* 11/17 P10: 골목 담 = 막돌 담 무늬 + 기와 갓(검은 기와), 바닥 = 박석 */const STN=(()=>{const c=document.createElement('canvas');c.width=256;c.height=128;const q=c.getContext('2d');q.fillStyle='#cfc7b4';q.fillRect(0,0,256,128);let r5=9;const rr=()=>(r5=(r5*16807)%2147483647)/2147483647;for(let y=2;y<128;y+=16+rr()*6)for(let x=-10+rr()*10;x<256;x+=20+rr()*14){const v=100+(rr()*80|0),ww=17+rr()*12,hh=12+rr()*6;q.fillStyle=`rgb(${v+8},${v},${v-12})`;q.beginPath();q.ellipse(x+ww/2,y+hh/2,ww/2,hh/2,(rr()-.5)*.4,0,7);q.fill()}return c})();const TILE=M(0x2e3238,{roughness:.6});
+ const blocks=[];const box=(x,z,w,d,h,c)=>{let mat=M(c);if(c===0xd8ccb0||c===0xc8b898){const t=new T.CanvasTexture(STN);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(Math.max(w,d)/1.6,h/1.1);mat=M(c===0xd8ccb0?0xb0a898:0xa89e8c,{map:t})}const m=new T.Mesh(new T.BoxGeometry(w,h,d),mat);m.position.set(x,h/2,z);m.castShadow=m.receiveShadow=true;sc.add(m);blocks.push({x,z,w,d,h,m});
+  if(c===0xd8ccb0||c===0xc8b898){const cap=new T.Mesh(new T.BoxGeometry(w+.25,.14,d+.25),TILE);cap.position.set(x,h+.07,z);cap.castShadow=true;sc.add(cap);const rg=new T.Mesh(new T.BoxGeometry(w>d?w+.25:.16,.12,w>d?.16:d+.25),TILE);rg.position.set(x,h+.2,z);sc.add(rg)}return m};
  for(const[x,z,w,d]of[[0,-12,26,1],[0,12,26,1],[-13,0,1,24],[13,0,1,24]])box(x,z,w,d,1.2,0xd8ccb0);
  /* 가게 벽(골목) */for(const[x,z,w,d]of[[-7,-5,5,1.2],[7,-5,5,1.2],[-7,5,5,1.2],[7,5,5,1.2],[-3.5,-9,1.2,4],[3.5,9,1.2,4]])box(x,z,w,d,1.8,0xc8b898);
  /* 숨는 곳: 통·상자 */const hide=[[-4.5,1.5],[-1.8,-3.2],[2.2,3.4],[4.4,-1.6],[-6,-8.5],[6.5,8],[0,8.8],[-9,2.5],[-3.6,-5.6]];for(const[x,z]of hide){if((x+z)%2){const c=new T.Mesh(new T.CylinderGeometry(.55,.6,1.3,14),M(0x6a4a2c));c.position.set(x,.65,z);c.castShadow=true;sc.add(c);blocks.push({x,z,w:1.1,d:1.1,h:1.3,m:c})}else box(x,z,1.3,1.3,1.2,0x8a6a40)}

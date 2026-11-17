@@ -5,6 +5,7 @@
    runGoldenBell(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {hallBack,boardFloor} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const QS=[['bid','입찰에 나온 업체끼리 미리 짜고 값을 정해도 괜찮다.',0,'미리 짜고 값을 정하는 건 담합이에요. 걸리면 나라 입찰에 못 나와요.'],
@@ -34,7 +35,7 @@ export function runGoldenBell(ctx,E){const ui=overlay('#120c18');let alive=true;
  const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.7},o));
  const cv=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),c);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t};
  /* 무대 */const stage=new T.Mesh(new T.CylinderGeometry(7,7.4,.6,48),M(0x8e2b20));stage.position.y=.3;stage.receiveShadow=true;sc.add(stage);const rim=new T.Mesh(new T.TorusGeometry(7,.08,8,64),new T.MeshBasicMaterial({color:0xffd24a,toneMapped:false}));rim.rotation.x=Math.PI/2;rim.position.y=.62;sc.add(rim);
- const fl=new T.Mesh(new T.PlaneGeometry(60,60),M(0x2a2030));fl.rotation.x=-Math.PI/2;sc.add(fl);
+ const fl=new T.Mesh(new T.PlaneGeometry(60,60),boardFloor(0x7a6a5a,12));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);try{hallBack(sc,{z:-10,w:34,h:11,y0:0})}catch(e){console.warn('대청',e)}
  /* 뒤 병풍과 문제 판 */const screen=new T.Mesh(new T.PlaneGeometry(10,4.2),new T.MeshBasicMaterial({toneMapped:false}));screen.position.set(0,6.2,-6);sc.add(screen);const frame=new T.Mesh(new T.BoxGeometry(10.6,4.8,.2),M(0x3b2a1c));frame.position.set(0,6.2,-6.15);sc.add(frame);
  const drawQ=(top,body,col='#fbf3dc')=>{screen.material.map=cv(1000,420,q=>{q.fillStyle='#1a2a4a';q.fillRect(0,0,1000,420);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(6,6,988,408);q.fillStyle='#f2d27a';q.font='bold 44px sans-serif';q.textAlign='center';q.fillText(top,500,72);q.fillStyle=col;q.font='bold 46px sans-serif';const words=body.split(' ');let line='',y=170;for(const w of words){const t=line?line+' '+w:w;if(q.measureText(t).width>880){q.fillText(line,500,y);line=w;y+=64}else line=t}q.fillText(line,500,y)});screen.material.needsUpdate=true};
  /* 단상(오르내림)과 무이 */const pod=new T.Group();const col=new T.Mesh(new T.CylinderGeometry(.9,1,1,24),M(0xf2d27a,{metalness:.5,roughness:.3}));col.position.y=.5;pod.add(col);pod.position.set(0,.6,0);sc.add(pod);let me=null;const H=window.__H3;

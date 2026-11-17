@@ -6,6 +6,7 @@
    runAuction(ctx,{ST,save,hudDraw,SND}) */
 import * as T from 'three';
 import {setupPost} from './post.js';
+import {hallBack,boardFloor} from './sites/dress.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {overlay,title,blip,softOut} from './sites/minigames.js';
 const ROUNDS=[{n:'금실 열 타래',start:120},{n:'청자 유약 다섯 단지',start:90},{n:'자개 백 장',start:150}];
@@ -18,9 +19,9 @@ export function runAuction(ctx,E){const ui=overlay('#1a1008');let alive=true;ui.
  title(ui.top,'역경매 장터','업체들이 값을 낮춰 불러요 · 품질 「하」 업체를 눌러 실격시키고, 끝까지 남은 가장 낮은 값이 낙찰');
  const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.75},o));
  const cv=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const q=c.getContext('2d');f(q);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.userData={c,q};return t};
- /* 마루·단상·병풍 */const fl=new T.Mesh(new T.PlaneGeometry(40,30),M(0x5a3a22));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);
+ /* 마루·단상·병풍 */const fl=new T.Mesh(new T.PlaneGeometry(40,30),boardFloor(0x9a8470,8));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);
  const stage=new T.Mesh(new T.BoxGeometry(14,.6,4),M(0x8e2b20));stage.position.set(0,.3,-1);stage.receiveShadow=true;sc.add(stage);
- const wall=new T.Mesh(new T.PlaneGeometry(18,8),M(0x3a2414));wall.position.set(0,4,-4);sc.add(wall);
+ const wall=new T.Mesh(new T.PlaneGeometry(18,8),M(0x3a2414));wall.position.set(0,4,-4.2);wall.visible=false;sc.add(wall);try{hallBack(sc,{z:-5.4,w:24,h:8.6,y0:0})}catch(e){console.warn('대청',e)}
  /* 큰 값 판 */const boardTex=cv(1024,256,q=>{});const board=new T.Mesh(new T.PlaneGeometry(10,2.5),new T.MeshBasicMaterial({map:boardTex,toneMapped:false}));board.position.set(0,4.95,-3.9);board.scale.setScalar(.9);sc.add(board);
  const drawBoard=(top,mid,col='#ffe08a')=>{const q=boardTex.userData.q;q.fillStyle='#1a2a4a';q.fillRect(0,0,1024,256);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(5,5,1014,246);q.fillStyle='#f2d27a';q.font='bold 46px sans-serif';q.textAlign='center';q.fillText(top,512,80);q.fillStyle=col;q.font='bold 92px sans-serif';q.fillText(mid,512,200);boardTex.needsUpdate=true};
  /* 망치 */const ham=new T.Group();{const h=new T.Mesh(new T.CylinderGeometry(.06,.06,1.2,8),M(0x6a4a2c));h.rotation.z=Math.PI/2;h.position.x=.5;ham.add(h);const hd=new T.Mesh(new T.CylinderGeometry(.2,.2,.5,12),M(0x4a2a14));ham.add(hd)}ham.position.set(5.6,1.6,1.6);sc.add(ham);
