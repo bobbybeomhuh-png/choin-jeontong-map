@@ -16,6 +16,7 @@ const gl=new GLTFLoader();{const d=new DRACOLoader();d.setDecoderPath('https://c
 const CACHE={};function getModel(p,cb){if(!CACHE[p])CACHE[p]=new Promise(res=>gl.load(U(p),m=>res(m.scene),undefined,()=>res(null)));CACHE[p].then(s=>s&&cb(s))}
 /* 초가: [종류 1|2, x, z, ry]  1=ㄱ자 집(약 15x14m), 2=일자 집(약 23x7m) */
 const SITES={
+ ondal:{village:false,pines:[[-34,22,10],[34,22,11],[-36,-28,10],[36,-28,10]],fx:[]},
  gongsan:{village:false,pines:[[-36,20,10],[36,22,11],[-38,-26,10],[38,-28,10]],fx:[]},
  hoeamsa:{village:false,pines:[[-34,20,10],[34,22,11],[-36,-28,10],[36,-30,10]],fx:[]},
  jongmyo:{village:false,pines:[[-54,30,10],[54,30,11],[-56,-34,10],[56,-36,10],[30,40,9],[-30,42,10],[-70,26,10],[-130,-10,11]],fx:[]},

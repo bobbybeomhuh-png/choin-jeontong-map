@@ -9,36 +9,55 @@ import {overlay,title,blip,finishCard,softOut} from './minigames.js';
 import {coinPop,PRICE,coinState,spendCoins} from '../coin.js';
 import {SB} from '../trk3d.js';
 export const ART=[
- {k:'crown',m:'gyeongju/crown',n:'천마총 금관',kind:'metal',cut:'ring',np:3,site:'경주',d:'경주 천마총에서 나온 신라 금관(5~6세기)이에요. 높이 32.5cm, 나뭇가지 모양 세움장식 셋과 사슴뿔 모양 둘에 곱은옥과 달개가 주렁주렁 달려 있어요. (3D: 국가유산청)'},
- {k:'maebyeong',m:'gangjin/maebyeong',n:'청자 매병',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'어깨가 넓고 입이 좁은 고려 청자 매병이에요. (3D: 클리블랜드 미술관 공개, CC0)'},
- {k:'hyangro',m:'buyeo/hyangro',n:'백제 금동대향로',kind:'metal',cut:'band',np:3,site:'부여',d:'1993년 부여 능산리 절터에서 나온 백제 향로예요(높이 61.8cm, 국보). 꼭대기 봉황, 뚜껑의 산봉우리와 다섯 악사, 신선과 동물, 몸통의 연꽃, 받침의 용까지 백제의 솜씨가 다 담겼어요. (3D: junhapark1, CC BY)'},
- {k:'moonjar',m:'icheon/jar1983',n:'달항아리',kind:'ceramic',cut:'ring',np:5,site:'이천',d:'보름달처럼 둥글고 하얀 큰 항아리예요(1700년대). 아무 무늬 없이 흰빛과 둥근 모양만으로 아름다워서, 조선 백자를 대표하는 그릇이 되었어요. (클리블랜드 미술관 1983.28, CC0)'},
- {k:'sumaksae',m:'gyeongju/sumaksae',n:'얼굴무늬 수막새',kind:'ceramic',cut:'ring',np:3,site:'경주',d:'"신라의 미소"로 불리는 기와 끝 장식이에요. 실제 지름은 11.5cm예요. 웃는 눈과 입이 손으로 빚은 듯 부드러워요. (3D: 국가유산청)'},
+ {k:'crown',loc:'국립경주박물관',m:'gyeongju/crown',n:'천마총 금관',kind:'metal',cut:'ring',np:3,site:'경주',d:'경주 천마총에서 나온 신라 금관(5~6세기)이에요. 높이 32.5cm, 나뭇가지 모양 세움장식 셋과 사슴뿔 모양 둘에 곱은옥과 달개가 주렁주렁 달려 있어요. (3D: 국가유산청)'},
+ {k:'maebyeong',loc:'미국 클리블랜드 미술관',m:'gangjin/maebyeong',n:'청자 매병',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'어깨가 넓고 입이 좁은 고려 청자 매병이에요. (3D: 클리블랜드 미술관 공개, CC0)'},
+ {k:'hyangro',loc:'국립부여박물관',m:'buyeo/hyangro',n:'백제 금동대향로',kind:'metal',cut:'band',np:3,site:'부여',d:'1993년 부여 능산리 절터에서 나온 백제 향로예요(높이 61.8cm, 국보). 꼭대기 봉황, 뚜껑의 산봉우리와 다섯 악사, 신선과 동물, 몸통의 연꽃, 받침의 용까지 백제의 솜씨가 다 담겼어요. (3D: junhapark1, CC BY)'},
+ {k:'moonjar',loc:'미국 클리블랜드 미술관',m:'icheon/jar1983',n:'달항아리',kind:'ceramic',cut:'ring',np:5,site:'이천',d:'보름달처럼 둥글고 하얀 큰 항아리예요(1700년대). 아무 무늬 없이 흰빛과 둥근 모양만으로 아름다워서, 조선 백자를 대표하는 그릇이 되었어요. (클리블랜드 미술관 1983.28, CC0)'},
+ {k:'sumaksae',loc:'국립경주박물관',m:'gyeongju/sumaksae',n:'얼굴무늬 수막새',kind:'ceramic',cut:'ring',np:3,site:'경주',d:'"신라의 미소"로 불리는 기와 끝 장식이에요. 실제 지름은 11.5cm예요. 웃는 눈과 입이 손으로 빚은 듯 부드러워요. (3D: 국가유산청)'},
  {k:'bansa',m:'gyeongju/bansa',n:'금동반가사유상',kind:'metal',cut:'band',np:3,site:'경주',d:'한쪽 다리를 무릎에 얹고 손가락을 뺨에 댄 채 생각에 잠긴 금동 불상이에요(삼국시대, 높이 93.5cm). (3D: 국가유산청)'},
  {k:'angbu',m:'hanyang/angbu',n:'앙부일구',kind:'metal',cut:'ring',np:4,site:'서울',d:'세종 때 만든 오목한 해시계예요. 솥을 하늘로 향해 놓은 모양이라 "앙부"라 불러요. 바늘 그림자로 시각과 절기를 함께 읽어요(지름 약 35cm). (3D: 국가유산청)'},
- {k:'dragonjar',m:'icheon/dragonjar',n:'백자 청화 운룡문 항아리',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'푸른 코발트로 구름 속 용을 그린 항아리예요(1700년대). 용무늬 항아리는 왕실 잔치에 썼어요. (클리블랜드 미술관 1986.85, CC0)'},
- {k:'kundika',m:'gangjin/kundika',n:'청자 정병',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'고려 청자 정병이에요. 강진 같은 고려 가마에서 비색 청자를 구웠어요. (클리블랜드 미술관 1921.631, CC0)'},
+ {k:'dragonjar',loc:'미국 클리블랜드 미술관',m:'icheon/dragonjar',n:'백자 청화 운룡문 항아리',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'푸른 코발트로 구름 속 용을 그린 항아리예요(1700년대). 용무늬 항아리는 왕실 잔치에 썼어요. (클리블랜드 미술관 1986.85, CC0)'},
+ {k:'kundika',loc:'미국 클리블랜드 미술관',m:'gangjin/kundika',n:'청자 정병',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'고려 청자 정병이에요. 강진 같은 고려 가마에서 비색 청자를 구웠어요. (클리블랜드 미술관 1921.631, CC0)'},
  {k:'unhyun',m:'icheon/unhyun_bottle',n:'운현궁 백자 병',kind:'ceramic',cut:'ring',np:3,site:'서울',d:'흥선대원군의 집 운현궁에서 쓰던 백자 병이에요. (국가유산청 재현 에셋, CC BY)'},
- {k:'fishbottle',m:'icheon/fishbottle',n:'분청사기 물고기무늬 병',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'회색 흙에 흰 흙을 바르고 긁어 물고기를 그린 분청사기 병이에요(1400년대). (클리블랜드 미술관 1962.153, CC0)'},
+ {k:'fishbottle',loc:'미국 클리블랜드 미술관',m:'icheon/fishbottle',n:'분청사기 물고기무늬 병',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'회색 흙에 흰 흙을 바르고 긁어 물고기를 그린 분청사기 병이에요(1400년대). (클리블랜드 미술관 1962.153, CC0)'},
  {k:'eobo',m:'hanyang/eobo',n:'어보',kind:'metal',cut:'band',np:3,site:'서울',d:'임금의 도장(어보)이에요. 나라의 큰 문서에 찍고, 왕실의 정통을 상징했어요. (3D: 국가유산청)'},
- {k:'bell',m:'gyeongju/bell',n:'성덕대왕신종',kind:'metal',cut:'band',np:3,site:'경주',d:'771년 신라 혜공왕 때 완성한 큰 종으로, 높이 3.66m, 무게 약 18.9톤이에요. 아기를 넣어 만들었다는 슬픈 전설 때문에 "에밀레종"이라고도 불려요. 종 위의 용뉴(용 모양 고리)와 소리를 울리는 음통, 몸통의 비천상이 아름다워요. (3D: 국가유산청)'},
+ {k:'bell',loc:'국립경주박물관',m:'gyeongju/bell',n:'성덕대왕신종',kind:'metal',cut:'band',np:3,site:'경주',d:'771년 신라 혜공왕 때 완성한 큰 종으로, 높이 3.66m, 무게 약 18.9톤이에요. 아기를 넣어 만들었다는 슬픈 전설 때문에 "에밀레종"이라고도 불려요. 종 위의 용뉴(용 모양 고리)와 소리를 울리는 음통, 몸통의 비천상이 아름다워요. (3D: 국가유산청)'},
  {k:'scrollbox',m:'tongyeong/scrollbox',n:'용봉무늬 두루마리 상자',kind:'lacquer',cut:'ring',np:3,site:'통영',d:'두루마리 그림이나 글을 넣어 두던 긴 상자예요. 뚜껑에 용과 봉황을 자개로 새겼어요. (3D: 클리블랜드 미술관 1990.15, CC0)'},
  {k:'jikjitype',m:'cheongju/jikji_type',n:'금속활자',kind:'metal',cut:'ring',np:3,site:'청주',d:'글자 하나를 쇠로 부어 만든 활자예요. 밀랍에 글자를 새기고 흙으로 감싼 뒤 녹인 쇳물을 부어 만들었다고 해요(밀랍주조법). 진짜 활자는 손톱만 해요. (3D: 한국문화정보원, CC BY)'},
  {k:'haetae',m:'hanyang/haetae_a',n:'광화문 해태',kind:'stone',cut:'band',np:3,site:'서울',d:'광화문 앞을 지키던 해태(해치)예요. 옳고 그름을 가리고 화재를 막는다고 믿은 상상의 동물이에요. (3D: 국가유산청)'},
  {k:'najeonham',m:'tongyeong/najeonham',n:'나전칠함',kind:'lacquer',cut:'ring',np:4,site:'통영',d:'옻칠한 나무 상자에 얇게 간 전복·조개 껍데기(자개)를 오려 붙여 꽃과 넝쿨을 그렸어요. 통영은 조선 때 통제영 공방(12공방)에서 나전을 만들던 나전칠기의 고장이에요. (3D: KCDF, CC BY)'},
  /* 2026-11-16 추가: 마당에 놓인 실제 유물 3D 가운데 출처가 분명한 것 일곱 점(거중기는 조각이 너무 많아 뺌). 설명은 각 마당 파일의 정본 */
- {k:'pitcher',m:'gangjin/pitcher',n:'청자 상감 국화모란무늬 주자',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'홈에 흰 흙과 붉은 흙을 메워 국화와 모란을 그린 상감청자 주자예요(1100년대). (3D: 클리블랜드 미술관 공개, CC0)'},
+ {k:'pitcher',loc:'미국 클리블랜드 미술관',m:'gangjin/pitcher',n:'청자 상감 국화모란무늬 주자',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'홈에 흰 흙과 붉은 흙을 메워 국화와 모란을 그린 상감청자 주자예요(1100년대). (3D: 클리블랜드 미술관 공개, CC0)'},
  {k:'lion',m:'gangjin/lion',n:'청자 사자 뚜껑 향로',kind:'ceramic',cut:'band',np:3,site:'강진',d:'뚜껑 위에 사자가 앉은 향로예요. 고려 도공들은 생김새를 살린 상형청자도 잘 만들었어요. (3D: 국가유산청 재현 에셋, CC BY)'},
  {k:'kettle',m:'gangjin/kettle',n:'청자 상감 표형 주전자',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'표주박 모양으로 빚은 고려 청자 주전자예요. (3D: 국가유산청 재현 에셋, CC BY)'},
  {k:'gamsari',m:'gyeongju/gam_outer',n:'감은사 사리장엄',kind:'metal',cut:'band',np:3,site:'경주',d:'경주 감은사 터 서쪽 삼층석탑 안에서 나온 사리 그릇이에요(통일신라, 682년 무렵). 사천왕을 두드려 새긴 금동 바깥 함 안에, 난간과 악사·승려 조각을 두른 집 모양 안쪽 함이 들어 있었어요. (3D: 국가유산청, CC BY)'},
  {k:'dujeonggap',m:'jinju/dujeonggap',n:'두정갑',kind:'lacquer',cut:'band',np:3,site:'진주',d:'조선 장수가 입던 갑옷이에요. 천 안쪽에 쇠 미늘을 대고 겉에 둥근 못(두정)을 박아 "두정갑"이라 해요. 투구와 함께 붉은 비단으로 지어 위엄이 있었어요. (3D: Heat Of Fusion, CC BY)'},
  {k:'cannon',m:'jinju/cannon',n:'현자총통',kind:'metal',cut:'ring',np:3,site:'진주',d:'조선의 화포 가운데 하나로, 길이 약 79cm예요(천자·지자·현자·황자 순으로 작아져요). 큰 화살(차대전)이나 쇠 탄환을 쏘았어요. 임진왜란 때 성과 배에서 크게 쓰였어요. (3D: 국가유산청 재현 에셋)'},
  {k:'tukjong',m:'jongmyo/tukjong',n:'종묘제례 특종',kind:'metal',cut:'band',np:3,site:'서울',d:'종묘제례악에 쓰는 악기로, 쇠종 하나를 틀에 매달아 쳐요. 몸에 둥근 돌기가 줄지어 있어요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
- {k:'jagyeok',m:'hanyang/jagyeok',n:'자격루 물그릇',kind:'metal',cut:'band',np:3,site:'서울',d:'세종 때 장영실이 만든 자동 물시계 자격루를 1536년(중종 31)에 다시 만든 것 가운데 남은 물그릇들이에요(국보). 위 그릇에서 흘러내린 물이 아래 긴 통에 차오르면 시각을 알렸어요. (3D: 국가유산청, CC BY)'},
+ {k:'jagyeok',loc:'국립고궁박물관',m:'hanyang/jagyeok',n:'자격루 물그릇',kind:'metal',cut:'band',np:3,site:'서울',d:'세종 때 장영실이 만든 자동 물시계 자격루를 1536년(중종 31)에 다시 만든 것 가운데 남은 물그릇들이에요(국보). 위 그릇에서 흘러내린 물이 아래 긴 통에 차오르면 시각을 알렸어요. (3D: 국가유산청, CC BY)'},
  {k:'toad',m:'gangjin/toad',n:'청자 두꺼비 모양 벼루',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'두꺼비가 엎드린 모양으로 빚은 고려 청자 벼루예요. (3D: 국가유산청 재현 에셋, CC BY)'},
  {k:'geojunggi',m:'suwon/geojunggi',n:'거중기',kind:'lacquer',cut:'band',np:3,site:'수원',d:'정약용이 책 『기기도설』을 참고해 만든 들어 올리는 기계예요. 위아래에 도르래를 여러 개 달아 작은 힘으로 무거운 성돌을 들었어요. 수원 화성을 쌓을 때(1794~1796) 쓰였어요. (3D: KBU jiin712921, CC BY)'},
- {k:'cloudjar',m:'icheon/cloudjar',n:'백자 철화 운룡문 항아리',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'갈색 철 안료로 구름 속 용을 힘차게 그린 조선 백자 항아리예요. 용무늬 항아리는 왕실 잔치에 썼어요. (클리블랜드 미술관 1986.69, CC0)'},
- {k:'winepot',m:'gangjin/winepot',n:'청자 음각 연꽃무늬 주자',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'몸에 연꽃무늬를 칼로 새긴 고려 청자 주전자예요. (클리블랜드 미술관 1921.628, CC0)'},
+ {k:'cloudjar',loc:'미국 클리블랜드 미술관',m:'icheon/cloudjar',n:'백자 철화 운룡문 항아리',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'갈색 철 안료로 구름 속 용을 힘차게 그린 조선 백자 항아리예요. 용무늬 항아리는 왕실 잔치에 썼어요. (클리블랜드 미술관 1986.69, CC0)'},
+ {k:'winepot',loc:'미국 클리블랜드 미술관',m:'gangjin/winepot',n:'청자 음각 연꽃무늬 주자',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'몸에 연꽃무늬를 칼로 새긴 고려 청자 주전자예요. (클리블랜드 미술관 1921.628, CC0)'},
+ {k:'bow',m:'jinju/bow',n:'각궁',kind:'lacquer',cut:'band',np:3,site:'진주',d:'소뿔로 만든 조선의 활이에요. 조선 군사는 특히 활쏘기에 강했어요. (3D: 국가유산청 재현 에셋)'},
+ {k:'crossbow',m:'jinju/crossbow',n:'쇠뇌',kind:'lacquer',cut:'band',np:3,site:'진주',d:'방아쇠를 당겨 화살을 쏘는 활 틀이에요. 힘이 약해도 멀리 쏠 수 있어요. (3D: 국가유산청 재현 에셋)'},
+ {k:'sword',m:'jinju/sword',n:'사인검',kind:'metal',cut:'band',np:3,site:'진주',d:'호랑이 기운을 담았다는 조선의 칼이에요. (3D: 국가유산청 재현 에셋)'},
+ {k:'woldo',m:'jinju/woldo',n:'월도',kind:'metal',cut:'band',np:3,site:'진주',d:'긴 자루 끝에 반달 모양 칼날을 단 무기예요. (3D: 국가유산청 재현 에셋)'},
+ {k:'matchlock',m:'jinju/matchlock',n:'화승총',kind:'metal',cut:'band',np:3,site:'진주',d:'불붙인 심지로 화약을 터뜨려 쏘는 총(조총)이에요. (3D: 국가유산청 재현 에셋)'},
+ {k:'platearmor',m:'jinju/platearmor',n:'판갑',kind:'metal',cut:'ring',np:3,site:'진주',d:'쇠판을 이어 몸통을 감싼 갑옷이에요. 오래전부터 쓰인 갑옷 방식이에요. (3D: 국가유산청 재현 에셋)'},
+ {k:'armguard',m:'jinju/armguard',n:'팔 보호구',kind:'metal',cut:'ring',np:3,site:'진주',d:'팔뚝을 지키는 쇠 보호구예요. (3D: 국가유산청 재현 에셋)'},
+ {k:'jwago',m:'jongmyo/jwago',n:'좌고',kind:'lacquer',cut:'ring',np:3,site:'서울',d:'틀에 매단 북이에요. 앉아서 쳐요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'nogo',m:'jongmyo/nogo',n:'노고',kind:'lacquer',cut:'band',np:3,site:'서울',d:'북 두 개를 엇갈려 틀에 매단 북이에요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'jeolgo',m:'jongmyo/jeolgo',n:'절고',kind:'lacquer',cut:'ring',np:3,site:'서울',d:'받침 위에 비스듬히 얹은 북이에요. 음악의 마디를 짚어 줘요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'unra',m:'jongmyo/unra',n:'운라',kind:'metal',cut:'band',np:3,site:'서울',d:'작은 징 열 개를 틀에 매달아 맑고 높은 소리를 내요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'janggu',m:'jongmyo/janggu',n:'장구',kind:'lacquer',cut:'ring',np:3,site:'서울',d:'허리가 잘록한 북이에요. 양쪽 가죽을 쳐서 두 가지 소리를 내요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'ajaeng',m:'jongmyo/ajaeng',n:'아쟁',kind:'lacquer',cut:'band',np:3,site:'서울',d:'활로 줄을 문질러 낮고 굵은 소리를 내는 현악기예요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'nagak',m:'jongmyo/nagak',n:'나각',kind:'lacquer',cut:'ring',np:3,site:'서울',d:'큰 소라 껍데기로 만든 나팔이에요. 뿌우 하고 길게 울려요. (3D: 국가유산청 종묘제례 에셋, CC BY · 이름은 모양을 보고 붙임)'},
+ {k:'gjhyangro',m:'hanyang/hyangro',n:'근정전 향로',kind:'metal',cut:'band',np:3,site:'서울',d:'경복궁 근정전 어좌 앞에 놓던 향로예요. (3D: 국가유산청)'},
+ {k:'gjlamp',m:'hanyang/lamp',n:'근정전 등',kind:'metal',cut:'band',np:3,site:'서울',d:'경복궁 근정전 어좌 양옆을 밝히던 등이에요. (3D: 국가유산청)'},
+ {k:'ewer',loc:'미국 클리블랜드 미술관',m:'gangjin/ewer',n:'청자 음각 넝쿨무늬 주자',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'몸에 넝쿨무늬를 칼로 새긴 고려 청자 주전자예요. (클리블랜드 미술관 1928.172, CC0)'},
+ {k:'kcdfbottle',m:'icheon/kcdf_bottle',n:'백자 청화 꽃무늬 병',kind:'ceramic',cut:'ring',np:3,site:'이천',d:'푸른 코발트로 꽃을 그린 조선 백자 병이에요. (3D: KCDF, CC BY)'},
+ {k:'pagoda',m:'gyeongju/pagoda',n:'인왕동 사지 삼층석탑',kind:'stone',cut:'band',np:3,site:'경주',d:'경주 인왕동 절터에 남은 통일신라 삼층석탑이에요. 기단 면에 신장(神將)을 돋을새김했어요. (3D: 국가유산청)'},
  {k:'hongipo',m:'suwon/hongipo',n:'홍이포',kind:'metal',cut:'ring',np:4,site:'수원',d:'17세기에 네덜란드식 대포를 본떠 만든 큰 대포예요. 나무 수레에 얹어 옮기고 쇠공을 멀리 쏘았어요. 화성 같은 큰 성에 두어 성을 지켰어요. (3D: 한국문화정보원 KCISA, CC BY)'}];
 try{window.__ARTN=Object.fromEntries(ART.map(a=>[a.k,a.n]))}catch(e){}
 /* 미리 찍어 둔 유물 그림(textures/thumb, 만드는 법: 작업 기록 참고) */const THUMB=k=>new URL('../textures/thumb/'+k+'.webp',import.meta.url).href;
@@ -51,7 +70,7 @@ export const TOOLS=[{k:'brush',n:'넓은 붓',d:'붓질이 한 번에 넓게 닦
 export const hasTool=k=>{try{return (JSON.parse(localStorage.getItem('muui-h3-tools')||'[]')).includes(k)}catch(e){return false}};
 const buyTool=k=>{const T=TOOLS.find(x=>x.k===k);if(!T||hasTool(k))return false;if(!spendCoins(T.p))return false;try{const L=JSON.parse(localStorage.getItem('muui-h3-tools')||'[]');L.push(k);localStorage.setItem('muui-h3-tools',JSON.stringify(L))}catch(e){}return true};
 /* 유물 세트: 다 복원하면 엽전 덤 */
-export const SETS=[{id:'silla',n:'신라의 빛',k:['crown','bansa','bell','sumaksae','gamsari']},{id:'celadon',n:'고려 청자와 백제 향로',k:['maebyeong','kundika','pitcher','lion','kettle','toad','winepot','hyangro']},{id:'joseon',n:'조선 백자와 분청',k:['moonjar','dragonjar','cloudjar','unhyun','fishbottle']},{id:'royal',n:'왕실과 과학',k:['angbu','eobo','haetae','jagyeok','tukjong']},{id:'craft',n:'장인의 솜씨',k:['najeonham','scrollbox','jikjitype']},{id:'fort',n:'성을 지킨 것들',k:['dujeonggap','cannon','hongipo','geojunggi']}];
+export const SETS=[{id:'silla',n:'신라의 빛',k:['crown','bansa','bell','sumaksae','gamsari','pagoda']},{id:'celadon',n:'고려 청자와 백제 향로',k:['maebyeong','kundika','pitcher','lion','kettle','toad','winepot','ewer','hyangro']},{id:'joseon',n:'조선 백자와 분청',k:['moonjar','dragonjar','cloudjar','kcdfbottle','unhyun','fishbottle']},{id:'royal',n:'왕실과 과학',k:['angbu','eobo','haetae','jagyeok','gjhyangro','gjlamp']},{id:'craft',n:'장인의 솜씨',k:['najeonham','scrollbox','jikjitype']},{id:'fort',n:'성을 지킨 것들',k:['dujeonggap','cannon','hongipo','geojunggi']},{id:'weapon',n:'조선의 무기',k:['bow','crossbow','sword','woldo','matchlock','platearmor','armguard']},{id:'jerye',n:'종묘제례악',k:['tukjong','jwago','nogo','jeolgo','unra','janggu','ajaeng','nagak']}];
 const LJ=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},LS_=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 /* 새로 완성된 세트를 기록하고 돌려줌 */const checkSets=()=>{const R=restored(),got=LJ('muui-h3-sets',[]),out=[];for(const s of SETS)if(!got.includes(s.id)&&s.k.every(k=>R.has(k))){got.push(s.id);out.push(s)}if(out.length)LS_('muui-h3-sets',got);return out};
 /* 의뢰서: 한국 날짜로 하루 석 장. 0 오늘의 유물 복원, 1 다른 유물을 실수 없이, 2 긴급 출동 몇 점 이상 */
@@ -156,7 +175,7 @@ export function restoreGame(ctx,key,opt={}){const A=ART.find(a=>a.k===key)||ART[
    bb.addEventListener('pointerdown',e=>{e.preventDefault();bb.setPointerCapture(e.pointerId);show(true)});for(const n of['pointerup','pointercancel'])bb.addEventListener(n,()=>show(false))}
 for(const d of dirt)d.visible=false;for(const s of seams)s.visible=GOLDF;/* 메운 자리는 매끈하게(혹처럼 튀어나와 보이지 않게). 금분이 있으면 금빛 점으로 남김(금 이음) */for(const g of pieces)for(const m of g.children)if(m.material&&!m.userData.dirt&&A.kind==='metal'){m.material.metalness=.8;m.material.roughness=.28;m.material.envMapIntensity=1.3}
   markRestored(A.k);try{window.__NETR&&window.__NETR(A.k)}catch(e){}const isToday=todayArt().k===A.k&&!todayDone();if(isToday){try{localStorage.setItem('muui-h3-restore-day',String(DAY()))}catch(e){}}const sec=(performance.now()-t0)/1000;const Q=Math.max(30,Math.min(100,Math.round(100-miss*3-Math.max(0,sec-150)*.2+(sorted?3:0))));/* 의뢰서와 세트 */{const RQ=reqsToday();const got=[];if(RQ[0].k===A.k&&markReq(0))got.push('의뢰서 한 장 완료!');if(RQ[1].k===A.k&&miss===0&&markReq(1))got.push('실수 없이 의뢰서 완료!');for(const s of checkSets()){got.push(`「${s.n}」 세트 완성!`);setTimeout(()=>{try{coinPop(PRICE.set,s.n+' 세트')}catch(e){}},1800)}if(got.length)setTimeout(()=>{try{ctx.say(got.join(' '))}catch(e){}},3200)}blip(ac,out,520,1040,.5,.2);head('복원 완료!','천천히 돌려 보세요');stepTag.textContent='복원 완료';fill.style.width='100%';
-  setTimeout(()=>{if(!alive)return;ctx.done('restore_'+A.k,Q,A.n+' 복원');if(isToday)setTimeout(()=>{try{ctx.done('restore_today',100,'오늘의 의뢰');ctx.say('오늘의 의뢰까지 해냈어요! 엽전 덤을 받았어요.')}catch(e){}},1500);finishCard(ui,`${A.n}, 복원 완료!`,A.d+` 진열장에 놓였어요(${restored().size} / ${ART.length}).`,Q,close)},2600)}
+  setTimeout(()=>{if(!alive)return;ctx.done('restore_'+A.k,Q,A.n+' 복원');if(isToday)setTimeout(()=>{try{ctx.done('restore_today',100,'오늘의 의뢰');ctx.say('오늘의 의뢰까지 해냈어요! 엽전 덤을 받았어요.')}catch(e){}},1500);finishCard(ui,`${A.n}, 복원 완료!`,A.d+(A.loc?` 진짜 유물은 지금 ${A.loc}에 있어요.`:'')+` 진열장에 놓였어요(${restored().size} / ${ART.length}).`,Q,close)},2600)}
  /* ---------- 그리기 ---------- */
  let last=performance.now(),chk=0;
  const loop=()=>{if(!alive)return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const r=R.domElement.getBoundingClientRect();if(R.domElement.width!==Math.round(r.width*R.getPixelRatio())){R.setSize(r.width,r.height,false);cam.aspect=r.width/Math.max(1,r.height);/* 세로 화면: 가로 시야가 넓은 화면(1.4)과 같아지게 세로 시야를 넓힘(흩어진 조각이 화면 밖에 놓이지 않게) */cam.fov=cam.aspect<1.4?Math.min(75,2*Math.atan(Math.tan(19*Math.PI/180)*1.4/cam.aspect)*180/Math.PI):38;cam.updateProjectionMatrix()}
