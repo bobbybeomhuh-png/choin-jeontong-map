@@ -37,6 +37,8 @@ export const ART=[
  {k:'jagyeok',m:'hanyang/jagyeok',n:'자격루 물그릇',kind:'metal',cut:'band',np:3,site:'서울',d:'세종 때 장영실이 만든 자동 물시계 자격루를 1536년(중종 31)에 다시 만든 것 가운데 남은 물그릇들이에요(국보). 위 그릇에서 흘러내린 물이 아래 긴 통에 차오르면 시각을 알렸어요. (3D: 국가유산청, CC BY)'},
  {k:'toad',m:'gangjin/toad',n:'청자 두꺼비 모양 벼루',kind:'ceramic',cut:'ring',np:3,site:'강진',d:'두꺼비가 엎드린 모양으로 빚은 고려 청자 벼루예요. (3D: 국가유산청 재현 에셋, CC BY)'},
  {k:'geojunggi',m:'suwon/geojunggi',n:'거중기',kind:'lacquer',cut:'band',np:3,site:'수원',d:'정약용이 책 『기기도설』을 참고해 만든 들어 올리는 기계예요. 위아래에 도르래를 여러 개 달아 작은 힘으로 무거운 성돌을 들었어요. 수원 화성을 쌓을 때(1794~1796) 쓰였어요. (3D: KBU jiin712921, CC BY)'},
+ {k:'cloudjar',m:'icheon/cloudjar',n:'백자 철화 운룡문 항아리',kind:'ceramic',cut:'ring',np:4,site:'이천',d:'갈색 철 안료로 구름 속 용을 힘차게 그린 조선 백자 항아리예요. 용무늬 항아리는 왕실 잔치에 썼어요. (클리블랜드 미술관 1986.69, CC0)'},
+ {k:'winepot',m:'gangjin/winepot',n:'청자 음각 연꽃무늬 주자',kind:'ceramic',cut:'ring',np:4,site:'강진',d:'몸에 연꽃무늬를 칼로 새긴 고려 청자 주전자예요. (클리블랜드 미술관 1921.628, CC0)'},
  {k:'hongipo',m:'suwon/hongipo',n:'홍이포',kind:'metal',cut:'ring',np:4,site:'수원',d:'17세기에 네덜란드식 대포를 본떠 만든 큰 대포예요. 나무 수레에 얹어 옮기고 쇠공을 멀리 쏘았어요. 화성 같은 큰 성에 두어 성을 지켰어요. (3D: 한국문화정보원 KCISA, CC BY)'}];
 try{window.__ARTN=Object.fromEntries(ART.map(a=>[a.k,a.n]))}catch(e){}
 /* 미리 찍어 둔 유물 그림(textures/thumb, 만드는 법: 작업 기록 참고) */const THUMB=k=>new URL('../textures/thumb/'+k+'.webp',import.meta.url).href;
@@ -49,7 +51,7 @@ export const TOOLS=[{k:'brush',n:'넓은 붓',d:'붓질이 한 번에 넓게 닦
 export const hasTool=k=>{try{return (JSON.parse(localStorage.getItem('muui-h3-tools')||'[]')).includes(k)}catch(e){return false}};
 const buyTool=k=>{const T=TOOLS.find(x=>x.k===k);if(!T||hasTool(k))return false;if(!spendCoins(T.p))return false;try{const L=JSON.parse(localStorage.getItem('muui-h3-tools')||'[]');L.push(k);localStorage.setItem('muui-h3-tools',JSON.stringify(L))}catch(e){}return true};
 /* 유물 세트: 다 복원하면 엽전 덤 */
-export const SETS=[{id:'silla',n:'신라의 빛',k:['crown','bansa','bell','sumaksae','gamsari']},{id:'celadon',n:'고려 청자와 백제 향로',k:['maebyeong','kundika','pitcher','lion','kettle','toad','hyangro']},{id:'joseon',n:'조선 백자와 분청',k:['moonjar','dragonjar','unhyun','fishbottle']},{id:'royal',n:'왕실과 과학',k:['angbu','eobo','haetae','jagyeok','tukjong']},{id:'craft',n:'장인의 솜씨',k:['najeonham','scrollbox','jikjitype']},{id:'fort',n:'성을 지킨 것들',k:['dujeonggap','cannon','hongipo','geojunggi']}];
+export const SETS=[{id:'silla',n:'신라의 빛',k:['crown','bansa','bell','sumaksae','gamsari']},{id:'celadon',n:'고려 청자와 백제 향로',k:['maebyeong','kundika','pitcher','lion','kettle','toad','winepot','hyangro']},{id:'joseon',n:'조선 백자와 분청',k:['moonjar','dragonjar','cloudjar','unhyun','fishbottle']},{id:'royal',n:'왕실과 과학',k:['angbu','eobo','haetae','jagyeok','tukjong']},{id:'craft',n:'장인의 솜씨',k:['najeonham','scrollbox','jikjitype']},{id:'fort',n:'성을 지킨 것들',k:['dujeonggap','cannon','hongipo','geojunggi']}];
 const LJ=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},LS_=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 /* 새로 완성된 세트를 기록하고 돌려줌 */const checkSets=()=>{const R=restored(),got=LJ('muui-h3-sets',[]),out=[];for(const s of SETS)if(!got.includes(s.id)&&s.k.every(k=>R.has(k))){got.push(s.id);out.push(s)}if(out.length)LS_('muui-h3-sets',got);return out};
 /* 의뢰서: 한국 날짜로 하루 석 장. 0 오늘의 유물 복원, 1 다른 유물을 실수 없이, 2 긴급 출동 몇 점 이상 */
