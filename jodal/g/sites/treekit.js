@@ -2,6 +2,13 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 let LEAFTEX=null,BROAD=null;
+/* 11/17 R2: 바람. 재질의 정점 계산에 흔들림을 끼워 넣음(나무 수천 그루에도 가벼움). 높을수록 크게, 나무마다 박자 다르게 */
+export const WIND={t:{value:0}};let windLoop=false;
+export function addWind(mat,amp=.12,base=1.5){if(!mat||mat.userData.wind)return mat;mat.userData.wind=1;const prev=mat.onBeforeCompile;mat.onBeforeCompile=(sh,r)=>{prev&&prev.call(mat,sh,r);sh.uniforms.uWind=WIND.t;sh.vertexShader='uniform float uWind;\n'+sh.vertexShader.replace('#include <begin_vertex>',['#include <begin_vertex>','#ifdef USE_INSTANCING','vec3 wip=vec3(instanceMatrix[3][0],instanceMatrix[3][1],instanceMatrix[3][2]);','#else','vec3 wip=vec3(0.);','#endif',
+  'float wh=max(0.,position.y-'+base.toFixed(2)+');float wph=wip.x*.13+wip.z*.17;',
+  'transformed.x+=(sin(uWind*1.5+wph)*.35+sin(uWind*4.3+wph*2.+position.x*3.)*.08)*'+amp.toFixed(3)+'*wh;',
+  'transformed.z+=(cos(uWind*1.2+wph*1.3)*.25+cos(uWind*3.7+wph+position.z*3.)*.07)*'+amp.toFixed(3)+'*wh;'].join('\n'))};mat.customProgramCacheKey=()=>'wind'+amp+'_'+base;
+ if(!windLoop){windLoop=true;const f=t=>{WIND.t.value=t/1000;requestAnimationFrame(f)};requestAnimationFrame(f)}return mat}
 function rng(seed){let a=seed;return()=>{a=(a*16807)%2147483647;return a/2147483647}}
 function leafTex(){if(LEAFTEX)return LEAFTEX;const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d'),r=rng(11);
  for(let i=0;i<190;i++){const x=22+r()*212,y=22+r()*212,a=r()*6.28,l=7+r()*7,w=l*.5,v=185+(r()*70|0);q.save();q.translate(x,y);q.rotate(a);q.fillStyle=`rgb(${v},${v},${v})`;q.beginPath();q.ellipse(0,0,l,w,0,0,7);q.fill();q.strokeStyle=`rgba(0,0,0,.18)`;q.lineWidth=1.2;q.beginPath();q.moveTo(-l,0);q.lineTo(l,0);q.stroke();q.restore()}
@@ -19,7 +26,7 @@ export function plantBroad(parent,list,{shadow=true,chunk=0}={}){
  /* chunk(m): 넓은 땅에 흩어 심을 때 칸별로 나눠 묶음 → 화면 밖 칸은 그리지 않음. 돌려주는 값은 [껍질 묶음들, 잎 묶음들] */
  if(chunk&&list.length>60){const cells=new Map();for(const t of list){const k=Math.floor(t[0]/chunk)+','+Math.floor(t[2]/chunk);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(t)}const B=[],L=[];for(const part of cells.values()){const r=plantBroad(parent,part,{shadow});if(r){r[0].computeBoundingSphere();r[1].computeBoundingSphere();B.push(r[0]);L.push(r[1])}}return [B,L]}
  const G=broadGeo(),N=list.length;if(!N)return null;
- const bm=new THREE.MeshStandardMaterial({color:0x5a4030,roughness:.95});const lm=new THREE.MeshStandardMaterial({map:leafTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:.9,vertexColors:true});
+ const bm=new THREE.MeshStandardMaterial({color:0x5a4030,roughness:.95});const lm=new THREE.MeshStandardMaterial({map:leafTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:.9,vertexColors:true});addWind(lm,.13,2.0);
  const b=new THREE.InstancedMesh(G.bark,bm,N),l=new THREE.InstancedMesh(G.leaf,lm,N),o=new THREE.Object3D(),c=new THREE.Color();
  const CR=window.__CROWNS||(window.__CROWNS=[]);list.forEach(([x,y,z,ry,s,hex],i)=>{CR.push({x,y:y+4.3*s,z,r:2.5*s});/* 카메라용 우듬지 자리 */o.position.set(x,y,z);o.rotation.set(0,ry,0);o.scale.setScalar(s);o.updateMatrix();b.setMatrixAt(i,o.matrix);l.setMatrixAt(i,o.matrix);l.setColorAt(i,c.set(hex==null?0x4f7f3a:hex))});
  b.castShadow=l.castShadow=shadow;b.receiveShadow=l.receiveShadow=true;parent.add(b,l);return [b,l]}
@@ -37,7 +44,7 @@ function paintedPineTex(){if(PPT)return PPT;/* 11/17: 층층 전나무 판 → �
   q.fillStyle='rgba(210,235,170,.18)';q.beginPath();q.ellipse(tx2-6,ty2-ht*.45,wd*.6,ht*.35,0,0,7);q.fill()}
  PPT=new THREE.CanvasTexture(c);PPT.colorSpace=THREE.SRGBColorSpace;PPT.anisotropy=4;return PPT}
 export function paintedPines(N){/* 판 세 장(60도씩)으로 어느 쪽에서 봐도 납작하지 않게 */const a=new THREE.PlaneGeometry(1.1,2.2).translate(0,1.1,0),b=a.clone().rotateY(Math.PI/3),c2=a.clone().rotateY(-Math.PI/3);const geo=mergeGeometries([a,b,c2]);
- const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:1});return new THREE.InstancedMesh(geo,m,N)}
+ const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:1});addWind(m,.1,.8);return new THREE.InstancedMesh(geo,m,N)}
 /* 울퉁불퉁한 산: 반구에 잔물결 능선과 아래 어둡고 위 밝은 색 */
 export function lumpyHill(rr,h,col,seed=1){const r=rng(seed*7+3),g=new THREE.SphereGeometry(rr,64,20,0,Math.PI*2,0,Math.PI/2),p=g.attributes.position,c=new Float32Array(p.count*3),base=new THREE.Color(col),hi=base.clone().offsetHSL(.02,-.05,.08),lo=base.clone().offsetHSL(-.02,0,-.1),k1=r()*6,k2=r()*6,tmp=new THREE.Color();
  for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),t=y/rr;const n=1+.07*Math.sin(a*5+k1)*Math.sin(t*4+k2)+.04*Math.sin(a*11+k2*2)*(1-t);p.setXYZ(i,x*n,y*(1+.12*Math.sin(a*3+k1))*h/rr,z*n);tmp.copy(lo).lerp(hi,Math.min(1,t*1.3));c[i*3]=tmp.r;c[i*3+1]=tmp.g;c[i*3+2]=tmp.b}
