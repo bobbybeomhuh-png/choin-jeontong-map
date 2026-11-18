@@ -20,6 +20,6 @@ export function tearBang(job,next,SND){const old=document.getElementById('jdTear
  const size=()=>{const W=pf.clientWidth,H=pf.clientHeight;R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix()};size();
  let t=0,last=performance.now(),bang=false,rip=false;const loop=()=>{if(!w.isConnected){try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}return}const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
   if(t>.35){const a=Math.min(1,(t-.35)/.18);stamp.material.opacity=a*.92;stamp.scale.setScalar(1.8-.8*a);if(a>=1&&!bang){bang=true;try{SND&&SND.stamp()}catch(e){}}}
-  if(t>1.0){if(!rip){rip=true;try{SND&&SND.paper()}catch(e){}}const k=t-1.0;stamp.material.opacity=Math.max(0,.92-k*2);for(const[g,s]of[[L,-1],[Rr,1]]){g.position.x=s*k*.35;g.position.y=1.75-k*k*1.6;g.position.z=.06+k*.25;g.rotation.z=s*k*.9;g.rotation.y=s*Math.sin(k*5)*.4}}
+  if(t>1.0){if(!rip){rip=true;try{SND&&SND.paper()}catch(e){}}const k=t-1.0;stamp.material.opacity=Math.max(0,.92-k*2);/* 11/19 M42: 찢긴 두 쪽이 떨어지며 옆바람에 쓸려 화면 밖으로 날아감 */for(const[g,s]of[[L,-1],[Rr,1]]){const w=k*k*(s<0?1.5:2.1);g.position.x=s*k*.35+w;g.position.y=1.75-k*k*1.1+Math.sin(k*6+s)*.08;g.position.z=.06+k*.35;g.rotation.z=s*k*.9-k*1.4;g.rotation.y=s*Math.sin(k*5)*.4+k*1.2;g.rotation.x=Math.sin(k*7)*.5}}
   if(t>2.6){end();return}R.render(sc,cam);requestAnimationFrame(loop)};requestAnimationFrame(loop);
  window.__TEAR={t:()=>t}}
