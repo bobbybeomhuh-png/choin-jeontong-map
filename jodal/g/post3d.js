@@ -1,0 +1,56 @@
+/* 무이 나라 조달청: 「방 붙이기 3D」(N4). 만든 날 2026-11-18
+   방 쓰기 창에서 「방 붙이기」를 누르면, 고을 게시판 앞 3D 장면이 뜬다.
+   1) 아래에 놓인 방(입찰 공고 종이)을 위로 끌어 올리면 게시판에 착 붙고(누르기만 해도 붙음)
+   2) 네 귀퉁이에 금빛 표시가 뜨면 하나씩 눌러 망치로 못을 박는다(쾅, 판이 흔들림, 나무 먼지)
+   3) 다 박으면 북이 울리고 「공고가 붙었어요」 → 다음(개찰)으로.
+   postBang(job, info, done) : info={pay,term,ann,spec,city,n}. window.__POST 시험용 */
+import * as THREE from 'three';
+const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
+export function postBang(job,info,done,SND){const old=document.getElementById('jdPost');if(old)old.remove();
+ const w=document.createElement('div');w.id='jdPost';w.innerHTML=`<style>#jdPost{position:fixed;inset:0;z-index:44;background:rgba(10,7,4,.62);display:grid;place-items:center}#jdPost .pf{position:relative;width:min(760px,94vw);height:min(560px,84vh);border-radius:12px;overflow:hidden;border:3px solid #d8a838;box-shadow:0 16px 46px rgba(0,0,0,.55);background:#2a1a10}#jdPost .tt{position:absolute;left:0;right:0;top:10px;text-align:center;font:24px 'Do Hyeon',sans-serif;color:#f2d27a;text-shadow:0 2px 4px #000;pointer-events:none}#jdPost .st{position:absolute;left:0;right:0;top:44px;text-align:center;font:16px 'Gowun Dodum',sans-serif;color:#fff4dc;text-shadow:0 1px 3px #000;pointer-events:none}#jdPost canvas{display:block;width:100%;height:100%;touch-action:none}</style><div class="pf"><div class="tt">${job.city} 고을 게시판에 방 붙이기</div><div class="st">방 종이를 위로 끌어 올려 게시판에 붙여요</div></div>`;
+ document.body.append(w);const pf=w.querySelector('.pf'),st=w.querySelector('.st');
+ let R;try{R=new THREE.WebGLRenderer({antialias:true})}catch(e){w.remove();done();return}
+ R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;pf.prepend(R.domElement);
+ const sc=new THREE.Scene();sc.background=new THREE.Color(0x9cc4dc);sc.fog=new THREE.Fog(0x9cc4dc,9,22);const cam=new THREE.PerspectiveCamera(40,1.4,.05,60);cam.position.set(0,1.62,4.3);cam.lookAt(0,1.28,0);
+ sc.add(new THREE.HemisphereLight(0xfff4e0,0x4a5a3a,1.3));const sun=new THREE.DirectionalLight(0xfff0d0,2.3);sun.position.set(3,6,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-4,right:4,top:4,bottom:-4});sc.add(sun);
+ const M=(c,x={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.8},x));
+ /* 땅·담장·나무 그림자 같은 배경 */
+ const gr=new THREE.Mesh(new THREE.PlaneGeometry(40,40),M(0x7a9a52));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;sc.add(gr);
+ const yard=new THREE.Mesh(new THREE.CircleGeometry(3.2,40),M(0xc8b890,{roughness:.95}));yard.rotation.x=-Math.PI/2;yard.position.y=.01;yard.receiveShadow=true;sc.add(yard);
+ for(let i=-6;i<=6;i++){const st2=new THREE.Mesh(new THREE.BoxGeometry(1.2,1,.4),M(0x8a8478));st2.position.set(i*1.2,.5,-4.5);sc.add(st2);const tl=new THREE.Mesh(new THREE.BoxGeometry(1.3,.12,.62),M(0x3e434a));tl.position.set(i*1.2,1.06,-4.5);sc.add(tl)}
+ for(const[x,z,s]of[[-3.6,-3,1.3],[3.8,-2.6,1.1],[-5.5,-5.5,1.6],[5.2,-6,1.5]]){const tr=new THREE.Mesh(new THREE.CylinderGeometry(.12,.16,1.6,8),M(0x5a3a22));tr.position.set(x,.8,z);sc.add(tr);for(let k=0;k<3;k++){const l=new THREE.Mesh(new THREE.IcosahedronGeometry(.7*s-k*.15,1),M([0xb8322a,0xd8a838,0x6a8a3a][k%3],{flatShading:true}));l.position.set(x+(k-1)*.3,1.6+k*.45,z);l.castShadow=true;sc.add(l)}}
+ /* 게시판: 기둥 둘, 판, 기와 지붕 */
+ const wood=M(0x6a4426,{roughness:.7}),dk=M(0x4a3020);const board=new THREE.Group();sc.add(board);
+ for(const sx of[-1,1]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.08,.09,2.9,10),dk);p.position.set(sx*1.25,1.45,0);p.castShadow=true;board.add(p)}
+ const plank=CV(512,384,(q,W,H)=>{q.fillStyle='#7a5634';q.fillRect(0,0,W,H);for(let y=0;y<H;y+=64){q.fillStyle='rgba(40,24,10,.5)';q.fillRect(0,y,W,3)}for(let k=0;k<90;k++){q.strokeStyle=`rgba(50,30,14,${.12+Math.random()*.15})`;q.beginPath();const y=Math.random()*H;q.moveTo(0,y);q.lineTo(W,y+Math.random()*6-3);q.stroke()}/* 예전에 붙었던 방 자국 */q.fillStyle='rgba(240,225,190,.25)';q.fillRect(30,40,120,90);q.fillRect(360,220,110,80)});
+ const bd=new THREE.Mesh(new THREE.BoxGeometry(2.35,1.6,.08),new THREE.MeshStandardMaterial({map:plank,roughness:.85}));bd.position.set(0,1.75,0);bd.castShadow=true;bd.receiveShadow=true;board.add(bd);
+ const roof=new THREE.Mesh(new THREE.BoxGeometry(2.9,.12,.6),M(0x3e434a,{roughness:.6}));roof.position.set(0,2.72,.05);roof.rotation.x=.12;board.add(roof);const ridge=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,2.95,8),M(0x2e3238));ridge.rotation.z=Math.PI/2;ridge.position.set(0,2.8,-.02);board.add(ridge);
+ /* 방 종이 */
+ const PT=CV(420,560,(q,W,H)=>{q.fillStyle='#f6ecd2';q.fillRect(0,0,W,H);for(let k=0;k<400;k++){q.fillStyle=`rgba(150,120,70,${Math.random()*.06})`;q.fillRect(Math.random()*W,Math.random()*H,3,1)}q.strokeStyle='#3b2a1c';q.lineWidth=4;q.strokeRect(14,14,W-28,H-28);q.strokeStyle='#b8322a';q.lineWidth=3;q.strokeRect(24,24,W-48,H-48);q.fillStyle='#1c1410';q.textAlign='center';q.font='bold 78px serif';q.fillText('榜',W/2,112);q.font='bold 34px "Do Hyeon",sans-serif';q.fillText(`${job.city} 고을 조달 공고`,W/2,172);q.font='28px "Gowun Dodum",sans-serif';const L=[`구하는 것: ${job.n} 되살리기`,`품삯: ${info.pay}냥`,`기한: ${info.term}`,`공고 기간: ${info.ann}`,info.spec||'솜씨와 자격을 함께 봄'];L.forEach((t,i)=>q.fillText(t,W/2,236+i*46));q.save();q.translate(W-104,H-104);q.rotate(-.14);q.strokeStyle='#c8352a';q.lineWidth=7;q.strokeRect(-56,-56,112,112);q.fillStyle='#c8352a';q.font='bold 38px serif';q.fillText('調達',0,-6);q.fillText('廳印',0,38);q.restore()});
+ const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.05,1.4,6,6),new THREE.MeshStandardMaterial({map:PT,roughness:.95,side:THREE.DoubleSide}));paper.castShadow=true;sc.add(paper);
+ const P0=new THREE.Vector3(0,.62,2.05),P1=new THREE.Vector3(0,1.75,.06);paper.position.copy(P0);paper.rotation.x=-1.0;
+ /* 못·망치 */
+ const NAILS=[[-.44,.6],[.44,.6],[-.44,-.6],[.44,-.6]].map(([x,y])=>{const g=new THREE.Group();g.position.set(x,1.75+y,.06);sc.add(g);const head=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.02,12),M(0x3a3a3a,{metalness:.7,roughness:.35}));head.rotation.x=Math.PI/2;head.position.z=.14;g.add(head);const sh=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.14,6),M(0x5a5a5a,{metalness:.6}));sh.rotation.x=Math.PI/2;sh.position.z=.07;g.add(sh);const ring=new THREE.Mesh(new THREE.RingGeometry(.06,.085,24),new THREE.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:0,side:THREE.DoubleSide}));ring.position.z=.16;g.add(ring);g.visible=false;return{g,head,ring,in:0,done:false,x,y}});
+ const ham=new THREE.Group();const hh=new THREE.Mesh(new THREE.BoxGeometry(.22,.1,.1),M(0x4a4a4a,{metalness:.6,roughness:.4}));hh.position.y=.32;ham.add(hh);const hd=new THREE.Mesh(new THREE.CylinderGeometry(.025,.03,.42,8),M(0x8a6a44));hd.position.y=.1;ham.add(hd);ham.visible=false;sc.add(ham);
+ const dust=[];const puff=p=>{for(let k=0;k<10;k++){const d=new THREE.Mesh(new THREE.SphereGeometry(.018,6,4),new THREE.MeshBasicMaterial({color:0xd8c49a,transparent:true,opacity:.9}));d.position.copy(p);d.userData.v=new THREE.Vector3((Math.random()-.5)*1.2,Math.random()*1.1,Math.random()*.8);d.userData.l=.6;sc.add(d);dust.push(d)}};
+ /* 상태 */
+ let stage=0,lift=0,drag=null,shake=0,hit=null,doneT=0;const rc=new THREE.Raycaster(),mv=new THREE.Vector2();
+ const ray=e=>{const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);rc.setFromCamera(mv,cam)};
+ const snd=n=>{try{SND&&SND[n]&&SND[n]()}catch(e){}};
+ const stick=()=>{if(stage!==0)return;stage=1;lift=1;snd('paper');st.textContent='네 귀퉁이 금빛 표시를 눌러 망치로 못을 박아요';NAILS.forEach(n=>{n.g.visible=true;n.head.position.z=.14})};
+ const nailAt=i=>{const n=NAILS[i];if(stage!==1||!n||n.done||hit)return;hit={n,t:0};ham.visible=true};
+ R.domElement.addEventListener('pointerdown',e=>{ray(e);if(stage===0){if(rc.intersectObject(paper,false).length){drag={y:e.clientY,l0:lift};try{R.domElement.setPointerCapture(e.pointerId)}catch(x){}}}else if(stage===1){let best=-1,bd2=1e9;NAILS.forEach((n,i)=>{if(n.done)return;const p=n.g.position.clone();p.z+=.14;p.project(cam);const d=Math.hypot(p.x-mv.x,(p.y-mv.y)*.7);if(d<bd2){bd2=d;best=i}});if(best>=0&&bd2<.16)nailAt(best)}});
+ R.domElement.addEventListener('pointermove',e=>{if(!drag)return;const r=R.domElement.getBoundingClientRect();lift=Math.max(0,Math.min(1,drag.l0+(drag.y-e.clientY)/(r.height*.45)))});
+ R.domElement.addEventListener('pointerup',()=>{if(!drag)return;const moved=Math.abs(lift-drag.l0)>.02;drag=null;if(lift>.55||!moved)stick();});
+ const size=()=>{const W=pf.clientWidth,H=pf.clientHeight;R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix()};size();
+ let last=performance.now(),alive=true,T=0;const loop=()=>{if(!alive||!w.isConnected){alive=false;try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}return}const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;
+  /* 종이: lift 0=아래(눕힘) → 1=게시판 */const k=stage>=1?Math.min(1,(paper.userData.k||0)+dt*5):lift;paper.userData.k=k;const e=1-Math.pow(1-k,3);paper.position.lerpVectors(P0,P1,e);paper.position.y+=Math.sin(e*Math.PI)*.25;paper.rotation.x=-1.0*(1-e);
+  const pa=paper.geometry.attributes.position;for(let i=0;i<pa.count;i++){const x=pa.getX(i),y=pa.getY(i);pa.setZ(i,(1-e)*Math.sin(x*3+T*4)*.03+(stage>=1?0:Math.sin(y*2+T*3)*.02*e))}pa.needsUpdate=true;
+  NAILS.forEach(n=>{if(!n.done){n.ring.material.opacity=stage===1?.55+.4*Math.sin(T*6):0;n.ring.scale.setScalar(1+.15*Math.sin(T*6))}});
+  if(hit){hit.t+=dt;const n=hit.n;const a=hit.t/.32;ham.position.set(n.g.position.x+.18,n.g.position.y-.05,.42);ham.rotation.z=a<.6?.9-a/.6*1.9:-1+(a-.6)*1.5;if(a>=.6&&!hit.bang){hit.bang=1;n.head.position.z=.022;n.done=true;n.ring.material.opacity=0;shake=.18;snd('stamp');puff(n.g.position.clone().setZ(.12))}if(a>=1){hit=null;ham.visible=false;if(NAILS.every(x=>x.done)){stage=2;doneT=0;try{SND&&SND.drum&&SND.drum(0)}catch(e){}st.textContent='방이 붙었어요! 이레 동안 누구나 보고 봉투를 낼 수 있어요';w.querySelector('.tt').textContent='입찰 공고가 붙었어요'}}}
+  if(stage===2){doneT+=dt;if(doneT>1.6&&alive){alive=false;try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}w.remove();done()}}
+  for(let i=dust.length-1;i>=0;i--){const d=dust[i];d.userData.v.y-=2.5*dt;d.position.addScaledVector(d.userData.v,dt);d.userData.l-=dt;d.material.opacity=Math.max(0,d.userData.l/.6);if(d.userData.l<=0){sc.remove(d);dust.splice(i,1)}}
+  if(shake>0){shake=Math.max(0,shake-dt);board.position.x=(Math.random()-.5)*shake*.15}else board.position.x=0;
+  R.render(sc,cam);if(alive)requestAnimationFrame(loop)};requestAnimationFrame(loop);
+ window.__POST={stage:()=>stage,paper:()=>{const p=paper.position.clone();p.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(p.x+1)/2*r.width,r.top+(1-p.y)/2*r.height]},nail:i=>{const p=NAILS[i].g.position.clone();p.z+=.14;p.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(p.x+1)/2*r.width,r.top+(1-p.y)/2*r.height]}};
+}
