@@ -32,7 +32,7 @@ export function buildHapcheon(opts={}){const mini=!!opts.mini;const MT=materials
     const l2=new THREE.Mesh(new THREE.PlaneGeometry(bw*(big?.5:.8),hi),latM);l2.position.set(cx,hiY+hi/2,zw);g.add(l2);const wh=box(bw*(big?.5:.2),hi,.16,wallM);wh.position.set(cx+bw*(big?.25:.4),hiY+hi/2,zw);g.add(wh);
     const top=box(bw,FY+PH-(hiY+hi),.16,wallM);top.position.set(cx,(FY+PH+hiY+hi)/2,zw);g.add(top)}
    if(side>0){S(-L/2,-1.7,0,9,zw-.15,zw+.15);S(1.7,L/2,0,9,zw-.15,zw+.15)}else S(-L/2,L/2,0,9,zw-.15,zw+.15)}
-  for(const sx of[-1,1]){const sw=box(.16,PH,D,wallM);sw.position.set(sx*L/2,FY+PH/2,cz);g.add(sw);S(sx*L/2-.15,sx*L/2+.15,0,9,cz-D/2,cz+D/2)}
+  for(const sx of[-1,1]){const sw=box(.16,PH,D,wallM);sw.position.set(sx*L/2,FY+PH/2,cz);g.add(sw);/* 옆벽(박공 쪽): 흰 판 한 장 대신 샛기둥 둘과 가운데·위 인방으로 칸 나눔 */for(const zz of[-D/6,D/6]){const sp=box(.2,PH,.2,pil);sp.position.set(sx*(L/2+.06),FY+PH/2,cz+zz);g.add(sp)}for(const yy of[FY+.5,FY+PH*.55,FY+PH-.12]){const ib=box(.18,.18,D,pil);ib.position.set(sx*(L/2+.07),yy,cz);g.add(ib)}S(sx*L/2-.15,sx*L/2+.15,0,9,cz-D/2,cz+D/2)}
   /* 맞배지붕(용마루가 끝까지 가는 hipRoof) */if(!mini){const rf=hipRoof(MT,L/2+1.6,D/2+1.8,L/2+1.6,FY+PH+.1,FY+PH+3.4,.35,.15,{plain:true,rs:.6});rf.position.set(0,0,cz);rf.traverse(o=>{if(o.isMesh)o.castShadow=true});g.add(rf);
    for(const sx of[-1,1]){const gs=new THREE.Shape();gs.moveTo(-D/2-1.6,0);gs.lineTo(D/2+1.6,0);gs.lineTo(0,3.3);gs.closePath();const ge=new THREE.Mesh(new THREE.ShapeGeometry(gs),M(0x6b4a2e,{side:THREE.DoubleSide}));ge.rotation.y=Math.PI/2;ge.position.set(sx*(L/2+1.5),FY+PH+.1,cz);g.add(ge)}}
   /* 판가 두 줄, 5단(앞줄은 문 앞 가운데를 비워 통로) */const segs=zr=>zr>0?[[-L/2+1.5,-2.2],[2.2,L/2-1.5]]:[[-L/2+1.5,L/2-1.5]];
