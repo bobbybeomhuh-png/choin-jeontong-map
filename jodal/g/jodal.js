@@ -3,6 +3,7 @@
    흐름: 지도에서 방 붙일 자리로 감 → 방 쓰기(구하는 장인·품삯·기한) → 찾아온 장인 셋 가운데 고르고 수결 → 복원(고른 장인에 따라 쉬워지거나 어려워짐) → 의궤 한 장
    다섯 국보를 다 되살리면 맺음 장면에서 오늘의 조달(입찰 공고·적격 심사·검수·계약 공개)과 잇는다.
    index.html 이 window.__JDX 로 필요한 것을 내준다. */
+import {postBang} from './post3d.js';
 import {bid3D} from './bid3d.js';
 import {fin3d,CARDS} from './fin3d.js';
 import {fieldGame} from './field3d.js';
@@ -137,7 +138,7 @@ function writeBang(job){showBand(0,ST,save);let yb=0;if(ST.coins<PAY[1].c){yb=PA
  ${yb?`<div class="jd-tip" style="border-color:#2f6a4a">곳간이 바닥나서 나라에서 예비비 ${yb}냥을 내려 주었어요. 나라 살림에는 뜻밖의 일에 쓰는 예비비가 따로 있어요.</div>`:''}<div class="jd-tip">조달청 한마디: 필요한 것을 또렷이 적어야 알맞은 사람이 와요. 오늘의 조달청은 이것을 <b>입찰 공고</b>라고 부르고, 누구나 볼 수 있게 <b>나라장터</b>에 올려요.<br><small style="color:#6b4a26">말풀이: 방(榜)은 여러 사람이 보도록 써 붙인 알림 글이에요.</small></div>
  <div class="jd-sticky" style="margin-top:12px;display:flex;gap:8px;justify-content:center"><button type="button" class="jd-btn" data-ok ${pick.crew?'':'disabled'}>방 붙이기</button><button type="button" class="jd-btn g" data-x>나중에</button></div>`;
   u.c.querySelectorAll('[data-crew]').forEach(b=>b.onclick=()=>{pick.crew=b.dataset.crew;draw()});u.c.querySelectorAll('[data-pay]').forEach(b=>b.onclick=()=>{pick.pay=+b.dataset.pay;draw()});u.c.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{const k=+b.dataset.q;if(!pick.q.includes(k))pick.q.push(k);try{SND.paper()}catch(e){}if(pick.q.length===3&&!pick.qd){pick.qd=1;ST.qsurvey=(ST.qsurvey||0)+1;save();X.hint('세 값의 평균에 가깝게 예정가격을 정해요. 너무 적으면 솜씨 좋은 장인이 오지 않고, 너무 많으면 나라 돈이 새요.',4200)}draw()});u.c.querySelectorAll('[data-term]').forEach(b=>b.onclick=()=>{pick.term=+b.dataset.term;draw()});u.c.querySelectorAll('[data-ann]').forEach(b=>b.onclick=()=>{pick.ann=+b.dataset.ann;draw()});u.c.querySelectorAll('[data-spec]').forEach(b=>b.onclick=()=>{pick.spec=+b.dataset.spec;try{SND.paper()}catch(e){}if(!pick.spec)X.hint('특정 업체만 낼 수 있게 쓰면 경쟁이 없어 값이 오르고 다른 장인은 기회를 잃어요. 규격은 성능과 품질로 적어요.',4200);draw()});
-  u.c.querySelector('[data-x]').onclick=u.close;u.c.querySelector('[data-ok]').onclick=()=>{SND.nail();try{SND.drum(.75)}catch(e){}u.close();setTimeout(()=>pickArtisan(job,pick),650)}};SND.paper();draw()}
+  u.c.querySelector('[data-x]').onclick=u.close;u.c.querySelector('[data-ok]').onclick=()=>{u.close();/* 11/18 N4: 고을 게시판 3D 앞에서 방을 끌어 붙이고 네 귀퉁이 못을 망치로 박음. 3D가 안 되면 예전처럼 소리만 */try{postBang(job,{pay:PAY[pick.pay].c,term:TERM[pick.term].n,ann:pick.ann===0?'이틀(긴급)':'이레',spec:'구하는 장인: '+(CREW[pick.crew]||'장인')},()=>setTimeout(()=>pickArtisan(job,pick),200),SND)}catch(e){console.warn('방 붙이기 3D',e);SND.nail();try{SND.drum(.75)}catch(x){}setTimeout(()=>pickArtisan(job,pick),650)}}};SND.paper();draw()}
 
 /* ---------- 2 찾아온 장인 고르기 ---------- */
 function candidates(job,pick){if(job.k==='najeonham'&&pick.spec&&pick.crew===job.need){const base=PAY[pick.pay].c;return{L:[{id:'lock',name:'통영 한 공방',face:pick.crew,say:'요청서에 우리 공방 자개만 쓰라 했으니, 값은 우리가 정하오.',pae:true,sample:'good',cost:Math.round(base*1.5),stars:2,npAdd:1,lock:1}],wrong:false,real:false,lock:1}}const wrong=pick.crew!==job.need,real=!wrong&&pick.pay>=1&&pick.term>=1&&(pick.ann!==0||job.k==='najeonham');const ck=pick.crew;const base=PAY[pick.pay].c;const L=[];
