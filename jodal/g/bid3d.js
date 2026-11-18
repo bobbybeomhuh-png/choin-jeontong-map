@@ -3,7 +3,7 @@
    봉투를 누르면 붉은 봉인 끈이 툭 끊어져 날아가고, 봉투가 앞으로 눕고 값 쪽지가 떠오른다(이름·값).
    열기 규칙(누르면 열림, 3.5초 뒤 저절로, 다 열면 결과표)은 jodal.js 의 개찰 코드가 그대로 맡고,
    여기는 보이는 것과 누르는 것만 한다. bid3D(host, list, {pick:k=>...}) → {open(k), ok}  */
-import * as THREE from 'three';
+import {SHL} from './muuiload.js';import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
 export function bid3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){return{ok:false,open(){}}}
  R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;
@@ -33,17 +33,18 @@ export function bid3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({antia
   const card=new THREE.Mesh(new THREE.PlaneGeometry(.62,.42),new THREE.MeshBasicMaterial({map:CV(300,200,(q,w,h)=>{q.fillStyle='#fbf6ea';q.fillRect(0,0,w,h);q.strokeStyle='#8a6a3a';q.lineWidth=5;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#8e2b20';q.font='bold 64px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText(`${x.cost}냥`,w/2,96);q.fillStyle='#3b2a1c';q.font='bold 30px "Gowun Dodum",sans-serif';const nm=String(x.name||'');q.fillText(nm.length>9?nm.slice(0,9)+'…':nm,w/2,152)}),transparent:true,opacity:0,side:THREE.DoubleSide}));card.position.set(0,.2,.05);card.visible=false;g.add(card);
   g.position.set(fx*.0,.1,-.55);g.rotation.y=-ang*.6;g.scale.setScalar(.01);sc.add(g);
   envs.push({k,g,env,cords,seal,card,flap,fx,fz,ang,t0:.35+k*.18,open:0,ot:0,bits:[]});env.userData.k=k;flap.userData.k=k;seal.userData.k=k});
+ /* 11/19 M3: 구경꾼. 입찰함 뒤에 고을 사람 무이 넷이 서서 지켜보고, 봉투가 열릴 때마다 폴짝 뛰며 「웅성」(모두가 보는 앞에서 여는 공정한 개찰) */const crowd=[];let hop=0;try{const LD=SHL;[['base',-2.0,-1.35],['carpenter',-1.15,-1.25],['ceramic',1.15,-1.25],['base',2.0,-1.35]].forEach(([k,x,z],i)=>LD.load(new URL('../world3d/media/muui_'+k+'.glb',document.baseURI).href,gl=>{const m=gl.scene;m.traverse(q=>{if(q.isMesh)q.castShadow=true;if(/^prop_/.test(q.name||''))q.visible=false});const bb=new THREE.Box3().setFromObject(m);m.scale.setScalar(1.0/Math.max(.01,bb.max.y-bb.min.y));m.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(m);m.position.y-=b2.min.y;const g=new THREE.Group();g.position.set(x,0,z);g.lookAt(0,0,1.5);g.add(m);sc.add(g);const mx=new THREE.AnimationMixer(m);const cl=gl.animations.find(a=>/idle/.test(a.name))||gl.animations[0];if(cl){const a=mx.clipAction(cl);a.play();a.time=i*.4}crowd.push({g,mx,ph:i*.9})},undefined,()=>{}))}catch(e){}const wb=new THREE.Sprite(new THREE.SpriteMaterial({map:CV(256,72,(q,w,h)=>{q.fillStyle='rgba(255,250,240,.95)';q.beginPath();q.roundRect?q.roundRect(4,4,w-8,h-8,14):q.rect(4,4,w-8,h-8);q.fill();q.strokeStyle='#3b2a1c';q.lineWidth=3;q.stroke();q.fillStyle='#8e2b20';q.font='bold 32px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText('웅성웅성!',w/2,48)}),depthTest:false,transparent:true}));wb.scale.set(1,.28,1);wb.position.set(0,1.2,-1.1);wb.renderOrder=8;wb.material.opacity=0;sc.add(wb);
  /* 고르기 */
  const rc=new THREE.Raycaster(),mv=new THREE.Vector2();const pickAt=e=>{const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);rc.setFromCamera(mv,cam);const hits=rc.intersectObjects(envs.flatMap(v=>[v.env,v.flap,v.seal]),false);return hits.length?hits[0].object.userData.k:null};
  R.domElement.addEventListener('pointerdown',e=>{e.stopPropagation();const k=pickAt(e);if(k!=null&&o.pick)o.pick(k)});
  R.domElement.addEventListener('pointermove',e=>{const k=pickAt(e);envs.forEach(v=>v.hover=v.k===k&&!v.open)});
  R.domElement.addEventListener('click',e=>e.stopPropagation());
  /* 열기: 끈이 두 동강 나 날아가고, 봉투가 앞으로 눕고, 값 쪽지가 떠오름 */
- const open=k=>{const v=envs[k];if(!v||v.open)return;v.open=1;v.ot=0;v.cords.forEach((c,i)=>{v.bits.push({m:c,vx:(i?1:-1)*(.9+Math.random()*.5),vy:1.2+Math.random()*.6,vr:(Math.random()-.5)*14})});v.seal.material=v.seal.material.clone();v.card.visible=true};
+ const open=k=>{const v=envs[k];if(!v||v.open)return;v.open=1;hop=1;v.ot=0;v.cords.forEach((c,i)=>{v.bits.push({m:c,vx:(i?1:-1)*(.9+Math.random()*.5),vy:1.2+Math.random()*.6,vr:(Math.random()-.5)*14})});v.seal.material=v.seal.material.clone();v.card.visible=true};
  let t=0,last=performance.now(),alive=true;const size=()=>{const w=host.clientWidth||600,h=host.clientHeight||240;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};size();
  const loop=()=>{if(!alive)return;if(!host.isConnected){alive=false;try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}return}const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
   if(R.domElement.width!==Math.round((host.clientWidth||600)*R.getPixelRatio()))size();
-  lidP.rotation.x=-Math.min(1,t/.35)*1.9;
+  lidP.rotation.x=-Math.min(1,t/.35)*1.9;if(hop>0)hop=Math.max(0,hop-dt*1.4);for(const c of crowd){c.mx.update(dt);c.g.position.y=hop>0?Math.max(0,Math.sin((1-hop)*Math.PI*2+c.ph))*.18*hop:0}wb.material.opacity=Math.min(1,hop*2);
   for(const v of envs){const a=Math.max(0,Math.min(1,(t-v.t0)/.45)),e=1-Math.pow(1-a,3);v.g.scale.setScalar(.01+.99*e);v.g.position.set(v.fx*e,.1+e*.42+Math.sin(e*Math.PI)*.25,-.55+(v.fz+.95)*e);
    if(v.open){v.ot+=dt;const b=Math.min(1,v.ot/.45),eb=1-Math.pow(1-b,3);v.env.rotation.x=-eb*1.15;v.flap.rotation.x=Math.PI/2-eb*1.15;v.env.position.y=-eb*.12;v.flap.position.y=.22-eb*.2;v.flap.position.z=.018+eb*.2;v.seal.scale.setScalar(1-eb*.6);v.seal.position.y=.12-eb*.18;v.seal.position.z=.03+eb*.12;
     v.card.material.opacity=Math.min(1,v.ot/.35);v.card.position.y=.2+eb*.66;v.card.scale.setScalar(1+eb*.12);v.card.position.z=.05+eb*.1;v.card.rotation.x=-(1-eb)*.6;

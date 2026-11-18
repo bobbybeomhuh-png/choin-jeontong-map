@@ -2,7 +2,7 @@
    맺음 창의 「장인들과 단체 사진」을 누르면 관아 정청 앞 3D. 다섯 고을에서 맡았던 장인 무이들과 청장(사모), 나(조달청 무이)가
    두 줄로 서서 손을 들고, 「하나, 둘, 셋」 뒤 찰칵(흰 번쩍임) → 사진 한 장을 「무이나라조달청_단체사진.png」로 내려받는다.
    사진 아래에는 다섯 국보 이름과 「무이 나라 조달청 · 다섯 고을 조달을 마치며」. groupPhoto(list,{SND}) */
-import * as THREE from 'three';
+import {SHL} from './muuiload.js';import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
@@ -27,7 +27,7 @@ export function groupPhoto(list,o={}){const old=document.getElementById('jdPhoto
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.72),new THREE.MeshStandardMaterial({map:CV(512,170,(q,W,H)=>{q.fillStyle='#1c1410';q.fillRect(0,0,W,H);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(8,8,W-16,H-16);q.fillStyle='#f2d27a';q.font='bold 104px serif';q.textAlign='center';q.fillText('調達廳',W/2,124)}),roughness:.6}));sign.position.set(0,2.75,.66);hall.add(sign);
  for(const sx of[-1,1]){const fg=new THREE.Mesh(new THREE.PlaneGeometry(.9,1.3),M(sx<0?0x2a4a9a:0xb8322a,{side:THREE.DoubleSide}));fg.position.set(sx*5.6,3.0,1.6);sc.add(fg);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,4,6),M(0x5a3a22));pole.position.set(sx*5.6-.45*sx,2,1.6);sc.add(pole)}
  /* 사람들: 뒷줄 장인 다섯, 앞줄 청장·나 */
- const L=new GLTFLoader(),D=new DRACOLoader();D.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');L.setDRACOLoader(D);const mixers=[];let loaded=0;const want=list.length+2;
+ const L=SHL;const mixers=[];let loaded=0;const want=list.length+2;
  const put=(k,x,z,hgt,pose,extra)=>L.load(new URL('../world3d/media/muui_'+k+'.glb',document.baseURI).href,gl=>{const m=gl.scene;m.traverse(q=>{if(q.isMesh)q.castShadow=true;if(/^prop_/.test(q.name||''))q.visible=false});const bb=new THREE.Box3().setFromObject(m);m.scale.setScalar(hgt/Math.max(.01,bb.max.y-bb.min.y));m.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(m);m.position.y-=b2.min.y;const g=new THREE.Group();g.position.set(x,0,z);g.add(m);sc.add(g);const mx=new THREE.AnimationMixer(m);const cl=gl.animations.find(a=>a.name===pose)||gl.animations.find(a=>/cheer|joy|wave|idle/.test(a.name))||gl.animations[0];if(cl){const a=mx.clipAction(cl);a.play();a.time=Math.random()*.5}mixers.push(mx);if(extra)try{extra(m,g)}catch(e){}loaded++},undefined,()=>{loaded++});
  list.forEach((x,i)=>put(x.crew||'metal',(i-(list.length-1)/2)*1.25,-.25,1.25,['cheer','wave','joy'][i%3]));
  put('base',-.75,1.05,1.15,'wave');

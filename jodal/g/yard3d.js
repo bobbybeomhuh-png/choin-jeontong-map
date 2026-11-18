@@ -3,7 +3,7 @@
    누르면 그 장인이 한 걸음 앞으로 나와 손을 흔들며 한마디(말풍선). 고르는 규칙(카드)은 jodal.js 가 그대로 맡고,
    여기서 누르면 같은 카드를 누른 것과 같다. 예정가격을 넘은 장인·입찰 제한 장인은 패가 붉고 고개를 숙임.
    yard3D(host, list, {pick:id=>..., flag:a=>'over'|'ban'|''}) → {ok, sel(id)} */
-import * as THREE from 'three';
+import {SHL} from './muuiload.js';import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
@@ -19,7 +19,7 @@ export function yard3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({anti
  const wall=new THREE.Mesh(new THREE.BoxGeometry(16,1.9,.3),M(0xe8dcc4));wall.position.set(0,.95,-2.2);sc.add(wall);const base=new THREE.Mesh(new THREE.BoxGeometry(16,.5,.36),M(0x8a8478));base.position.set(0,.25,-2.18);sc.add(base);
  const cap=new THREE.Mesh(new THREE.BoxGeometry(16.4,.16,.7),M(0x3e434a,{roughness:.55}));cap.position.set(0,1.98,-2.15);sc.add(cap);for(let x=-7.5;x<=7.5;x+=2.5){const p=new THREE.Mesh(new THREE.CylinderGeometry(.11,.12,1.9,10),M(0x8e2b20,{roughness:.6}));p.position.set(x,.95,-2.0);sc.add(p)}
  /* 장인들 */
- const N=list.length,sp=Math.min(1.6,7/Math.max(1,N)),cands=[];const L=new GLTFLoader(),Dl=new DRACOLoader();Dl.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');L.setDRACOLoader(Dl);
+ const N=list.length,sp=Math.min(1.6,7/Math.max(1,N)),cands=[];const L=SHL;
  /* 3D 마당에서는 담합한 둘을 나란히 세움(카드 순서는 그대로) */const ord=list.slice();{const d=ord.filter(a=>a.dam);if(d.length>=2){const i1=ord.indexOf(d[0]);ord.splice(ord.indexOf(d[1]),1);ord.splice(i1+1,0,d[1])}}
  ord.forEach((a,i)=>{const x=(i-(N-1)/2)*sp;const g=new THREE.Group();g.position.set(x,0,0);sc.add(g);const flag=o.flag?o.flag(a):'';
   const plate=new THREE.Sprite(new THREE.SpriteMaterial({map:CV(256,96,(q,w,h)=>{q.fillStyle=flag?'#8e2b20':'#2a1a10';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=5;q.strokeRect(3,3,w-6,h-6);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 26px "Do Hyeon",sans-serif';const nm=String(a.name||'');q.fillText(nm.length>9?nm.slice(0,9)+'…':nm,w/2,40);q.fillStyle='#fff4dc';q.font='bold 28px "Do Hyeon",sans-serif';q.fillText(o.label?o.label(a,flag):flag==='over'?`${a.cost}냥 · 낙찰 불가`:flag==='ban'?'입찰 제한':`${a.cost}냥`,w/2,78)}),depthTest:false}));plate.scale.set(1.2,.45,1);plate.position.set(0,1.78,0);plate.renderOrder=5;g.add(plate);

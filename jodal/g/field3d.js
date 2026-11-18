@@ -8,7 +8,7 @@
    이천 가마터: 흙 → 재층(빗자루로 쓸어 냄) → 가마 바닥 → 달항아리 조각
    조각은 붓으로 흙을 털고 눌러 바구니에 담는다. 스캔(E 또는 단추)하면 땅속 조각이 금빛으로 비친다.
    시험용 문: window.__FD = {dbg, auto} */
-import * as THREE from 'three';
+import {SHL} from './muuiload.js';import * as THREE from 'three';
 import {setupPost} from './post.js';
 import {volPines,plantBroad} from './sites/treekit.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -133,7 +133,7 @@ export function fieldGame(ctx,job,opt={}){const S=SITES[job.k];if(!S){opt.done&&
  let mix=null,acts={},curA=null,mate=null,onceT=0;const crew=opt.crew||'metal';
  const stageAnim=()=>stage===0?'dig':stage===1?(S.cover==='stones'||S.cover==='blocks'?'carry':S.cover==='ash'?'sweep':'push'):stage===2?'hammer':goB.style.display!=='none'?'joy':'brush';
  const play=(n,once)=>{const a=acts[n];if(!a)return;if(curA===a&&!once)return;a.reset();a.setLoop(once?THREE.LoopOnce:THREE.LoopRepeat);a.clampWhenFinished=!!once;a.fadeIn(.25).play();if(curA&&curA!==a)curA.fadeOut(.25);curA=a;onceT=once?1.8:0};
- try{const L=new GLTFLoader(),Dl=new DRACOLoader();Dl.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');L.setDRACOLoader(Dl);
+ try{const L=SHL;
   L.load(new URL('../world3d/media/muui_'+crew+'.glb',document.baseURI).href,g=>{if(!alive)return;mate=g.scene;mate.traverse(o=>{if(o.isMesh)o.castShadow=true});const bb=new THREE.Box3().setFromObject(mate);mate.scale.setScalar(1.2/Math.max(.01,bb.max.y-bb.min.y));mate.position.set(NX*CS/2+.55,0,-(NZ*CS/2)+.2);mate.lookAt(0,0,0);if(S.water)mate.position.y=.02;sc.add(mate);mix=new THREE.AnimationMixer(mate);for(const c of g.animations)acts[c.name]=mix.clipAction(c);play(stageAnim())},undefined,()=>{})}catch(e){}
  /* ---------- 입자·소리·흔들림 ---------- */
  const FXN=260,fxP=new Float32Array(FXN*3).fill(-99),fxV=new Float32Array(FXN*3),fxL=new Float32Array(FXN),fxC=new Float32Array(FXN*3);let fxI=0,shake=0;const fxG=new THREE.BufferGeometry();fxG.setAttribute('position',new THREE.BufferAttribute(fxP,3));fxG.setAttribute('color',new THREE.BufferAttribute(fxC,3));const fx=new THREE.Points(fxG,new THREE.PointsMaterial({size:.06,vertexColors:true,transparent:true,depthWrite:false}));fx.frustumCulled=false;sc.add(fx);
