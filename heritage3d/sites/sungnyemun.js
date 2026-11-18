@@ -146,6 +146,6 @@ export function buildSungnyemun(opts={}){const MT=materials();const G=new THREE.
   env:{plaza:{w:96,d:80,x:0,z:0},beds:false,sign:{x:4.5,z:16.5,lines:['숭례문 崇禮門','국보 · 1398년 처음 세움','육축 폭 약 30m · 높이 약 20m','실제 크기로 지었어요']},treeAvoid:(x,z)=>(Math.abs(x)<52&&Math.abs(z)<44)||(Math.abs(x)<16&&z>0&&z<140)},
   npc:[['science',[[-8,22],[8,22],[8,12],[-8,12]]],['ceramic',[[-15.5,14],[-15.5,36]]],['metal',[[15.5,36],[15.5,14]]],['painter',[[-5,34],[5,34]]],['ceramic',[[-3,6],[3,6],[3,-6],[-3,-6]]],['painter',[[-10,H+.45,-3.8],[10,H+.45,-3.8]]],['metal',[[20,-12],[-20,-12]]],['carpenter',[[-6,1.4],[6,-1.4]]]],
   level:P=>P.y>H+.3+5.5?'누각 2층':P.y>H+.3?'누각 1층':P.y>H-.3?'육축 위':Math.abs(P.x)<2.4&&Math.abs(P.z)<6?'홍예 통로':P.y>.6?'돌계단':'광장',
-  camCap:P=>(P.y>H+.3&&Math.abs(P.x)<12.5&&Math.abs(P.z)<5.5)?(P.y>H+5?3.2:4.2):Infinity,
+  camCap:P=>(P.y>H+.3&&Math.abs(P.x)<12.5&&Math.abs(P.z)<5.5)?(P.y>H+5?3.2:4.2):/* 육축 안쪽 돌계단 위: 카메라가 육축 벽 속으로 들어가지 않게 */(P.y>.5&&P.y<H+.3&&P.z<-D/2+.6&&P.z>-D/2-4.5)?3.0:Infinity,
   mini:{S:4.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#b9b2a6';g.fillRect(X(-48),Z(-40),96*S,80*S);g.fillStyle='#8e877c';g.fillRect(X(-15),Z(-6),30*S,12*S);g.fillStyle='#7a7468';g.fillRect(X(-41),Z(-3.5),26*S,7*S);g.fillRect(X(15),Z(-3.5),26*S,7*S);g.fillStyle='#4a4e54';g.fillRect(X(-12.8),Z(-6.8),25.6*S,13.6*S);g.fillStyle='#d8c8a0';g.fillRect(X(-2.3),Z(-6),4.6*S,12*S)}}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:26,yaw:Math.PI},size:{W,D,H,top:F2+C2+5.6}},meta)}
