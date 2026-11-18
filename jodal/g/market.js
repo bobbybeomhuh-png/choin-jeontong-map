@@ -64,9 +64,9 @@ export function setupMarket(E){const {X,THREE,JOBS}=E;const H=window.__H3;
   u.c.innerHTML=`<h2>${j.city} 공방에 ${o.n}이 닿았어요!</h2><div>공방에서 재료값에 수고비를 얹어 ${pay}냥을 돌려주었어요. 남은 주문 ${ORD.filter(x=>!S[x.k]).length}개.</div>${all?`<div class="f3-card" style="margin:10px auto 0;max-width:560px"><b>조달 도감 카드가 열렸어요 · 나라장터</b><br>나라장터는 나라의 전자 조달 장터예요. 공공기관의 입찰 공고와 견적, 계약이 한곳에서 이뤄지고 누구나 볼 수 있어요.</div>`:''}<div style="margin-top:12px"><button type="button" class="jd-btn" data-ok>좋아요</button></div>`;u.c.querySelector('[data-ok]').onclick=u.close};
  let last=performance.now();
  const loop=()=>{const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;try{
-  if(!site&&H.P&&X.scene&&open())build();
-  if(site){ui();for(const m of mates)m.mx.update(dt);const P=H.P;const near=P&&Math.hypot(P.x-site.P.x,P.z-(site.P.z+1))<9.5&&!busy();btn.style.display=near?'block':'none';
+  /* 11/18 D79: 장터 건물도 처음부터(관아가 장터 자리를 피해 서므로 함께). 들어가기·where() 는 첫 국보 뒤 */if(!site&&H.P&&X.scene)build();
+  if(site){ui();for(const m of mates)m.mx.update(dt);const P=H.P;const near=P&&Math.hypot(P.x-site.P.x,P.z-(site.P.z+1))<9.5&&!busy();btn.style.display=near&&open()?'block':'none';if(near&&!open()&&!site.told){site.told=1;try{H.say&&H.say('나라장터예요. 첫 국보를 되살리면 장이 열려요.',5)}catch(e){}}
    if(carry&&P){carry.g.position.set(P.x,P.y+1.62+Math.sin(now/250)*.03,P.z);carry.g.rotation.y+=dt*.6;const j=JOBS.find(x=>x.k===carry.o.to);if(j&&Math.hypot(P.x-j.sp.x,P.z-j.sp.z)<5&&!busy())deliver()}
    else if(!carry&&st().cur)carryOn()}}catch(e){}requestAnimationFrame(loop)};requestAnimationFrame(loop);
  return{carrying:()=>!!carry,target:()=>carry?JOBS.find(x=>x.k===carry.o.to).sp:null,hud:()=>carry?`<br><span style="color:#ffd27a">곁일: ${E.esc(carry.o.n)}을 ${JOBS.find(x=>x.k===carry.o.to).city} 공방으로</span>`:'',
-  where:()=>site&&site.P,test:{open:openMarket,state:()=>({site:site&&[site.P.x,site.P.z],mk:st(),carry:!!carry})}}}
+  pos:()=>site&&site.P,where:()=>site&&open()&&site.P,test:{open:openMarket,state:()=>({site:site&&[site.P.x,site.P.z],mk:st(),carry:!!carry})}}}
