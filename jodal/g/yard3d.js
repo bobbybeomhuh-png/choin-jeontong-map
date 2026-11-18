@@ -1,4 +1,4 @@
-/* 무이 나라 조달청: 「장인 면접 마당 3D」(N8). 만든 날 2026-11-18
+/* 무이 나라 조달청: 「장인 면접 마당 3D」(N8, 나라장터 견적 비교에도 씀 N12). 만든 날 2026-11-18
    장인 고르기 창 위에 관아 마당 한 토막을 띄운다. 봉투를 낸 장인 무이들이 박석 마당에 한 줄로 서 있고(이름·값 패),
    누르면 그 장인이 한 걸음 앞으로 나와 손을 흔들며 한마디(말풍선). 고르는 규칙(카드)은 jodal.js 가 그대로 맡고,
    여기서 누르면 같은 카드를 누른 것과 같다. 예정가격을 넘은 장인·입찰 제한 장인은 패가 붉고 고개를 숙임.
@@ -21,7 +21,7 @@ export function yard3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({anti
  /* 장인들 */
  const N=list.length,sp=Math.min(1.6,7/Math.max(1,N)),cands=[];const L=new GLTFLoader(),Dl=new DRACOLoader();Dl.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');L.setDRACOLoader(Dl);
  list.forEach((a,i)=>{const x=(i-(N-1)/2)*sp;const g=new THREE.Group();g.position.set(x,0,0);sc.add(g);const flag=o.flag?o.flag(a):'';
-  const plate=new THREE.Sprite(new THREE.SpriteMaterial({map:CV(256,96,(q,w,h)=>{q.fillStyle=flag?'#8e2b20':'#2a1a10';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=5;q.strokeRect(3,3,w-6,h-6);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 26px "Do Hyeon",sans-serif';const nm=String(a.name||'');q.fillText(nm.length>9?nm.slice(0,9)+'…':nm,w/2,40);q.fillStyle='#fff4dc';q.font='bold 28px "Do Hyeon",sans-serif';q.fillText(flag==='over'?`${a.cost}냥 · 낙찰 불가`:flag==='ban'?'입찰 제한':`${a.cost}냥`,w/2,78)}),depthTest:false}));plate.scale.set(1.2,.45,1);plate.position.set(0,1.78,0);plate.renderOrder=5;g.add(plate);
+  const plate=new THREE.Sprite(new THREE.SpriteMaterial({map:CV(256,96,(q,w,h)=>{q.fillStyle=flag?'#8e2b20':'#2a1a10';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=5;q.strokeRect(3,3,w-6,h-6);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 26px "Do Hyeon",sans-serif';const nm=String(a.name||'');q.fillText(nm.length>9?nm.slice(0,9)+'…':nm,w/2,40);q.fillStyle='#fff4dc';q.font='bold 28px "Do Hyeon",sans-serif';q.fillText(o.label?o.label(a,flag):flag==='over'?`${a.cost}냥 · 낙찰 불가`:flag==='ban'?'입찰 제한':`${a.cost}냥`,w/2,78)}),depthTest:false}));plate.scale.set(1.2,.45,1);plate.position.set(0,1.78,0);plate.renderOrder=5;g.add(plate);
   const ring=new THREE.Mesh(new THREE.RingGeometry(.38,.46,32),new THREE.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:0,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=.02;g.add(ring);
   const hit=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,1.5,10),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=.75;hit.userData.id=a.id;g.add(hit);
   const c={a,g,ring,hit,flag,x,mix:null,acts:{},cur:null,z:0,tz:0,ph:i*1.3};cands.push(c);
