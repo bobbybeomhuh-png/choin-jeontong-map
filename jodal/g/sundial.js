@@ -21,7 +21,7 @@ export function sundial(F,term){const T=F.THREE,sc=F.sc;const D=[3,10,30][term]?
  const loop=()=>{if(!F.alive())return;const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000);lastT=now;tt+=dt;
   try{const L=window.__FD&&window.__FD.dbg&&window.__FD.dbg().left;if(L){const n=(L.soil||0)+(L.sh||0)*3+(L.cov||0)+(L.pl||0);if(p0==null||n>p0)p0=Math.max(1,n);const p=1-n/p0;prog+=(p-prog)*Math.min(1,dt*3)}}catch(e){}
   const day=prog*NEED,late=day>D+.3?Math.max(1,Math.round(day-D)):0;shp.rotation.y=ang(day);paint(Math.min(MAXD,Math.ceil(day)),late>0?late:0);
-  if(late>dropped){dropped=late;for(let k=0;k<3;k++)setTimeout(drop,k*160)}{const ph=(tt+8)%22,cx=-9+ph*1.1;cloud.position.x=cx;cloud.position.z=2.0+Math.sin(tt*.2)*.3;g.getWorldPosition(wp0);const d=Math.abs(cx-wp0.x),cov=Math.max(0,1-d/1.8);sh.material.opacity=.75-.6*cov;if(sunL)sunL.intensity=sunI*(1-.38*cov)}lim.material.color.setHex(late?(Math.sin(tt*8)>0?0xff5040:0x8e2b20):0xd8322a);
+  if(late>dropped){dropped=late;for(let k=0;k<3;k++)setTimeout(drop,k*160)}{const ph=(tt+8)%22,cx=-9+ph*1.1;cloud.position.x=cx;cloud.position.z=2.0+Math.sin(tt*.2)*.3;g.getWorldPosition(wp0);const d=Math.abs(cx-wp0.x),cov=Math.max(0,1-d/1.8);sh.material.opacity=.75-.6*cov;if(sunL)sunL.intensity=sunI*(1-.38*cov);window.__CLOUDCOV=Math.max(0,1-d/3.2)}lim.material.color.setHex(late?(Math.sin(tt*8)>0?0xff5040:0x8e2b20):0xd8322a);
   for(const c of coins){if(c.position.y>.56){c.userData.vy-=6*dt;c.position.y+=c.userData.vy*dt;c.rotation.x+=dt*9}else{c.position.y=.56;c.rotation.x=Math.PI/2}}
   requestAnimationFrame(loop)};requestAnimationFrame(loop);
  window.__SUN={day:()=>prog*NEED,D,cloud:()=>[+cloud.position.x.toFixed(2),+sh.material.opacity.toFixed(2),sunL?+(sunL.intensity/sunI).toFixed(2):null]}}

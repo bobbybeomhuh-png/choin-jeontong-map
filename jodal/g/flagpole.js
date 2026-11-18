@@ -12,14 +12,14 @@ export function flagPole(F){const T=F.THREE,sc=F.sc;
  const fg=new T.PlaneGeometry(.78,.5,10,4);const P=fg.attributes.position,X=new Float32Array(P.count);for(let i=0;i<P.count;i++)X[i]=P.getX(i);
  const flag=new T.Mesh(fg,new T.MeshStandardMaterial({map:tx,side:T.DoubleSide,roughness:.9}));flag.position.set(.43,Y0,0);g.add(flag);
  const bits=[];for(let k=0;k<8;k++){const b=new T.Mesh(new T.OctahedronGeometry(.035),new T.MeshBasicMaterial({color:0xfff0b0}));b.visible=false;g.add(b);bits.push({b,a:k/8*Math.PI*2})}
- let p0=null,prog=0,lastT=performance.now(),tt=0,done=false,stepShown=0;
+ let p0=null,prog=0,lastT=performance.now(),tt=0,done=false,stepShown=0,wph=0;
  const loop=()=>{if(!F.alive())return;const now=performance.now(),dt=Math.min(.05,(now-lastT)/1000);lastT=now;tt+=dt;
   try{const L=window.__FD&&window.__FD.dbg&&window.__FD.dbg().left;if(L){const n=(L.soil||0)+(L.sh||0)*3+(L.cov||0)+(L.pl||0);if(p0==null||n>p0)p0=Math.max(1,n);const p=1-n/p0;prog+=(p-prog)*Math.min(1,dt*3);if(n===0&&p0>1)prog=Math.max(prog,.999)}}catch(e){}
   /* 깃발은 눈금 칸마다 올라감(조금씩 미끄러지듯) */const step=Math.min(4,Math.floor(prog*4+1e-3));const want=Y0+(Y1-Y0)*step/4;flag.position.y+=(want-flag.position.y)*Math.min(1,dt*4);
   if(step>stepShown){stepShown=step;try{window.__JDSND&&window.__JDSND.paper()}catch(e){}}
   if(step>=4&&!done){done=true}paint(Math.round(step/4*10),done);
   if(F.cam){g.rotation.y=Math.atan2(F.cam.position.x-g.position.x,F.cam.position.z-g.position.z)}
-  for(let i=0;i<P.count;i++){const x=X[i]+.39;P.setZ(i,Math.sin(x*9-tt*6)*.05*x)}P.needsUpdate=true;fg.computeVertexNormals();
+  /* 11/19 M36: 구름(바람)이 지나면 세게 펄럭 */const wv=window.__CLOUDCOV||0;wph=(wph||0)+dt*(6+8*wv);for(let i=0;i<P.count;i++){const x=X[i]+.39;P.setZ(i,Math.sin(x*9-wph)*(.05+.09*wv)*x+Math.sin(x*17-wph*1.7)*.02*wv*x)}P.needsUpdate=true;fg.computeVertexNormals();
   for(const s of bits){s.b.visible=done;if(done){s.a+=dt*1.6;s.b.position.set(Math.cos(s.a)*.5+.43,Y1+Math.sin(s.a*2)*.12,Math.sin(s.a)*.3);s.b.rotation.y+=dt*5}}
   requestAnimationFrame(loop)};requestAnimationFrame(loop);
- window.__FLAG={prog:()=>prog,step:()=>stepShown,done:()=>done}}
+ window.__FLAG={wind:()=>+(window.__CLOUDCOV||0).toFixed(2),prog:()=>prog,step:()=>stepShown,done:()=>done}}
