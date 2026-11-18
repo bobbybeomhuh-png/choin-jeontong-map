@@ -1,0 +1,21 @@
+/* 무이 나라 조달청: 「감독 순찰」(M19). 만든 날 2026-11-19
+   발굴 현장 구덩이 네 귀퉁이 말뚝에 금빛 고리가 깜빡인다. 말뚝을 누르면 붉은 「확인」 리본이 묶이고,
+   앞서 돈 말뚝에서 이 말뚝까지 둘레를 따라 금빛 발자국이 콕콕 찍힌다(감독이 현장을 한 바퀴 돌아봄).
+   넷을 다 돌면 구덩이 위에 「감독 일지 · 둘레 점검 끝」 도장. 안 돌아도 발굴은 그대로 됨. patrol(FDX, SND) */
+export function patrol(F,SND){const T=F.THREE,sc=F.sc,cam=F.cam;const W=6*.55,D=4*.55;const P=[[-W/2,D/2],[W/2,D/2],[W/2,-D/2],[-W/2,-D/2]];
+ const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.7},o));
+ const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t};
+ const pegs=P.map(([x,z],i)=>{const g=new T.Group();g.position.set(x,0,z);sc.add(g);const ring=new T.Mesh(new T.TorusGeometry(.13,.018,8,24),new T.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:.8,depthWrite:false}));ring.rotation.x=Math.PI/2;ring.position.y=.52;g.add(ring);
+  const rib=new T.Group();rib.position.y=.4;rib.visible=false;g.add(rib);const rm=M(0xc8352a,{side:T.DoubleSide});for(const s of[-1,1]){const l=new T.Mesh(new T.PlaneGeometry(.1,.06),rm);l.position.x=s*.06;l.rotation.z=s*.35;rib.add(l);const tl=new T.Mesh(new T.PlaneGeometry(.025,.14),rm);tl.position.set(s*.025,-.08,0);tl.rotation.z=s*.25;rib.add(tl)}const kn=new T.Mesh(new T.SphereGeometry(.022,8,6),rm);rib.add(kn);
+  return{g,ring,rib,done:false,x,z,t:0}});
+ const steps=[];const stepG=new T.CircleGeometry(.045,12),stepM=new T.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:.9,depthWrite:false});
+ const walk=(a,b)=>{const n=8;for(let k=1;k<n;k++){const f=k/n,x=a.x+(b.x-a.x)*f,z=a.z+(b.z-a.z)*f;const dx=b.x-a.x,dz=b.z-a.z,L=Math.hypot(dx,dz)||1,nx=-dz/L,nz=dx/L,o=(k%2?1:-1)*.06+.0;const m=new T.Mesh(stepG,stepM.clone());m.scale.set(.7,1.25,1);m.rotation.x=-Math.PI/2;m.rotation.z=-Math.atan2(dx,dz);m.position.set(x+nx*(o+.16*Math.sign(nx||1)*0)+(a.x<0&&b.x<0?-.18:a.x>0&&b.x>0?.18:0),.02,z+nz*o+(a.z<0&&b.z<0?-.18:a.z>0&&b.z>0?.18:0));m.material.opacity=0;sc.add(m);steps.push({m,t:-k*.07})}};
+ let last=null,first=null,nDone=0,stamp=null;const tie=i=>{const p=pegs[i];if(p.done)return;p.done=true;p.rib.visible=true;p.ring.visible=false;try{SND&&SND.paper()}catch(e){}if(last)walk(last,p);else first=p;last=p;nDone++;if(nDone===4){walk(p,first);stamp=new T.Sprite(new T.SpriteMaterial({map:CV(512,96,(q,w,h)=>{q.fillStyle='rgba(30,18,8,.88)';q.beginPath();q.roundRect?q.roundRect(4,4,w-8,h-8,18):q.rect(4,4,w-8,h-8);q.fill();q.strokeStyle='#c8352a';q.lineWidth=6;q.stroke();q.fillStyle='#ffd27a';q.font='bold 40px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText('감독 일지 · 둘레 점검 끝 ✔',w/2,62)}),depthTest:false,transparent:true,opacity:0}));stamp.scale.set(2.2,.41,1);stamp.position.set(0,1.25,0);stamp.renderOrder=9;sc.add(stamp);stamp.userData.t=0;try{SND&&SND.stamp()}catch(e){}}};
+ const ndc=new T.Vector3();const onDown=e=>{try{const r=F.dom.getBoundingClientRect();let best=-1,bd=1e9;pegs.forEach((p,i)=>{if(p.done)return;ndc.set(p.x,.45,p.z).project(cam);const sx=r.left+(ndc.x+1)/2*r.width,sy=r.top+(1-ndc.y)/2*r.height;const d=Math.hypot(sx-e.clientX,sy-e.clientY);if(d<bd){bd=d;best=i}});if(best>=0&&bd<34)tie(best)}catch(x){}};
+ try{F.dom.addEventListener('pointerdown',onDown)}catch(e){}
+ let lt=performance.now(),tt=0;const loop=()=>{if(!F.alive()){try{F.dom.removeEventListener('pointerdown',onDown)}catch(e){}return}const now=performance.now(),dt=Math.min(.05,(now-lt)/1000);lt=now;tt+=dt;
+  for(const p of pegs){if(!p.done){p.ring.material.opacity=.45+.4*Math.sin(tt*5);p.ring.scale.setScalar(1+.15*Math.sin(tt*5))}else{p.t+=dt;p.rib.rotation.y=Math.sin(tt*3+p.x)*.3}}
+  for(const s of steps){s.t+=dt;if(s.t>0)s.m.material.opacity=Math.min(.9,s.t*4)}
+  if(stamp){stamp.userData.t+=dt;const a=Math.min(1,stamp.userData.t/.3);stamp.material.opacity=a*(stamp.userData.t>4?Math.max(0,1-(stamp.userData.t-4)):1);stamp.scale.set(2.2*(1.6-.6*a),.41*(1.6-.6*a),1)}
+  requestAnimationFrame(loop)};requestAnimationFrame(loop);
+ window.__PATROL={n:()=>nDone,steps:()=>steps.length,scr:i=>{const r=F.dom.getBoundingClientRect();ndc.set(pegs[i].x,.45,pegs[i].z).project(cam);return[r.left+(ndc.x+1)/2*r.width,r.top+(1-ndc.y)/2*r.height]}}}
