@@ -16,6 +16,7 @@ const gl=new GLTFLoader();{const d=new DRACOLoader();d.setDecoderPath('https://c
 const CACHE={};function getModel(p,cb){if(!CACHE[p])CACHE[p]=new Promise(res=>gl.load(U(p),m=>res(m.scene),undefined,()=>res(null)));CACHE[p].then(s=>s&&cb(s))}
 /* 초가: [종류 1|2, x, z, ry]  1=ㄱ자 집(약 15x14m), 2=일자 집(약 23x7m) */
 const SITES={
+ soswae:{village:false,pines:[[-40,38,10],[40,38,9],[-42,-36,10],[40,-34,11]],fx:[]},
  seongeup:{village:false,pines:[[-40,36,10],[40,36,9],[-42,-34,10],[42,-34,11]],fx:[]},
  hahoe:{village:false,pines:[[-25,-6,10],[-21,-13,11],[-27,1,9],[-16,-18,10],[-23,-17,9],[-13,-22,9]],chogas:[[1,-23,8,Math.PI/2],[2,23,10,-Math.PI/2],[2,-14,20.5,0],[1,22,-26,0]],fx:[]},
  ondal:{village:false,pines:[[-34,22,10],[34,22,11],[-36,-28,10],[36,-28,10]],fx:[]},
