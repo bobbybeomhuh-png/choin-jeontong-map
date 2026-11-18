@@ -129,7 +129,7 @@ export function buildHahoe(opts={}){const mini=!!opts.mini;const MT=materials();
  const RIDE={on:false,t:0};const BTH=.42*Math.PI;
  window.__HHBOAT=()=>{const bt=G.userData.boat;if(!bt||RIDE.on)return;RIDE.on=true;RIDE.t=0;try{window.__H3.ctx().say('나룻배에 올랐어요! 사공 무이가 장대로 밀어 강을 건너요. 부용대가 점점 커져요.')}catch(e){}};
  const rideTick=dt=>{const bt=G.userData.boat;if(!bt)return;if(!RIDE.on){return}RIDE.t+=dt;const T=RIDE.t,go=10,stay=5;let k;if(T<go)k=T/go;else if(T<go+stay)k=1;else if(T<go*2+stay)k=1-(T-go-stay)/go;else{RIDE.on=false;k=0;const[x0,z0]=AT(RI-1.4,BTH);try{window.__H3.tp(x0,z0,0)}catch(e){}try{window.__H3.ctx().say('다시 마을 쪽 강가에 내렸어요.')}catch(e){}const[mx,mz]=AT((RI+RO)/2,BTH);bt.position.set(mx,.05,mz);return}
-  const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const R=RI+.9+(RO-RI-1.8)*e;const[x,z]=AT(R,BTH);bt.position.set(x,.05,z);try{window.__H3.tp(x,z,.55)}catch(e){}if(T>go&&T<go+.05){try{window.__H3.ctx().say('부용대 바로 아래예요. 올려다보면 절벽이 하늘까지 닿을 것 같아요!')}catch(e){}}};
+  const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const R=RI+.9+(RO-RI-1.8)*e;const[x,z]=AT(R,BTH);bt.position.set(x,.05,z);try{window.__H3.tp(x,z,.55)}catch(e){}/* 동행도 배 뒤쪽에 함께(물 위를 걷지 않게) */try{const C=window.__H3.comp;if(C&&C.pos){const[cx,cz]=AT(R,BTH+.035);C.pos.set(cx,.55,cz);C.root.position.copy(C.pos)}}catch(e){}if(T>go&&T<go+.05){try{window.__H3.ctx().say('부용대 바로 아래예요. 올려다보면 절벽이 하늘까지 닿을 것 같아요!')}catch(e){}}};
  /* ---------- 볼거리 ---------- */
  spots.push({x:0,y:0,z:3.6,r:2.4,t:'삼신당 느티나무',h:'마을 한가운데 서 있는 600살 넘은 느티나무예요. 마을을 지켜 주는 삼신(아기를 점지해 주는 신)이 깃든 나무라고 믿어, 사람들이 금줄을 두르고 소원을 적은 종이를 매달아요.'});
  spots.push({x:-12,y:0,z:-7.4,r:2.6,t:'양진당',h:'풍산 류씨 큰집(대종가)이에요. 하회마을에서 가장 오래된 집 가운데 하나로, 사랑채가 높은 기단 위에 우뚝 서 있어요. 보물로 지정돼 있어요.'});
