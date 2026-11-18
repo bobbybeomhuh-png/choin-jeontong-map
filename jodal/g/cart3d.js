@@ -26,6 +26,7 @@ export function cartPay(host,info,SND){let R;try{R=new THREE.WebGLRenderer({anti
  const play=(f,re)=>{if(!f)return;const k=Object.keys(f.acts).find(n=>re.test(n))||Object.keys(f.acts).find(n=>/idle/.test(n));const a=k&&f.acts[k];if(!a||f.cur===a)return;a.reset().fadeIn(.2).play();if(f.cur)f.cur.fadeOut(.2);f.cur=a};
  mk('me','base',-2.0,Math.PI/2);mk('art',info.crew||'metal',2.25,-Math.PI/2);
  /* 11/19 M23: 수레가 가는 동안 엽전 꾸러미가 덜컹덜컹 흔들리고, 흙길에 바퀴 자국 두 줄이 남음 */const rutM=new THREE.MeshBasicMaterial({color:0x4a3a26,transparent:true,opacity:.75,depthWrite:false}),rutG=new THREE.BoxGeometry(.075,.012,.07);let rutX=null;const ruts=[];
+ /* 11/19 M32: 대금을 다 받으면 장인이 계약서 두루마리를 들어 보이고(약속대로 마침), 조달청 무이가 두 번 고개 끄덕 */const scr=new THREE.Group();{const r=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.32,14),M(0xf6ecd2,{roughness:.95}));r.rotation.z=Math.PI/2;scr.add(r);const b=new THREE.Mesh(new THREE.TorusGeometry(.053,.01,6,16),M(0xb8322a));b.rotation.y=Math.PI/2;scr.add(b)}scr.visible=false;sc.add(scr);let st2=-1;
  const X0=-2.75,X1=.2;cart.position.set(X0,0,.35);
  const size=()=>{const W=host.clientWidth||600,H=host.clientHeight||130;R.setSize(W,H,false);cam.aspect=W/H;cam.position.z=Math.max(5.5,4.3/(Math.tan(13*Math.PI/180)*cam.aspect));cam.position.y=.55+cam.position.z*.17;cam.lookAt(0,.55,0);cam.updateProjectionMatrix()};size();
  let t=0,last=performance.now(),stage=0,thump=0;const loop=()=>{if(!host.isConnected){try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}return}const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
@@ -35,6 +36,7 @@ export function cartPay(host,info,SND){let R;try{R=new THREE.WebGLRenderer({anti
   const art=folk.art;if(art){art.mx.update(dt)}
   if(a>=1&&stage===0){stage=1;cap.textContent=`대금 ${info.amt||''}냥을 ${info.name||'장인'}께 건네요`;bags.forEach((b,i)=>b.t=-.25*i)}
   if(stage===1){let all=true;for(const b of bags){if(b.done)continue;all=false;b.t+=dt;if(b.t<0)continue;const k=Math.min(1,b.t/.5);const sx=cart.position.x+b.lx,sy=b.ly,tx=2.15,ty=.6;b.g.position.set(b.lx+(tx-sx)*k,sy+(ty-sy)*k+Math.sin(k*Math.PI)*.6,b.lz*(1-k));b.g.rotation.x+=dt*8;if(k>=1){b.done=true;b.g.visible=false;thump++;try{SND&&SND.coin()}catch(x){}}}if(all){stage=2;cap.textContent=`${info.name||'장인'}: 「약속한 대금, 잘 받았습니다!」`;play(art,/joy|jump|wave/)}}
+  if(stage===2){if(st2<0)st2=0;st2+=dt;scr.visible=true;const k=Math.min(1,st2/.4);scr.position.set(2.0,.5+k*.42+Math.sin(st2*3)*.02,.62);scr.rotation.y=Math.sin(st2*2)*.2;if(me){const nd=x=>x<0||x>.5?0:Math.sin(x/.5*Math.PI);me.m.rotation.x=(nd(st2-.5)+nd(st2-1.1))*.35}}
   if(art){art.p.position.y=stage===2?Math.max(0,Math.sin((t%0.7)/0.7*Math.PI))*.12:0}
   if(R.domElement.width!==Math.round((host.clientWidth||600)*R.getPixelRatio()))size();R.render(sc,cam);requestAnimationFrame(loop)};requestAnimationFrame(loop);
- window.__CART={ruts:()=>ruts.length,stage:()=>stage,got:()=>thump,n:()=>bags.length,x:()=>cart.position.x.toFixed(2),folk:()=>Object.keys(folk)};return{ok:true}}
+ window.__CART={st2:()=>+st2.toFixed(2),ruts:()=>ruts.length,stage:()=>stage,got:()=>thump,n:()=>bags.length,x:()=>cart.position.x.toFixed(2),folk:()=>Object.keys(folk)};return{ok:true}}
