@@ -136,7 +136,7 @@ export function buildHaemi(opts={}){const mini=!!opts.mini;const MT=materials();
   npc:[['carpenter',[[-3,0,B-12],[3,0,B-12]]],['science',[[MX+3,0,MZ-2],[MX+5,0,MZ+1]]],['painter',[[KX-3,0,KZ+7],[KX+3,0,KZ+7]]]],
   baseAt:()=>0,
   level:P=>P.y>1.6&&Math.hypot(P.x-QX,P.z-QZ)<8?'청허정 뒷동산':Math.abs(P.x-DX)<11&&P.z<DZ+7&&P.z>DZ-9?'동헌':Math.hypot(P.x-OX,P.z-OZ)<OR?'옥사':(P.x/A)**2+(P.z/B)**2<1?'읍성 안':'성 밖',
-  camCap:()=>Infinity,tick,
+  camCap:P=>/* 동헌 바로 앞(처마 아래까지): 뒤돌아서면 카메라가 동헌 지붕 속으로 들어가던 것 */(Math.abs(P.x-DX)<7.5&&P.z>DZ+.4&&P.z<DZ+4.6&&P.y<2)?2.2:Infinity,tick,
   mini:{S:2.1,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.strokeStyle='#9a9284';g.lineWidth=S*2.4;g.beginPath();g.ellipse(X(0),Z(0),A*S,B*S,0,0,7);g.stroke();g.fillStyle='#c8b28a';g.fillRect(X(-1.5),Z(-4),3*S,(B+8)*S);g.fillStyle='#8a5a34';g.fillRect(X(DX-6.5),Z(DZ-6),13*S,7*S);g.fillRect(X(KX-11),Z(KZ-3),22*S,6*S);g.strokeStyle='#b8ac94';g.lineWidth=S;g.beginPath();g.arc(X(OX),Z(OZ),OR*S,0,7);g.stroke();g.fillStyle='#4f7a38';g.beginPath();g.arc(X(HX),Z(HZ),3*S,0,7);g.fill();g.beginPath();g.arc(X(QX),Z(QZ),8*S,0,7);g.fill()}}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:B+12,yaw:Math.PI},size:{}},meta)}
 const SCAN_RY=-.35;/* 스캔 축소 모형 방향(진남문이 +z 를 보게): 시험 뒤 맞춤 */
