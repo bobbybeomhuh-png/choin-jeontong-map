@@ -13,7 +13,7 @@ export function buildBuyeo(opts={}){const mini=!!opts.mini;const MT=materials();
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
  /* ---------- 궁남지 연못(타원), 가운데 섬 ---------- */
- const PX=-6,PZ=-14,PA=26,PB=17,IR=5.2;/* 연못 중심, 반지름(가로·세로), 섬 반지름 */
+ const PX=-6,PZ=-14,PA=21,PB=17,IR=5.2;/* 연못 중심, 반지름(가로·세로), 섬 반지름 */
  const onLane=(x,z)=>z<2.5&&z>-24.5&&Math.abs(x-(16+(1-z)/24*2))<1.45;/* 정림사지 가는 모래길: 연못 가장자리와 겹치는 구간은 땅으로 */const inPond=(x,z)=>((x-PX)/PA)**2+((z-PZ)/PB)**2<1&&Math.hypot(x-PX,z-PZ)>IR&&!onLane(x,z);
  {const WT=tex(256,256,(q,w,h)=>{q.fillStyle='#3f7d7a';q.fillRect(0,0,w,h);for(let i=0;i<60;i++){q.strokeStyle='rgba(220,240,235,'+(.05+r()*.1)+')';q.lineWidth=2;q.beginPath();q.ellipse(r()*w,r()*h,8+r()*20,2+r()*3,0,0,7);q.stroke()}});WT.wrapS=WT.wrapT=THREE.RepeatWrapping;WT.repeat.set(10,7);
   const sh=new THREE.Shape();sh.absellipse(PX,-PZ,PA,PB,0,Math.PI*2,false,0);const hole=new THREE.Path();hole.absarc(PX,-PZ,IR,0,Math.PI*2,true);sh.holes.push(hole);const wg=new THREE.ShapeGeometry(sh,64);wg.rotateX(-Math.PI/2);const water=new THREE.Mesh(wg,new THREE.MeshStandardMaterial({map:WT,roughness:.15,metalness:.2,color:0xd8eeea,transparent:true,opacity:.92}));water.position.y=-.25;water.receiveShadow=true;G.add(water);G.userData.water=WT;
@@ -29,7 +29,7 @@ export function buildBuyeo(opts={}){const mini=!!opts.mini;const MT=materials();
   spots.push({x:PX,y:.2,z:PZ+PB+2,r:2.2,t:'궁남지 구름다리',h:'연못 가운데 섬으로 건너가는 나무다리예요. 궁남지는 백제 무왕(재위 600~641) 때 궁궐 남쪽에 판 연못으로, 우리나라에서 가장 오래된 인공 연못으로 알려져 있어요. 여기서는 줄여서 지었어요.'})}
  /* ---------- 포룡정(섬 가운데 육각 정자) ---------- */
  {const g=new THREE.Group();g.position.set(PX,.25,PZ);G.add(g);const pil=M(0x8a3a2a);const R6=2.1;const fl=new THREE.Mesh(new THREE.CylinderGeometry(R6+.4,R6+.5,.5,6),M(0xb3aa98));fl.position.y=.25;g.add(fl);S(PX-R6-.4,PX+R6+.4,0,.75,PZ-R6-.4,PZ+R6+.4);
-  for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const p=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,2.8,10),pil);p.position.set(Math.cos(a)*R6,.5+1.4,Math.sin(a)*R6);p.castShadow=true;g.add(p);solids.push({cx:PX+Math.cos(a)*R6,cz:PZ+Math.sin(a)*R6,r:.2,y0:0,y1:6})}
+  for(let i=0;i<6;i++){const a=i/6*Math.PI*2;const p=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,2.8,10),pil);p.position.set(Math.cos(a)*R6,.5+1.4,Math.sin(a)*R6);p.castShadow=true;g.add(p);solids.push({cx:PX+Math.cos(a)*R6,cz:PZ+Math.sin(a)*R6,r:.32,y0:0,y1:6})}
   const ring=new THREE.Mesh(new THREE.CylinderGeometry(R6+.15,R6+.15,.35,6,1,true),M(0x2f6b55,{side:THREE.DoubleSide}));ring.position.y=3.2;g.add(ring);
   const roofM=M(0x3a4048,{roughness:.7,flatShading:true});
   /* 육모 지붕: 원뿔 대신 오목하게 휜 지붕면 + 기와 골 줄 + 내림마루 여섯 + 절병통 */{const prof=[];for(let i=0;i<=14;i++){const t=i/14;const rr=(R6+1.55)*(1-t)+.18*t,yy=3.35+2.3*Math.pow(t,1.7);prof.push(new THREE.Vector2(Math.max(.05,rr),yy))}
