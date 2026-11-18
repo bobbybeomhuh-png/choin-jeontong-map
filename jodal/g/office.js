@@ -6,7 +6,7 @@
 import {runBidOpen} from './bidopen.js';
 import {cardIcon} from './cardicon.js';
 import {house as vhouse,gate as vgate,wallSeg,haechi as vhaechi,mats as vmats,Bag as VBag} from './villages.js';
-import {groundTex,clearGrass} from './sites/dress.js';
+import {groundTex,clearGrass} from './sites/dress.js';import {clearPropsIn,clearDecoIn} from './props.js';
 import {runExport} from './export.js';
 import {runFestival} from './festival.js';
 import {runBridge} from './bridge.js';
@@ -28,7 +28,7 @@ export function setupOffice(E){try{setupDaily(E)}catch(e){}const {X,THREE,JOBS}=
   {const MV=vmats(),bag=VBag();const pv=groundTex('pave',4);const pm=new THREE.Mesh(new THREE.PlaneGeometry(14,12),new THREE.MeshStandardMaterial({map:pv,color:0xc8c0b0,roughness:.95}));pm.rotation.x=-Math.PI/2;pm.position.set(0,.09,-.5);pm.material.polygonOffset=true;pm.material.polygonOffsetFactor=-6;pm.receiveShadow=true;g.add(pm);
    const W0=7,Z0=-6.5,Z1=5.5;wallSeg(bag,MV,-W0,Z0,W0,Z0,0,1.5);wallSeg(bag,MV,-W0,Z0,-W0,Z1,0,1.5);wallSeg(bag,MV,W0,Z0,W0,Z1,0,1.5);wallSeg(bag,MV,-W0,Z1,-2.6,Z1,0,1.5);wallSeg(bag,MV,2.6,Z1,W0,Z1,0,1.5);
    vgate(bag,MV,0,0,Z1,0);vhouse(bag,MV,0,0,-3.2,0,{w:8,d:3.6,h:2.2,roof:'tile'});vhouse(bag,MV,-5,0,.6,Math.PI/2,{w:5,d:2,h:1.5,roof:'tile'});vhouse(bag,MV,5,0,.6,-Math.PI/2,{w:5,d:2,h:1.5,roof:'tile'});
-   vhaechi(bag,MV,-1.9,0,Z1+1.2,0);vhaechi(bag,MV,1.9,0,Z1+1.2,0);bag.build(g);try{clearGrass(X.scene,P.x,P.z-.5,7.4,6.6)}catch(e){}
+   vhaechi(bag,MV,-1.9,0,Z1+1.2,0);vhaechi(bag,MV,1.9,0,Z1+1.2,0);bag.build(g);try{clearGrass(X.scene,P.x,P.z-.5,7.4,6.6)}catch(e){}/* 11/18 D77: 먼저 놓인 이웃 집 살림살이(빨랫줄 등)가 관아 담·문 앞을 가로지르지 않게 치움 */{let k=0;const clr=()=>{try{if(X.scene.getObjectByName('jodal-props')){window.__OFCCLR=clearPropsIn(X.scene,P.x,P.z,-9,9,-8,10.5)+clearDecoIn(X.scene,P.x,P.z,-8.2,8.2,-7.4,14);/* 지도 장식은 3초 뒤 합쳐 그려지므로 그 뒤에 한 번 더 */for(const t of[5000,12000])setTimeout(()=>{try{window.__OFCCLR+=clearDecoIn(X.scene,P.x,P.z,-8.2,8.2,-7.4,14)}catch(e){}},t);return}}catch(e){return}if(++k<60)setTimeout(clr,1000)};clr()}
    /* 정청 앞 붉은 기둥 줄과 단청 창방 */for(let i=-3;i<=3;i++){const p=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,2.3,12),M(0x8e2b20));p.position.set(i*1.25,.32+1.15,-3.2+1.95);p.castShadow=true;g.add(p)}
    {const c=document.createElement('canvas');c.width=1024;c.height=64;const q=c.getContext('2d');q.fillStyle='#2f6b55';q.fillRect(0,0,1024,64);for(let x=0;x<1024;x+=64){q.fillStyle='#c8352a';q.fillRect(x+4,8,18,48);q.fillStyle='#f2c14e';q.beginPath();q.arc(x+42,32,14,0,7);q.fill();q.fillStyle='#2d4f9a';q.beginPath();q.arc(x+42,32,7,0,7);q.fill()}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const b=new THREE.Mesh(new THREE.BoxGeometry(8.6,.32,.2),new THREE.MeshStandardMaterial({map:t,roughness:.7}));b.position.set(0,2.52,-1.22);g.add(b)}
    {const c=document.createElement('canvas');c.width=512;c.height=180;const q=c.getContext('2d');q.fillStyle='#1c1410';q.fillRect(0,0,512,180);q.strokeStyle='#d8a838';q.lineWidth=10;q.strokeRect(8,8,496,164);q.fillStyle='#f2d27a';q.font='bold 108px serif';q.textAlign='center';q.fillText('調達廳',256,130);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const hp=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.78),new THREE.MeshStandardMaterial({map:t,roughness:.6}));hp.position.set(0,2.95,-1.1);g.add(hp);const hp2=hp.clone();hp2.scale.setScalar(.62);hp2.position.set(0,2.62,Z1+.62);g.add(hp2)}
