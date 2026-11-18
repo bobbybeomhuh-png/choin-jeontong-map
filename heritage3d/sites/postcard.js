@@ -20,6 +20,7 @@ export const STAMPS={
  jinju:{m:'jinju/cannon',n:'현자총통',e:'조선',c:'3D 국가유산청 재현 에셋',msg:'진주성을 지키던 현자총통 앞에 서 봤어요.'},
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
+ namwon:{p:'stamps/namwon.jpg',n:'남원 광한루원',e:'조선',c:'무이 월드 장면',msg:'오작교를 건너 춘향 그네를 높이 뛰었어요. 딸랑!'},
  hahoe:{p:'stamps/hahoe.jpg',n:'안동 하회마을',e:'조선',c:'무이 월드 장면',msg:'낙동강이 S자로 감싸 도는 마을에서 줄불놀이를 봤어요.'},
  seongeup:{p:'stamps/seongeup.jpg',n:'제주 성읍 민속마을',e:'조선',c:'무이 월드 장면',msg:'검은 돌담 올레를 걷고 돌하르방 코를 만졌어요.'},
  soswae:{p:'stamps/soswae.jpg',n:'담양 소쇄원',e:'조선',c:'무이 월드 장면',msg:'계곡 물소리 들으며 징검다리를 건넜어요.'},
