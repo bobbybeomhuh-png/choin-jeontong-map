@@ -8,7 +8,7 @@ const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h
 export function bid3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){return{ok:false,open(){}}}
  R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;
  R.domElement.style.cssText='display:block;width:100%;height:100%;cursor:pointer;border-radius:8px';host.append(R.domElement);
- const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(34,2,.05,40);cam.position.set(0,2.15,3.7);cam.lookAt(0,.62,0);
+ const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(34,2,.05,40);cam.position.set(0,1.85,3.05);cam.lookAt(0,.72,0);
  sc.add(new THREE.HemisphereLight(0xfff2dc,0x3a2614,1.25));const sun=new THREE.DirectionalLight(0xfff0d6,2.1);sun.position.set(2.2,4,2.6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-3,right:3,top:3,bottom:-3});sc.add(sun);
  const M=(c,x={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.75},x));
  /* 탁자: 결 있는 나무, 붉은 비단 깔개 */
@@ -24,13 +24,13 @@ export function bid3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({antia
  const lidP=new THREE.Group();lidP.position.set(0,.55,-.4);box.add(lidP);const lid=new THREE.Mesh(new THREE.BoxGeometry(1.56,.08,.84),lac);lid.position.set(0,.04,.42);lid.castShadow=true;lidP.add(lid);const knob=new THREE.Mesh(new THREE.SphereGeometry(.05,12,8),brass);knob.position.set(0,.1,.42);lidP.add(knob);
  /* 봉투들 */
  const N=list.length,envs=[];const paper=M(0xefe0bc,{roughness:.9});
- list.forEach((x,k)=>{const g=new THREE.Group();const ang=(k-(N-1)/2)*Math.min(.32,1.4/Math.max(1,N-1));const fx=Math.sin(ang)*1.6,fz=-.25+(1-Math.cos(ang))*.9;
+ list.forEach((x,k)=>{const g=new THREE.Group();const sp=Math.min(.78,3.3/Math.max(1,N)),off=k-(N-1)/2,ang=off*.12;const fx=off*sp,fz=-.25+Math.abs(off)*.12;
   const env=new THREE.Mesh(new THREE.BoxGeometry(.5,.66,.03),paper);env.castShadow=true;g.add(env);
   const flap=new THREE.Mesh(new THREE.ConeGeometry(.33,.2,3),M(0xd8c49a,{roughness:.9}));flap.rotation.set(Math.PI/2,0,Math.PI);flap.scale.set(1,1,.08);flap.position.set(0,.22,.018);g.add(flap);
   const seal=new THREE.Mesh(new THREE.CylinderGeometry(.075,.08,.03,20),M(0xa82218,{roughness:.35}));seal.rotation.x=Math.PI/2;seal.position.set(0,.12,.03);g.add(seal);
   const cordM=M(0xb8322a,{roughness:.7});const cords=[-1,1].map(s=>{const c=new THREE.Mesh(new THREE.BoxGeometry(.26,.018,.012),cordM);c.position.set(s*.13,.12,.025);g.add(c);return c});
   const num=new THREE.Mesh(new THREE.PlaneGeometry(.3,.12),new THREE.MeshBasicMaterial({map:CV(128,52,(q,w,h)=>{q.fillStyle='#efe0bc';q.fillRect(0,0,w,h);q.fillStyle='#6b4a26';q.font='bold 30px "Do Hyeon",sans-serif';q.textAlign='center';q.textBaseline='middle';q.fillText(`${k+1}번`,w/2,h/2+2)})}));num.position.set(0,-.18,.017);g.add(num);
-  const card=new THREE.Mesh(new THREE.PlaneGeometry(.62,.42),new THREE.MeshBasicMaterial({map:CV(300,200,(q,w,h)=>{q.fillStyle='#fbf6ea';q.fillRect(0,0,w,h);q.strokeStyle='#8a6a3a';q.lineWidth=5;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#8e2b20';q.font='bold 64px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText(`${x.cost}냥`,w/2,96);q.fillStyle='#3b2a1c';q.font='26px "Gowun Dodum",sans-serif';const nm=String(x.name||'');q.fillText(nm.length>11?nm.slice(0,11)+'…':nm,w/2,150)}),transparent:true,opacity:0,side:THREE.DoubleSide}));card.position.set(0,.2,.05);card.visible=false;g.add(card);
+  const card=new THREE.Mesh(new THREE.PlaneGeometry(.62,.42),new THREE.MeshBasicMaterial({map:CV(300,200,(q,w,h)=>{q.fillStyle='#fbf6ea';q.fillRect(0,0,w,h);q.strokeStyle='#8a6a3a';q.lineWidth=5;q.strokeRect(4,4,w-8,h-8);q.fillStyle='#8e2b20';q.font='bold 64px "Do Hyeon",sans-serif';q.textAlign='center';q.fillText(`${x.cost}냥`,w/2,96);q.fillStyle='#3b2a1c';q.font='bold 30px "Gowun Dodum",sans-serif';const nm=String(x.name||'');q.fillText(nm.length>9?nm.slice(0,9)+'…':nm,w/2,152)}),transparent:true,opacity:0,side:THREE.DoubleSide}));card.position.set(0,.2,.05);card.visible=false;g.add(card);
   g.position.set(fx*.0,.1,-.55);g.rotation.y=-ang*.6;g.scale.setScalar(.01);sc.add(g);
   envs.push({k,g,env,cords,seal,card,flap,fx,fz,ang,t0:.35+k*.18,open:0,ot:0,bits:[]});env.userData.k=k;flap.userData.k=k;seal.userData.k=k});
  /* 고르기 */
@@ -46,7 +46,7 @@ export function bid3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({antia
   lidP.rotation.x=-Math.min(1,t/.35)*1.9;
   for(const v of envs){const a=Math.max(0,Math.min(1,(t-v.t0)/.45)),e=1-Math.pow(1-a,3);v.g.scale.setScalar(.01+.99*e);v.g.position.set(v.fx*e,.1+e*.42+Math.sin(e*Math.PI)*.25,-.55+(v.fz+.95)*e);
    if(v.open){v.ot+=dt;const b=Math.min(1,v.ot/.45),eb=1-Math.pow(1-b,3);v.env.rotation.x=-eb*1.15;v.flap.rotation.x=Math.PI/2-eb*1.15;v.env.position.y=-eb*.12;v.flap.position.y=.22-eb*.2;v.flap.position.z=.018+eb*.2;v.seal.scale.setScalar(1-eb*.6);v.seal.position.y=.12-eb*.18;v.seal.position.z=.03+eb*.12;
-    v.card.material.opacity=Math.min(1,v.ot/.35);v.card.position.y=.2+eb*.62;v.card.position.z=.05+eb*.1;v.card.rotation.x=-(1-eb)*.6;
+    v.card.material.opacity=Math.min(1,v.ot/.35);v.card.position.y=.2+eb*.66;v.card.scale.setScalar(1+eb*.12);v.card.position.z=.05+eb*.1;v.card.rotation.x=-(1-eb)*.6;
     for(const p of v.bits){p.vy-=4.5*dt;p.m.position.x+=p.vx*dt;p.m.position.y+=p.vy*dt;p.m.position.z+=.4*dt;p.m.rotation.z+=p.vr*dt;if(p.m.position.y<-.6)p.m.visible=false}}
    else{const h=v.hover?.06:0;v.env.position.y+=(h-v.env.position.y)*Math.min(1,dt*12)}}
   R.render(sc,cam);requestAnimationFrame(loop)};requestAnimationFrame(loop);
