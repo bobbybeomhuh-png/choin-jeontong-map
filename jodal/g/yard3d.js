@@ -1,0 +1,39 @@
+/* 무이 나라 조달청: 「장인 면접 마당 3D」(N8). 만든 날 2026-11-18
+   장인 고르기 창 위에 관아 마당 한 토막을 띄운다. 봉투를 낸 장인 무이들이 박석 마당에 한 줄로 서 있고(이름·값 패),
+   누르면 그 장인이 한 걸음 앞으로 나와 손을 흔들며 한마디(말풍선). 고르는 규칙(카드)은 jodal.js 가 그대로 맡고,
+   여기서 누르면 같은 카드를 누른 것과 같다. 예정가격을 넘은 장인·입찰 제한 장인은 패가 붉고 고개를 숙임.
+   yard3D(host, list, {pick:id=>..., flag:a=>'over'|'ban'|''}) → {ok, sel(id)} */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
+export function yard3D(host,list,o={}){let R;try{R=new THREE.WebGLRenderer({antialias:true})}catch(e){return{ok:false,sel(){}}}
+ host.style.position='relative';R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.domElement.style.cssText='display:block;width:100%;height:100%;cursor:pointer';host.append(R.domElement);
+ const bub=document.createElement('div');bub.style.cssText='position:absolute;left:50%;bottom:8px;transform:translateX(-50%);max-width:86%;padding:5px 12px;border-radius:12px;background:#fffaf0;border:2px solid #3b2a1c;font:14px/1.45 "Gowun Dodum",sans-serif;color:#2b1d12;box-shadow:0 3px 8px rgba(0,0,0,.3);display:none;pointer-events:none;text-align:center';host.append(bub);
+ const sc=new THREE.Scene();sc.background=new THREE.Color(0xbcd6e6);const cam=new THREE.PerspectiveCamera(30,3.4,.05,60);cam.position.set(0,1.5,5.4);cam.lookAt(0,.85,0);
+ sc.add(new THREE.HemisphereLight(0xfff4e0,0x5a4a3a,1.35));const sun=new THREE.DirectionalLight(0xfff0d0,2.2);sun.position.set(-3,6,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-6,right:6,top:4,bottom:-3});sc.add(sun);
+ const M=(c,x={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},x));
+ /* 박석 마당과 뒤 행랑 담 */
+ const pave=CV(512,512,(q,w,h)=>{q.fillStyle='#b8b0a0';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=64)for(let x=(y/64%2)*40;x<w;x+=80){const v=170+Math.random()*30|0;q.fillStyle=`rgb(${v},${v-6},${v-18})`;q.fillRect(x+3,y+3,74,58)}});pave.wrapS=pave.wrapT=THREE.RepeatWrapping;pave.repeat.set(4,2);
+ const fl=new THREE.Mesh(new THREE.PlaneGeometry(16,8),new THREE.MeshStandardMaterial({map:pave,roughness:.95}));fl.rotation.x=-Math.PI/2;fl.receiveShadow=true;sc.add(fl);
+ const wall=new THREE.Mesh(new THREE.BoxGeometry(16,1.9,.3),M(0xe8dcc4));wall.position.set(0,.95,-2.2);sc.add(wall);const base=new THREE.Mesh(new THREE.BoxGeometry(16,.5,.36),M(0x8a8478));base.position.set(0,.25,-2.18);sc.add(base);
+ const cap=new THREE.Mesh(new THREE.BoxGeometry(16.4,.16,.7),M(0x3e434a,{roughness:.55}));cap.position.set(0,1.98,-2.15);sc.add(cap);for(let x=-7.5;x<=7.5;x+=2.5){const p=new THREE.Mesh(new THREE.CylinderGeometry(.11,.12,1.9,10),M(0x8e2b20,{roughness:.6}));p.position.set(x,.95,-2.0);sc.add(p)}
+ /* 장인들 */
+ const N=list.length,sp=Math.min(1.6,7/Math.max(1,N)),cands=[];const L=new GLTFLoader(),Dl=new DRACOLoader();Dl.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');L.setDRACOLoader(Dl);
+ list.forEach((a,i)=>{const x=(i-(N-1)/2)*sp;const g=new THREE.Group();g.position.set(x,0,0);sc.add(g);const flag=o.flag?o.flag(a):'';
+  const plate=new THREE.Sprite(new THREE.SpriteMaterial({map:CV(256,96,(q,w,h)=>{q.fillStyle=flag?'#8e2b20':'#2a1a10';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=5;q.strokeRect(3,3,w-6,h-6);q.fillStyle='#f2d27a';q.textAlign='center';q.font='bold 26px "Do Hyeon",sans-serif';const nm=String(a.name||'');q.fillText(nm.length>9?nm.slice(0,9)+'…':nm,w/2,40);q.fillStyle='#fff4dc';q.font='bold 28px "Do Hyeon",sans-serif';q.fillText(flag==='over'?`${a.cost}냥 · 낙찰 불가`:flag==='ban'?'입찰 제한':`${a.cost}냥`,w/2,78)}),depthTest:false}));plate.scale.set(1.2,.45,1);plate.position.set(0,1.78,0);plate.renderOrder=5;g.add(plate);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.38,.46,32),new THREE.MeshBasicMaterial({color:0xffd27a,transparent:true,opacity:0,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=.02;g.add(ring);
+  const hit=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,1.5,10),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=.75;hit.userData.id=a.id;g.add(hit);
+  const c={a,g,ring,hit,flag,x,mix:null,acts:{},cur:null,z:0,tz:0,ph:i*1.3};cands.push(c);
+  L.load(new URL('../world3d/media/muui_'+(a.face||'metal')+'.glb',document.baseURI).href,gl=>{const m=gl.scene;m.traverse(q=>{if(q.isMesh){q.castShadow=true}});m.traverse(q=>{if(/^prop_/.test(q.name||''))q.visible=false});const bb=new THREE.Box3().setFromObject(m);m.scale.setScalar(1.3/Math.max(.01,bb.max.y-bb.min.y));m.updateMatrixWorld(true);/* 11/18: 모형 원점이 가운데라 아래 절반이 바닥에 묻히던 것 → 발을 바닥에 */const b2=new THREE.Box3().setFromObject(m);m.position.y-=b2.min.y;if(flag)m.rotation.x=.12;g.add(m);c.mix=new THREE.AnimationMixer(m);for(const cl of gl.animations)c.acts[cl.name]=c.mix.clipAction(cl);play(c,'idle')},undefined,()=>{})});
+ const play=(c,n)=>{const a=c.acts[n]||c.acts.idle||Object.values(c.acts)[0];if(!a||c.cur===a)return;a.reset().fadeIn(.25).play();if(c.cur)c.cur.fadeOut(.25);c.cur=a};
+ let selId=null;const sel=id=>{selId=id;for(const c of cands){const on=c.a.id===id;c.tz=on?.75:0;play(c,on?(c.acts.wave?'wave':'joy'):'idle');c.ring.material.opacity=on?.85:0}const s=cands.find(c=>c.a.id===id);if(s&&s.a.say){bub.textContent=`${s.a.name}: “${s.a.say}”`;bub.style.display='block'}else bub.style.display='none'};
+ const rc=new THREE.Raycaster(),mv=new THREE.Vector2();R.domElement.addEventListener('pointerdown',e=>{e.stopPropagation();const r=R.domElement.getBoundingClientRect();mv.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);rc.setFromCamera(mv,cam);const h=rc.intersectObjects(cands.map(c=>c.hit),false)[0];if(h&&o.pick)o.pick(h.object.userData.id)});
+ R.domElement.addEventListener('click',e=>e.stopPropagation());
+ const size=()=>{const w=host.clientWidth||700,h=host.clientHeight||200;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};size();
+ let last=performance.now(),T=0,alive=true;const loop=()=>{if(!alive)return;if(!host.isConnected){/* 창이 다시 그려지는 동안 잠깐 떨어질 수 있어 조금 기다렸다 판단 */if((host.__gone=(host.__gone||0)+1)>90){alive=false;try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}return}requestAnimationFrame(loop);return}host.__gone=0;
+  const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;if(R.domElement.width!==Math.round((host.clientWidth||700)*R.getPixelRatio()))size();
+  for(const c of cands){if(c.mix)c.mix.update(dt);c.z+=(c.tz-c.z)*Math.min(1,dt*6);c.g.position.z=c.z;c.g.rotation.y=Math.sin(T*.7+c.ph)*.08;if(c.ring.material.opacity>0)c.ring.scale.setScalar(1+.06*Math.sin(T*5))}
+  R.render(sc,cam);requestAnimationFrame(loop)};requestAnimationFrame(loop);
+ window.__YARD={dbg:()=>cands.map(c=>{const bb=new THREE.Box3().setFromObject(c.g);return [c.a.id,bb.min.y.toFixed(2),bb.max.y.toFixed(2),c.g.children.length,c.g.children.map(k=>k.type+':'+(k.visible?1:0)).join(',')].join(' ')}),n:()=>cands.length,loaded:()=>cands.filter(c=>c.mix).length,sel:()=>selId,scr:id=>{const c=cands.find(x=>x.a.id===id);const p=new THREE.Vector3(c.g.position.x,.7,c.g.position.z);p.project(cam);const r=R.domElement.getBoundingClientRect();return[r.left+(p.x+1)/2*r.width,r.top+(1-p.y)/2*r.height]}};
+ return{ok:true,sel}}
