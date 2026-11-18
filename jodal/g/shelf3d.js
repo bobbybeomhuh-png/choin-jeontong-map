@@ -1,0 +1,22 @@
+/* 무이 나라 조달청: 「의궤 책이 의궤각 서가에 꽂힘」(M6). 만든 날 2026-11-19
+   의궤 창 안의 작은 3D 띠. 나무 서가에 이미 되살린 고을의 의궤가 꽂혀 있고, 이번 고을의 붉은 의궤 책이 앞에서 날아와
+   빈 칸에 쏙 꽂힌다(책등에 「○○ 의궤」). 다섯 칸이 다 차면 서가 위 현판 「의궤각」에 금빛. shelfBook(host, cities, cur) */
+import * as THREE from 'three';
+const CV=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t};
+export function shelfBook(host,cities,cur,SND){let R;try{R=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){return{ok:false}}
+ R.setPixelRatio(Math.min(2,devicePixelRatio||1));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.domElement.style.cssText='display:block;width:100%;height:100%';host.append(R.domElement);
+ const sc=new THREE.Scene();const cam=new THREE.PerspectiveCamera(30,4,.05,30);cam.position.set(0,.62,3.1);cam.lookAt(0,.55,0);
+ sc.add(new THREE.HemisphereLight(0xfff2dc,0x3a2614,1.4));const d=new THREE.DirectionalLight(0xffe8c8,2);d.position.set(1.5,3,3);sc.add(d);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.7},o));const wd=M(0x5a3a22);
+ const back=new THREE.Mesh(new THREE.BoxGeometry(3.2,1.1,.06),M(0x4a2e1a));back.position.set(0,.55,-.2);sc.add(back);for(const y of[.05,1.05]){const s=new THREE.Mesh(new THREE.BoxGeometry(3.3,.06,.42),wd);s.position.set(0,y,0);sc.add(s)}for(const x of[-1.62,1.62]){const s=new THREE.Mesh(new THREE.BoxGeometry(.06,1.06,.42),wd);s.position.set(x,.55,0);sc.add(s)}
+ const all=5,gap=.56;const slotX=i=>(i-(all-1)/2)*gap;
+ const book=(city,on)=>{const t=CV(128,320,(q,w,h)=>{q.fillStyle=on?'#8e2b20':'#3a2a1e';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=5;q.strokeRect(8,8,w-16,h-16);if(on){q.fillStyle='#f6ecd2';q.fillRect(26,40,76,220);q.fillStyle='#1c1410';q.font='bold 36px "Noto Serif KR",serif';q.textAlign='center';[...(city+'의궤')].forEach((ch,i)=>q.fillText(ch,64,86+i*44))}});const m=new THREE.Mesh(new THREE.BoxGeometry(.42,.9,.3),[M(on?0x8e2b20:0x3a2a1e),M(on?0x8e2b20:0x3a2a1e),M(0xf0e4c4),M(0xf0e4c4),new THREE.MeshStandardMaterial({map:t,roughness:.8}),M(on?0x8e2b20:0x3a2a1e)]);return m};
+ let ci=cities.indexOf(cur);if(ci<0)ci=cities.length;const fly=book(cur,true);
+ cities.forEach((c,i)=>{if(c===cur)return;const b=book(c,true);b.position.set(slotX(i),.53,0);sc.add(b)});for(let i=cities.length;i<all;i++){}
+ sc.add(fly);const from=new THREE.Vector3(slotX(ci)+.4,.9,2.2),to=new THREE.Vector3(slotX(ci),.53,0);fly.position.copy(from);
+ const lab=new THREE.Mesh(new THREE.PlaneGeometry(.9,.22),new THREE.MeshBasicMaterial({map:CV(256,64,(q,w,h)=>{q.fillStyle='#1c1410';q.fillRect(0,0,w,h);q.strokeStyle='#d8a838';q.lineWidth=4;q.strokeRect(3,3,w-6,h-6);q.fillStyle=cities.length>=all?'#ffd27a':'#c8b890';q.font='bold 40px serif';q.textAlign='center';q.fillText('儀軌閣',w/2,48)})}));lab.position.set(0,1.22,-.15);sc.add(lab);
+ const size=()=>{const W=host.clientWidth||600,H=host.clientHeight||140;R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix()};size();
+ let t=0,last=performance.now(),thud=false;const loop=()=>{if(!host.isConnected){try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}return}const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
+  const a=Math.max(0,Math.min(1,(t-.5)/1.1)),e=1-Math.pow(1-a,3);fly.position.lerpVectors(from,to,e);fly.position.y+=Math.sin(e*Math.PI)*.35;fly.rotation.y=(1-e)*1.4;fly.rotation.z=(1-e)*.5;if(a>=1&&!thud){thud=true;try{SND&&SND.paper()}catch(x){}}
+  if(R.domElement.width!==Math.round((host.clientWidth||600)*R.getPixelRatio()))size();R.render(sc,cam);requestAnimationFrame(loop)};requestAnimationFrame(loop);
+ window.__SHELF={t:()=>t};return{ok:true}}

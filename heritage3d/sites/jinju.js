@@ -68,6 +68,6 @@ export function buildJinju(opts={}){const mini=!!opts.mini;const MT=materials();
   npc:[['metal',[[14,.45,8],[18,.45,8]]],['carpenter',[[-24,CZ+7],[-14,CZ+7]]],['science',[[-4,6],[4,6]]]],
   baseAt:(x,z)=>z<CZ?-3.4:0,
   level:P=>P.y>2.5&&Math.abs(P.x-LX)<8&&Math.abs(P.z-LZ)<5.5?'촉석루 위':Math.abs(P.x-16)<6&&Math.abs(P.z-6)<3.5?'무기고':P.z<CZ+3?'성벽 위':'진주성 안',
-  camCap:P=>Math.abs(P.x-16)<6&&Math.abs(P.z-6)<3.5?3.2:Infinity,tick,
+  camCap:P=>/* 촉석루 2층 마루 위: 카메라가 지붕 들보 속에 끼지 않게(1119) */(P.y>FY-.4&&Math.abs(P.x-LX)<W/2+1.2&&Math.abs(P.z-LZ)<D/2+1.2)?2.3:Math.abs(P.x-16)<6&&Math.abs(P.z-6)<3.5?3.2:Infinity,tick,
   mini:{S:3.6,ox:0,oz:-6,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.fillStyle='#3d7f8a';g.fillRect(0,0,300,Z(CZ));g.fillStyle='#9a9284';g.fillRect(0,Z(CZ),300,S);g.fillStyle='#8a3a2a';g.fillRect(X(LX-7.5),Z(LZ-5),15*S,10*S);g.fillStyle='#d8d0c0';g.fillRect(X(10),Z(2.5),12*S,7*S);g.fillStyle='#8a8478';g.beginPath();g.arc(X(7),Z(CZ-7),2*S,0,7);g.fill()}}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:24,yaw:Math.PI},size:{}},meta)}
