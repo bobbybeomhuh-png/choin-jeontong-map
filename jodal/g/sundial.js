@@ -4,7 +4,7 @@
    사흘(아주 급하게)로 잡았으면 일이 나흘 걸려 그림자가 기한을 넘고 「하루 늦음」 패와 함께 엽전이 떨어진다(의궤의 지체상금과 같은 규칙).
    sundial(FDX, termIdx) */
 export function sundial(F,term){const T=F.THREE,sc=F.sc;const D=[3,10,30][term]??10,NEED=term===0?4:8;
- const g=new T.Group();g.position.set(-.9,0,1.75);g.rotation.y=.6;g.scale.setScalar(.85);sc.add(g);const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.5},o));
+ const g=new T.Group();g.position.set(1.0,0,2.35);g.rotation.y=.2;g.scale.setScalar(.75);sc.add(g);const M=(c,o={})=>new T.MeshStandardMaterial(Object.assign({color:c,roughness:.5},o));
  const ped=new T.Mesh(new T.CylinderGeometry(.42,.5,.5,20),M(0x8a847a,{roughness:.9}));ped.position.y=.25;g.add(ped);
  const bowl=new T.Mesh(new T.SphereGeometry(.46,28,14,0,Math.PI*2,Math.PI/2,Math.PI/2),M(0x3a3226,{metalness:.6,roughness:.35,side:T.DoubleSide}));bowl.position.y=.92;g.add(bowl);
  for(let k=0;k<4;k++){const l=new T.Mesh(new T.CylinderGeometry(.025,.025,.42,6),M(0x3a3226,{metalness:.6}));const a=k/4*Math.PI*2;l.position.set(Math.cos(a)*.34,.7,Math.sin(a)*.34);l.rotation.z=Math.cos(a)*.3;l.rotation.x=-Math.sin(a)*.3;g.add(l)}
