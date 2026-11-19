@@ -95,7 +95,7 @@ export function restoreGame(ctx,key,opt={}){const A=ART.find(a=>a.k===key)||ART[
  let crack=null,seamT=performance.now();let doneLift=0;const slotG=[];let EDGEg=[];let digging=false,mounds=[],decoys=[],basket=null,sorted=0;let step=0,pieces=[],dirt=[],seams=[],ghost=null,art=null,H=1.6,drag=null,orbit=null,t0=performance.now(),miss=0,doneAll=false;let FIN=null;/* 조달청판 마지막 손질(3D): 켜지면 포인터·그리기를 손질 쪽이 받음 */
  const CER=A.kind==='ceramic'||A.kind==='stone';const STEPS=A.kind==='stone'?['조각 맞추기','이끼 털기','틈 메우기']:A.kind==='ceramic'?['조각 맞추기','흙 털기','이음매 메우기']:A.kind==='metal'?['조각 맞추기','녹 닦기','광내기']:['조각 맞추기','먼지 털기','광내기'];
  const setStep=i=>{step=i;if(crack)crack.visible=i===2&&CER&&!RUSH;stepTag.textContent=`${i+2} / 4  ${STEPS[i]}`;fill.style.width='0';
-  if(i===0)head('조각을 끌어서 흐린 자리에 맞춰요',JD?'조각을 잡으면 제자리 깊이로 끌려와요 · 약속과 다른 조각은 바구니로(검수) · 빈 곳을 끌면 돌려 봐요':'색이 다른 조각은 바구니에 · 빈 곳을 끌면 돌려요');
+  if(i===0)head('조각을 끌어서 흐린 자리에 맞춰요',JD?'약속과 다른 조각은 바구니에 넣어요(검수)':'색이 다른 조각은 바구니에 · 빈 곳을 끌면 돌려요');
   if(i===1)head(A.kind==='stone'?'솔로 문질러 이끼와 먼지를 털어요':A.kind==='ceramic'?'붓으로 문질러 흙을 털어요':A.kind==='metal'?'솔로 문질러 푸른 녹을 닦아요':'붓으로 먼지를 털어요','빈 곳을 끌면 돌려요');
   if(i===2)head(CER?'반짝이는 점을 눌러 이음매 틈을 메워요':'천으로 문질러 반짝반짝 광을 내요','빈 곳을 끌면 돌려요')};
  /* 모델 불러와서 크기 맞추고 조각으로 나눔 */
