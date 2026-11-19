@@ -68,7 +68,7 @@ export function buildSeason(G,{TOP,provAt,HALL,mulb,MS=1,scene}){const U=G.userD
     if(a[k]>35)a[k]-=70;if(a[k]<-35)a[k]+=70;if(a[k+2]>35)a[k+2]-=70;if(a[k+2]<-35)a[k+2]+=70}fg.attributes.position.needsUpdate=true;
    /* 여름 반딧불은 낮게 깔리게: 높이 0.3~6 안에서만 */FL.visible=!(window.__SEASON_OFF)}
   for(const C of CL){C.a+=dt*.015;const x=C.hx+Math.cos(C.a)*C.rad,z=C.hz+Math.sin(C.a)*C.rad;C.g.position.x=x;C.g.position.z=z;
-   const ph=((t+C.ph)%cyc+cyc)%cyc,on=ph<30;const was=C.raining;C.raining=on;
+   const ph=((t+C.ph)%cyc+cyc)%cyc,on=ph<30&&!(window.__ENDING&&Date.now()-window.__ENDING<120000)/* 11/19 E24: 맺음 장면 2분 동안은 비·눈 안 옴 */;const was=C.raining;C.raining=on;
    const far=Math.hypot(P.x-x,P.z-z);const show=far<260;C.rain.visible=on&&show&&!C.isSnow;C.snow.visible=on&&show&&C.isSnow;
    if(show&&on){const sp=C.isSnow?2.2:26;if(!C.isSnow){const a=C.rp;for(let i=0;i<C.NR;i++){const k=i*6;a[k+1]-=sp*dt;a[k+4]-=sp*dt;if(a[k+1]<-C.RH){a[k+1]+=C.RH;a[k+4]+=C.RH}}C.rain.geometry.attributes.position.needsUpdate=true}
     else{const a=C.sp;for(let i=0;i<C.NR;i++){const k=i*3;a[k+1]-=sp*dt;a[k]+=Math.sin(t*1.3+i)*dt*.3;if(a[k+1]<-C.RH)a[k+1]+=C.RH}C.snow.geometry.attributes.position.needsUpdate=true}}
