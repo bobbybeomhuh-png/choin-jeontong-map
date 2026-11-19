@@ -23,7 +23,7 @@ export function buildGyeongju(opts={}){const mini=!!opts.mini;const MT=materials
  const pathM=new THREE.MeshStandardMaterial({map:PATH,roughness:1});
  const lane=(x0,z0,x1,z1,w)=>{const len=Math.hypot(x1-x0,z1-z0);const t=PATH.clone();t.needsUpdate=true;t.repeat.set(w/4,len/4);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,len),new THREE.MeshStandardMaterial({map:t,roughness:1}));m.rotation.x=-Math.PI/2;m.rotation.z=-Math.atan2(x1-x0,z1-z0)+Math.PI;m.position.set((x0+x1)/2,.03+(lane.n=(lane.n||0)+1)*.012,(z0+z1)/2);m.receiveShadow=true;G.add(m)};
  lane(0,24,0,-62,5);lane(-26,-6,26,-6,4);lane(-26,-6,-26,-36,4);lane(26,-6,26,-30,4);
- /* ---------- 첨성대: 공개 실측값으로 쌓기 ---------- */
+ /* ---------- 첨성대: 공개 실측값으로 쌓기 ---------- */const CHS_ROT=0;
  {const CH=new THREE.Group();CH.position.set(-26,0,-40);G.add(CH);const GR=M(0xc9c0ae),GRd=M(0xb3aa98);
   const STN=tex(512,256,(q,w,h)=>{q.fillStyle='#b9b09e';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=34+((x/34)%3)*4){const g=175+(r()*30|0);q.fillStyle=`rgb(${g},${g-6},${g-16})`;q.fillRect(x+2,3,30+((x/34)%3)*4,h-6)}noise(q,w,h,3000,['rgba(0,0,0,.08)','rgba(255,255,255,.08)'],2)});STN.wrapS=THREE.RepeatWrapping;
   /* 기단 2단(정사각) */const b1=box(5.36,.4,5.36,GRd);b1.position.y=.2;CH.add(b1);const b2=box(5.02,.38,5.02,GR);b2.position.y=.59;CH.add(b2);
@@ -33,8 +33,9 @@ export function buildGyeongju(opts={}){const mini=!!opts.mini;const MT=materials
   /* 남쪽 네모 창(13~15단, 약 1m) */const wy=H0+13*ch+.45,wr=2.465-(2.465-1.425)*Math.pow(13.5/26,1.25);/* 창: 속이 깊어 보이게 어두운 상자 + 아래 문지방돌·위 인방돌·양옆 선돌 */const win=box(.95,.95,.5,M(0x1d1814));win.position.set(0,wy,wr*1.035-.2);CH.add(win);for(const[w,h,x,yy]of[[1.35,.16,0,wy-.55],[1.35,.16,0,wy+.55],[.18,.95,-.56,wy],[.18,.95,.56,wy]]){const f=box(w,h,.22,GR);f.position.set(x,yy,wr*1.035+.04);CH.add(f)}
   /* 꼭대기 정자석 2단(井자 틀) */for(const[k,yy]of[[0,y],[1,y+.32]]){for(const s of[-1,1]){const a=box(3.06,.3,.32,GR);a.position.set(0,yy+.15,s*1.37);CH.add(a);const b=box(.32,.3,3.06,GR);b.position.set(s*1.37,yy+.15,0);CH.add(b)}}
   CH.traverse(o=>{if(o.isMesh)cam.push(o)});solids.push({cx:-26,cz:-40,r:2.75,y0:0,y1:20});
+  /* 실측 스캔으로 바꾸기(1119): lacomi1975 'Cheomseongdae Observatory (첨성대)' 드론 실측, CC BY 4.0. 16만 면으로 줄임. 불러오면 손으로 쌓은 첨성대는 숨김 */if(!mini){try{new GLTFLoader().load(new URL('../models/gyeongju/cheomseongdae_scan.glb',import.meta.url).href,gg=>{const sc=gg.scene;const bb=new THREE.Box3().setFromObject(sc);const c=bb.getCenter(new THREE.Vector3());sc.position.set(-c.x,-bb.min.y,-c.z);const wrap=new THREE.Group();wrap.add(sc);wrap.rotation.y=CHS_ROT;wrap.userData.noBatch=true;sc.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;if(o.material){o.material.roughness=.9;o.material.metalness=0}}});for(const ch of[...CH.children])ch.visible=false;CH.add(wrap);window.__CHSCAN=wrap},undefined,()=>{})}catch(e){}}
   spots.push({x:-21,y:0,z:-32,r:2,t:'별똥별 언덕',h:'신라 사람들은 첨성대에서 별과 하늘을 살폈어요. 밤에 오면 별똥별이 떨어져요. 지나가는 동안 소원을 빌어 보세요.'});
-spots.push({x:-26,y:0,z:-35.6,r:2.4,t:'첨성대',h:'신라 선덕여왕(재위 632~647) 때 쌓은 천문대로, 지금 남아 있는 동양에서 가장 오래된 천문대로 꼽혀요. 높이 약 9.17m, 둥근 몸통은 돌 27단이고 남쪽 가운데에 네모 창이 있어요. 꼭대기에는 우물 정(井) 자 모양 돌이 두 단 얹혀 있어요. 이 모형은 공개된 실측값으로 쌓았어요.'})}
+spots.push({x:-26,y:0,z:-35.6,r:2.4,t:'첨성대',h:'신라 선덕여왕(재위 632~647) 때 쌓은 천문대로, 지금 남아 있는 동양에서 가장 오래된 천문대로 꼽혀요. 높이 약 9.17m, 둥근 몸통은 돌 27단이고 남쪽 가운데에 네모 창이 있어요. 꼭대기에는 우물 정(井) 자 모양 돌이 두 단 얹혀 있어요. 이 첨성대는 실제 첨성대를 드론으로 찍어 만든 실측 3D예요. (3D 실측: lacomi1975, Sketchfab, CC BY 4.0)'})}
  /* ---------- 성덕대왕신종과 종각 ---------- */
  {const BX=26,BZ=-38;const pil=M(0x8a3a2a);for(const sx of[-1,1])for(const sz of[-1,1]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.22,.26,5.6,12),pil);p.position.set(BX+sx*3.2,2.8,BZ+sz*3.2);p.castShadow=true;G.add(p);solids.push({cx:BX+sx*3.2,cz:BZ+sz*3.2,r:.32,y0:0,y1:9})}
   const fl=box(8.4,.35,8.4,M(0xb3aa98));fl.position.set(BX,.17,BZ);G.add(fl);S(BX-4.2,BX+4.2,0,.35,BZ-4.2,BZ+4.2);
