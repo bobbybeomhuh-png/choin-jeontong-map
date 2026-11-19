@@ -7,6 +7,7 @@ const CSS=`#jdGuide{position:fixed;z-index:9990;pointer-events:none;display:none
 #jdGuide .r{position:absolute;left:50%;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;border:3px solid #ffd34a;box-shadow:0 0 12px #ffd34a;animation:jdgR 1.3s ease-out infinite}
 #jdGuide .h{font-size:38px;line-height:1;animation:jdgH 1.3s ease-in-out infinite;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
 #jdGuide .t{display:inline-block;margin-top:20px;padding:2px 10px;border-radius:10px;background:#3b2a1c;color:#ffe9a8;font:15px 'Do Hyeon',sans-serif;white-space:nowrap;border:2px solid #ffd34a}
+#jdGuide.up .t{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);margin:0}
 @keyframes jdgR{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.5);opacity:0}}
 @keyframes jdgH{0%,100%{transform:translateY(8px)}50%{transform:translateY(16px)}}`;
 const xy=s=>!s?null:Array.isArray(s)?s:(s.x!=null?[s.x,s.y]:null);
@@ -35,7 +36,7 @@ function target(){
 function hide(){if(hand)hand.style.display='none'}
 function tick(){if(performance.now()-last<3500){hide();return}if(document.querySelector('.jd-ov')){hide();return}
  const g=target();const p=g&&g.p;if(!p||!(p[0]>0&&p[1]>0&&p[0]<innerWidth&&p[1]<innerHeight)){hide();return}
- hand.style.left=p[0]+'px';hand.style.top=p[1]+'px';hand.querySelector('.t').textContent=g.t;hand.style.display='block'}
+ hand.style.left=p[0]+'px';hand.style.top=p[1]+'px';hand.querySelector('.t').textContent=g.t;hand.classList.toggle('up',p[1]>innerHeight-90);hand.style.display='block'}
 export function guide3d(){if(window.__GUIDE3D)return;window.__GUIDE3D=1;const st=document.createElement('style');st.textContent=CSS;document.head.append(st);
  hand=document.createElement('div');hand.id='jdGuide';hand.innerHTML='<div class="r"></div><div class="h">👆</div><div class="t"></div>';document.body.append(hand);
  last=performance.now();addEventListener('pointerdown',()=>{last=performance.now();hide()},true);addEventListener('keydown',()=>{last=performance.now();hide()},true);
