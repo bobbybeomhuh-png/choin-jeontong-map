@@ -17,6 +17,7 @@ const CSS=`.jd-easy{display:block;max-width:660px;margin:2px auto 8px;padding:7p
 @keyframes jdNext{0%,100%{box-shadow:0 0 0 0 rgba(255,200,60,.0),0 2px 0 rgba(0,0,0,.25)}50%{box-shadow:0 0 0 6px rgba(255,200,60,.55),0 2px 0 rgba(0,0,0,.25)}}
 .jd-next{animation:jdNext 1.6s ease-in-out infinite;position:relative}
 .jd-next::after{content:'👆';position:absolute;right:-14px;bottom:-16px;font-size:20px;pointer-events:none;animation:jdHand 1.6s ease-in-out infinite}
+/* 11/19 E5: 5분 체험에서만 「처음이면 이것」 */.jd-hint{animation:jdNext 1.6s ease-in-out infinite;outline:3px solid #e8b838;outline-offset:2px;position:relative}.jd-hint::before{content:'★ 처음이면 이것';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:#e8b838;color:#3b1a0c;font:12px 'Do Hyeon',sans-serif;padding:1px 8px;border-radius:8px;z-index:3;white-space:nowrap;pointer-events:none}
 @keyframes jdHand{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-4px)}}`;
 const firstSentence=html=>{const m=/(요|다|니다)[.!?]\s/.exec(html);return m?m.index+m[0].length:-1};
 function fix(root){
