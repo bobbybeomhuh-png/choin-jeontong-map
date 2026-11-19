@@ -8,7 +8,7 @@ export function setupFlow(){if(window.__FLOWON)return;window.__FLOWON=1;
 #jdFlow .t{font:14px "Do Hyeon",sans-serif;color:#f2d27a;text-align:center;text-shadow:0 1px 2px #000;margin-bottom:2px}
 #jdFlow .s{display:flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;border-radius:12px;background:rgba(40,26,14,.72);color:#d8c8a8;border:2px solid rgba(216,168,56,.25);min-width:132px;transition:all .3s}
 #jdFlow .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#5a4430;color:#f3ead6;font:13px "Do Hyeon",sans-serif;flex:none}
-#jdFlow .s b{display:block;font:14px "Do Hyeon",sans-serif;color:#f3ead6;line-height:1.1}#jdFlow .s small{font-size:11px;opacity:.85}
+#jdFlow .s b{display:block;font:14px "Do Hyeon",sans-serif;color:#f3ead6;line-height:1.1}#jdFlow .s small{font-size:12px;opacity:.85}
 #jdFlow .s.on{background:linear-gradient(90deg,#8e2b20,#b8452a);border-color:#f2d27a;color:#fff;transform:translateX(-6px) scale(1.04);box-shadow:0 4px 14px rgba(0,0,0,.45)}#jdFlow .s.on .n{background:#f2d27a;color:#5a2a10}
 #jdFlow .s.done .n{background:#2f6b55}#jdFlow .s.done{opacity:.8}#jdFlow .a{height:6px;width:2px;background:rgba(216,168,56,.5);margin:-2px 0 -2px 22px}
 @media (max-width:700px){#jdFlow{display:none!important}}@media (max-width:900px) and (orientation:portrait){#jdFlow{display:none!important}}/* 11/19 E20: 세로 태블릿은 발굴 칸을 가려서 숨김 */`;document.head.append(st);
