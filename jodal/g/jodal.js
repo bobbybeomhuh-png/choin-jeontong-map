@@ -7,7 +7,7 @@ import {tearBang} from './tear3d.js';
 import {shelfBook} from './shelf3d.js';import {cartPay} from './cart3d.js';
 import {contractBow} from './bow3d.js';
 import {showTreasure} from './treasure.js';
-import {sundial} from './sundial.js';import {easyMode} from './easy.js';try{easyMode()}catch(e){}import {flagPole} from './flagpole.js';import {patrol} from './patrol.js';
+import {sundial} from './sundial.js';import {easyMode} from './easy.js';import {guide3d} from './guide3d.js';try{easyMode()}catch(e){}try{guide3d()}catch(e){}import {flagPole} from './flagpole.js';import {patrol} from './patrol.js';
 import {wonnimScroll} from './wonnim3d.js';
 import {inspect3D} from './insp3d.js';
 import {groupPhoto} from './photo3d.js';

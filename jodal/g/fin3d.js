@@ -122,7 +122,7 @@ function tCrown(api){const {THREE,F}=api,K=kit(api),H=F.H,sc=F.sc;const S=H*.048
  const nG=hooks.filter(h=>h.t==='g').length,nJ=hooks.length-nG;const items=[];const N=nG+nJ,ty=K.box.min.y+.03,tz=K.box.max.z+H*.35;
  for(let i=0;i<N;i++){const t=i<nG?'g':'j';const g=t==='g'?mkG():mkJ();const home=new THREE.Vector3(x0+(x1-x0)*(i+.5)/N,ty+S*2.4,tz);g.position.copy(home);g.userData={t,home,h:null,a:0,v:0};G.add(g);items.push(g)}
  /* 쟁반 */{const tr=new THREE.Mesh(new THREE.BoxGeometry(x1-x0+H*.2,S*.4,S*5),new THREE.MeshStandardMaterial({color:0x5a3a22,roughness:.8}));tr.position.set((x0+x1)/2,ty,tz);G.add(tr)}
- F.view({yaw:0,pitch:.25,ty:K.box.min.y+H*.55});api.say('금빛 달개는 금빛 고리에, 초록 곡옥은 초록 고리에 끌어다 걸어요');
+ F.view({yaw:0,pitch:.25,ty:K.box.min.y+H*.55});api.say('금빛 달개는 금빛 고리, 초록 곡옥은 초록 고리에 걸어요');
  let drag=null,fin=false;
  const hang=(g,h)=>{g.userData.h=h;h.used=1;h.mark.visible=false;g.position.copy(h.p);g.userData.v=.35;api.snd.coin();F.puff(h.p,F.GOLD,18,.8,.4,.3)};
  const check=()=>{const left=items.filter(g=>!g.userData.h).length;if(left)api.say(`잘 걸렸어요! 남은 장식 ${left}개`);else if(!fin){fin=true;api.say('달개가 살랑이며 반짝여요. 금관이 제 모습을 찾았어요!','');setTimeout(()=>api.done(5),900)}};
@@ -175,12 +175,12 @@ function tAngbu(api){const {THREE,F}=api,K=kit(api),H=F.H,sc=F.sc,R=F.R;const B0
  let shadow=null;const shMat=new THREE.MeshBasicMaterial({color:0x050302,transparent:true,opacity:.92,depthWrite:false});
  const drawShadow=()=>{if(shadow){sc.remove(shadow);shadow.geometry.dispose()}const pts=shadowPts(t);shadow=tube(pts,H*.022,shMat);if(shadow){shadow.renderOrder=6;sc.add(shadow)}};
  let phase=0,fin=false,drag=null;
- F.view({yaw:Math.PI,pitch:1.0,ty:base.y,dist:Math.max(H*2.6,RAD*4.0)});/* 검은 청동 솥 안을 청동빛으로 조금 밝혀 그림자가 보이게 */for(const m of K.meshes){const mm=m.material;if(mm&&mm.emissive){mm.emissive.setHex(0x5a4228);mm.emissiveIntensity=.55;mm.needsUpdate=true}}api.say(api.tool?'영침을 위로 끌어 빨간 길잡이에 맞춰 세워요':'영침을 위로 끌어 北 쪽으로 37.5도 세워요','서울은 북위 37.5도라 영침도 그만큼 기울여 북극을 가리켜요');
+ F.view({yaw:Math.PI,pitch:1.0,ty:base.y,dist:Math.max(H*2.6,RAD*4.0)});/* 검은 청동 솥 안을 청동빛으로 조금 밝혀 그림자가 보이게 */for(const m of K.meshes){const mm=m.material;if(mm&&mm.emissive){mm.emissive.setHex(0x5a4228);mm.emissiveIntensity=.55;mm.needsUpdate=true}}api.say(api.tool?'영침을 위로 끌어 빨간 길잡이에 맞춰 세워요':'영침을 위로 끌어 北 쪽으로 37.5도 세워요','서울에 맞는 기울기예요');
  const c=api.ctl;
  const toPhase1=()=>{phase=1;el=LAT;setRod();gg.visible=false;api.snd.coin();F.puff(tip(),F.GOLD,20,.8,.4,.3);
   for(const[n,h]of HR){const pts=shadowPts(h);const m=tube(pts,H*(h===12?.007:.004),h===12?noonMat:silver);if(m)lines.add(m);if(pts.length){const s=K.label(n,h===12?'#ffd86a':'#f3ead6',h===12?62:52);s.scale.setScalar(H*(h===12?.16:.12));s.position.copy(pts[pts.length-1]).add(new THREE.Vector3(0,H*.05,0));lines.add(s)}}
   sun.visible=true;placeSun();F.dl.intensity=3.2;drawShadow();c.style.display='flex';c.innerHTML=`<span>해 옮기기</span><span style="opacity:.8">아침</span><input type="range" min="6.5" max="17.5" step="0.05" value="${t}" data-t><span style="opacity:.8">저녁</span>`;
-  const rt=c.querySelector('[data-t]');rt.oninput=()=>{t=+rt.value;placeSun();drawShadow();chk()};api.say('해를 옮겨 영침 그림자가 금빛 午(정오) 선에 오게 해요','은빛 줄은 시각선이에요 · 해는 위 손잡이로도, 해를 직접 끌어서도')};
+  const rt=c.querySelector('[data-t]');rt.oninput=()=>{t=+rt.value;placeSun();drawShadow();chk()};api.say('해를 옮겨 영침 그림자가 금빛 午(정오) 선에 오게 해요','해를 끌거나 위 손잡이를 밀어요')};
  const chk=()=>{if(fin||phase!==1)return;if(Math.abs(t-12)<.3){fin=true;t=12;placeSun();drawShadow();api.snd.light();api.say('그림자가 午 선에 닿았어요. 지금은 정오, 앙부일구가 다시 시각을 알려요!','');setTimeout(()=>api.done(5),1100)}};
  return{
   down:e=>{if(fin){K.orbit.down(e);return}K.setRay(e);if(phase===0){const h=K.ray.intersectObjects([stick,knob],false)[0];const ts=K.scr(tip()),d=Math.hypot(ts[0]-e.clientX,ts[1]-e.clientY);if(h||d<60){drag={rod:1};return}}if(phase===1){const ss=K.scr(sun.position);if(Math.hypot(ss[0]-e.clientX,ss[1]-e.clientY)<70){drag={sun:1};return}}K.orbit.down(e)},
@@ -204,7 +204,7 @@ function tNajeon(api){const {THREE,F}=api,K=kit(api),H=F.H,sc=F.sc;const B0=K.bo
  /* 옻칠: 앞면에 붓 자국, 칸 채우기, 마를 때마다 함 전체 광택이 오름 */const strokes=new THREE.Group();sc.add(strokes);const NX=14,NY=8;let cover=new Uint8Array(NX*NY),coat=0,dry=0,phase=0,fin=false,drag=null,brushing=false;
  const lacq=new THREE.MeshStandardMaterial({color:0x2a0804,roughness:.12,metalness:.1,transparent:true,opacity:.5,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3});const sGeo=new THREE.CircleGeometry(S*.95,14);
  const mats=[];for(const m of K.meshes){const mm=m.material;mats.push([mm,mm.roughness,mm.envMapIntensity??1])}
- F.view({yaw:0,pitch:.12,ty:B0.min.y+Hh*.62,dist:Math.max(H*2.4,W*1.75)});api.say('앞면 꽃무늬에서 빠진 자개 꽃잎을 금빛 테두리 자리로 끌어 넣어요','넣은 자개를 누르면 결이 돌아가요 · 빈 곳을 끌면 돌려 봐요');
+ F.view({yaw:0,pitch:.12,ty:B0.min.y+Hh*.62,dist:Math.max(H*2.4,W*1.75)});api.say('앞면 꽃무늬에서 빠진 자개 꽃잎을 금빛 테두리 자리로 끌어 넣어요','넣은 자개를 누르면 돌아가요');
  const status=()=>{const placed=petals.filter(p=>p.userData.s).length,ok=petals.filter(p=>p.userData.s&&near(p.rotation.z,p.userData.s.r)).length;if(ok===5&&phase===0){phase=1;api.snd.light();for(const s of slots)s.ol.visible=false;F.puff(new THREE.Vector3(fcx,fcy,fz),F.WHITE,30,1,.4,.2);api.say('자개 꽃이 다시 피었어요! 이제 붓으로 앞면을 문질러 옻칠해요 (1 / 3번째)','칠할수록 광택이 올라요');return}if(phase===0)api.say(placed<5?`자개를 금빛 자리에 끌어 넣어요 (${placed} / 5)`:`결이 안 맞는 자개를 눌러 돌려요 (맞은 것 ${ok} / 5)`,'테두리 모양과 같은 방향이 되게')};
  const paintAt=e=>{K.setRay(e);const pl=new THREE.Plane(new THREE.Vector3(0,0,1),-fz);const p=new THREE.Vector3();if(!K.ray.ray.intersectPlane(pl,p))return;if(p.x<B0.min.x||p.x>B0.max.x||p.y<B0.min.y||p.y>B0.max.y)return;const PX0=B0.min.x+W*.05,PW=W*.9,PY0=B0.min.y+Hh*.14,PH=Hh*.76;/* 칠할 판: 앞면 판(모서리·다리 뺌) */const i=Math.floor((p.x-PX0)/PW*NX),j=Math.floor((p.y-PY0)/PH*NY);let nw=0;for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){const a=i+di,b=j+dj;if(a>=0&&a<NX&&b>=0&&b<NY&&!cover[b*NX+a]){cover[b*NX+a]=1;nw++}}if(nw&&strokes.children.length<400){const s=new THREE.Mesh(sGeo,lacq);s.position.set(p.x,p.y,fz+H*.006);strokes.add(s)}const pc=cover.reduce((a,v)=>a+v,0)/cover.length;F.fill.style.width=(pc*100)+'%';if(pc>.82)coatDone()};
  const coatDone=()=>{if(dry||fin)return;dry=.001;brushing=false;api.snd.paper();api.say('옻칠을 말리는 중…','')};
