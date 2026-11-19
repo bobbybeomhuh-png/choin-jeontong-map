@@ -1,0 +1,30 @@
+/* 무이 나라 조달청: 「쉽게 보기」(E1~E3). 만든 날 2026-11-19
+   1) 창이 뜨면 제목 아래에 어린이도 아는 큰 한 줄(무엇을 하는 곳인지)을 먼저 보여 준다. 조달 용어는 그 뒤 창 글에 그대로 있음.
+   2) 긴 「조달청 한마디」(jd-tip)는 첫 문장만 보이고 나머지는 「더 보기」로 접는다(단추가 든 안내는 그대로).
+   3) 창마다 다음에 누를 큰 단추가 금빛으로 숨 쉬듯 빛나고 손가락 표시가 붙는다.
+   모든 창에 한 번에 적용(창 내용이 바뀔 때마다 다시 살핌). easyMode() 한 번 부르면 됨 */
+const EASY=[
+ [/고을에 방 붙이기/,'장인을 구하는 알림 글(방)을 써서 붙여요. 누구를, 얼마에, 며칠 안에 구할지 골라요!'],
+ [/개찰: 입찰 봉투/,'장인들이 낸 값 봉투를 모두가 보는 앞에서 열어요. 봉투를 눌러 보세요!'],
+ [/^개찰 결과/,'값이 낮은 차례로 섰어요. 정해 둔 값보다 비싸면 안 되고, 너무 싸도 조심해요.'],
+ [/장인들이 찾아왔어요/,'값만 보지 말고 견본(솜씨)과 자격 패를 보고 한 사람을 골라요.'],
+ [/검수 조서/,'맡긴 대로 잘 되었는지 왼쪽(약속한 것)과 오른쪽(받은 것)을 견줘 봐요.'],
+ [/의궤에 적었어요/,'다 되었어요! 약속한 돈을 치르고, 한 일을 모두 책(의궤)에 남겨요.'],
+ [/하던 일이 있어요/,'하던 일을 이어서 하거나 처음부터 다시 할 수 있어요.']
+];
+const CSS=`.jd-easy{display:block;max-width:660px;margin:2px auto 8px;padding:7px 14px;border-radius:12px;background:#fff1c2;border:2px solid #e2b23a;color:#2b1d12;font:18px/1.4 'Do Hyeon',sans-serif;text-align:center;box-shadow:0 2px 0 #c8963066}
+.jd-tip .jd-more-b{margin-left:6px;padding:0 8px;border-radius:9px;border:1.5px solid #c8a050;background:#fff8e4;color:#8e2b20;font:12.5px 'Do Hyeon',sans-serif;cursor:pointer}
+@keyframes jdNext{0%,100%{box-shadow:0 0 0 0 rgba(255,200,60,.0),0 2px 0 rgba(0,0,0,.25)}50%{box-shadow:0 0 0 6px rgba(255,200,60,.55),0 2px 0 rgba(0,0,0,.25)}}
+.jd-next{animation:jdNext 1.6s ease-in-out infinite;position:relative}
+.jd-next::after{content:'👆';position:absolute;right:-14px;bottom:-16px;font-size:20px;pointer-events:none;animation:jdHand 1.6s ease-in-out infinite}
+@keyframes jdHand{0%,100%{transform:translate(0,0)}50%{transform:translate(-3px,-4px)}}`;
+const firstSentence=html=>{const m=/(요|다|니다)[.!?]\s/.exec(html);return m?m.index+m[0].length:-1};
+function fix(root){
+ /* 1 쉬운 한 줄 */
+ for(const h of root.querySelectorAll('.jd-ov h2')){if(h.nextElementSibling&&h.nextElementSibling.classList.contains('jd-easy'))continue;const t=(h.textContent||'').trim();const e=EASY.find(([re])=>re.test(t));if(!e)continue;const d=document.createElement('div');d.className='jd-easy';d.textContent=e[1];h.after(d)}
+ /* 2 긴 한마디 접기 */
+ for(const tip of root.querySelectorAll('.jd-ov .jd-tip')){if(tip.dataset.ez)continue;tip.dataset.ez=1;if(tip.querySelector('button,input,select,canvas,a'))continue;const h=tip.innerHTML;const cut=firstSentence(h);if(cut<0||h.replace(/<[^>]+>/g,'').length<70)continue;const head=h.slice(0,cut),rest=h.slice(cut);if(/<[^>]*$/.test(head))continue;tip.innerHTML=head+`<span class="jd-more" hidden>${rest}</span><button type="button" class="jd-more-b">더 보기</button>`;const b=tip.querySelector('.jd-more-b'),r=tip.querySelector('.jd-more');b.onclick=ev=>{ev.stopPropagation();r.hidden=!r.hidden;b.textContent=r.hidden?'더 보기':'접기'}}
+ /* 3 다음에 누를 큰 단추 */
+ for(const ov of root.querySelectorAll('.jd-ov')){const cur=ov.querySelector('.jd-next');const pick=[...ov.querySelectorAll('.jd-btn:not(.g)')].find(b=>!b.disabled&&b.offsetParent!==null&&!b.closest('.jd-more'));if(cur&&cur!==pick)cur.classList.remove('jd-next');if(pick&&!pick.classList.contains('jd-next'))pick.classList.add('jd-next')}
+}
+export function easyMode(){if(window.__EASY)return;window.__EASY=1;const st=document.createElement('style');st.textContent=CSS;document.head.append(st);let q=false;const run=()=>{q=false;try{fix(document)}catch(e){}};new MutationObserver(()=>{if(!q){q=true;requestAnimationFrame(run)}}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','style','hidden']});run();window.__EASYDBG=()=>({easy:document.querySelectorAll('.jd-easy').length,more:document.querySelectorAll('.jd-more').length,next:[...document.querySelectorAll('.jd-next')].map(b=>b.textContent.trim().slice(0,12))})}
