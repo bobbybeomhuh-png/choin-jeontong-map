@@ -17,6 +17,8 @@ const CACHE={};function getModel(p,cb){if(!CACHE[p])CACHE[p]=new Promise(res=>gl
 /* 초가: [종류 1|2, x, z, ry]  1=ㄱ자 집(약 15x14m), 2=일자 집(약 23x7m) */
 const SITES={
  wolji:{village:false,pines:[[-40,30,10],[40,30,9],[-42,-36,10],[40,-36,11]],fx:[]},
+ jejumok:{village:false,pines:[],fx:[]},
+ chunyanggyo:{village:false,pines:[],fx:[]},
  namwon:{village:false,pines:[[-38,30,10],[38,30,9],[-40,-30,10],[38,-30,10]],fx:[]},
  haenyeo:{village:false,pines:[[-40,30,9],[40,30,10]],fx:[]},
  soswae:{village:false,pines:[[-40,38,10],[40,38,9],[-42,-36,10],[40,-34,11]],fx:[]},
