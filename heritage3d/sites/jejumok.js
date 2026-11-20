@@ -9,7 +9,7 @@ export function buildJejumok(opts={}){const mini=!!opts.mini;const G=new THREE.G
  const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
  const R90=Math.PI/2;/* [이름, x, z, 돌림] : 앞면이 남쪽(+z)을 보게 90도 돌림 */
- const B=[['oedae',0,38,R90],['jungdae',0,20,R90],['honghwa',-17,-2,R90],['yeonhui',17,-2,R90],['manggyeong',0,-30,R90],['uryeon',28,-34,R90],['gwandeok',-48,52,R90]];
+ const B=[['oedae',0,38,R90],['jungdae',0,20,R90],['honghwa',-17,-2,R90],['yeonhui',17,-2,R90],['manggyeong',0,-30,R90],['uryeon',28,-34,R90],['gwandeok',-48,52,R90],['gyullim',-24,-34,0],['yeongju',21,22,R90]];
  /* 땅: 다진 흙 마당(담 안), 풀밭(담 밖), 돌길 */{const ET=tex(256,256,(q,w,h)=>{q.fillStyle='#b9a68a';q.fillRect(0,0,w,h);for(let i=0;i<2600;i++){q.fillStyle=r()<.5?'rgba(120,100,80,.35)':'rgba(220,205,180,.35)';q.fillRect(r()*w,r()*h,2,2)}},[20,20]);const yd=new THREE.Mesh(new THREE.PlaneGeometry(68,96),new THREE.MeshStandardMaterial({map:ET,roughness:1}));yd.rotation.x=-Math.PI/2;yd.position.set(0,.02,-6);yd.receiveShadow=true;G.add(yd);
   const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#6f8f45';q.fillRect(0,0,w,h);for(let i=0;i<3200;i++){q.fillStyle=r()<.5?'rgba(80,110,40,.5)':'rgba(140,150,80,.35)';q.fillRect(r()*w,r()*h,2,2)}},[40,40]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(240,240),new THREE.MeshStandardMaterial({map:GT,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr);
   const PT=tex(256,256,(q,w,h)=>{q.fillStyle='#8a8478';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=40)for(let x=-(y/40%2)*30;x<w;x+=60){const v=120+(r()*35|0);q.fillStyle=`rgb(${v},${v-4},${v-10})`;q.fillRect(x+3,y+3,54,34)}},[2,14]);const pth=new THREE.Mesh(new THREE.PlaneGeometry(4,70),new THREE.MeshStandardMaterial({map:PT,roughness:.95}));pth.rotation.x=-Math.PI/2;pth.position.set(0,.04,26);G.add(pth);
@@ -26,6 +26,8 @@ export function buildJejumok(opts={}){const mini=!!opts.mini;const G=new THREE.G
  const SRC='(3D: 한국문화정보원 KCISA, Sketchfab kcisameta, CC BY 4.0)';
  spots.push({x:-48,y:0,z:66,r:3.4,t:'관덕정',h:'조선 세종 30년(1448) 병사를 훈련하려고 세운 정자예요. 제주에서 가장 오래된 건물 가운데 하나로 보물이에요. 활쏘기와 군사 훈련, 잔치가 여기서 열렸어요. '+SRC});
  spots.push({x:0,y:0,z:46,r:3,t:'외대문',h:'제주목 관아로 들어가는 바깥 문이에요. 2층 누문으로 진해루라고도 불렀어요. '+SRC});
+ spots.push({x:-24,y:0,z:-26,r:2.6,t:'귤림당',h:'귤나무 숲(귤림) 속에 지은 작은 정자예요. 목사가 책을 읽고 쉬던 곳이래요. '+SRC});
+ spots.push({x:21,y:0,z:32,r:2.8,t:'영주협당',h:'제주목 관아의 군관들이 일을 보던 곳이에요. 영주는 제주의 옛 이름이에요. '+SRC});
  spots.push({x:0,y:0,z:27,r:2.6,t:'중대문',h:'바깥 마당과 안 마당을 나누는 가운데 문이에요. '+SRC});
  spots.push({x:-17,y:0,z:9,r:3,t:'홍화각',h:'제주 목사가 일을 보던 집무처예요. 이름은 임금의 큰 덕화가 백성에게 미친다는 뜻이래요. '+SRC});
  spots.push({x:17,y:0,z:9,r:3,t:'연희각',h:'목사가 머물며 정사를 보던 곳이에요. '+SRC});
