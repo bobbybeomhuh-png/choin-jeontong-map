@@ -11,8 +11,8 @@ export function startAmb(ctx,kind){let a=null,out=null;try{a=ctx.ac();out=ctx.ou
  const tap=(f,v,t=0,q=2)=>{const s=a.createBufferSource();s.buffer=noise(.2);const fl=a.createBiquadFilter();fl.type='bandpass';fl.frequency.value=f;fl.Q.value=q;const g=a.createGain();const t0=a.currentTime+t;g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+.12);s.connect(fl);fl.connect(g);g.connect(master);s.start(t0)};
  const nodes=[];let timer=null;const every=(ms,fn)=>{const go=()=>{try{fn()}catch(e){}timer=setTimeout(go,ms*(.6+Math.random()*.8))};timer=setTimeout(go,ms*.5)};
  /* 11/20 녹음(CC0)이 있으면 쉿 소리 바탕 대신 실제 새·바람과 종이·망치·엽전 소리로 */const S=window.__SFX,L=[];const sx=(k,v,t=0)=>S&&S.sfx(a,master,k,{vol:v,at:t});
- if(S){if(kind==='hall'){every(5200,()=>sx('paper',.22))}else if(kind==='site'){L.push(S.ambLoop(a,master,'wind',.14));every(2600,()=>{for(let i=0;i<2+(Math.random()*2|0);i++)sx('nail',.32,i*.34)})}
-  else if(kind==='market'){L.push(S.ambLoop(a,master,'birds',.08));every(3600,()=>sx('coin',.22))}else{L.push(S.ambLoop(a,master,'birds',.22),S.ambLoop(a,master,'wind',.08))}nodes.push(...L.map(l=>({stop:()=>l.stop()})))}
+ /* 11/20 밤 「망치·새소리가 총소리처럼 시끄럽다」 → 몇 초마다 나던 망치·종이·엽전 소리는 없애고, 아주 작은 바탕 소리 하나만 */
+ if(S){if(kind==='site')L.push(S.ambLoop(a,master,'wind',.07));else if(kind==='yard')L.push(S.ambLoop(a,master,'birds',.07));else if(kind==='market')L.push(S.ambLoop(a,master,'birds',.04));nodes.push(...L.map(l=>({stop:()=>l.stop()})))}
  else if(kind==='hall'){nodes.push(...bed(420,.8,.018));every(5200,()=>{tap(3200,.05);tap(2600,.035,.09)})}
  else if(kind==='site'){nodes.push(...bed(300,.5,.012,'lowpass'));every(2600,()=>{for(let i=0;i<2+(Math.random()*2|0);i++){tap(900,.09,i*.32,3);tone(220,.09,.035,i*.32,'triangle')}})}
  else if(kind==='market'){nodes.push(...bed(520,.7,.024));every(3600,()=>{tone(1568,.14,.03);tone(2093,.18,.025,.06)})}

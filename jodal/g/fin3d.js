@@ -85,7 +85,7 @@ export function fin3d(job,E,F){return new Promise(res=>{const D=EV[job.k],T=TASK
   panel.innerHTML=`<h3>${D.t}</h3><div>${c.say}</div><div style="margin-top:10px"><button type="button" class="f3-btn" data-go>손질 시작</button></div>`;panel.querySelector('[data-go]').onclick=start};
  const start=()=>{panel.style.display='none';ctl=document.createElement('div');ctl.className='f3-ctl';ctl.style.display='none';ui.o.append(ctl);
   const api={THREE,F,E,ctl,tool:!!(chosen&&chosen.tool),say:(a,b)=>head(a,b||'빈 곳을 끌면 돌려 봐요'),miss:()=>{miss++},snd:E.SND,
-   done:q=>{F.set({frame:task&&task.frame,down:orbitDown,move:orbitMove,up:orbitUp});ctl.remove();E.SND.light();F.shake(.05);
+   done:q=>{F.set({frame:task&&task.frame,down:orbitDown,move:orbitMove,up:orbitUp});ctl.remove();E.SND.light();F.shake(.05);/* 11/20 밤: 국보가 제 모습을 찾는 순간 큰 관인 */try{window.__CER&&setTimeout(()=>window.__CER('되살림 완료',String(D.t||'').replace(/ ?복원$/,'')+' · 제 모습을 찾았어요','復<br>元'),200)}catch(e){}
     panel.style.display='block';panel.innerHTML=`<h3>${D.t} 끝!</h3><div class="f3-card"><b>조달 도감 카드가 열렸어요 · ${CARDS[job.k].n}</b><br>${CARDS[job.k].d}</div><div style="margin-top:10px"><button type="button" class="f3-btn" data-ok>의궤에 적기</button></div>`;
     panel.querySelector('[data-ok]').onclick=()=>{panel.remove();window.__JDSP=null;res({q:Math.max(0,Math.min(8,q+(chosen.bonus||0)-miss)),ch:chosen.id,good:!!chosen.good})}}};
   task=T(api);F.set(task)};
