@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
 const MURL=k=>new URL('../models/buyeo/'+k+'.glb',import.meta.url).href;
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
@@ -53,6 +54,11 @@ export function buildBuyeo(opts={}){const mini=!!opts.mini;const MT=materials();
   g.traverse(o=>{if(o.isMesh)cam.push(o)});S(TX-2.1,TX+2.1,0,20,TZ-2.1,TZ+2.1);
   spots.push({x:PX+5,y:0,z:22,r:2,t:'기와 만드는 곳',h:'백제 사람들은 연꽃무늬를 새긴 수막새로 지붕 끝을 꾸몄어요. 틀에 흙을 눌러 찍고 가마에 구워 만들었어요. 직접 찍어 보세요.'});
 spots.push({x:TX,y:0,z:TZ+4,r:2.6,t:'정림사지 오층석탑',h:'백제 사비 시대(6~7세기)에 세운 석탑으로, 높이 약 8.33m예요. 목탑처럼 돌을 짜 맞추고 지붕돌을 얇고 넓게 펼쳐 날렵하고 단정해요. 백제가 멸망할 때 당나라 장수가 탑에 승전 글을 새긴 아픈 흔적도 남아 있어요. 공개 실측값에 맞춰 쌓았어요.'})}
+ /* 정림사지 석조여래좌상(11/21): 스케치팹 dshot 사진 측량(CC BY 4.0), 실제 높이 5.6m 그대로. 탑 뒤 강당 자리(지금 보호각 안)에 탑을 바라보게 */
+ if(!opts.mini){const gl2=new GLTFLoader();const dr2=new DRACOLoader();dr2.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl2.setDRACOLoader(dr2);
+  gl2.load(new URL('../models/buyeo/jeongnim_buddha.glb',import.meta.url).href,m=>{const o=m.scene;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0;e.material.transparent=false;e.material.alphaTest=0;e.material.alphaHash=false}}});const b=new THREE.Box3().setFromObject(o);const c=b.getCenter(new THREE.Vector3());o.position.set(-c.x,-b.min.y,-c.z);const p=new THREE.Group();p.add(o);p.position.set(32,0,-26);p.rotation.y=-Math.PI/2;p.userData.noBatch=true;o.userData.noBatch=true;G.add(p)},undefined,()=>{});
+  solids.push({cx:32,cz:-26,r:1.8,y0:0,y1:6})}
+ spots.push({x:28,y:0,z:-26,r:2.4,t:'정림사지 석조여래좌상',h:'정림사지 강당 터에 앉은 고려 때 돌부처예요(보물, 높이 5.62m). 백제가 무너진 뒤 고려 때 절을 다시 세우며 모셨어요. 얼굴과 몸이 많이 닳아 높은 모자 같은 머리 부분은 나중에 얹은 거예요. 실측 그대로예요(3D: dshot, Sketchfab, CC BY 4.0).'});
  /* ---------- 향로각: 백제 금동대향로 ---------- */
  {const HX=16,HZ=4;const pil=M(0x8a3a2a),wall=M(0xf2ede2);const fl=box(8,.45,6,M(0xb3aa98));fl.position.set(HX,.22,HZ);G.add(fl);S(HX-4,HX+4,0,.45,HZ-3,HZ+3);
   const bk=box(8,3.2,.2,wall);bk.position.set(HX,2.05,HZ-3);G.add(bk);S(HX-4,HX+4,0,4,HZ-3.15,HZ-2.85);for(const sx of[-1,1]){const w=box(.2,3.2,6,wall);w.position.set(HX+sx*4,2.05,HZ);G.add(w);S(HX+sx*4-.15,HX+sx*4+.15,0,4,HZ-3,HZ+3)}
