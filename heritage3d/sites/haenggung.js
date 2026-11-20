@@ -21,7 +21,7 @@ export function buildHaenggung(opts={}){const mini=!!opts.mini;const G=new THREE
  /* 귤나무와 팽나무 */if(!mini){const tr=M(0x5a4430),lf=M(0x2f5a2a),or=M(0xf08a20);for(const[x,z]of[[-20,30],[-20,14],[20,30],[20,14],[-34,-48],[34,-48],[-60,-40],[-60,30]]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.14,.2,1.6,6),tr);t.position.set(x,.8,z);G.add(t);const c=new THREE.Mesh(new THREE.SphereGeometry(1.4,10,8),lf);c.position.set(x,2.2,z);c.scale.y=.8;G.add(c);for(let k=0;k<9;k++){const o=new THREE.Mesh(new THREE.SphereGeometry(.09,6,5),or);const a=r()*6.28,b=r()*1.2;o.position.set(x+Math.cos(a)*1.3*Math.cos(b-.6),2.2+Math.sin(b-.6)*1.1,z+Math.sin(a)*1.3*Math.cos(b-.6));G.add(o)}solids.push({cx:x,cz:z,r:.3,y0:0,y1:3})}
   for(const[x,z]of[[-80,50],[-40,70],[40,70],[60,20],[60,-30],[-85,-20],[-30,-70],[30,-70]]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.5,.8,5,8),tr);t.position.set(x,2.5,z);G.add(t);const c=new THREE.Mesh(new THREE.SphereGeometry(4,10,8),M(0x3f6a35));c.position.set(x,6.5,z);c.scale.y=.7;G.add(c);solids.push({cx:x,cz:z,r:.9,y0:0,y1:8})}}
  if(!mini){const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);
-  for(const[n,x,z,ry]of B)gl.load(new URL('../models/haenggung/'+n+'.glb',import.meta.url).href,g=>{const o=g.scene;o.position.set(x,0,z);o.rotation.y=ry;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0}cam.push(e)}});G.add(o)},undefined,()=>{});
+  for(const[n,x,z,ry]of B)gl.load(new URL('../models/haenggung/'+n+'.glb',import.meta.url).href,g=>{const o=g.scene;o.position.set(x,0,z);o.rotation.y=ry;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0;e.material.envMapIntensity=.6}cam.push(e)}});G.add(o)},undefined,()=>{});
   fetch(new URL('../models/haenggung/floors.json',import.meta.url).href).then(r=>r.json()).then(F=>{for(const[n,ox,oz,ry]of B){const L=F[n];if(!L)continue;const c=Math.cos(ry),s=Math.sin(ry);for(const[x0,x1,z0,z1,h]of L){const a=[ox+x0*c+z0*s,oz-x0*s+z0*c],b=[ox+x1*c+z1*s,oz-x1*s+z1*c];S(a[0],b[0],-1,h,a[1],b[1])}}}).catch(()=>{})}
  const SRC='(3D: 한국문화정보원 KCISA, Sketchfab kcisameta, CC BY 4.0)';/* 꽃나무는 벚꽃 빛 */
  spots.push({x:0,y:0,z:54,r:3.4,t:'신풍루',h:'화성행궁의 정문이에요. 정조가 새로운 고향이라는 뜻으로 신풍루라 이름 붙였어요. 2층 누문이에요. '+SRC});
@@ -34,7 +34,7 @@ export function buildHaenggung(opts={}){const mini=!!opts.mini;const G=new THREE
  const tick=()=>{};
  const meta={quest:{t:'화성행궁 둘러보기',d:'정조의 행궁 일곱 곳을 찾아보세요. 실측 3D라 실제 크기예요.',steps:[['신풍루','신풍루'],['좌익문','좌익문'],['중양문','중양문'],['봉수당','봉수당'],['복내당','복내당'],['득중정','득중정'],['미로한정','미로한정']]},
   title:'수원 화성행궁',hint:'한국문화정보원이 실측한 화성행궁 건물 일곱 채를 실제 크기로 세웠어요. 정문 신풍루에서 봉수당까지 걸어 보고, 득중정 활터도 들러 보세요. '+SRC,
-  env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-12,z:62,lines:['수원 화성행궁','정조의 행궁','신풍루 · 봉수당 · 득중정','실측 3D · 실제 크기']}},
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-12,z:62,lines:['수원 화성행궁','정조의 행궁','신풍루 · 봉수당 · 득중정','실측 3D · 실제 크기']}},
   npc:[['base',[[-20,52],[20,52],[20,66],[-20,66]]],['metal',[[-30,-6],[-30,-30],[-56,-30],[-56,-6]]]],
   bounds:[-110,110,-100,100],level:P=>P.y>1.2?'마루 위':P.x>-72&&P.x<48&&P.z<46&&P.z>-58?'행궁 안마당':'신풍루 앞',camCap:()=>Infinity,
   baseAt:()=>0,tick,

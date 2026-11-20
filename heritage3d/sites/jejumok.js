@@ -21,7 +21,7 @@ export function buildJejumok(opts={}){const mini=!!opts.mini;const G=new THREE.G
  /* 귤나무와 팽나무 */if(!mini){const tr=M(0x5a4430),lf=M(0x2f5a2a),or=M(0xf08a20);for(const[x,z]of[[-26,20],[-26,8],[26,20],[26,8],[-26,-40],[-12,-44],[12,-44],[-26,-20]]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.14,.2,1.6,6),tr);t.position.set(x,.8,z);G.add(t);const c=new THREE.Mesh(new THREE.SphereGeometry(1.4,10,8),lf);c.position.set(x,2.2,z);c.scale.y=.8;G.add(c);for(let k=0;k<9;k++){const o=new THREE.Mesh(new THREE.SphereGeometry(.09,6,5),or);const a=r()*6.28,b=r()*1.2;o.position.set(x+Math.cos(a)*1.3*Math.cos(b-.6),2.2+Math.sin(b-.6)*1.1,z+Math.sin(a)*1.3*Math.cos(b-.6));G.add(o)}solids.push({cx:x,cz:z,r:.3,y0:0,y1:3})}
   for(const[x,z]of[[-70,30],[-62,70],[-12,66],[40,62],[50,10],[-50,-20],[48,-50]]){const t=new THREE.Mesh(new THREE.CylinderGeometry(.5,.8,5,8),tr);t.position.set(x,2.5,z);G.add(t);const c=new THREE.Mesh(new THREE.SphereGeometry(4,10,8),M(0x3f6a35));c.position.set(x,6.5,z);c.scale.y=.7;G.add(c);solids.push({cx:x,cz:z,r:.9,y0:0,y1:8})}}
  if(!mini){const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);
-  for(const[n,x,z,ry]of B)gl.load(new URL('../models/jejumok/'+n+'.glb',import.meta.url).href,g=>{const o=g.scene;o.position.set(x,0,z);o.rotation.y=ry;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0}cam.push(e)}});G.add(o)},undefined,()=>{});
+  for(const[n,x,z,ry]of B)gl.load(new URL('../models/jejumok/'+n+'.glb',import.meta.url).href,g=>{const o=g.scene;o.position.set(x,0,z);o.rotation.y=ry;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0;e.material.envMapIntensity=.6}cam.push(e)}});G.add(o)},undefined,()=>{});
   fetch(new URL('../models/jejumok/floors.json',import.meta.url).href).then(r=>r.json()).then(F=>{for(const[n,ox,oz,ry]of B){const L=F[n];if(!L)continue;const c=Math.cos(ry),s=Math.sin(ry);for(const[x0,x1,z0,z1,h]of L){const a=[ox+x0*c+z0*s,oz-x0*s+z0*c],b=[ox+x1*c+z1*s,oz-x1*s+z1*c];S(a[0],b[0],-1,h,a[1],b[1])}}}).catch(()=>{})}
  const SRC='(3D: 한국문화정보원 KCISA, Sketchfab kcisameta, CC BY 4.0)';
  spots.push({x:-48,y:0,z:66,r:3.4,t:'관덕정',h:'조선 세종 30년(1448) 병사를 훈련하려고 세운 정자예요. 제주에서 가장 오래된 건물 가운데 하나로 보물이에요. 활쏘기와 군사 훈련, 잔치가 여기서 열렸어요. '+SRC});
@@ -34,7 +34,7 @@ export function buildJejumok(opts={}){const mini=!!opts.mini;const G=new THREE.G
  const tick=()=>{};
  const meta={quest:{t:'제주목 관아 둘러보기',d:'조선 제주 관아의 일곱 채를 찾아보세요. 실측 3D라 실제 크기예요.',steps:[['관덕정','관덕정'],['외대문','외대문'],['중대문','중대문'],['홍화각','홍화각'],['연희각','연희각'],['우련당','우련당'],['망경루','망경루']]},
   title:'제주목 관아와 관덕정',hint:'한국문화정보원이 실측한 제주목 관아 건물 일곱 채를 실제 크기로 세웠어요. 관덕정 앞마당에서 외대문을 지나 망경루까지 걸어 보세요. '+SRC,
-  env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-20,z:60,lines:['제주목 관아','조선 제주 고을의 관청','관덕정 · 홍화각 · 망경루','실측 3D · 실제 크기']}},
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-20,z:60,lines:['제주목 관아','조선 제주 고을의 관청','관덕정 · 홍화각 · 망경루','실측 3D · 실제 크기']}},
   npc:[['base',[[-30,48],[-10,48],[-10,58],[-30,58]]],['ceramic',[[-6,10],[6,10],[6,-10],[-6,-10]]]],
   bounds:[-110,110,-100,100],level:P=>P.y>1.2?'마루 위':Math.abs(P.x)<33&&P.z<40&&P.z>-52?'관아 안마당':'관덕정 앞마당',camCap:()=>Infinity,
   baseAt:()=>0,tick,
