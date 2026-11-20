@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+const skyFollow=(()=>{let sky=null,t=0;return()=>{const H=window.__H3;if(!H)return;if(!sky&&t++%30===0){H.scene.traverse(o=>{if(!sky&&o.isMesh&&o.geometry&&o.geometry.type==='SphereGeometry'&&o.geometry.parameters.radius>=500)sky=o})}if(sky&&H.CAM)sky.position.copy(H.CAM.position)}})();
 export function buildMaisan(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
  let HG=null;const hAt=(x,z)=>{if(!HG)return 60;const fx=(x-HG.x0)/HG.step,fz=(HG.z0-z)/HG.step;const i=Math.max(0,Math.min(HG.nx-2,Math.floor(fx))),j=Math.max(0,Math.min(HG.nz-2,Math.floor(fz)));const u=Math.max(0,Math.min(1,fx-i)),v=Math.max(0,Math.min(1,fz-j));const H=HG.h;return (H[j][i]*(1-u)+H[j][i+1]*u)*(1-v)+(H[j+1][i]*(1-u)+H[j+1][i+1]*u)*v};
@@ -34,6 +35,6 @@ export function buildMaisan(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
   title:'진안 마이산',hint:'사진 측량한 마이산을 실제 크기로 놓았어요. 말 귀 같은 두 봉우리 사이에서 출발해 꼭대기까지 걸어 올라 봐요. '+SRC,
   ibl:true,env:{fog:[260,1100],noHills:true,plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-195,z:238,y:141.6,lines:['진안 마이산','명승 · 말 귀 두 봉우리','암마이봉 686m · 수마이봉 680m','실측 3D · 실제 크기']}},
   npc:[],bounds:[-490,490,-450,450],level:P=>P.y>230?'봉우리 꼭대기':'마이산 자락',camCap:()=>Infinity,
-  baseAt:(x,z)=>hAt(x,z),tick:(()=>{let once=false;return()=>{if(once)return;once=true;try{window.__H3.face(-.2);window.__H3.cam(0,.18,11)}catch(e){}}})(),
+  baseAt:(x,z)=>hAt(x,z),tick:(()=>{let once=false;return()=>{skyFollow();if(once)return;once=true;try{window.__H3.face(-.2);window.__H3.cam(0,.18,11)}catch(e){}}})(),
   mini:{S:.28,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#4a6a38';g.fillRect(0,0,300,300);g.fillStyle='#9a8a70';for(const p of[[162,-47],[-166,69]]){g.beginPath();g.arc(X(p[0]),Z(p[1]),40*S,0,7);g.fill()}}}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:-200,z:233,yaw:-.2},size:{}},meta)}
