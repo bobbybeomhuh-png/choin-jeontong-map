@@ -1,0 +1,50 @@
+/* 광주 무등산 주상절리 마당(2026-11-20): 국가유산청이 실측한 3D(스케치팹 KHS_Asset, CC BY 4.0) 무등산 주상절리(천연기념물)를 실제 크기로.
+   중생대 백악기 화산 활동 때 용암(석영안산암)이 식으며 갈라져 생긴 돌기둥 무리. 서석대·입석대처럼 병풍처럼 늘어선 바위를 둘러봄.
+   놀이: 용암 식혀 주상절리 만들기(빨갛게 끓는 육각 칸을 밟아 식히면 돌기둥이 솟아요). */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+import {tex,mulb} from './sungnyemun.js';
+export function buildMudeung(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1187);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
+ /* 땅: 억새 산비탈, 돌길, 둘레 산 */{const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#7a8a4a';q.fillRect(0,0,w,h);for(let i=0;i<3600;i++){q.fillStyle=r()<.5?'rgba(170,150,90,.45)':'rgba(90,110,50,.4)';q.fillRect(r()*w,r()*h,2,3)}},[40,40]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(260,260),new THREE.MeshStandardMaterial({map:GT,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr);
+  const KT=tex(256,256,(q,w,h)=>{q.fillStyle='#8a8478';q.fillRect(0,0,w,h);for(let i=0;i<60;i++){const v=110+(r()*60|0);q.fillStyle=`rgb(${v},${v-4},${v-12})`;q.beginPath();q.ellipse(r()*w,r()*h,8+r()*14,6+r()*10,r()*3,0,7);q.fill()}},[2,16]);const pth=new THREE.Mesh(new THREE.PlaneGeometry(3,40),new THREE.MeshStandardMaterial({map:KT,roughness:1}));pth.rotation.x=-Math.PI/2;pth.position.set(4,.03,44);G.add(pth)}
+ /* 억새 덤불과 돌, 둘레 소나무 */if(!mini){const sv=M(0xd8c89a),st=M(0x7a7468);for(let i=0;i<140;i++){const x=(r()-.5)*180,z=(r()-.5)*180;if(Math.abs(x)<56&&z>-34&&z<34)continue;if(Math.abs(x-4)<4&&z>20)continue;const b=new THREE.Mesh(new THREE.ConeGeometry(.5+r()*.5,1.2+r()*.8,5),sv);b.position.set(x,.6,z);G.add(b)}
+  for(let i=0;i<40;i++){const x=(r()-.5)*170,z=(r()-.5)*170;if(Math.abs(x)<58&&z>-36&&z<36)continue;const s=new THREE.Mesh(new THREE.DodecahedronGeometry(.6+r()*1.2,0),st);s.position.set(x,.3,z);s.rotation.set(r(),r(),r());G.add(s)}
+  const tr=M(0x6a4a30),pn=M(0x355a30);for(let i=0;i<28;i++){const a=i/28*Math.PI*2+r()*.1,d=70+r()*20;const x=Math.cos(a)*d,z=Math.sin(a)*d;const h=5+r()*3;const t=new THREE.Mesh(new THREE.CylinderGeometry(.25,.4,h,7),tr);t.position.set(x,h/2,z);G.add(t);const c=new THREE.Mesh(new THREE.ConeGeometry(2.2+r(),4,8),pn);c.position.set(x,h+1.2,z);G.add(c)}}
+ if(!mini){const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);
+  gl.load(new URL('../models/mudeung/mudeung.glb',import.meta.url).href,g=>{const o=g.scene;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.95;e.material.metalness=0;e.material.envMapIntensity=.5;e.material.transparent=false;e.material.alphaTest=0;e.material.alphaHash=false;e.material.opacity=1;e.material.side=THREE.DoubleSide;e.material.needsUpdate=true}cam.push(e)}});G.add(o)},undefined,()=>{});
+  fetch(new URL('../models/mudeung/floors.json',import.meta.url).href).then(r=>r.json()).then(F=>{for(const[x0,x1,z0,z1,h]of(F.mudeung||[]))solids.push({x0,x1,y0:-1,y1:h,z0,z1})}).catch(()=>{})}
+ const SRC='(3D: 국가유산청 KHS_Asset, Sketchfab, CC BY 4.0)';
+ spots.push({x:0,y:0,z:32,r:3.4,t:'무등산 주상절리',h:'광주 무등산 정상 가까이에 병풍처럼 늘어선 돌기둥 무리예요(천연기념물). 약 8천만 년 전 백악기 화산의 용암이 식으며 육각·오각 기둥으로 갈라졌어요. 실측 그대로 실제 크기예요. '+SRC});
+ spots.push({x:-40,y:0,z:-30,r:3,t:'서석대',h:'해 질 녘 돌기둥이 수정처럼 빛난다 해서 수정병풍이라고도 불러요. 무등산의 상징이에요. '+SRC});
+ spots.push({x:42,y:0,z:-30,r:3,t:'입석대',h:'돌기둥이 하나하나 서 있는 모습이 사람이 줄지어 선 것 같다 해서 입석대예요. 옛 선비들도 이 바위를 보러 산을 올랐어요. '+SRC});
+ /* 용암 식히기(11/20): 육각 칸 37개. 빨갛게 끓는 칸을 밟으면 식어 돌기둥이 솟아요. 오래 두면 옆 칸으로 번져요. 60초 */
+ const HX={x:4,z:58};
+ window.__MDLAVA=()=>{if(document.getElementById('mlvP'))return;const H=window.__H3,ctx=H.ctx();try{H.tp(HX.x,HX.z+7,0);H.face(Math.PI);H.cam(0,.6,9)}catch(e){}
+  const g=new THREE.Group();g.position.set(HX.x,0,HX.z);G.add(g);const R=1.05,cells=[];
+  for(let q=-3;q<=3;q++)for(let rr=-3;rr<=3;rr++){if(Math.abs(q+rr)>3)continue;const x=R*1.5*q,z=R*Math.sqrt(3)*(rr+q/2);const m=new THREE.MeshStandardMaterial({color:0x5a554e,roughness:.9,emissive:0x000000});const c=new THREE.Mesh(new THREE.CylinderGeometry(R*.95,R*.95,.25,6),m);c.position.set(x,.12,z);c.rotation.y=Math.PI/6;g.add(c);cells.push({q,rr,x,z,c,m,st:0,t:0,h:.25})}
+  const nb=(a)=>cells.filter(b=>b!==a&&Math.abs(b.q-a.q)<=1&&Math.abs(b.rr-a.rr)<=1&&Math.abs((b.q+b.rr)-(a.q+a.rr))<=1);
+  const d=document.createElement('div');d.id='mlvP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#2a1e1a;border:3px solid #e0b048;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:236px;user-select:none";document.body.appendChild(d);
+  const TL=60;let cool=0,spread=0,done=false,t0=performance.now()/1000,lt=t0,spawnT=0;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#ffd890">🌋 용암 식혀 돌기둥 만들기</b><div id="mlvS" style="font:20px 'Do Hyeon',sans-serif;margin:4px 0">돌기둥 0개</div><div id="mlvW" style="font-size:13px">번진 용암 0</div><div id="mlvT" style="font-size:13px">${TL}초</div><div style="font-size:12px;opacity:.85">빨갛게 끓는 칸을 밟으면 식어 육각 돌기둥이 솟아요. 오래 두면 옆으로 번져요</div>`;const Sx=d.querySelector('#mlvS'),W=d.querySelector('#mlvW'),T=d.querySelector('#mlvT');
+  const hiss=()=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,len=AC.sampleRate*.4,b=AC.createBuffer(1,len,AC.sampleRate),dd=b.getChannelData(0);for(let i=0;i<len;i++)dd[i]=(Math.random()*2-1)*(1-i/len);const n=AC.createBufferSource();n.buffer=b;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=2500;const gg=AC.createGain();gg.gain.value=.12;n.connect(f).connect(gg).connect(ctx.out()||AC.destination);n.start(s)}catch(e){}};
+  const fin=()=>{if(done)return;done=true;const Q=Math.max(0,Math.min(100,Math.round(cool*4-spread*6)));const st=Q>=85?3:Q>=55?2:Q>0?1:0;try{ctx.done('mudeung_lava',Q,'용암 식혀 돌기둥 만들기')}catch(e){}window.__MDLQ=Q;
+   setTimeout(()=>{if(!d.isConnected)return;d.innerHTML=`<b style="font:18px 'Do Hyeon',sans-serif;color:#ffd890">돌기둥 ${cool}개를 세웠어요</b><div style="font-size:13px;margin:4px 0">용암이 천천히 식으면 몸이 줄어들며 육각으로 쩍쩍 갈라져요. 무등산 주상절리도 그렇게 생겼어요!</div><div style="font-size:26px;color:#e0b048">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#e0b048;color:#2a1a10;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();setTimeout(()=>window.__MDLAVA(),60)};d.querySelector('[data-x]').onclick=()=>d.remove()},900)};
+  const heat=c=>{if(c.st!==0)return;c.st=1;c.t=0};
+  const loop=()=>{if(!d.isConnected){G.remove(g);return}const now=performance.now()/1000,dt=Math.min(.05,now-lt);lt=now;const P=H.P;const el=now-t0;
+   if(!done){spawnT-=dt;if(spawnT<=0){spawnT=Math.max(.7,1.8-el*.02);const free=cells.filter(c=>c.st===0);if(free.length)heat(free[(Math.random()*free.length)|0])}
+    for(const c of cells){if(c.st===1){c.t+=dt;if(Math.hypot(P.x-HX.x-c.x,P.z-HX.z-c.z)<R*.9){c.st=2;c.t=0;cool++;hiss()}else if(c.t>4.5){c.t=0;const n=nb(c).filter(b=>b.st===0);if(n.length){heat(n[(Math.random()*n.length)|0]);spread++;try{ctx.say('용암이 옆으로 번졌어요!',1)}catch(e){}}}}}
+    Sx.textContent='돌기둥 '+cool+'개';W.textContent='번진 용암 '+spread;const left=Math.max(0,TL-el);T.textContent=Math.ceil(left)+'초';if(left<=0)fin()}
+   for(const c of cells){if(c.st===1){const k=.7+Math.sin(now*8+c.x)*.3;c.m.emissive.setRGB(1*k,.3*k,.05);c.m.color.setHex(0x6a2a1a)}else if(c.st===2){c.t+=dt;c.m.emissive.setRGB(0,0,0);c.m.color.setHex(0x8a857c);const tgt=.25;c.c.scale.y=1;c.c.position.y=.12}else{c.m.emissive.setRGB(0,0,0)}}
+   requestAnimationFrame(loop)};loop();
+  window.__MLV={cells,get cool(){return cool},get spread(){return spread},hx:HX};try{ctx.say('무등산 주상절리는 끓던 용암이 식어 생겼대요. 끓는 칸을 밟아 식혀 봐요!',3)}catch(e){}};
+ spots.push({x:HX.x-6,y:0,z:HX.z,r:2.4,t:'용암 식히는 마당',h:'끓는 용암이 식으면 부피가 줄며 거북 등처럼 육각으로 갈라져요. 그 틈이 아래로 이어져 돌기둥이 돼요. 직접 식혀 봐요.'});
+ const tick=()=>{};
+ const meta={quest:{t:'무등산 주상절리 둘러보기',d:'광주 무등산의 돌기둥 무리를 실측 그대로 둘러보세요.',steps:[['주상절리','무등산 주상절리'],['서석대','서석대'],['입석대','입석대']]},
+  title:'광주 무등산 주상절리',hint:'국가유산청이 실측한 무등산 주상절리를 실제 크기로 놓았어요. 병풍 같은 돌기둥 둘레를 걸어 보고, 용암 식히기 놀이도 해 봐요. '+SRC,
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-4,z:46,lines:['광주 무등산 주상절리','천연기념물','백악기 화산 돌기둥','실측 3D · 실제 크기']}},
+  npc:[['science',[[-6,40],[10,40],[10,48],[-6,48]]]],
+  bounds:[-110,110,-110,110],level:()=>'무등산',camCap:()=>Infinity,
+  baseAt:()=>0,tick,
+  mini:{S:1.6,ox:0,oz:8,draw(g,X,Z,S){g.fillStyle='#7a8a4a';g.fillRect(0,0,300,300);g.fillStyle='#6a665c';g.fillRect(X(-48),Z(-26),96*S,52*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:4,z:50,yaw:Math.PI},size:{}},meta)}
