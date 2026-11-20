@@ -1,0 +1,35 @@
+/* 정선 대촌마을 마당(2026-11-21): 스케치팹 lacomi1975 사진 측량(CC BY 4.0) 정선 산골 마을과 둘레 산을 실제 크기(약 1000×760m)로. 놀이: 마을에서 뒷산 꼭대기 오르기. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+const TR=[[212, 208, 18.6], [228, 128, 27.1], [256, 60, 53.8], [312, 12, 74.2], [356, -36, 102.4], [392, -52, 131.3], [368, -96, 155.2], [380, -136, 185.1], [364, -164, 212.4], [284, -164, 240.4]];
+const skyFollow=(()=>{let sky=null,t=0;return()=>{const H=window.__H3;if(!H)return;if(!sky&&t++%30===0){H.scene.traverse(o=>{if(!sky&&o.isMesh&&o.geometry&&o.geometry.type==='SphereGeometry'&&o.geometry.parameters.radius>=500)sky=o})}if(sky&&H.CAM)sky.position.copy(H.CAM.position)}})();
+export function buildDaechon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
+ let HG=null;const hAt=(x,z)=>{if(!HG)return 5;const fx=(x-HG.x0)/HG.step,fz=(HG.z0-z)/HG.step;const i=Math.max(0,Math.min(HG.nx-2,Math.floor(fx))),j=Math.max(0,Math.min(HG.nz-2,Math.floor(fz)));const u=Math.max(0,Math.min(1,fx-i)),v=Math.max(0,Math.min(1,fz-j));const H=HG.h;return (H[j][i]*(1-u)+H[j][i+1]*u)*(1-v)+(H[j+1][i]*(1-u)+H[j+1][i+1]*u)*v};
+ if(!mini){fetch(new URL('../models/daechon/height.json',import.meta.url).href).then(r=>r.json()).then(j=>{HG=j}).catch(()=>{});
+  const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);
+  gl.load(new URL('../models/daechon/daechon.glb',import.meta.url).href,g=>{const o=g.scene;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=false;e.receiveShadow=true;if(e.material){e.material.roughness=.95;e.material.metalness=0;e.material.envMapIntensity=.5;e.material.transparent=false;e.material.alphaTest=0;e.material.alphaHash=false}cam.push(e)}});G.add(o)},undefined,()=>{})}
+ {const gr=new THREE.Mesh(new THREE.PlaneGeometry(2400,2400),new THREE.MeshBasicMaterial({color:0x5a7a50}));gr.rotation.x=-Math.PI/2;gr.position.y=-3;G.add(gr)}
+ const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';const S0=TR[0],S9=TR[TR.length-1];
+ spots.push({x:S0[0]-6,y:0,z:S0[1]+4,r:6,t:'대촌마을',h:'강원 정선 산골 마을이에요. 깊은 산과 계곡 사이 좁은 들에 집과 밭이 모여 있어요. 정선 아리랑이 불리던 땅이에요. 실측 그대로 실제 크기예요. '+SRC});
+ spots.push({x:S9[0],y:0,z:S9[1],r:10,t:'뒷산 꼭대기',h:'마을 뒷산 꼭대기예요. 산이 첩첩이 둘러싼 정선 땅이 한눈에 보여요. '+SRC});
+ window.__DAECHONTRAIL=()=>{if(document.getElementById('daechonP'))return;const H=window.__H3,ctx=H.ctx();try{H.tp(S0[0],S0[1],hAt(S0[0],S0[1])+.3)}catch(e){}
+  const g=new THREE.Group();G.add(g);const R=TR.slice(1).map((p,i)=>{const y=hAt(p[0],p[1]);const b=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.4,40,18,1,true),new THREE.MeshBasicMaterial({color:0x8ad8ff,transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide}));b.position.set(p[0],y+20,p[1]);b.visible=i===0;g.add(b);return{x:p[0],z:p[1],y,b}});
+  const d=document.createElement('div');d.id='daechonP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#1e2a2a;border:3px solid #e0b048;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:236px;user-select:none";document.body.appendChild(d);
+  const N=R.length,TL=240;let idx=0,done=false,t0=performance.now()/1000;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#ffd890">⛰️ 뒷산 꼭대기 오르기</b><div id="daechonS" style="font:20px 'Do Hyeon',sans-serif;margin:4px 0">0 / ${N}</div><div id="daechonD" style="font-size:13px;color:#ffd890"></div><div id="daechonT" style="font-size:13px">${TL}초</div><div style="font-size:12px;opacity:.85">노란 빛기둥을 따라 마을에서 뒷산 꼭대기까지 올라가요. 말을 타면 빨라요(H)</div>`;const Sx=d.querySelector('#daechonS'),Dd=d.querySelector('#daechonD'),T=d.querySelector('#daechonT');
+  const drip=()=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type='sine';o.frequency.setValueAtTime(1200,s);o.frequency.exponentialRampToValueAtTime(500,s+.15);gg.gain.setValueAtTime(.08,s);gg.gain.exponentialRampToValueAtTime(.0001,s+.25);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+.27)}catch(e){}};
+  const fin=()=>{if(done)return;done=true;const el=performance.now()/1000-t0;const Q=idx>=N?Math.max(70,Math.round(100-Math.max(0,el-120)*.4)):Math.round(idx/N*65);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('daechon_climb',Q,'뒷산 꼭대기 오르기')}catch(e){}window.__DAECHONQ=Q;
+   setTimeout(()=>{if(!d.isConnected)return;d.innerHTML=`<b style="font:18px 'Do Hyeon',sans-serif;color:#ffd890">${idx>=N?'꼭대기까지 올라왔어요':'빛기둥 '+idx+'개를 지났어요'}</b><div style="font-size:13px;margin:4px 0">정선은 땅의 대부분이 산이에요. 실제 크기라 700m 넘게 올라왔어요!</div><div style="font-size:26px;color:#e0b048">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#e0b048;color:#2a1a10;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();setTimeout(()=>window.__DAECHONTRAIL(),60)};d.querySelector('[data-x]').onclick=()=>d.remove()},900)};
+  const loop=()=>{if(!d.isConnected){G.remove(g);return}const now=performance.now()/1000;const P=H.P;
+   if(!done){const r=R[idx];const dd=Math.hypot(P.x-r.x,P.z-r.z);Dd.textContent='다음 빛기둥까지 '+Math.round(dd)+'m';if(dd<4){r.b.visible=false;idx++;drip();if(idx>=N)fin();else R[idx].b.visible=true}Sx.textContent=idx+' / '+N;const left=Math.max(0,TL-(now-t0));T.textContent=Math.ceil(left)+'초';if(left<=0)fin()}
+   for(const r of R)r.b.material.opacity=.16+Math.sin(now*3)*.06;requestAnimationFrame(loop)};loop();
+  window.__DAECHONG={R,get idx(){return idx}};try{ctx.say('대촌마을 뒷산 꼭대기까지 올라가 봐요!',3)}catch(e){}};
+ spots.push({x:S0[0]+5,y:0,z:S0[1]-3,r:3,t:'오르막 길 들머리',h:'여기서 뒷산 꼭대기 오르기을 시작해요.'});
+ const meta={quest:{t:'정선 대촌마을 둘러보기',d:'실측 그대로 걸어 보세요.',steps:[['들머리','오르막 길 들머리'],['꼭대기','뒷산 꼭대기']]},
+  title:'정선 대촌마을',hint:'사진 측량한 정선 대촌마을과 둘레 산을 실제 크기로 놓았어요. 마을에서 뒷산 꼭대기까지 걸어 올라가 봐요. '+SRC,
+  ibl:true,env:{fog:[260,1100],noHills:true,plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:S0[0]-8,z:S0[1]+8,y:18.0,lines:["정선 대촌마을", "강원 정선 산골 마을", "첩첩 산 · 계곡", "실측 3D · 실제 크기"]}},
+  npc:[],bounds:[-100, 500, -300, 320],level:P=>P.y>150?'정선 대촌마을 꼭대기':'정선 대촌마을',camCap:()=>Infinity,
+  baseAt:(x,z)=>hAt(x,z),tick:(()=>{let once=false;return()=>{skyFollow();if(once)return;once=true;try{window.__H3.cam(0,.32,14)}catch(e){}}})(),
+  mini:{S:.28,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#4a6a38';g.fillRect(0,0,300,300);g.strokeStyle='#ffd060';g.lineWidth=3;g.beginPath();TR.forEach((p,i)=>i?g.lineTo(X(p[0]),Z(p[1])):g.moveTo(X(p[0]),Z(p[1])));g.stroke()}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:S0[0],z:S0[1]+6,yaw:Math.PI},size:{}},meta)}
