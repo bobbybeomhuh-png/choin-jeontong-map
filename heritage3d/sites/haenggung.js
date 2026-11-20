@@ -9,7 +9,7 @@ export function buildHaenggung(opts={}){const mini=!!opts.mini;const G=new THREE
  const S=(x0,x1,y0,y1,z0,z1)=>solids.push({x0:Math.min(x0,x1),x1:Math.max(x0,x1),y0,y1,z0:Math.min(z0,z1),z1:Math.max(z0,z1)});
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
  const R90=Math.PI/2;/* [이름, x, z, 돌림] : 앞면이 남쪽(+z)을 보게 90도 돌림 */
- const B=[['sinpung',0,44,R90],['jwaik',0,26,R90],['jungyang',0,10,R90],['bongsu',0,-14,R90],['boknae',22,-38,R90],['deukjung',-44,-18,0],['miro',-20,-52,R90]];
+ const B=[['sinpung',0,44,R90],['jwaik',0,26,R90],['jungyang',0,10,R90],['bongsu',0,-14,R90],['boknae',22,-38,R90],['deukjung',-44,-18,0],['miro',-8,-52,R90],['naknam',-40,-42,R90],['yuyeo',36,-12,R90],['gyeongryong',36,-32,R90],['namgun',-22,32,R90],['bukgun',22,32,R90],['oejeong',32,16,0],['jipsa',-30,14,0],['unhan',-92,-10,0]];
  /* 땅: 다진 흙 마당(담 안), 풀밭(담 밖), 돌길 */{const ET=tex(256,256,(q,w,h)=>{q.fillStyle='#b9a68a';q.fillRect(0,0,w,h);for(let i=0;i<2600;i++){q.fillStyle=r()<.5?'rgba(120,100,80,.35)':'rgba(220,205,180,.35)';q.fillRect(r()*w,r()*h,2,2)}},[20,20]);const yd=new THREE.Mesh(new THREE.PlaneGeometry(122,104),new THREE.MeshStandardMaterial({map:ET,roughness:1}));yd.rotation.x=-Math.PI/2;yd.position.set(-12,.02,-6);yd.receiveShadow=true;G.add(yd);
   const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#6f8f45';q.fillRect(0,0,w,h);for(let i=0;i<3200;i++){q.fillStyle=r()<.5?'rgba(80,110,40,.5)':'rgba(140,150,80,.35)';q.fillRect(r()*w,r()*h,2,2)}},[40,40]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(240,240),new THREE.MeshStandardMaterial({map:GT,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr);
   const PT=tex(256,256,(q,w,h)=>{q.fillStyle='#8a8478';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=40)for(let x=-(y/40%2)*30;x<w;x+=60){const v=120+(r()*35|0);q.fillStyle=`rgb(${v},${v-4},${v-10})`;q.fillRect(x+3,y+3,54,34)}},[2,14]);const pth=new THREE.Mesh(new THREE.PlaneGeometry(4,70),new THREE.MeshStandardMaterial({map:PT,roughness:.95}));pth.rotation.x=-Math.PI/2;pth.position.set(0,.04,26);G.add(pth);
@@ -30,7 +30,15 @@ export function buildHaenggung(opts={}){const mini=!!opts.mini;const G=new THREE
  spots.push({x:0,y:0,z:5,r:3.4,t:'봉수당',h:'행궁의 으뜸 건물이에요. 1795년 정조가 어머니 혜경궁 홍씨의 회갑 잔치를 여기서 열었어요. 오래 사시라는 뜻의 이름이에요. '+SRC});
  spots.push({x:22,y:0,z:-26,r:3,t:'복내당',h:'행궁의 안채예요. 왕이 머무는 동안 살림을 하던 곳이에요. '+SRC});
  spots.push({x:-44,y:0,z:-8,r:3.4,t:'득중정',h:'정조가 활을 쏘던 활터 정자예요. 활을 쏘아 과녁을 맞히면 마음을 얻는다는 뜻이에요. 정조는 활을 아주 잘 쐈대요. '+SRC});
- spots.push({x:-20,y:0,z:-44,r:3,t:'미로한정',h:'행궁 뒷동산의 작은 정자예요. 정조가 늙으면 여기서 쉬겠다고 이름 붙였어요. '+SRC});
+ spots.push({x:-40,y:0,z:-24,r:3.4,t:'낙남헌',h:'정조가 혜경궁 회갑 때 군사들에게 상을 내리고 과거 시험을 치른 큰 건물이에요. 일제 강점기에도 헐리지 않고 남은 행궁 건물이에요. '+SRC});
+ spots.push({x:36,y:0,z:-2,r:3,t:'유여택',h:'정조가 행궁에 머물 때 신하들을 만나던 곳이에요. '+SRC});
+ spots.push({x:36,y:0,z:-24,r:2.6,t:'경룡관',h:'봉수당 뒤쪽으로 이어지는 건물이에요. 용(임금)이 기쁘게 머문다는 뜻이래요. '+SRC});
+ spots.push({x:-22,y:0,z:40,r:2.8,t:'남군영',h:'행궁을 지키던 군사들이 머물던 곳이에요. 북군영과 짝을 이뤄 정문 안쪽 양옆에 있어요. '+SRC});
+ spots.push({x:22,y:0,z:40,r:2.8,t:'북군영',h:'남군영과 마주 보는 군사 숙소예요. '+SRC});
+ spots.push({x:32,y:0,z:24,r:2.6,t:'외정리소',h:'정조의 화성 행차를 준비하던 관청이에요. 원행을묘정리의궤를 펴낸 곳으로 이어져요. '+SRC});
+ spots.push({x:-30,y:0,z:22,r:2.6,t:'집사청',h:'행궁 일을 보던 집사들이 머물던 곳이에요. '+SRC});
+ spots.push({x:-92,y:0,z:16,r:3.4,t:'화령전 운한각',h:'정조의 초상(어진)을 모신 화령전의 으뜸 건물이에요. 순조가 아버지 정조를 기리려고 1801년에 지었고, 지금도 처음 모습 그대로 남아 보물로 지정됐어요. '+SRC});
+ spots.push({x:-8,y:0,z:-44,r:3,t:'미로한정',h:'행궁 뒷동산의 작은 정자예요. 정조가 늙으면 여기서 쉬겠다고 이름 붙였어요. '+SRC});
  const tick=()=>{};
  const meta={quest:{t:'화성행궁 둘러보기',d:'정조의 행궁 일곱 곳을 찾아보세요. 실측 3D라 실제 크기예요.',steps:[['신풍루','신풍루'],['좌익문','좌익문'],['중양문','중양문'],['봉수당','봉수당'],['복내당','복내당'],['득중정','득중정'],['미로한정','미로한정']]},
   title:'수원 화성행궁',hint:'한국문화정보원이 실측한 화성행궁 건물 일곱 채를 실제 크기로 세웠어요. 정문 신풍루에서 봉수당까지 걸어 보고, 득중정 활터도 들러 보세요. '+SRC,
