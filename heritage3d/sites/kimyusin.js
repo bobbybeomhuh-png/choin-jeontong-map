@@ -1,0 +1,51 @@
+/* 경주 김유신 장군묘 마당(2026-11-20): 국가유산청 실측 3D(스케치팹 KHS_Asset, CC BY 4.0) 십이지신 부조 아홉 점, 비석 둘, 상석을 실제 크기로.
+   봉분(지름 약 30m)과 호석·돌난간은 간추려 지음. 호석 판석에 평상복 차림으로 무기를 든 십이지신이 방향마다 새겨져 있음(남은 실측이 없는 양·닭·돼지 자리는 빈 판석).
+   놀이: 내 띠 신 찾기(말한 띠의 부조 앞에 서기). */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+import {tex,mulb} from './sungnyemun.js';
+export function buildKimyusin(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(595);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
+ const RM=15,RH=15.35,RL=18;/* 봉분 반지름, 호석 반지름, 난간 반지름 */
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#6f9248';q.fillRect(0,0,w,h);for(let i=0;i<3400;i++){q.fillStyle=r()<.5?'rgba(80,115,40,.5)':'rgba(150,165,90,.35)';q.fillRect(r()*w,r()*h,2,2)}},[40,40]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(260,260),new THREE.MeshStandardMaterial({map:GT,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr);
+  const KT=tex(256,256,(q,w,h)=>{q.fillStyle='#b8ad98';q.fillRect(0,0,w,h);for(let i=0;i<2400;i++){const v=140+(r()*70|0);q.fillStyle=`rgb(${v},${v-6},${v-16})`;q.fillRect(r()*w,r()*h,3,3)}},[3,16]);const pth=new THREE.Mesh(new THREE.PlaneGeometry(4,34),new THREE.MeshStandardMaterial({map:KT,roughness:1}));pth.rotation.x=-Math.PI/2;pth.position.set(0,.02,38);G.add(pth);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(RH+.4,RL-.4,72),new THREE.MeshStandardMaterial({map:KT,roughness:1}));ring.rotation.x=-Math.PI/2;ring.position.y=.025;G.add(ring)}
+ /* 봉분: 잔디 덮인 둥근 흙 무덤 */{const GT2=tex(256,256,(q,w,h)=>{q.fillStyle='#7a9a4a';q.fillRect(0,0,w,h);for(let i=0;i<4000;i++){q.fillStyle=r()<.5?'rgba(90,120,40,.5)':'rgba(160,170,90,.4)';q.fillRect(r()*w,r()*h,2,2)}},[8,8]);const g=new THREE.SphereGeometry(RM,48,16,0,Math.PI*2,0,Math.PI/2);g.scale(1,5.6/RM,1);const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:GT2,roughness:1}));m.position.y=1.1;m.receiveShadow=true;m.castShadow=true;G.add(m);cam.push(m);solids.push({cx:0,cz:0,r:RH+.3,y0:-1,y1:30})}
+ /* 호석: 판석 띠(높이 1.2m)와 덮개돌, 기둥돌 */const ST=M(0xb0a898,{roughness:.85}),ST2=M(0xa49c8c,{roughness:.85});
+ {const n=72;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const w=2*Math.PI*RH/n;const b=new THREE.Mesh(new THREE.BoxGeometry(w*.98,1.2,.35),i%6===0?ST2:ST);b.position.set(Math.cos(a)*RH,.6,Math.sin(a)*RH);b.rotation.y=-a+Math.PI/2;b.castShadow=b.receiveShadow=true;G.add(b)}
+  const cap=new THREE.Mesh(new THREE.TorusGeometry(RH,.3,6,96),ST2);cap.rotation.x=Math.PI/2;cap.position.y=1.25;cap.scale.z=.5;G.add(cap)}
+ /* 돌난간: 기둥과 가로대 */{const n=48;for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const p=new THREE.Mesh(new THREE.BoxGeometry(.26,1.2,.26),ST);p.position.set(Math.cos(a)*RL,.6,Math.sin(a)*RL);p.rotation.y=-a;G.add(p)}for(const y of[.5,1.05]){const t=new THREE.Mesh(new THREE.TorusGeometry(RL,.07,5,120),ST);t.rotation.x=Math.PI/2;t.position.y=y;G.add(t)}}
+ /* 십이지신 부조: 쥐(북)부터 시계 방향 */
+ const ZN=[['쥐','🐭'],['소','🐮'],['범','🐯'],['토끼','🐰'],['용','🐲'],['뱀','🐍'],['말','🐴'],['양','🐑'],['원숭이','🐵'],['닭','🐔'],['개','🐶'],['돼지','🐷']];const ZF={0:'z001',1:'z002',2:'z003',3:'z004',4:'z005',5:'z006',6:'z007',8:'z009',10:'z011'};
+ const zPos=(i,rr=RH+.3)=>{const a=-Math.PI/2+i*Math.PI/6;return[Math.cos(a)*rr,Math.sin(a)*rr,a]};
+ const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);
+ const place=(file,x,z,ry,yb=0,face=null)=>gl.load(new URL('../models/kimyusin/'+file+'.glb',import.meta.url).href,g=>{const o=g.scene;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0;e.material.envMapIntensity=.6}cam.push(e)}});const bx=new THREE.Box3().setFromObject(o);const c=bx.getCenter(new THREE.Vector3());o.position.set(-c.x,-bx.min.y,-c.z);const p=new THREE.Group();p.add(o);p.position.set(x,yb,z);p.rotation.y=ry;p.userData.noBatch=true;G.add(p);const b2=new THREE.Box3().setFromObject(p);if(!face)solids.push({x0:b2.min.x,x1:b2.max.x,y0:0,y1:b2.max.y,z0:b2.min.z,z1:b2.max.z})},undefined,()=>{});
+ if(!mini){for(let i=0;i<12;i++){const[x,z,a]=zPos(i);const ry=Math.atan2(-Math.cos(a),-Math.sin(a))+Math.PI;if(ZF[i])place(ZF[i],x,z,ry,.1,1);else{const b=new THREE.Mesh(new THREE.BoxGeometry(.66,1.0,.2),ST2);b.position.set(x,.6,z);b.rotation.y=ry;G.add(b)}}
+  place('stone_table',0,RL+3.2,0);place('monument_001',-7,RL+9,0);place('monument_002',7,RL+9,0)}
+ const SRC='(3D: 국가유산청 KHS_Asset, Sketchfab, CC BY 4.0)';
+ spots.push({x:0,y:0,z:RL+6,r:3.4,t:'김유신 장군묘',h:'삼국 통일을 이끈 신라 장군 김유신(595~673)의 무덤이에요. 봉분 둘레 호석에 평상복 차림으로 무기를 든 십이지신을 새겼어요. 십이지신·비석·상석은 실측 그대로 실제 크기예요. '+SRC});
+ spots.push({x:-7,y:0,z:RL+12,r:2.6,t:'김유신묘 비',h:'김유신 장군의 무덤임을 알리는 비석이에요. 실측 그대로예요. '+SRC});
+ spots.push({x:0,y:0,z:-RL-3,r:3,t:'십이지 호석',h:'봉분을 두른 판석에 열두 띠 신을 방향마다 새겼어요. 북쪽이 쥐, 남쪽이 말이에요. 양·닭·돼지 자리는 아직 실측본이 없어 빈 판석으로 두었어요. '+SRC});
+ /* 내 띠 신 찾기(11/20): 다섯 문제. 말한 띠의 부조 앞(난간 안 고리)에 서요. 90초 */
+ window.__KYZOD=()=>{if(document.getElementById('kzP'))return;const H=window.__H3,ctx=H.ctx();try{H.tp(0,RL-1.2,0);H.face(Math.PI)}catch(e){}
+  const Q=[];const pool=[0,1,2,3,4,5,6,8,10];while(Q.length<5){const k=pool[(Math.random()*pool.length)|0];if(!Q.includes(k))Q.push(k)}
+  const g=new THREE.Group();G.add(g);const ring=new THREE.Mesh(new THREE.RingGeometry(.7,.95,24),new THREE.MeshBasicMaterial({color:0xffd060,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=.04;ring.visible=false;g.add(ring);
+  const d=document.createElement('div');d.id='kzP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#2a2016;border:3px solid #e0b048;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:236px;user-select:none";document.body.appendChild(d);
+  const TL=90;let qi=0,ok=0,done=false,t0=performance.now()/1000,hint=0;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#ffd890">🐉 내 띠 신 찾기</b><div id="kzS" style="font:22px 'Do Hyeon',sans-serif;margin:4px 0"></div><div id="kzH" style="font-size:12px;color:#ffd890;min-height:15px"></div><div id="kzT" style="font-size:13px">${TL}초 · 0 / 5</div><div style="font-size:12px;opacity:.85">호석과 난간 사이를 돌며 그 띠 신이 새겨진 판석 앞에 서요. 북쪽이 쥐, 시계 방향이에요</div>`;const Sx=d.querySelector('#kzS'),Hh=d.querySelector('#kzH'),T=d.querySelector('#kzT');
+  const show=()=>{Sx.textContent=ZN[Q[qi]][1]+' '+ZN[Q[qi]][0]+'띠 신을 찾아요';Hh.textContent='';hint=performance.now()/1000};show();
+  const ding=()=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime;[784,1047].forEach((f,i)=>{const o=AC.createOscillator(),gg=AC.createGain();o.type='sine';o.frequency.value=f;gg.gain.setValueAtTime(.08,s+i*.12);gg.gain.exponentialRampToValueAtTime(.0001,s+i*.12+.6);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s+i*.12);o.stop(s+i*.12+.65)})}catch(e){}};
+  const fin=()=>{if(done)return;done=true;const el=performance.now()/1000-t0;const Qs=ok>=5?Math.max(70,Math.round(100-Math.max(0,el-50)*.8)):Math.round(ok/5*65);const st=Qs>=85?3:Qs>=60?2:Qs>0?1:0;try{ctx.done('kimyusin_zodiac',Qs,'내 띠 신 찾기')}catch(e){}window.__KYZQ=Qs;ring.visible=false;
+   setTimeout(()=>{if(!d.isConnected)return;d.innerHTML=`<b style="font:18px 'Do Hyeon',sans-serif;color:#ffd890">띠 신 ${ok}을 찾았어요</b><div style="font-size:13px;margin:4px 0">김유신 장군묘의 십이지신은 갑옷 대신 평상복을 입고 무기를 들었어요. 신라 십이지 호석 가운데 가장 뛰어난 솜씨로 꼽혀요.</div><div style="font-size:26px;color:#e0b048">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#e0b048;color:#2a1a10;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();setTimeout(()=>window.__KYZOD(),60)};d.querySelector('[data-x]').onclick=()=>d.remove()},900)};
+  const loop=()=>{if(!d.isConnected){G.remove(g);return}const now=performance.now()/1000;const P=H.P;
+   if(!done){const k=Q[qi];const[x,z]=zPos(k,RH+1.3);if(now-hint>12){ring.visible=true;ring.position.set(x,.04,z);Hh.textContent='힌트: 노란 고리가 떴어요'}ring.material.opacity=.35+Math.sin(now*5)*.15;
+    if(Math.hypot(P.x-x,P.z-z)<1.3){ok++;ding();ring.visible=false;try{ctx.say(ZN[k][0]+'띠 신을 찾았어요!',1.4)}catch(e){}qi++;if(qi>=5)fin();else show()}
+    const left=Math.max(0,TL-(now-t0));T.textContent=Math.ceil(left)+'초 · '+ok+' / 5';if(left<=0)fin()}
+   requestAnimationFrame(loop)};loop();window.__KZG={Q,pos:i=>zPos(i,RH+1.3),get ok(){return ok}};try{ctx.say('김유신 장군묘 호석에 열두 띠 신이 있어요. 띠 신을 찾아 봐요!',3)}catch(e){}};
+ spots.push({x:-5,y:0,z:RL+3,r:2.4,t:'띠 신 찾는 자리',h:'호석에 새겨진 열두 띠 신 가운데 말하는 띠를 찾아가 봐요.'});
+ const meta={quest:{t:'김유신 장군묘 둘러보기',d:'십이지 호석과 비석을 실측 그대로 둘러보세요.',steps:[['장군묘','김유신 장군묘'],['비석','김유신묘 비'],['호석','십이지 호석']]},
+  title:'경주 김유신 장군묘',hint:'국가유산청이 실측한 김유신 장군묘 십이지신 부조와 비석·상석을 실제 크기로 놓았어요. 호석을 따라 돌며 띠 신을 찾아 봐요. '+SRC,
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:-6,z:RL+16,lines:['경주 김유신 장군묘','신라 장군 김유신(595~673)','십이지 호석 · 비석 · 상석','실측 3D · 실제 크기']}},
+  npc:[['science',[[-5,RL+14],[5,RL+14],[5,RL+20],[-5,RL+20]]]],bounds:[-90,90,-90,90],level:()=>'김유신 장군묘',camCap:()=>Infinity,baseAt:()=>0,tick:()=>{},
+  mini:{S:2,ox:0,oz:4,draw(g,X,Z,S){g.fillStyle='#6f9248';g.fillRect(0,0,300,300);g.fillStyle='#7a9a4a';g.beginPath();g.arc(X(0),Z(0),15*S,0,7);g.fill();g.strokeStyle='#b0a898';g.lineWidth=2;g.beginPath();g.arc(X(0),Z(0),18*S,0,7);g.stroke()}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:RL+20,yaw:Math.PI},size:{}},meta)}
