@@ -35,10 +35,10 @@ function target(){
   if(d.stage===2)return{p:xy(d.planks&&d.planks[0]),t:'꾹 눌러요'};
   const s=d.shards&&d.shards[0];return s?{p:xy(s.xy),t:'문질러요'}:null}}catch(e){}
  return null}
-let mgh=null;function hide(){if(hand)hand.style.display='none';if(mgh)mgh.style.display='none'}
+let mgh=null;function hide(){if(hand)hand.style.display='none';if(mgh)mgh.style.display='none';try{if(window.__MGSP){window.__MGSP.style.opacity='';window.__MGSP=null}}catch(e){}}
 /* 11/20 E29: 곁놀이(관아 놀이) 화면에서 6초 가만히 있으면 제목 아래 「하는 법」 한 줄을 크게 금빛 띠로 */
-function mgTip(){if(performance.now()-last<6000)return false;if(document.querySelector('.jd-ov'))return false;const m=document.querySelector('body>div[data-mg]');if(!m)return false;let sp=null;for(const d of m.children){if(d.tagName==='DIV'&&d.querySelector(':scope>b')&&d.querySelector(':scope>span')){sp=d.querySelector(':scope>span');break}}const t=sp&&(sp.textContent||'').trim();if(!t)return false;if(!mgh){mgh=document.createElement('div');mgh.id='jdMgHint';document.body.append(mgh)}mgh.textContent='👆 '+t;mgh.style.display='block';return true}
-function tick(){if(performance.now()-last<3500){hide();return}if(mgTip()){if(hand)hand.style.display='none';return}if(mgh)mgh.style.display='none';if(document.querySelector('.jd-ov')){hide();return}
+function mgTip(){if(performance.now()-last<6000)return false;if(document.querySelector('.jd-ov'))return false;const m=document.querySelector('body>div[data-mg]');if(!m)return false;let sp=null;for(const d of m.children){if(d.tagName==='DIV'&&d.querySelector(':scope>b')&&d.querySelector(':scope>span')){sp=d.querySelector(':scope>span');break}}const t=sp&&(sp.textContent||'').trim();if(!t)return false;if(!mgh){mgh=document.createElement('div');mgh.id='jdMgHint';document.body.append(mgh)}mgh.textContent='👆 '+t;mgh.style.display='block';/* 11/20 같은 안내가 두 번 보이지 않게, 금빛 안내가 떠 있는 동안 위 제목 아래 줄은 숨김 */try{if(window.__MGSP&&window.__MGSP!==sp)window.__MGSP.style.opacity='';sp.style.opacity='0';window.__MGSP=sp}catch(e){}return true}
+function tick(){if(performance.now()-last<3500){hide();return}if(mgTip()){if(hand)hand.style.display='none';return}if(mgh)mgh.style.display='none';try{if(window.__MGSP){window.__MGSP.style.opacity='';window.__MGSP=null}}catch(e){}if(document.querySelector('.jd-ov')){hide();return}
  const g=target();const p=g&&g.p;if(!p||!(p[0]>0&&p[1]>0&&p[0]<innerWidth&&p[1]<innerHeight)){hide();return}
  hand.style.left=p[0]+'px';hand.style.top=p[1]+'px';hand.querySelector('.t').textContent=g.t;hand.classList.toggle('up',p[1]>innerHeight-90);hand.style.display='block'}
 export function guide3d(){if(window.__GUIDE3D)return;window.__GUIDE3D=1;const st=document.createElement('style');st.textContent=CSS;document.head.append(st);
