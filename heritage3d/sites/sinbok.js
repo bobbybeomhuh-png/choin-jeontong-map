@@ -1,0 +1,28 @@
+/* 강릉 신복사지 마당(2026-11-21): 스케치팹 lacomi1975 사진 측량(CC BY 4.0) 신복사지 삼층석탑(보물)과 탑 앞 석조보살좌상(보물).
+   실측 단위가 깨져 있어 탑 실제 높이 4.55m에 맞춰 줄임. 보살이 탑 앞에 무릎 꿇고 공양하는 모습 그대로. 놀이: 탑 둘레 등 공양. */
+import {photoSite} from './photosite.js';
+const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
+export function buildSinbok(opts={}){return photoSite('sinbok',opts,{h0:-.2,groundY:-.25,groundColor:0x7a8a5a,
+ title:'강릉 신복사지',hint:'사진 측량한 신복사지 삼층석탑과 석조보살좌상을 실제 높이로 놓았어요. 보살처럼 탑 둘레에 등을 밝혀 공양해 봐요. '+SRC,
+ quest:{t:'신복사지 둘러보기',d:'고려 탑과 공양하는 보살을 실측 그대로 둘러보세요.',steps:[['석탑','신복사지 삼층석탑'],['보살','석조보살좌상']]},
+ spawn:{x:-.3,z:6,yaw:Math.PI},bounds:[-9,9,-9,9],level:'신복사지',env:{fog:[60,300],sign:{x:-3.5,z:5,y:-.2,lines:['강릉 신복사지','삼층석탑 · 석조보살좌상','보물 · 고려','실측 3D · 실제 높이']}},
+ npc:[['science',[[-3,6],[3,6]]]],
+ build({G,spots,hAt,THREE}){
+  spots.push({x:-.3,y:0,z:3.4,r:2.2,t:'신복사지 삼층석탑',h:'고려 때 세운 삼층석탑이에요(보물). 높이 4.55m, 아래 받침에 연꽃을 새겼어요. 실측 그대로 실제 높이에 맞췄어요. '+SRC});
+  spots.push({x:-3.4,y:0,z:2,r:1.8,t:'석조보살좌상',h:'탑 앞에 한쪽 무릎을 세우고 앉아 두 손을 모은 보살이에요(보물). 높은 관을 쓰고 탑에 공양하는 모습이에요. 강원도에만 있는 독특한 모습이에요. '+SRC});
+  const C={x:-.3,z:.5},RR=2.9;
+  window.__SBLAMP=()=>{if(document.getElementById('sbP'))return;const H=window.__H3,ctx=H.ctx();
+   const g=new THREE.Group();G.add(g);const lc=document.createElement('canvas');lc.width=lc.height=64;{const q=lc.getContext('2d');const gr=q.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(255,225,150,1)');gr.addColorStop(1,'rgba(255,150,60,0)');q.fillStyle=gr;q.fillRect(0,0,64,64)}const lt=new THREE.CanvasTexture(lc);
+   const L=[];for(let i=0;i<8;i++){const a=i/8*Math.PI*2;const x=C.x+Math.cos(a)*RR,z=C.z+Math.sin(a)*RR,y=hAt(x,z);const b=new THREE.Mesh(new THREE.CylinderGeometry(.12,.15,.3,8),new THREE.MeshStandardMaterial({color:0xe8d8b0,emissive:0xff9a40,emissiveIntensity:0}));b.position.set(x,y+.15,z);g.add(b);const h=new THREE.Sprite(new THREE.SpriteMaterial({map:lt,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0}));h.scale.set(.9,.9,1);h.position.set(x,y+.35,z);g.add(h);const r=new THREE.Mesh(new THREE.RingGeometry(.35,.5,20),new THREE.MeshBasicMaterial({color:0xffd060,transparent:true,opacity:.5,depthWrite:false,side:THREE.DoubleSide}));r.rotation.x=-Math.PI/2;r.position.set(x,y+.03,z);g.add(r);L.push({x,z,b,h,r,on:false})}
+   const d=document.createElement('div');d.id='sbP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#2a2016;border:3px solid #e0b048;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:236px;user-select:none";document.body.appendChild(d);
+   const N=L.length,TL=45;let n=0,done=false,t0=performance.now()/1000;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#ffd890">🪔 탑 둘레 등 공양</b><div id="sbS" style="font:20px 'Do Hyeon',sans-serif;margin:4px 0">0 / ${N}</div><div id="sbT" style="font-size:13px">${TL}초</div><div style="font-size:12px;opacity:.85">보살처럼 탑에 공양해요. 탑 둘레 노란 고리마다 등을 밝혀요</div>`;const Sx=d.querySelector('#sbS'),T=d.querySelector('#sbT');
+   const bell=()=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type='sine';o.frequency.value=523+n*40;gg.gain.setValueAtTime(.07,s);gg.gain.exponentialRampToValueAtTime(.0001,s+1.2);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+1.25)}catch(e){}};
+   const fin=()=>{if(done)return;done=true;const el=performance.now()/1000-t0;const Q=n>=N?Math.max(70,Math.round(100-Math.max(0,el-20)*1.5)):Math.round(n/N*65);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('sinbok_lamp',Q,'탑 둘레 등 공양')}catch(e){}window.__SBQ=Q;
+    setTimeout(()=>{if(!d.isConnected)return;d.innerHTML=`<b style="font:18px 'Do Hyeon',sans-serif;color:#ffd890">등 ${n}개를 밝혔어요</b><div style="font-size:13px;margin:4px 0">탑 앞 보살은 천 년 가까이 이렇게 탑에 공양하는 모습으로 앉아 있어요.</div><div style="font-size:26px;color:#e0b048">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#e0b048;color:#2a1a10;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();setTimeout(()=>window.__SBLAMP(),60)};d.querySelector('[data-x]').onclick=()=>d.remove()},800)};
+   const loop=()=>{if(!d.isConnected){G.remove(g);return}const now=performance.now()/1000;const P=H.P;
+    if(!done){for(const l of L)if(!l.on&&Math.hypot(P.x-l.x,P.z-l.z)<.8){l.on=true;l.r.visible=false;n++;bell();if(n>=N)fin()}Sx.textContent=n+' / '+N;const left=Math.max(0,TL-(now-t0));T.textContent=Math.ceil(left)+'초';if(left<=0)fin()}
+    for(const l of L){if(l.on){l.b.material.emissiveIntensity=Math.min(1.8,l.b.material.emissiveIntensity+.05);l.h.material.opacity=Math.min(.9,l.h.material.opacity+.03)}}requestAnimationFrame(loop)};loop();
+   window.__SBG={L,get n(){return n}};try{ctx.say('탑 앞 보살처럼 등을 밝혀 공양해 봐요!',2.5)}catch(e){}};
+  spots.push({x:2.5,y:0,z:5,r:1.6,t:'등 공양 자리',h:'탑 둘레에 등을 밝혀 공양해 봐요.'});
+ },
+ mini:{S:15,ox:-.3,oz:.5,draw(g,X,Z,S){g.fillStyle='#7a8a5a';g.fillRect(0,0,300,300);g.fillStyle='#9a948a';g.fillRect(X(-1.7),Z(2.6),2.8*S,4.1*S)}}})}
