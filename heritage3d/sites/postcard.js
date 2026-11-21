@@ -21,6 +21,7 @@ export const STAMPS={
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
  wolji:{p:'stamps/wolji.jpg',n:'경주 동궁과 월지',e:'통일신라',c:'무이 월드 장면',msg:'주령구를 굴렸더니 벌칙이 나왔어요. 밤 연못이 정말 예뻤어요.'},
+ nonsan:{p:'stamps/wolji.jpg',n:'논산 관촉사·돈암서원',e:'실측 3D',c:'무이 월드 장면',msg:'관촉사·돈암서원에 다녀왔어요. 실제 크기라 정말 컸어요!'},
  pungnam:{p:'stamps/wolji.jpg',n:'전주 풍남문·전주사고',e:'실측 3D',c:'무이 월드 장면',msg:'풍남문·전주사고에 다녀왔어요. 실제 크기라 정말 컸어요!'},
  jangseong:{p:'stamps/wolji.jpg',n:'장성 필암서원·홍길동',e:'실측 3D',c:'무이 월드 장면',msg:'필암서원·홍길동에 다녀왔어요. 실제 크기라 정말 컸어요!'},
  dongnae:{p:'stamps/wolji.jpg',n:'부산 동래읍성·부산포',e:'실측 3D',c:'무이 월드 장면',msg:'동래읍성·부산포에 다녀왔어요. 실제 크기라 정말 컸어요!'},
