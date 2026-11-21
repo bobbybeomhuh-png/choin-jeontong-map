@@ -1,0 +1,62 @@
+/* 대구 도동서원 마당(2026-11-22, 대구 덧붙이기 E4): 공개 실측 3D(CC BY)가 없어 공개 사진·수치로 간추려 지음.
+   도동서원(사적, 세계유산 「한국의 서원」 2019): 한훤당 김굉필을 기린 서원(1604 다시 지음), 낙동강 가 언덕. 수월루(문루) → 몸을 숙여야 지나는 작은 문 환주문 → 강당 중정당(보물).
+   중정당 기단: 크기·모양·색이 다른 돌을 빈틈없이 짜맞추고, 용머리 돌 넷과 꽃봉오리·다람쥐 조각을 넣음. 서원 앞 400년 넘은 은행나무.
+   놀이: 기단 돌 맞추기(빈자리 모양에 맞는 돌 고르기), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {tex,mulb} from './sungnyemun.js';
+import {buildHall} from './hallkit.js';
+export function buildDodong(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1604);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
+ /* 땅: 북쪽으로 오르는 계단식 언덕, 남쪽(z>40) 낙동강 */const RZ=40;const H=(x,z)=>z>RZ?-2:z<-24?3.6:z<-8?2.4:z<6?1.2:0;
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);
+  const g=new THREE.PlaneGeometry(220,200,220,200);g.rotateX(-Math.PI/2);const p=g.attributes.position;const col=[];const c=new THREE.Color();for(let k=0;k<p.count;k++){const x=p.getX(k),z=p.getZ(k);p.setY(k,z>RZ+2?-3:Math.max(0,H(x,z)));c.set(z>RZ-1?'#d0c098':'#8a9a4a');col.push(c.r,c.g,c.b)}g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.computeVertexNormals();const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:GT,vertexColors:true,roughness:1}));m.receiveShadow=true;G.add(m)}
+ {const WT=tex(256,256,(q,w,h)=>{q.fillStyle='#4f7f86';q.fillRect(0,0,w,h);for(let i=0;i<200;i++){q.strokeStyle=`rgba(220,240,240,${.08+r()*.12})`;q.lineWidth=1+r()*2;const x=r()*w,y=r()*h;q.beginPath();q.moveTo(x,y);q.lineTo(x+20+r()*20,y);q.stroke()}},[8,4]);const rv=new THREE.Mesh(new THREE.PlaneGeometry(400,90),new THREE.MeshStandardMaterial({map:WT,roughness:.12,metalness:.2}));rv.rotation.x=-Math.PI/2;rv.position.set(0,-.6,RZ+45);G.add(rv);solids.push({x0:-200,x1:200,y0:-6,y1:20,z0:RZ+1,z1:RZ+200})}
+ /* 축대 */{const sm=M(0xa89c88,{flatShading:true});for(const[z,y]of[[6,1.2],[-8,2.4],[-24,3.6]]){const w=new THREE.Mesh(new THREE.BoxGeometry(40,1.2,.6),sm);w.position.set(0,y-.6,z);G.add(w)}}
+ /* 수월루 → 환주문 → 중정당 */
+ if(!mini){const B=(spec,y)=>{const h=buildHall(Object.assign({solids,light:false},spec));h.group.position.y+=y;G.add(h.group);h.group.traverse(e=>{if(e.isMesh)cam.push(e)});return h};
+  B({x:0,z:14,ry:Math.PI,W:9,D:4,nx:3,nz:1,FY:1.8,PH:2.4,roof:'gable',name:'水月樓',pillar:0x8a6a48,bracket:'ik',front:'open',back:'open',left:'open',right:'open',stairs:'none',rail:true,roofScale:.85},0);
+  B({x:0,z:-2,ry:Math.PI,W:1.8,D:1.4,nx:1,nz:1,FY:.2,PH:1.5,roof:'gable',name:'喚主門',pillar:0x8a6a48,bracket:'ik',front:'open',back:'open',stairs:'none',roofScale:.6},1.2);
+  B({x:0,z:-16,ry:Math.PI,W:12,D:7,nx:5,nz:2,FY:1.4,PH:3,base:false,stairs:'none',roof:'gable',name:'中正堂',pillar:0x8a6a48,bracket:'ik',front:'open',roofScale:.95},2.4);{const kb=new THREE.Mesh(new THREE.BoxGeometry(14,1.4,9),M(0xa89c88));kb.position.set(0,2.4+.7,-16);G.add(kb);solids.push({x0:-7,x1:7,y0:0,y1:3.8,z0:-20.5,z1:-11.5});const stp=new THREE.Mesh(new THREE.BoxGeometry(3,.7,1.2),M(0xb8ac98));stp.position.set(0,2.4+.35,-10.9);stp.scale.set(1,.5,1);G.add(stp)}
+  for(const s of[-1,1])B({x:s*10,z:-8,ry:s*Math.PI/2,W:6,D:3.4,nx:3,nz:1,FY:.5,PH:2.4,roof:'gable',name:s<0?'居仁齋':'居義齋',pillar:0x8a6a48,bracket:'ik',roofScale:.8},2.4)}
+ /* 중정당 짜맞춘 기단(앞면): 여러 색 다각형 돌 + 용머리 넷 */const KZ=-16+4.5+.02,KY=2.4;{const cols=[0x8a7a60,0x6a6050,0xb0a080,0x9a8a70,0x7a6a58,0xc0ac88,0x8a6a50];const edgeM=new THREE.LineBasicMaterial({color:0x2a241c});const yy=KY;let x=-7;while(x<6.9){const w=.5+r()*.9;for(let row=0;row<2;row++){const h=.7;const sh=new THREE.Shape();const j=()=>(r()-.5)*.12;sh.moveTo(j(),j());sh.lineTo(w+j(),j());sh.lineTo(w+j(),h+j());sh.lineTo(j(),h+j());const g=new THREE.ShapeGeometry(sh);const m=new THREE.Mesh(g,M(cols[(r()*cols.length)|0],{side:THREE.DoubleSide}));m.position.set(x,yy+row*.7,KZ+.01);G.add(m);const el=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(sh.getPoints().map(p=>new THREE.Vector3(p.x,p.y,0))),edgeM);el.position.copy(m.position);el.position.z+=.01;G.add(el)}x+=w}
+  for(const sx of[-4.5,-1.5,1.5,4.5]){const dh=new THREE.Mesh(new THREE.BoxGeometry(.4,.4,.7),M(0xb0a490));dh.position.set(sx,yy+1.1,KZ+.3);G.add(dh)}}
+ /* 은행나무 */{const t=new THREE.Mesh(new THREE.CylinderGeometry(.9,1.4,9,10),M(0x5a4430));t.position.set(-14,4.5,24);G.add(t);for(let k=0;k<7;k++){const c=new THREE.Mesh(new THREE.IcosahedronGeometry(3.4,1),M(0xe8c030,{roughness:.8,flatShading:true}));c.position.set(-14+(r()-.5)*5,9+r()*4,24+(r()-.5)*5);G.add(c)}solids.push({cx:-14,cz:24,r:1.5,y0:0,y1:9})}
+ const NL=[];if(!mini){for(const[x,y,z]of[[0,4,18],[0,6,-10],[-14,4,28]]){const L=new THREE.PointLight(0xffc080,0,22,1.5);L.position.set(x,y,z);G.add(L);NL.push(L)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);for(const L of NL)L.intensity=nk*7};
+ /* 안내 */const sp=(x,z,rr,t,h)=>spots.push({x,y:Math.max(0,H(x,z)),z,r:rr,t,h});
+ sp(0,20,3,'도동서원 수월루','한훤당 김굉필을 기린 서원이에요. 낙동강을 내려다보는 언덕에 있고, 2019년 「한국의 서원」으로 세계유산이 됐어요. 간추려 지었어요.');
+ sp(0,2,2,'환주문','키 작은 문이라 갓을 쓴 선비도 몸을 숙여야 지나요. 「주인을 부르는 문」이라는 뜻이에요.');
+ sp(3,-10,2.6,'중정당 기단','크기·모양·색이 다른 돌을 빈틈없이 짜맞춘 기단이에요(보물). 용머리 돌 넷과 꽃봉오리·다람쥐 조각이 숨어 있어요. 빈자리에 맞는 돌을 골라 봐요.');
+ sp(-14,30,3,'은행나무','김굉필의 외증손 한강 정구가 심었다고 전하는 400년 넘은 은행나무예요.');
+ sp(24,24,2.4,'발굴 탐지 자리','서원 둘레 땅속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
+ /* 기단 돌 맞추기(11/22): 빈자리 모양(테두리)을 보고 네 돌 가운데 꼭 맞는 돌 고르기. 열 자리, 60초 */
+ const SHAPES=[[[0,0],[1,0],[1,1],[0,1]],[[0,0],[1.4,0],[1.2,1],[0,1]],[[0,0],[1,0],[1,.7],[.5,1],[0,.7]],[[0,.2],[.8,0],[1,1],[0,1]],[[0,0],[1,.3],[1,1],[.2,1]],[[0,0],[.6,0],[1,.5],[.6,1],[0,1]],[[.2,0],[1,0],[1,1],[0,.8]],[[0,0],[1.6,0],[1.6,.6],[0,.6]],[[0,0],[.7,0],[.7,1.3],[0,1.3]],[[0,0],[1,0],[.8,.5],[1,1],[0,1]]];
+ window.__DDSTONE=()=>{if(document.getElementById('ddP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(3,-10,0);H3.face(Math.PI)}catch(e){}
+  window.__GCAM=()=>document.getElementById('ddP')?[0,3.6,-5,0,3,-12,55]:null;
+  const N=10,TL=60;let i=0,ok=0,bad=0,done=false,t0=performance.now()/1000;const order=SHAPES.map((s,k)=>k).sort(()=>Math.random()-.5);let opts4=[];
+  const d=document.createElement('div');d.id='ddP';d.style.cssText="position:fixed;right:12px;bottom:130px;z-index:60;background:#2a2620;border:3px solid #c8b498;border-radius:16px;padding:10px 12px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#f0ece0;box-shadow:0 6px 18px rgba(0,0,0,.35);width:250px;user-select:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#e8d8b8">🧱 기단 돌 맞추기</b><div id="ddS" style="font-size:13px;margin:2px 0"></div><canvas id="ddSlot" width="220" height="110" style="background:#6a6050;border-radius:8px;margin:4px 0"></canvas><div id="ddO" style="display:grid;grid-template-columns:1fr 1fr;gap:6px"></div><div id="ddG" style="font-size:12px;color:#e8d8b8;min-height:16px;margin-top:4px">빈자리에 꼭 맞는 돌을 골라요</div><div id="ddT">${TL}초</div>`;
+  const slot=d.querySelector('#ddSlot'),sq=slot.getContext('2d'),O=d.querySelector('#ddO');
+  const poly=(c,pts,cx,cy,sc,fill,stroke,rot)=>{c.save();c.translate(cx,cy);c.rotate(rot||0);c.beginPath();const mx=Math.max(...pts.map(p=>p[0])),my=Math.max(...pts.map(p=>p[1]));pts.forEach(([x,y],k)=>{const X=(x-mx/2)*sc,Y=(y-my/2)*sc;k?c.lineTo(X,Y):c.moveTo(X,Y)});c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=3;c.setLineDash(fill?[]:[6,4]);c.stroke()}c.restore()};
+  const snd=(f,len,type='triangle')=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s);gg.gain.setValueAtTime(.05,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const show=()=>{const k=order[i];sq.clearRect(0,0,220,110);sq.fillStyle='#7a7060';for(let y=0;y<110;y+=22)for(let x=-(y/22%2)*18;x<220;x+=36){sq.fillRect(x+1,y+1,34,20)}poly(sq,SHAPES[k],110,55,60,'#3a3428','#ffe090');const others=SHAPES.map((s,j)=>j).filter(j=>j!==k).sort(()=>Math.random()-.5).slice(0,3);opts4=[k,...others].sort(()=>Math.random()-.5);O.innerHTML='';opts4.forEach(j=>{const b=document.createElement('button');b.style.cssText='background:#4a4438;border:0;border-radius:8px;padding:2px;cursor:pointer';const cv=document.createElement('canvas');cv.width=110;cv.height=64;b.appendChild(cv);poly(cv.getContext('2d'),SHAPES[j],55,32,36,['#c8b498','#a89880','#b8a888','#d0c0a0'][j%4],'#3a3428');b.onclick=()=>pick(j);O.appendChild(b)});d.querySelector('#ddS').textContent=(i+1)+' / '+N+'자리 · 맞춤 '+ok};
+  const pick=j=>{if(done)return;if(j===order[i]){ok++;snd(700+i*30,.12);d.querySelector('#ddG').textContent='꼭 맞아요!'}else{bad++;snd(180,.25,'sawtooth');d.querySelector('#ddG').textContent='틈이 생겨요. 다른 돌이에요'}i++;if(i>=N)fin();else show()};
+  const fin=()=>{if(done)return;done=true;const el=performance.now()/1000-t0;const Q=Math.max(0,Math.round(ok/N*100-bad*2-Math.max(0,el-35)*.5));const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('dodong_stone',Q,'도동서원 기단 돌 맞추기')}catch(e){}window.__DDQ=Q;
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#e8d8b8">${N}자리 가운데 ${ok}자리 꼭 맞췄어요</b><div style="font-size:13px;margin:4px 0">중정당 기단은 모양이 제각각인 돌을 다듬어 하나하나 맞춘 솜씨로 이름났어요. 서로 다른 사람이 어울려 하나가 된다는 뜻을 담았다고도 해요.</div><div style="font-size:24px;color:#c8b498">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#c8b498;color:#2a2620;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f0ece0;border:2px solid #f0ece0;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__DDSTONE()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  show();const loop=()=>{if(!d.isConnected)return;if(!done){const left=Math.max(0,TL-(performance.now()/1000-t0));d.querySelector('#ddT').textContent=Math.ceil(left)+'초';if(left<=0)fin()}requestAnimationFrame(loop)};loop();
+  window.__DDG={pick,cur:()=>order[i],get ok(){return ok}};try{ctx.say('빈자리에 맞는 돌을 골라요!',2)}catch(e){}};
+ /* 발굴 탐지 */const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const ITEMS=[
+  {n:'다람쥐 조각 돌',h:'중정당 기단에 숨은 다람쥐 조각처럼 작은 돌 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.08,8,6),M(0xb0a490)))})},
+  {n:'백자 연적',h:'서원 유생이 쓰던 연적이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.08,12,8),M(0xf0ece0,{roughness:.3})))})},
+  {n:'막새 기와',h:'서원 지붕 끝 기와예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.04,18),M(0x5a5a5a)))})},
+  {n:'은행 열매',h:'서원 앞 은행나무 열매예요. 냄새가 고약하지만 약으로도 썼어요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),M(0xd8b840)))})},
+  {n:'상평통보',h:'옛 엽전이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.02,20),M(0x6a5a30,{metalness:.6})))})}];
+ window.__DDDIG=()=>{window.__DETECT&&window.__DETECT({key:'dodong_dig',title:'도동서원 발굴 탐지',emoji:'⛏️',bg:'#2a2620',count:4,TL:150,cand:[[24,24],[30,0],[-30,10],[20,34],[-26,30],[34,-20],[-34,-20],[10,30]],items:ITEMS,intro:'서원 둘레 땅속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'도동서원은 돌 하나까지 정성을 들인 서원이에요.'})};
+ const meta={quest:{t:'도동서원 둘러보기',d:'수월루·환주문·중정당을 지나 은행나무까지 둘러보세요.',steps:[['수월루','도동서원 수월루'],['환주문','환주문'],['기단','중정당 기단'],['은행나무','은행나무']]},
+  title:'대구 도동서원',hint:'세계유산 도동서원을 간추려 지었어요. 중정당 기단의 빈자리에 맞는 돌을 골라 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,groundY:-3.5,sign:{x:14,z:22,lines:['대구 도동서원','세계유산 한국의 서원','짜맞춘 기단 · 은행나무','간추려 지음']}},
+  npc:[['science',[[10,20],[20,20],[20,28],[10,28]]]],bounds:[-90,90,-80,RZ],level:()=>'대구',camCap:()=>Infinity,baseAt:(x,z)=>Math.max(0,H(x,z)),
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:1.4,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#8a9a4a';g.fillRect(0,0,300,300);g.fillStyle='#4f7f86';g.fillRect(0,Z(RZ),300,300);g.fillStyle='#8a6a48';g.fillRect(X(-6),Z(-19.5),12*S,7*S);g.fillRect(X(-4.5),Z(12),9*S,4*S);g.fillStyle='#e8c030';g.beginPath();g.arc(X(-14),Z(24),5,0,7);g.fill()}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:14,z:28,yaw:Math.PI},size:{}},meta)}
