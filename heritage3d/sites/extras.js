@@ -17,6 +17,7 @@ const CACHE={};function getModel(p,cb){if(!CACHE[p])CACHE[p]=new Promise(res=>gl
 /* 초가: [종류 1|2, x, z, ry]  1=ㄱ자 집(약 15x14m), 2=일자 집(약 23x7m) */
 const SITES={
  wolji:{village:false,pines:[[-40,30,10],[40,30,9],[-42,-36,10],[40,-36,11]],fx:[]},
+ yeongdong:{village:false,pines:[],fx:[]},
  yeongdeok:{village:false,pines:[],fx:[]},
  yecheon:{village:false,pines:[],fx:[]},
  cheongdo:{village:false,pines:[],fx:[]},
