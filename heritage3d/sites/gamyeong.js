@@ -9,7 +9,7 @@ export function buildGamyeong(opts={}){const mini=!!opts.mini;const G=new THREE.
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#b8a888';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=150+(r()*50|0);q.fillStyle=`rgba(${v},${v-12},${v-30},.5)`;q.fillRect(r()*w,r()*h,2,2)}},[40,40]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  if(!mini){const B=spec=>{const h=buildHall(Object.assign({solids,light:false},spec));G.add(h.group);h.group.traverse(e=>{if(e.isMesh)cam.push(e)});return h};
-  B({x:0,z:36,ry:Math.PI,W:9,D:4.6,nx:3,nz:2,FY:.6,PH:3.4,roof:'hip',name:'布政樓',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',stairs:'none',upper:{h:2.6},roofScale:.95});
+  B({x:0,z:36,ry:Math.PI,W:9,D:4.6,nx:3,nz:2,FY:.3,PH:3.7,roof:'hip',name:'布政樓',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',stairs:'none',upper:{h:2.6},roofScale:.95});
   B({x:0,z:20,ry:Math.PI,W:6,D:2.6,nx:3,nz:1,FY:.3,PH:2.8,roof:'gable',name:'中三門',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',stairs:'none',roofScale:.75});
   B({x:0,z:8,ry:Math.PI,W:6,D:2.6,nx:3,nz:1,FY:.3,PH:2.8,roof:'gable',name:'內三門',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',stairs:'none',roofScale:.75});
   B({x:0,z:-8,ry:Math.PI,W:16,D:9,nx:5,nz:2,FY:1.2,PH:3.6,roof:'hip',name:'宣化堂',pillar:0x9a3a26,bracket:'ik',front:'open',roofScale:1});
