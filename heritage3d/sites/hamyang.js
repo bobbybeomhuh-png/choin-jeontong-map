@@ -1,0 +1,77 @@
+/* 함양·거창 마당(2026-11-22, W73): 함양 상림(최치원이 가꾼 둑 숲), 일두 정여창 고택(개평마을), 거창 수승대 거북바위·요수정.
+   공개 실측 3D(CC BY)가 없어 공개 사진으로 간추려 지음.
+   함양 상림(천연기념물): 신라 때 최치원이 함양 태수로 있으며 위천 물난리를 막으려 둑을 쌓고 나무를 심어 가꾼 숲으로 전해져요. 우리나라에서 오래된 사람이 가꾼 숲.
+   거창 수승대(명승): 위천 가운데 거북 모양 큰 바위(거북바위)와 정자 요수정.
+   놀이: 상림 숲 둑 심기(물이 넘칠 길을 나무 몇 그루로 모두 막기. 언덕은 물이 못 넘고, 나무 수는 꼭 막는 데 드는 가장 적은 수만큼만 줘요, 새 방식), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {tex,mulb} from './sungnyemun.js';
+import {buildHall} from './hallkit.js';
+export function buildHamyang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(857);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,color:0x84a24c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
+ const mkTree=(s=1,col=0x3a7a34)=>{const g=new THREE.Group();const t=new THREE.Mesh(new THREE.CylinderGeometry(.12*s,.2*s,2.4*s,6),M(0x5a4030));t.position.y=1.2*s;g.add(t);for(let k=0;k<3;k++){const c=new THREE.Mesh(new THREE.SphereGeometry((1.1-k*.2)*s,8,6),M(col));c.position.set((k-1)*.35*s,(2.5+k*.45)*s,((k%2)-.5)*.3*s);g.add(c)}return g};
+ /* 위천 강 + 상림 숲 둑 */const RZ=-40;{const rv=new THREE.Mesh(new THREE.PlaneGeometry(220,14),M(0x5a88a0,{roughness:.2,metalness:.1}));rv.rotation.x=-Math.PI/2;rv.position.set(0,.03,RZ);G.add(rv);solids.push({x0:-110,x1:110,y0:-1,y1:3,z0:RZ-7,z1:RZ+7});const bk=new THREE.Mesh(new THREE.BoxGeometry(150,1,4),M(0x7a8a48));bk.position.set(-10,.5,RZ+9);G.add(bk);const COLS=[0x3a7a34,0x4a8a3a,0x8a9a30,0xb87a2a];for(let i=0;i<60;i++){const tr=mkTree(.9+r()*.5,COLS[i%4]);tr.position.set(-80+i*2.5+(r()-.5),1,RZ+9+(r()-.5)*3);G.add(tr)}solids.push({x0:-85,x1:65,y0:0,y1:1,z0:RZ+7,z1:RZ+11})}
+ const LT=tex(256,64,(q,w,h)=>{q.fillStyle='#3a2a1a';q.fillRect(0,0,w,h);q.fillStyle='#f4e8c8';q.font='bold 34px serif';q.textAlign='center';q.fillText('함양 상림',w/2,46)});{const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.6),new THREE.MeshStandardMaterial({map:LT}));sg.position.set(-20,1.8,RZ+12);G.add(sg);const p=new THREE.Mesh(new THREE.BoxGeometry(.12,1.6,.12),M(0x3a2a1a));p.position.set(-20,.8,RZ+11.9);G.add(p)}
+ /* 일두 고택: 사랑채 + 흙돌담 */const IX=-36,IZ=-6;if(!mini){const h=buildHall({x:IX,z:IZ,ry:0,W:10,D:5,nx:4,nz:1,FY:1.2,PH:2.6,roof:'hip',name:'一蠹古宅',pillar:0x8a6a44,bracket:'ik',front:'open',roofScale:.95,solids,light:false});G.add(h.group);h.group.traverse(e=>{if(e.isMesh)cam.push(e)})}
+ {const wm=M(0xb8a888);for(const[x0,x1,z]of[[IX-12,IX-2,IZ+6],[IX+2,IX+12,IZ+6]]){const w=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,1.6,.5),wm);w.position.set((x0+x1)/2,.8,z);G.add(w);solids.push({x0,x1,y0:0,y1:1.6,z0:z-.25,z1:z+.25})}}
+ /* 거창 수승대: 거북바위 + 요수정 */const SX=40,SZ=RZ;{const tb=new THREE.Mesh(new THREE.SphereGeometry(5,16,10),M(0xa8a090,{flatShading:true}));tb.scale.set(1.3,.55,1);tb.position.set(SX,.6,SZ);G.add(tb);cam.push(tb);const hd=new THREE.Mesh(new THREE.SphereGeometry(1.4,10,8),tb.material);hd.position.set(SX+6.6,1,SZ);G.add(hd);
+  if(!mini){const h=buildHall({x:SX-2,z:SZ+12,ry:0,W:4.5,D:4.5,nx:2,nz:2,FY:1.4,PH:2.4,roof:'hip',name:'樂水亭',pillar:0x7a5a3a,bracket:'ik',front:'open',roofScale:1,solids,light:false});G.add(h.group);h.group.traverse(e=>{if(e.isMesh)cam.push(e)})}}
+ /* 놀이 판: 6칸 × 9줄 (위=강 쪽, 아래=마을 쪽) */const GX=8,GZ=-18,CS=1.4,NC=6,NR=9;const gx=c=>GX+(c-(NC-1)/2)*CS,gz=rw=>GZ+(rw-(NR-1)/2)*CS;
+ const board=new THREE.Group();board.visible=false;G.add(board);{const bd=new THREE.Mesh(new THREE.BoxGeometry(NC*CS+.4,.12,NR*CS+.4),M(0x9a8a60));bd.position.set(GX,.06,GZ);board.add(bd);const ch=new THREE.Mesh(new THREE.BoxGeometry(NC*CS+.4,.1,1.2),M(0x5a88a0,{roughness:.2}));ch.position.set(GX,.1,gz(-1)+.1);board.add(ch);for(let i=0;i<4;i++){const hs=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(1,.7,.8),M(0xe8e0cc));b.position.y=.35;hs.add(b);const rf=new THREE.Mesh(new THREE.ConeGeometry(.85,.5,4),M(0x8a6a3a));rf.rotation.y=Math.PI/4;rf.position.y=.95;hs.add(rf);hs.position.set(gx(i*1.6+.2),.1,gz(NR)+.3);board.add(hs)}}
+ const tiles=[],hillM=M(0x9a8458,{flatShading:true}),tileM=M(0xb8a878),waterM=new THREE.MeshStandardMaterial({color:0x4a8ac8,transparent:true,opacity:.85,roughness:.15});for(let rw=0;rw<NR;rw++)for(let c=0;c<NC;c++){const t=new THREE.Mesh(new THREE.BoxGeometry(CS*.94,.06,CS*.94),tileM);t.position.set(gx(c),.15,gz(rw));t.userData={c,rw};board.add(t);tiles.push(t)}
+ const NL=[];if(!mini){for(const[x,y,z]of[[-20,3,RZ+14],[IX,4,IZ+9],[SX,3,SZ+16]]){const L=new THREE.PointLight(0xffc080,0,26,1.5);L.position.set(x,y,z);G.add(L);NL.push(L)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(L=>L.intensity=nk*8)};
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ sp(-20,RZ+15,3.2,'함양 상림','신라 때 최치원이 위천 물난리를 막으려 둑을 쌓고 나무를 심어 가꾼 숲으로 전해져요(천연기념물). 간추려 지었어요.');
+ sp(GX,GZ+8.6,2.2,'숲 둑 심는 자리','물이 넘칠 길을 나무로 모두 막아 마을을 지켜 봐요.');
+ sp(IX,IZ+9,3,'함양 일두 고택','조선 선비 일두 정여창의 옛집이에요. 개평마을에 있어요. 간추려 지었어요.');
+ sp(SX-2,SZ+17,3,'거창 수승대','위천 가운데 거북 모양 큰 바위와 정자 요수정이 있는 경치 좋은 곳이에요(명승). 간추려 지었어요.');
+ sp(-60,30,2.4,'발굴 탐지 자리','땅속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
+ /* 최소 막기 수(정점 자르기) 계산: 강 쪽 첫 줄 → 마을 쪽 끝 줄, 4방향 */const minCut=(blk)=>{const N=NC*NR,S=2*N,T=2*N+1,V=2*N+2;const cap=new Map();const adj=Array.from({length:V},()=>[]);const add=(a,b,c)=>{const k=a*V+b;if(!cap.has(k)){adj[a].push(b);adj[b].push(a);cap.set(k,0);if(!cap.has(b*V+a))cap.set(b*V+a,0)}cap.set(k,cap.get(k)+c)};const id=(c,rw)=>rw*NC+c;const INF=1e6;
+  for(let rw=0;rw<NR;rw++)for(let c=0;c<NC;c++){const u=id(c,rw);if(blk[u])continue;add(2*u,2*u+1,1);if(rw===0)add(S,2*u,INF);if(rw===NR-1)add(2*u+1,T,INF);for(const[dc,dr]of[[1,0],[-1,0],[0,1],[0,-1]]){const c2=c+dc,r2=rw+dr;if(c2<0||c2>=NC||r2<0||r2>=NR)continue;const v=id(c2,r2);if(blk[v])continue;add(2*u+1,2*v,INF)}}
+  let flow=0;for(;;){const pr=new Int32Array(V).fill(-1);pr[S]=S;const q=[S];while(q.length&&pr[T]<0){const a=q.shift();for(const b of adj[a])if(pr[b]<0&&cap.get(a*V+b)>0){pr[b]=a;q.push(b)}}if(pr[T]<0)break;let f=INF;for(let b=T;b!==S;b=pr[b])f=Math.min(f,cap.get(pr[b]*V+b));for(let b=T;b!==S;b=pr[b]){const a=pr[b];cap.set(a*V+b,cap.get(a*V+b)-f);cap.set(b*V+a,cap.get(b*V+a)+f)}flow+=f;if(flow>=INF)break}
+  const seen=new Uint8Array(V);const q=[S];seen[S]=1;while(q.length){const a=q.shift();for(const b of adj[a])if(!seen[b]&&cap.get(a*V+b)>0){seen[b]=1;q.push(b)}}const cut=[];for(let u=0;u<N;u++)if(!blk[u]&&seen[2*u]&&!seen[2*u+1])cut.push(u);return{flow,cut}};
+ /* 상림 숲 둑 심기(11/22): 세 판. 판마다 언덕(물이 못 넘음)이 흩어져 있고, 나무는 꼭 필요한 가장 적은 수만큼. 칸을 눌러 나무 심기·뽑기 → 「물 흘려보내기」 */
+ window.__HYFOREST=()=>{if(document.getElementById('hyP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(GX+5.6,GZ+7.6,0)}catch(e){}
+  const CAM=[GX,15.5,GZ+9.5,GX,0,GZ+.3,50];window.__GCAM=()=>document.getElementById('hyP')?CAM:null;board.visible=true;
+  let rd=0,blk=null,tree=null,need=0,ans=[],done=false,auto=false,last=performance.now(),msg='',phase='plan',fl=null,wait=0,at=0;const res=[];const deco=[];
+  const clearDeco=()=>{deco.forEach(m=>board.remove(m));deco.length=0;tiles.forEach(t=>{t.material=tileM;t.position.y=.15})};
+  const newRound=()=>{clearDeco();let best=null;for(let tries=0;tries<600;tries++){const bb=new Uint8Array(NC*NR);const p=.22+rd*.03;for(let i=0;i<bb.length;i++)bb[i]=Math.random()<p?1:0;const mc=minCut(bb);if(mc.flow<2||mc.flow>3+rd)continue;if(!best||mc.flow>best.mc.flow)best={bb,mc};if(mc.flow>=2+rd)break}if(!best){const bb=new Uint8Array(NC*NR);best={bb,mc:minCut(bb)}}blk=best.bb;need=best.mc.flow;ans=best.mc.cut;tree=new Uint8Array(NC*NR);
+   for(let i=0;i<blk.length;i++)if(blk[i]){const t=tiles[i];const h=new THREE.Mesh(new THREE.SphereGeometry(CS*.55,8,6),hillM);h.scale.y=.6;h.position.set(t.position.x,.2,t.position.z);board.add(h);deco.push(h)}phase='plan';msg=`${rd+1}판: 나무 ${need}그루로 물길을 모두 막아요`};
+  const treeMesh={};const setTree=(i,on)=>{tree[i]=on?1:0;if(on){const tr=mkTree(.42,0x2f6e30);const t=tiles[i];tr.position.set(t.position.x,.18,t.position.z);board.add(tr);deco.push(tr);treeMesh[i]=tr}else if(treeMesh[i]){board.remove(treeMesh[i]);delete treeMesh[i]}};
+  const count=()=>tree.reduce((a,b)=>a+b,0);
+  const tap=i=>{if(done||phase!=='plan'||blk[i])return;if(tree[i]){setTree(i,0)}else{if(count()>=need){msg=`나무는 ${need}그루뿐이에요. 다른 곳을 뽑고 심어요`;return}setTree(i,1)}snd(tree[i]?520:360,.08,'triangle',.04)};
+  const flood=()=>{if(done||phase!=='plan')return;phase='flood';const wet=new Uint8Array(NC*NR);let front=[];for(let c=0;c<NC;c++){const i=c;if(!blk[i]&&!tree[i]){wet[i]=1;front.push(i)}}fl={wet,front,t:0,hit:false}};
+  const d=document.createElement('div');d.id='hyP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#1e2a1a;border:3px solid #8ac060;border-radius:16px;padding:10px 12px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#f0f4e8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:300px;max-width:94vw;user-select:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#fff">🌳 상림 숲 둑 심기</b><div data-i style="margin:3px 0;font:14px 'Do Hyeon',sans-serif"></div><div style="font-size:12px;color:#d8e8c8">위는 강, 아래는 마을이에요. 칸을 눌러 나무를 심고 뽑아요. 언덕은 물이 못 넘어요. 물은 위아래 옆으로만 흘러요</div><button data-f style="width:100%;margin-top:7px;font:17px 'Do Hyeon',sans-serif;background:#4a8ac8;color:#fff;border:0;border-radius:12px;padding:10px 0;cursor:pointer">물 흘려보내기 🌊</button><div data-m style="font-size:12px;color:#f8e8a0;margin-top:5px"></div>`;
+  const iEl=d.querySelector('[data-i]'),mEl=d.querySelector('[data-m]');d.querySelector('[data-f]').onclick=flood;
+  const snd=(f,len,type='sine',v=.05)=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s);gg.gain.setValueAtTime(v,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  /* 칸 누르기: 놀이 카메라와 같은 시점으로 광선 쏘기 */const pc=new THREE.PerspectiveCamera(CAM[6],innerWidth/innerHeight,.1,500);const rc=new THREE.Raycaster();
+  const ov=document.createElement('div');ov.id='hyO';ov.style.cssText='position:fixed;inset:0;z-index:55;cursor:pointer';document.body.appendChild(ov);
+  ov.onpointerdown=e=>{pc.aspect=innerWidth/innerHeight;pc.position.set(CAM[0],CAM[1],CAM[2]);pc.lookAt(CAM[3],CAM[4],CAM[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();G.updateMatrixWorld();rc.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects(tiles,false)[0];if(h){const u=h.object.userData;tap(u.rw*NC+u.c)}};
+  const cleanup=()=>{ov.remove();clearDeco();board.visible=false};
+  newRound();
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   if(phase==='plan'&&auto){at+=dt;if(at>.35){at=0;const ex=tree.findIndex((v,i)=>v&&!ans.includes(i));const nx=ans.find(i=>!tree[i]);if(ex>=0)tap(ex);else if(nx!=null)tap(nx);else flood()}}
+   if(phase==='flood'&&fl){fl.t+=dt;if(fl.t>.18){fl.t=0;fl.front.forEach(i=>{tiles[i].material=waterM;tiles[i].position.y=.2});if(fl.front.some(i=>Math.floor(i/NC)===NR-1)){fl.hit=true}const nf=[];for(const i of fl.front){const c=i%NC,rw=Math.floor(i/NC);for(const[dc,dr]of[[1,0],[-1,0],[0,1],[0,-1]]){const c2=c+dc,r2=rw+dr;if(c2<0||c2>=NC||r2<0||r2>=NR)continue;const j=r2*NC+c2;if(fl.wet[j]||blk[j]||tree[j])continue;fl.wet[j]=1;nf.push(j)}}fl.front=nf;snd(200+Math.random()*80,.08,'sine',.02);
+     if(fl.hit||!nf.length){const ok=!fl.hit;res.push(ok?1:0);msg=ok?'물이 숲 둑에 막혔어요! 마을이 무사해요':'물이 마을까지 넘쳤어요. 막히지 않은 길이 있었어요';snd(ok?780:180,.4,ok?'sine':'sawtooth',ok?.05:.04);phase='wait';wait=2;fl=null}}}
+   if(phase==='wait'){wait-=dt;if(wait<=0){rd++;if(rd>=3){fin();return}newRound()}}
+   iEl.textContent=`${Math.min(rd+1,3)} / 3판 · 나무 ${count()} / ${need}그루`;mEl.textContent=msg;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('hamyang_forest',Q,'상림 숲 둑 심기')}catch(e){}window.__HYQ=Q;snd(660,.4);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#fff">숲 둑을 다 심었어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">최치원은 강물이 마을로 넘치던 위천 가에 둑을 쌓고 나무를 심어 숲을 가꿨다고 전해져요. 천 년 넘게 지난 지금도 상림은 숲으로 남아 있어요. 언덕 사이 물길만 골라 막으면 적은 나무로도 마을을 지킬 수 있어요.</div><div style="font-size:24px;color:#8ac060">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#8ac060;color:#1e2a1a;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f0f4e8;border:2px solid #f0f4e8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__HYFOREST()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__HYG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()}};try{ctx.say('물길을 찾아 막아요!',2)}catch(e){}};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const ITEMS=[
+  {n:'도토리',h:'상림 참나무 도토리예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.04,8,6),M(0x8a5a2a)))})},
+  {n:'분청 대접',h:'조선 분청사기 대접 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.2,.1,.08,18),M(0xb8b0a0,{roughness:.4})))})},
+  {n:'벼루 조각',h:'선비가 쓰던 돌 벼루 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.16,.03,.1),M(0x2a2a2a)))})},
+  {n:'기와 조각',h:'옛 집 지붕 기와 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.14,.14,.2,10,1,false,0,Math.PI),M(0x5a5a5a)))})},
+  {n:'상평통보',h:'옛 엽전이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.02,20),M(0x6a5a30,{metalness:.6})))})}];
+ window.__HYDIG=()=>{window.__DETECT&&window.__DETECT({key:'hamyang_dig',title:'함양·거창 발굴 탐지',emoji:'⛏️',bg:'#1e2a1a',count:4,TL:150,cand:[[-60,30],[-20,30],[20,30],[60,10],[-70,0],[60,30],[30,0],[-10,40]],items:ITEMS,intro:'땅속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'함양·거창은 숲과 선비, 맑은 물의 고장이에요.'})};
+ const meta={quest:{t:'함양·거창 둘러보기',d:'상림과 일두 고택, 수승대를 둘러보세요.',steps:[['상림','함양 상림'],['일두고택','함양 일두 고택'],['수승대','거창 수승대']]},
+  title:'함양·거창 상림·일두 고택·수승대',hint:'상림·일두 고택·수승대를 공개 사진으로 간추려 지었어요. 나무 몇 그루로 물길을 모두 막아 마을을 지켜 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-6,z:14,lines:['함양·거창','상림 숲 · 일두 고택','수승대 거북바위','간추려 지음']}},
+  npc:[['science',[[-8,6],[-2,6],[-2,20],[-8,20]]]],bounds:[-90,80,-60,60],level:()=>'함양',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:1.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#84a24c';g.fillRect(0,0,300,300);g.fillStyle='#5a88a0';g.fillRect(0,Z(RZ-7),300,14*S);g.fillStyle='#3a7a34';g.fillRect(X(-85),Z(RZ+7),150*S,4*S);g.fillStyle='#8a6a44';g.fillRect(X(IX-5),Z(IZ-2.5),10*S,5*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:16,yaw:Math.PI},size:{}},meta)}
