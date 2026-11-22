@@ -2,6 +2,7 @@
    바다 바닥은 해안에서 완만하게 깊어져 걸어 들어가면 물속으로 잠김. 물속에선 숨이 줄고, 다하면 숨비소리 내며 떠오름.
    새 놀이: 물질(60초 안에 소라·전복 따기). 제주해녀문화는 유네스코 인류무형문화유산(2016). 배치는 제주 바닷가를 본떠 지음. */
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildHaenyeo(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1213);
  const TOUCH=typeof matchMedia!=='undefined'&&matchMedia('(pointer:coarse)').matches;
@@ -108,4 +109,34 @@ spots.push({x:BX,y:0,z:BZ+4,r:2.6,t:'불턱',h:'해녀들이 물질 전후에 �
   baseAt:(x,z)=>DEPTH(x,z),tick,
   npc:[['science',[[-4,10],[4,10],[4,14],[-4,14]]]],level:P=>P.z<SH?(P.y<-.8?'물속':'바다'):P.z<SH+5?'갯가':'해녀 마을',camCap:P=>P.z<SH&&P.y<-.8?3.6:Infinity,
   mini:{S:3,ox:0,oz:-4,draw(g,X,Z,S){g.fillStyle='#6a8442';g.fillRect(0,0,300,300);g.fillStyle='#2f7f9a';g.fillRect(0,0,300,Z(SH));g.fillStyle='#3e3a36';g.fillRect(0,Z(SH),300,3*S);g.fillStyle='#3a3836';g.beginPath();g.arc(X(BX),Z(BZ),3*S,0,7);g.fill();g.fillStyle='#f07a1a';g.fillRect(X(3),Z(4),3*S,1.5*S)}}};
+ /* 제주 악기 자리(11/22): 한국문화정보원 KCISA 3D(CC BY) 테왁·물장구·사장구·제주 무속장구, 자료 크기 그대로.
+   물장구는 물 담은 허벅이나 큰 그릇에 바가지를 엎어 두드리는 제주 악기예요. 놀이: 물장구 장단 따라 치기(무이가 친 장단을 듣고 보고 그대로 따라 치기, 판마다 길어져요, 새 방식) */
+ const JX=-10,JZ=14;const drums=[];{const mat=new THREE.Mesh(new THREE.BoxGeometry(3.4,.04,2.2),new THREE.MeshStandardMaterial({color:0xc8a868,roughness:1}));mat.position.set(JX,.02,JZ);G.add(mat);solids.push({x0:JX-1.7,x1:JX+1.7,y0:0,y1:.6,z0:JZ-1.1,z1:JZ+1.1})}
+ if(!mini){const L=new GLTFLoader();[['muljanggu.glb',-.55,0],['musokjanggu.glb',.55,-.05],['sajanggu.glb',1.45,.5],['tewak.glb',-1.45,.5]].forEach(([f,dx,dz],i)=>L.load(new URL('../models/haenyeo/'+f,import.meta.url).href,g=>{const o=g.scene;const w=new THREE.Group();w.add(o);w.userData.noBatch=true;w.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(o);o.position.set(-(b.min.x+b.max.x)/2,-b.min.y+.04,-(b.min.z+b.max.z)/2);w.position.set(JX+dx,0,JZ+dz);G.add(w);if(i<2)drums[i]=w},undefined,e=>console.warn('HNLOADERR',f,String(e&&e.message||e))))}
+ spots.push({x:JX,y:0,z:JZ+2.2,r:1.8,t:'물장구 자리',h:'물장구·무속장구·사장구·테왁이에요. 한국문화정보원 3D 자료, 크기 그대로예요. 물장구는 물 그릇에 바가지를 엎어 두드려 소리를 내요.'});
+ window.__HNDRUM=()=>{if(document.getElementById('hdP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(JX+2.4,JZ+2.4,0)}catch(e){}
+  window.__GCAM=()=>document.getElementById('hdP')?[JX,2,JZ+2.6,JX,.25,JZ,50]:null;
+  const hb=[-.55,.55].map((dx,i)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.8,12),new THREE.MeshBasicMaterial({visible:false}));m.position.set(JX+dx,.4,JZ+(i?-.1:0));m.userData.i=i;G.add(m);return m});
+  const ring=hb.map(h=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.32,.025,6,24),new THREE.MeshBasicMaterial({color:0xffd040,transparent:true,opacity:0}));r.rotation.x=Math.PI/2;r.position.set(h.position.x,.5,h.position.z);G.add(r);return r});
+  const LEN=[3,4,5];let rd=0,pat=[],play=[],pi=0,inp=[],phase='listen',t=0,wait=0,auto=false,done=false,msg='',last=performance.now(),at=0;const res=[];
+  const d=document.createElement('div');d.id='hdP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#1e2a3a;border:3px solid #f07a1a;border-radius:16px;padding:9px 12px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:310px;max-width:94vw;user-select:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#fff">🥁 물장구 장단 따라 치기</b><div data-i style="margin:3px 0;font:14px 'Do Hyeon',sans-serif"></div><div style="font-size:11.5px;color:#e0d8c0">무이가 친 장단을 잘 듣고, 물장구(왼쪽)·무속장구(오른쪽)를 같은 차례·같은 빠르기로 쳐요</div><div data-m style="font-size:12px;color:#f8e8a0;margin-top:4px"></div>`;
+  const iEl=d.querySelector('[data-i]'),mEl=d.querySelector('[data-m]');
+  const hit=i=>{try{const AC=ctx.ac();if(!AC)return;const s0=AC.currentTime;const o=AC.createOscillator(),g=AC.createGain();o.type=i?'triangle':'sine';o.frequency.setValueAtTime(i?240:110,s0);o.frequency.exponentialRampToValueAtTime(i?150:60,s0+.18);g.gain.setValueAtTime(.18,s0);g.gain.exponentialRampToValueAtTime(.0001,s0+(i?.25:.4));o.connect(g).connect(ctx.out()||AC.destination);o.start(s0);o.stop(s0+.45)}catch(e){}ring[i].material.opacity=1;if(drums[i])drums[i].scale.setScalar(1.06)};
+  const newRound=()=>{const n=LEN[rd];pat=[];let tt=0;for(let k=0;k<n;k++){pat.push({i:Math.random()<.5?0:1,t:tt});tt+=k===n-2&&rd>0?.35:.6}play=pat.slice();pi=0;inp=[];t=-.6;phase='listen';msg=`${rd+1}판: 잘 들어요…`};
+  const judge=()=>{const n=pat.length;let ok=0;for(let k=0;k<n;k++){if(inp[k]&&inp[k].i===pat[k].i)ok++}let tim=1;if(inp.length===n){const a0=inp[0].t,p0=pat[0].t;let e=0;for(let k=1;k<n;k++)e+=Math.abs((inp[k].t-a0)-(pat[k].t-p0));tim=Math.max(0,1-e/n/.35)}const sc=ok/n*.7+tim*.3*(ok===n?1:0);res.push(sc);msg=ok===n?(tim>.7?'장단이 꼭 맞아요!':'차례는 맞았는데 빠르기가 조금 달라요'):`${ok}/${n} 맞았어요`;phase='wait';wait=2.2};
+  const pc=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.05,50);const rc=new THREE.Raycaster();const ov=document.createElement('div');ov.id='hdO';ov.style.cssText='position:fixed;inset:0;z-index:55;cursor:pointer';document.body.appendChild(ov);
+  const tapI=i=>{if(phase!=='play')return;hit(i);inp.push({i,t:t});if(inp.length>=pat.length)judge()};
+  ov.onpointerdown=e=>{const C=window.__GCAM();if(!C)return;pc.aspect=innerWidth/innerHeight;pc.position.set(C[0],C[1],C[2]);pc.lookAt(C[3],C[4],C[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();rc.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects(hb,false)[0];if(h)tapI(h.object.userData.i)};
+  const cleanup=()=>{ov.remove();hb.forEach(h=>G.remove(h));ring.forEach(r=>G.remove(r));drums.forEach(dm=>dm&&dm.scale.setScalar(1))};
+  newRound();
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
+   ring.forEach(r=>r.material.opacity=Math.max(0,r.material.opacity-dt*4));drums.forEach(dm=>{if(dm)dm.scale.setScalar(1+(dm.scale.x-1)*Math.pow(.02,dt))});
+   if(phase==='listen'){while(pi<play.length&&t>=play[pi].t){hit(play[pi].i);pi++}if(pi>=play.length&&t>play[play.length-1].t+.8){phase='play';t=0;msg='이제 따라 쳐요!'}}
+   if(phase==='play'&&auto){at+=dt;const k=inp.length;const base=inp.length?inp[0].t:0;const want=k===0?.4:base+(pat[k].t-pat[0].t);if(t>=want)tapI(pat[k].i)}
+   if(phase==='wait'){wait-=dt;if(wait<=0){rd++;if(rd>=3){fin();return}newRound()}}
+   iEl.textContent=`${Math.min(rd+1,3)} / 3판 · 장단 ${LEN[Math.min(rd,2)]}번`;mEl.textContent=msg;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('haenyeo_drum',Q,'물장구 장단 따라 치기')}catch(e){}window.__HDQ=Q;
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#fff">장단을 다 따라 쳤어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">제주에서는 물 그릇에 바가지를 엎어 두드리는 물장구로 노래 장단을 맞췄어요. 해녀들은 노를 저으며 「이어도사나」 같은 노래로 힘을 모았어요.</div><div style="font-size:24px;color:#f07a1a">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#f07a1a;color:#fff;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__HNDRUM()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__HDG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()}};try{ctx.say('잘 들어 봐요!',2)}catch(e){}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:18,yaw:Math.PI},size:{}},meta)}
