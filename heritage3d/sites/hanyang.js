@@ -111,4 +111,39 @@ export function buildHanyang(opts={}){const mini=!!opts.mini;const MT=materials(
   camCap:P=>P.y>HY-.1&&Math.abs(P.x)<12&&Math.abs(P.z-HZ)<6?4:(P.y>1.2&&Math.abs(P.x)<8.5&&P.z<-55.5&&P.z>-64.5?3.4:Infinity),
   tick:(P,dt)=>{try{G.userData.ghRide&&G.userData.ghRide(dt)}catch(e){}const g=G.userData.ghNight;const nt=!!(window.__WX&&window.__WX.night);if(g&&g.visible!==nt)g.visible=nt;if(G.userData.kwater)G.userData.kwater.offset.x+=dt*.008},
   mini:{S:3.6,ox:0,oz:-10,draw(g,X,Z,S){g.fillStyle='#7aa04e';g.fillRect(0,0,300,300);g.fillStyle='#9a9284';g.fillRect(X(-32),Z(-44),64*S,68*S);g.fillStyle='#c4bcaa';g.fillRect(X(-17),Z(WZ-10),34*S,20*S);g.fillStyle='#8a3a2a';g.fillRect(X(-12),Z(HZ-6),24*S,12*S);g.fillStyle='#b9b09e';g.fillRect(X(-1.6),Z(-16),3.2*S,40*S)}}};
+ /* 이문원 측우대·측우기(11/22): 국가유산청 KHS_Asset CC BY 실측. 1782년 정조 명으로 창덕궁 이문원에 둔 측우대(국보), 단위 mm라 실제 크기(받침 높이 약 32cm, 측우기 높이 약 32cm).
+   놀이: 비 재기(비가 그친 뒤 측우기 속 물 높이에 붉은 고리를 맞춰 치·푼으로 적기, 놀이용으로 크게 본 측우기 속, 새 방식) */
+ const RGX=-14,RGZ=3.6;place('raindae',{x:RGX,z:RGZ,h:.3204});place('raingauge',{x:RGX,y:.3204,z:RGZ,h:.3206});solids.push({x0:RGX-.3,x1:RGX+.3,y0:0,y1:.7,z0:RGZ-.3,z1:RGZ+.3});
+ spots.push({x:RGX,y:0,z:RGZ+1.2,r:1.4,t:'이문원 측우대',h:'1782년 정조가 창덕궁 이문원에 둔 측우대와 측우기예요(측우대는 국보). 빗물이 고인 깊이를 주척으로 재어 적었어요. 국가유산청 실측, 실제 크기예요.'});
+ window.__HYRAIN=()=>{if(document.getElementById('hrP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(RGX+2.4,RGZ+2.2,0)}catch(e){}
+  const KX=RGX+3.2,KZ=RGZ-.6,SC=3,DEP=15;/* 측우기 깊이 1척 5치=15치, 주척 1치 약 2.07cm */const CH=.0207,HM=DEP*CH*SC;
+  window.__GCAM=()=>document.getElementById('hrP')?[KX,HM*.55+.2,KZ+2.1,KX,HM*.5,KZ,50]:null;
+  const grp=new THREE.Group();grp.userData.noBatch=true;grp.position.set(KX,0,KZ);G.add(grp);
+  const R=.075*SC;const wall=new THREE.Mesh(new THREE.CylinderGeometry(R,R,HM,32,1,true,0,Math.PI*1.25),new THREE.MeshStandardMaterial({color:0x7a7a74,metalness:.6,roughness:.4,side:THREE.DoubleSide}));wall.position.y=HM/2;wall.rotation.y=Math.PI*.38;grp.add(wall);const bot=new THREE.Mesh(new THREE.CircleGeometry(R,32),new THREE.MeshStandardMaterial({color:0x5a5a54}));bot.rotation.x=-Math.PI/2;bot.position.y=.002;grp.add(bot);
+  const rul=new THREE.Mesh(new THREE.PlaneGeometry(.12,HM),new THREE.MeshStandardMaterial({map:tex(64,512,(q,w,h)=>{q.fillStyle='#e8d8b0';q.fillRect(0,0,w,h);q.fillStyle='#2a2018';for(let i=0;i<=150;i++){const y=h-i/150*h;const L=i%10===0?40:i%5===0?26:14;q.fillRect(0,y-1,L,i%10===0?3:1.5);if(i%10===0&&i<150){q.font='bold 18px serif';q.fillText(String(i/10),44,y+6)}}})}));rul.position.set(-R-.08,HM/2,R*.5);grp.add(rul);
+  const water=new THREE.Mesh(new THREE.CylinderGeometry(R*.98,R*.98,1,32),new THREE.MeshStandardMaterial({color:0x4a8ac8,transparent:true,opacity:.7,roughness:.1}));water.scale.y=.001;water.position.y=0;grp.add(water);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(R*1.08,.012,8,40),new THREE.MeshBasicMaterial({color:0xff3030}));ring.rotation.x=Math.PI/2;grp.add(ring);
+  const drops=[];let rd=0,lvl=0,goal=0,mark=0,phase='rain',t=0,rate=0,wait=0,auto=false,done=false,msg='',last=performance.now();const res=[];
+  const d=document.createElement('div');d.id='hrP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#1e2a3a;border:3px solid #7aa8d8;border-radius:16px;padding:9px 12px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#eef0f4;box-shadow:0 6px 18px rgba(0,0,0,.35);width:310px;max-width:94vw;user-select:none;touch-action:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#fff">🌧️ 비 재기</b><div data-i style="margin:3px 0;font:14px 'Do Hyeon',sans-serif"></div><div data-v style="font:15px 'Do Hyeon',sans-serif;color:#f8e8a0"></div><div style="font-size:11.5px;color:#d8dce8">비가 그치면 화면을 위아래로 밀어 붉은 고리를 물 높이에 맞추고 「적기」</div><button data-w style="width:100%;margin-top:6px;font:14px 'Do Hyeon',sans-serif;background:#7aa8d8;color:#1e2a3a;border:0;border-radius:10px;padding:7px 0;cursor:pointer">적기</button><div data-m style="font-size:12px;color:#f8e8a0;margin-top:4px"></div>`;
+  const q=k=>d.querySelector(k);const iEl=q('[data-i]'),vEl=q('[data-v]'),mEl=q('[data-m]');
+  const snd=(f,len,type='sine',v=.05)=>{try{const AC=ctx.ac();if(!AC)return;const s0=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s0);g.gain.setValueAtTime(v,s0);g.gain.exponentialRampToValueAtTime(.0001,s0+len);o.connect(g).connect(ctx.out()||AC.destination);o.start(s0);o.stop(s0+len+.02)}catch(e){}};
+  const fmt=c=>{const t10=Math.round(c*10);return `${Math.floor(t10/10)}치 ${t10%10}푼`};
+  const newRound=()=>{goal=[2.5,5.5,9.5][rd]+Math.random()*2;lvl=0;mark=.5;t=0;rate=goal/5;phase='rain';msg=`${rd+1}판: 비가 와요…`;vEl.textContent=''};
+  const write=()=>{if(phase!=='read')return;const err=Math.abs(mark-goal);const sc=Math.max(0,1-err/1);res.push(sc);msg=`적은 값 ${fmt(mark)} · 실제 ${fmt(goal)}`;snd(sc>.8?820:360,.3);phase='wait';wait=2.6};
+  q('[data-w]').onclick=write;
+  const ov=document.createElement('div');ov.id='hrO';ov.style.cssText='position:fixed;inset:0;z-index:55;touch-action:none';document.body.appendChild(ov);let dy=null;
+  ov.onpointerdown=e=>{dy=e.clientY};ov.onpointermove=e=>{if(dy==null||phase!=='read')return;mark=Math.max(0,Math.min(DEP,mark-(e.clientY-dy)*.03));dy=e.clientY};ov.onpointerup=ov.onpointerleave=ov.onpointercancel=()=>{dy=null};
+  const cleanup=()=>{ov.remove();G.remove(grp);drops.forEach(x=>G.remove(x))};
+  newRound();
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   if(phase==='rain'){t+=dt;const k=Math.max(0,Math.sin(t/5*Math.PI))*1.6;lvl=Math.min(goal,lvl+dt*rate*k);if(Math.random()<dt*40*k){const dr=new THREE.Mesh(new THREE.CylinderGeometry(.004,.004,.08,4),new THREE.MeshBasicMaterial({color:0x9ac8f0}));dr.position.set(KX+(Math.random()-.5)*R*1.6,HM+.8,KZ+(Math.random()-.5)*R*1.6);dr.userData.v=4;G.add(dr);drops.push(dr)}if(t>=5){lvl=goal;phase='read';msg='비가 그쳤어요. 물 높이를 재요';snd(500,.2)}}
+   for(let i=drops.length-1;i>=0;i--){const dr=drops[i];dr.position.y-=dt*dr.userData.v;if(dr.position.y<lvl*CH*SC){G.remove(dr);drops.splice(i,1)}}
+   if(phase==='read'&&auto){mark+=(goal-mark)*Math.min(1,dt*6);if(Math.abs(mark-goal)<.02)write()}
+   const hw=lvl*CH*SC;water.scale.y=Math.max(.001,hw);water.position.y=hw/2;ring.position.y=mark*CH*SC;
+   if(phase==='wait'){wait-=dt;if(wait<=0){rd++;if(rd>=3){fin();return}newRound()}}
+   iEl.textContent=`${Math.min(rd+1,3)} / 3판`;vEl.textContent=phase==='rain'?'':`붉은 고리: ${fmt(mark)}`;mEl.textContent=msg;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('hanyang_rain',Q,'비 재기')}catch(e){}window.__HRQ=Q;snd(660,.4);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#fff">비를 다 쟀어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">조선은 세종 때부터 측우기로 전국의 비를 같은 방법으로 재어 적었어요. 주척으로 치·푼까지 적은 기록이 오래 쌓여, 지금도 옛 날씨를 살필 수 있어요.</div><div style="font-size:24px;color:#7aa8d8">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#7aa8d8;color:#1e2a3a;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#eef0f4;border:2px solid #eef0f4;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__HYRAIN()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__HRG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()}};try{ctx.say('비가 그치면 재요!',2)}catch(e){}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:40,yaw:Math.PI},size:{}},meta)}
