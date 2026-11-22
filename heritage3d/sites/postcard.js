@@ -21,6 +21,7 @@ export const STAMPS={
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
  wolji:{p:'stamps/wolji.jpg',n:'경주 동궁과 월지',e:'통일신라',c:'무이 월드 장면',msg:'주령구를 굴렸더니 벌칙이 나왔어요. 밤 연못이 정말 예뻤어요.'},
+ myeongjae:{p:'stamps/wolji.jpg',n:'논산 명재고택',e:'간추려 지음',c:'무이 월드 장면',msg:'명재고택에 다녀왔어요. 같이 걸으니 즐거웠어요!'},
  samnyeon:{p:'stamps/wolji.jpg',n:'보은 삼년산성',e:'간추려 지음',c:'무이 월드 장면',msg:'삼년산성에 다녀왔어요. 같이 걸으니 즐거웠어요!'},
  museom:{p:'stamps/wolji.jpg',n:'영주 무섬마을',e:'간추려 지음',c:'무이 월드 장면',msg:'무섬마을에 다녀왔어요. 같이 걸으니 즐거웠어요!'},
  deoksu:{p:'stamps/wolji.jpg',n:'서울 덕수궁',e:'실측+간추림',c:'무이 월드 장면',msg:'덕수궁에 다녀왔어요. 같이 걸으니 즐거웠어요!'},
