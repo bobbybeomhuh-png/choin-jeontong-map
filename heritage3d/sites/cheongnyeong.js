@@ -1,0 +1,86 @@
+/* 영월 청령포 마당(2026-11-23, 2단계 열째 묶음): 서강이 세 면을 감싸고 뒤는 가파른 절벽이라 배로만 드나드는 '육지 속 섬'(명승). 어린 임금 단종이 1457년 유배되어 머문 곳.
+   공개 실측 3D(CC BY)가 없어 공개 사진으로 간추려 지음(배치·크기 어림).
+   나루와 나룻배, 소나무 숲, 단종 어소(다시 지은 집)와 행랑, 단묘유지비 비각(1763), 관음송(천연기념물, 단종의 모습을 보고 말을 들었다 해서 '관음'), 망향탑과 노산대(단종이 돌을 쌓고 한양 쪽을 바라봤다는 이야기는 전해 오는 이야기), 금표비(1726, 드나들지 말라는 표석).
+   놀이: 관음송 바가지 섞기(솔방울을 덮은 바가지를 섞으면 눈으로 따라가 어디 있는지 맞혀요. 판마다 바가지가 많아지고 빨라져요. 눈으로 따라가기, 새 방식), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {tex,mulb} from './sungnyemun.js';
+export function buildCheongnyeong(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1457);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x6e8e48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
+ /* 서강(동·남·서를 감쌈) + 자갈 강변 */const WM=M(0x4a8aa8,{roughness:.2,metalness:.05});{const S=new THREE.Mesh(new THREE.PlaneGeometry(100,9),WM);S.rotation.x=-Math.PI/2;S.position.set(0,.06,42);G.add(S);for(const s of[-1,1]){const E=new THREE.Mesh(new THREE.PlaneGeometry(9,80),WM);E.rotation.x=-Math.PI/2;E.position.set(s*40,.06,6);G.add(E)}const gv=new THREE.Mesh(new THREE.PlaneGeometry(100,4),M(0xc8c0a8));gv.rotation.x=-Math.PI/2;gv.position.set(0,.04,36);G.add(gv)}
+ /* 뒤 절벽(북) */for(let i=0;i<9;i++){const k=new THREE.Mesh(new THREE.BoxGeometry(10+r()*4,16+r()*10,6),M(0x8e8a7e,{flatShading:true}));k.position.set(-40+i*10,8,-40-r()*2);k.rotation.y=(r()-.5)*.3;G.add(k)}for(let i=0;i<8;i++){const h=new THREE.Mesh(new THREE.SphereGeometry(18+r()*8,12,8,0,Math.PI*2,0,Math.PI/2),M(0x4a6a3a,{flatShading:true}));h.scale.y=.7;h.position.set(-70+i*20,10,-60-r()*8);G.add(h)}
+ /* 나루와 나룻배 */{const dk=new THREE.Mesh(new THREE.BoxGeometry(4,.3,3),M(0x8a7458));dk.position.set(2,.2,48.5);G.add(dk);const bt=new THREE.Mesh(new THREE.BoxGeometry(2,.5,5.2),M(0x7a5a3a));bt.position.set(-2,.3,43);G.add(bt);const rope=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,9,4),M(0xc8b890));rope.rotation.x=Math.PI/2;rope.position.set(-3.2,1,42);G.add(rope)}
+ sp(2,51,3,'청령포 나루','청령포는 배를 타야만 들어갈 수 있어요. 세 면은 강, 한 면은 절벽이라 "육지 속 섬"이라 불려요.');
+ /* 소나무 숲 */const PINE=M(0x2f5a32,{flatShading:true}),BARK=M(0x7a4a32);const pine=(x,z,s=1)=>{const t=new THREE.Group();t.position.set(x,0,z);t.scale.setScalar(s);G.add(t);const tr=new THREE.Mesh(new THREE.CylinderGeometry(.22,.3,6,7),BARK);tr.position.y=3;tr.rotation.z=(r()-.5)*.25;t.add(tr);for(let k=0;k<3;k++){const c=new THREE.Mesh(new THREE.DodecahedronGeometry(1.6-k*.2),PINE);c.scale.y=.5;c.position.set((r()-.5)*1.4,5.6+k*.8,(r()-.5)*1.4);t.add(c)}solids.push({cx:x,cz:z,r:.4*s,y0:0,y1:6})};
+ if(!mini){const occ=[[0,0,9],[-10,2,5],[6,8,3],[14,-6,5],[-18,-20,3],[20,-26,3],[0,30,5],[-14,22,4]];for(let i=0;i<70;i++){const x=-34+r()*68,z=-34+r()*66;if(occ.some(([a,b,rr])=>Math.hypot(x-a,z-b)<rr+2))continue;if(Math.abs(x)<3&&z>-4)continue;pine(x,z,.8+r()*.5)}}
+ /* 단종 어소 + 행랑 */const ST=M(0xa8a296),WALLW=M(0xeee6d4),WOOD=M(0x8a7458),ROOF=M(0x4a4a50),THATCH=M(0xb89a5a,{roughness:1});
+ const plaque=(x,y,z,txt,w=1.4)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
+ {const b=new THREE.Mesh(new THREE.BoxGeometry(10,.6,5.4),ST);b.position.set(0,.3,0);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(9,2.6,4.4),WALLW);w.position.set(0,1.9,0);G.add(w);for(let i=0;i<=4;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,2.6,8),WOOD);c.position.set(-4.5+i*2.25,1.9,2.22);G.add(c)}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(8,1.8,5.2);rf.position.set(0,4,0);G.add(rf);solids.push({x0:-5,x1:5,y0:0,y1:3.2,z0:-2.7,z1:2.7});
+  const hw=new THREE.Mesh(new THREE.BoxGeometry(6,2.2,3),M(0xd8c8a8));hw.position.set(-10,1.1,2);G.add(hw);const hr=new THREE.Mesh(new THREE.SphereGeometry(1,12,8,0,Math.PI*2,0,Math.PI/2),THATCH);hr.scale.set(3.8,1.3,2.2);hr.position.set(-10,2.2,2);G.add(hr);solids.push({x0:-13.2,x1:-6.8,y0:0,y1:2.6,z0:.4,z1:3.6})}
+ sp(0,5,2.8,'단종 어소','단종이 머물던 집을 옛 기록을 바탕으로 다시 지었어요. 열일곱 살 어린 임금이 이곳에서 지냈어요.');
+ sp(-10,6,2.4,'행랑채','시중 드는 사람들이 머물던 초가 행랑이에요.');
+ /* 단묘유지비 비각 */{const X=6,Z=8;const b=new THREE.Mesh(new THREE.BoxGeometry(2.4,.3,2.4),ST);b.position.set(X,.15,Z);G.add(b);const bi=new THREE.Mesh(new THREE.BoxGeometry(.7,1.6,.22),M(0x6a6a68));bi.position.set(X,1.1,Z);G.add(bi);for(const[sx,sz]of[[-1,-1],[1,-1],[1,1],[-1,1]]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.1,.12,2.2,8),M(0x8a3a2a));c.position.set(X+sx*1,1.1,Z+sz*1);G.add(c)}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(2.2,1,2.2);rf.position.set(X,2.6,Z);G.add(rf);solids.push({cx:X,cz:Z,r:1.4,y0:0,y1:2.6})}
+ sp(6,11.5,2.2,'단묘유지비','영조 때(1763) "단종이 머물던 옛터"라고 새겨 세운 비석이에요.');
+ /* 관음송(갈라진 두 줄기 큰 소나무) */const GX=14,GZ=-6;{const t=new THREE.Group();t.position.set(GX,0,GZ);G.add(t);const base=new THREE.Mesh(new THREE.CylinderGeometry(.6,.9,1.4,10),BARK);base.position.y=.7;t.add(base);for(const s of[-1,1]){const tr=new THREE.Mesh(new THREE.CylinderGeometry(.35,.5,9,8),BARK);tr.position.set(s*.9,5.4,0);tr.rotation.z=-s*.22;t.add(tr)}for(let k=0;k<9;k++){const c=new THREE.Mesh(new THREE.DodecahedronGeometry(2+r()*.8),PINE);c.scale.y=.5;c.position.set((r()-.5)*6,8.6+r()*2.4,(r()-.5)*5);t.add(c)}solids.push({cx:GX,cz:GZ,r:1.2,y0:0,y1:9})}
+ sp(GX,GZ+4,2.8,'관음송','높이 30m, 600살쯤 된 소나무예요(천연기념물). 줄기가 두 갈래로 갈라진 자리에 단종이 걸터앉아 쉬었대요. 단종의 모습을 보고(觀) 울음소리를 들었다(音) 해서 관음송이에요.');
+ /* 망향탑 + 노산대 */{const X=-18,Z=-20;let y=0;for(let i=0;i<10;i++){const s=1.3-i*.1;const st=new THREE.Mesh(new THREE.DodecahedronGeometry(s*.5),M(0x9a968a,{flatShading:true}));st.scale.y=.5;st.position.set(X+(r()-.5)*.2,y+s*.25,Z);G.add(st);y+=s*.42}solids.push({cx:X,cz:Z,r:1,y0:0,y1:y})}
+ sp(-18,-16.4,2.4,'망향탑','단종이 한양에 두고 온 왕비를 그리며 돌을 쌓았다는 돌탑이에요(전해 오는 이야기).');
+ {const cl=new THREE.Mesh(new THREE.BoxGeometry(6,3,3),M(0x8e8a7e,{flatShading:true}));cl.position.set(-8,1.5,-31);G.add(cl);solids.push({x0:-11,x1:-5,y0:0,y1:3,z0:-32.5,z1:-29.5})}
+ sp(-8,-27,2.4,'노산대','절벽 위 바위예요. 단종(노산군)이 해 질 녘 이곳에서 한양 쪽을 바라봤다고 전해 와요(전해 오는 이야기).');
+ /* 금표비 */{const b=new THREE.Mesh(new THREE.BoxGeometry(.6,1.6,.25),M(0x7a7a74));b.position.set(20,.8,-26);G.add(b);solids.push({cx:20,cz:-26,r:.5,y0:0,y1:1.6})}
+ sp(20,-22.6,2.2,'금표비','영조 때(1726) 세운 표석이에요. 동서로 300척, 남북으로 490척 안에는 백성이 드나들지 못하게 했대요.');
+ /* 관음송 바가지 섞기(11/23) */const PX=-14,PZ=22;const pg=new THREE.Group();pg.position.set(PX,0,PZ);pg.visible=false;G.add(pg);
+ window.__CNSHELL=()=>{if(document.getElementById('cnsP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(PX+6,PZ+3,0)}catch(e){}pg.visible=true;
+  const BY=.6;const camA=()=>{const k=innerWidth<innerHeight?1.7:1;return[PX,2.8*k+.6,PZ+3*k+.4,PX,BY,PZ-.2,50]};window.__GCAM=()=>document.getElementById('sssX')?null:document.getElementById('cnsP')?camA():null;
+  const pc=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.05,100);const rc=new THREE.Raycaster();
+  const setPC=()=>{const C=camA();pc.aspect=innerWidth/innerHeight;pc.position.set(C[0],C[1],C[2]);pc.lookAt(C[3],C[4],C[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();G.updateMatrixWorld()};
+  const CFG=[[3,6,.55],[4,9,.42],[5,12,.32]];/* 바가지 수, 섞는 횟수, 한 번 섞는 시간 */
+  let rd=0,trial=0,n=3,bowls=[],slots=[],ball=0,swaps=[],sw=null,swT=0,phase='show',phT=0,done=false,auto=false,last=performance.now(),wait=0,ok=0,cone=null,lift=0;const res=[];const NR=3,NT=3;
+  const snd=(f,len=.1,ty='triangle')=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=ty;o.frequency.value=f;gg.gain.setValueAtTime(.06,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const clr=()=>{while(pg.children.length)pg.remove(pg.children[0]);bowls=[]};
+  const GOURD=M(0xd8c088,{roughness:.6});
+  const sx=i=>(i-(n-1)/2)*.75;
+  const setup=()=>{clr();n=CFG[rd][0];const tb=new THREE.Mesh(new THREE.BoxGeometry(n*.75+.8,.12,1.4),M(0x7a5a3a));tb.position.y=BY-.06;pg.add(tb);for(const s of[-1,1])for(const t of[-1,1]){const lg=new THREE.Mesh(new THREE.BoxGeometry(.1,BY-.1,.1),M(0x5a3a22));lg.position.set(s*(n*.375+.3),(BY-.1)/2,t*.6);pg.add(lg)}
+   cone=new THREE.Group();const cn=new THREE.Mesh(new THREE.SphereGeometry(.1,10,8),M(0x8a5a2a,{flatShading:true}));cn.scale.y=1.4;cn.position.y=.13;cone.add(cn);pg.add(cone);
+   for(let i=0;i<n;i++){const g=new THREE.Group();const dm=new THREE.Mesh(new THREE.SphereGeometry(.28,16,10,0,Math.PI*2,0,Math.PI/2),GOURD);g.add(dm);const st=new THREE.Mesh(new THREE.CylinderGeometry(.02,.03,.1,6),M(0x6a5a2a));st.position.y=.3;g.add(st);const hit=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.4,10),new THREE.MeshBasicMaterial({visible:false}));hit.position.y=.15;hit.userData.b=i;g.add(hit);g.userData.hit=hit;pg.add(g);bowls.push(g)}
+   slots=[...Array(n).keys()];ball=(r()*n)|0;place();lift=1;phase='show';phT=1.4;ui('솔방울이 어디 있는지 잘 봐요!')};
+  const place=()=>{bowls.forEach((g,i)=>{g.position.set(sx(slots[i]),BY,0)});cone.position.set(sx(slots[ball]),BY,0)};
+  const startShuffle=()=>{const[,ns]=CFG[rd];swaps=[];for(let k=0;k<ns;k++){const a=(r()*n)|0;let b=(r()*(n-1))|0;if(b>=a)b++;swaps.push([a,b])}phase='shuffle';sw=null;cone.visible=false};
+  const guess=b=>{if(phase!=='guess'||done||wait>0)return;phase='reveal';phT=1.4;lift=0;cone.visible=true;const okk=b===ball;if(okk){ok++;snd(760,.3,'sine')}else snd(220,.25,'sawtooth');bowls[b].userData.pick=true;ui(okk?'맞았어요! 관음송처럼 잘 보았어요':'아쉬워요, 솔방울은 다른 바가지에 있었어요')};
+  const ov=document.createElement('div');ov.id='cnsO';ov.style.cssText='position:fixed;inset:0;z-index:55;cursor:pointer';document.body.appendChild(ov);
+  ov.onpointerdown=e=>{setPC();rc.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects(bowls.map(g=>g.userData.hit),false)[0];if(h)guess(h.object.userData.b)};
+  const d=document.createElement('div');d.id='cnsP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#22302a;border:3px solid #8ab88a;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#eef6ee;box-shadow:0 6px 18px rgba(0,0,0,.35);width:226px;user-select:none";document.body.appendChild(d);
+  const ui=(msg='')=>{if(done)return;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#c0e8c0">🌲 관음송 바가지 섞기 ${rd+1}/${NR}</b><div style="font-size:12px;margin:4px 0;line-height:1.5">바가지 ${n}개 가운데 하나에 솔방울을 덮어요. 섞이는 동안 눈을 떼지 말고, 멈추면 솔방울이 든 바가지를 눌러요.</div><div style="font-size:13px">${trial+1}/${NT}번째 · 맞힌 수 ${ok}</div><div style="font-size:13px;color:#c0e8c0;min-height:18px">${msg}</div><button data-x style="font:12px 'Do Hyeon',sans-serif;background:transparent;color:#eef6ee;border:1px solid #eef6ee;border-radius:8px;padding:2px 8px;margin-top:4px;cursor:pointer">그만</button>`;d.querySelector('[data-x]').onclick=()=>{cleanup();d.remove()}};
+  const cleanup=()=>{clr();pg.visible=false;ov.remove()};
+  const fin=()=>{done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/res.length);const s2=Q>=80?3:Q>=55?2:Q>0?1:0;try{ctx.done('cheongnyeong_shell',Q,'관음송 바가지 섞기')}catch(e){}window.__CNSQ=Q;
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#c0e8c0">잘 지켜보았어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">관음송은 600년 동안 청령포를 지켜본 소나무예요. 어린 단종의 모습을 보고 울음소리를 들었다고 해서 '관음(觀音)'송이라 불려요.</div><div style="font-size:24px;color:#8ab88a">${'★'.repeat(s2)}${'☆'.repeat(3-s2)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#8ab88a;color:#22302a;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#eef6ee;border:2px solid #eef6ee;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__CNSHELL()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   const targetLift=(phase==='show'||phase==='reveal')?1:0;lift+=(targetLift-lift)*Math.min(1,dt*8);
+   if(phase!=='shuffle')bowls.forEach((g,i)=>{const show=phase==='show'||(phase==='reveal'&&(i===ball||g.userData.pick));g.position.y=BY+(show?lift*.45:0)});
+   if(phase==='show'){phT-=dt;if(phT<=0)startShuffle()}
+   else if(phase==='shuffle'){if(!sw){if(!swaps.length){phase='guess';ui('솔방울은 어느 바가지에?');}else{sw=swaps.shift();swT=0;snd(330+r()*80,.05)}}if(sw){const D=CFG[rd][2];swT+=dt/D;const t=Math.min(1,swT);const[a,b]=sw;const pa=sx(slots[a]),pb=sx(slots[b]);const e=t*t*(3-2*t);bowls[a].position.set(pa+(pb-pa)*e,BY,Math.sin(e*Math.PI)*.35);bowls[b].position.set(pb+(pa-pb)*e,BY,-Math.sin(e*Math.PI)*.35);if(t>=1){const tmp=slots[a];slots[a]=slots[b];slots[b]=tmp;sw=null;place()}}}
+   else if(phase==='guess'){if(auto)guess(ball)}
+   else if(phase==='reveal'){cone.position.set(sx(slots[ball]),BY,0);phT-=dt;if(phT<=0){bowls.forEach(g=>g.userData.pick=false);trial++;if(trial>=NT){res.push(Math.round(ok/NT*100));if(rd+1>=NR){fin();return}rd++;trial=0;ok=0}setup()}}
+   requestAnimationFrame(step)};
+  setup();requestAnimationFrame(step);
+  window.__CNSG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()},guess,get phase(){return phase},get ball(){return ball},scr:i=>{setPC();const v=new THREE.Vector3();bowls[i].getWorldPosition(v);v.y+=.15;v.project(pc);return[(v.x+1)/2*innerWidth,(1-v.y)/2*innerHeight]}};try{ctx.say('솔방울이 든 바가지를 잘 따라가요!',2.4)}catch(e){}};
+ spots.push({x:PX,y:0,z:PZ+3,r:2.4,t:'바가지 섞는 자리',h:'솔방울을 덮은 바가지를 섞어요. 잘 따라가서 맞혀 봐요.'});
+ /* 밤 */const NL=[];if(!mini){for(const[x,y,z]of[[2,3,50],[0,3,5],[-10,3,6],[6,3,11],[GX,3,GZ+4],[-18,3,-16],[PX,3,PZ+3]]){const Lt=new THREE.PointLight(0xffc080,0,26,1.5);Lt.position.set(x,y,z);G.add(Lt);NL.push(Lt)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(Lt=>Lt.intensity=nk*8)};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const DIG=[
+  {n:'솔방울',h:'관음송 아래 떨어진 솔방울이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.DodecahedronGeometry(.05),M(0x8a5a2a,{flatShading:true})))})},
+  {n:'기와 조각',h:'어소 지붕의 기와 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.03,.14),M(0x5a5a58)))})},
+  {n:'강자갈',h:'서강이 둥글게 깎은 자갈이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.05,10,8),M(0xb8b0a0)))})},
+  {n:'백자 잔 조각',h:'조선 백자 잔 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.06,.04,.05,12,1,true),M(0xf0ece0)))})},
+  {n:'엽전',h:'조선 상평통보예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.01,18),M(0x6a5a30,{metalness:.6})))})}];
+ sp(14,30,2.4,'발굴 탐지 자리','강가 흙 속에 옛 흔적이 묻혀 있대요. 무이 탐지기로 찾아 봐요.');
+ window.__CNDIG=()=>{window.__DETECT&&window.__DETECT({key:'cheongnyeong_dig',title:'청령포 발굴 탐지',emoji:'⛏️',bg:'#22302a',count:4,TL:150,cand:[[-6,30],[22,26],[-26,10],[26,6],[-4,-12],[8,-20],[-26,-10],[28,-14],[-2,18],[18,16]],items:DIG,intro:'청령포 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'청령포는 단종이 유배되어 머문 육지 속 섬이에요(명승).'})};
+ const meta={quest:{t:'청령포 둘러보기',d:'나루에서 배를 타고 들어가 단종 어소와 행랑, 단묘유지비, 관음송, 망향탑과 노산대, 금표비를 둘러보세요.',steps:[['나루','청령포 나루'],['어소','단종 어소'],['비','단묘유지비'],['관음송','관음송'],['망향탑','망향탑'],['노산대','노산대'],['금표비','금표비']]},
+  title:'영월 청령포',hint:'청령포를 공개 사진으로 간추려 지었어요(배치·크기 어림). 관음송 곁에서 솔방울 바가지를 잘 따라가 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-6,z:54,lines:['영월 청령포','서강 · 단종 유배지(명승)','관음송 · 망향탑','간추려 지음']}},
+  npc:[['science',[[-6,52],[6,52],[6,58],[-6,58]]]],bounds:[-44,44,-34,60],level:()=>'영월 청령포',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:2.4,ox:0,oz:10,draw(g,X,Z,S){g.fillStyle='#6e8e48';g.fillRect(0,0,300,300);g.fillStyle='#4a8aa8';g.fillRect(0,150+(38-10)*S,300,9*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:2,z:55,yaw:Math.PI},size:{}},meta)}
