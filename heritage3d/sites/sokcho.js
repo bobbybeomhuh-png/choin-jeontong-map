@@ -1,0 +1,69 @@
+/* 속초·인제·고성 마당(2026-11-22, W57): 속초 아바이마을 갯배, 설악산 울산바위, 인제 백담사.
+   공개 실측 3D(CC BY)가 없어 공개 사진으로 간추려 지음.
+   갯배: 청초호 물길 건너편 아바이마을(한국전쟁 때 함경도 피란민이 이룬 마을)을 잇는 쇠줄 배. 손님이 쇠갈고리로 줄을 당겨 건너요.
+   백담사: 설악산 내설악의 절, 계곡에 사람들이 쌓은 돌탑. 울산바위: 설악산의 큰 화강암 봉우리.
+   놀이: 갯배 당기기(왼손·오른손 번갈아 줄을 당겨 건너고, 줄을 잡아 살살 대기), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {tex,mulb} from './sungnyemun.js';
+import {buildHall} from './hallkit.js';
+export function buildSokcho(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1950);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,color:0x8a9a5a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
+ /* 아바이마을 물길: 동쪽, 남북으로 흐르는 물길(폭 44m 중 배 길 40m) */const CX0=20,CX1=64,CZ=-6;const W=CX1-CX0;{const ch=new THREE.Mesh(new THREE.PlaneGeometry(W,200),M(0x2a6a8a,{roughness:.18,metalness:.12}));ch.rotation.x=-Math.PI/2;ch.position.set((CX0+CX1)/2,.04,0);G.add(ch);solids.push({x0:CX0+.2,x1:CX1-.2,y0:-1,y1:4,z0:-100,z1:100});
+  for(const x of[CX0,CX1]){const q=new THREE.Mesh(new THREE.BoxGeometry(1.4,.7,200),M(0x9a9690));q.position.set(x,.2,0);G.add(q)}
+  for(const[x,s]of[[CX0+2.6,1],[CX1-2.6,-1]]){const dk=new THREE.Mesh(new THREE.BoxGeometry(4,.4,4.6),M(0x7a5a3a));dk.position.set(x,.35,CZ);G.add(dk);for(const dz of[-2,2]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,2.4,8),M(0x5a4a3a));p.position.set(x+s*1.8,1,CZ+dz);G.add(p)}}
+  const cable=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,W,6),M(0x2a2a2a,{metalness:.5}));cable.rotation.z=Math.PI/2;cable.position.set((CX0+CX1)/2,1.25,CZ);G.add(cable);
+  /* 아바이마을 집들(동쪽 건너편) */for(let k=0;k<8;k++){const h=new THREE.Group();h.position.set(CX1+6+(k%2)*8,0,CZ-16+k*5);const b=new THREE.Mesh(new THREE.BoxGeometry(5,3,4),M([0xe8e0d0,0xd8e0e8,0xf0d8c0][k%3]));b.position.y=1.5;h.add(b);const rf=new THREE.Mesh(new THREE.BoxGeometry(5.4,.3,4.4),M([0x3a6a9a,0xc85a3a,0x5a8a5a][k%3]));rf.position.y=3.15;h.add(rf);G.add(h)}}
+ /* 갯배 */const boat=new THREE.Group();{const deck=new THREE.Mesh(new THREE.BoxGeometry(5,.5,4),M(0x6a8a9a,{metalness:.3}));deck.position.y=.25;boat.add(deck);for(const sz of[-1,1]){const rl=new THREE.Mesh(new THREE.BoxGeometry(5,.08,.08),M(0xd8d0c0));rl.position.set(0,1.1,sz*1.9);boat.add(rl);for(const sx of[-2.2,0,2.2]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,.6,6),M(0xd8d0c0));p.position.set(sx,.8,sz*1.9);boat.add(p)}}const ring=new THREE.Mesh(new THREE.TorusGeometry(.12,.03,6,12),M(0x3a3a3a));ring.position.set(0,1.25,0);ring.rotation.y=Math.PI/2;boat.add(ring);
+  const pax=[];for(let k=0;k<5;k++){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.CylinderGeometry(.18,.24,1.1,8),M([0xc83a3a,0x3a6ac8,0xe8c040,0x3a9a5a,0xf0f0e8][k]));b.position.y=.55;g.add(b);const hd=new THREE.Mesh(new THREE.SphereGeometry(.15,10,8),M(0xe0b890));hd.position.y=1.25;g.add(hd);g.position.set(-1.6+k*.8,.5,(k%2?.6:-.6));boat.add(g);pax.push(g)}boat.userData.pax=pax;
+  const puller=new THREE.Group();const pb=new THREE.Mesh(new THREE.CylinderGeometry(.2,.26,1.2,8),M(0x5a3a2a));pb.position.y=.6;puller.add(pb);const ph=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),M(0xe0b890));ph.position.y=1.35;puller.add(ph);const hook=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.7,6),M(0x8a6a44));hook.position.set(0,1.1,.2);hook.rotation.x=-.6;puller.add(hook);puller.position.set(0,.5,.2);boat.add(puller);boat.userData.puller=puller}
+ boat.position.set(CX0+2.6+3,0,CZ);G.add(boat);
+ /* 설악산 울산바위(북쪽 멀리) */{const RK=M(0xc8c0b4,{flatShading:true,roughness:.9});for(let k=0;k<9;k++){const p=new THREE.Mesh(new THREE.DodecahedronGeometry(8+r()*6,0),RK);p.scale.set(1,1.6+r()*.8,.8);p.position.set(-40+k*11,6+r()*4,-85-r()*6);G.add(p)}for(let k=0;k<14;k++){const t=new THREE.Mesh(new THREE.ConeGeometry(2,6,7),M(0x2a4a24));t.position.set(-50+k*8,3,-70-r()*6);G.add(t)}}
+ /* 인제 백담사(서쪽) + 계곡 돌탑 */const BX=-34,BZ=-20;if(!mini){const h=buildHall({x:BX,z:BZ,ry:Math.PI/2,W:9,D:6,nx:3,nz:2,FY:1,PH:3.2,roof:'gable',name:'極樂寶殿',pillar:0x9a3a26,bracket:'ik',front:'door',roofScale:.95,solids,light:false});G.add(h.group);h.group.traverse(e=>{if(e.isMesh)cam.push(e)})}
+ {const st=new THREE.Mesh(new THREE.PlaneGeometry(12,100),M(0x6aa0b0,{roughness:.2}));st.rotation.x=-Math.PI/2;st.position.set(BX+16,.04,0);G.add(st);const pb=M(0xd8d4c8,{flatShading:true});for(let k=0;k<70;k++){const x=BX+11+r()*10,z=-40+r()*60;const n=2+Math.floor(r()*5);let y=0;for(let j=0;j<n;j++){const s=.35-j*.05;const s2=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),pb);s2.scale.y=.5;y+=s*.5;s2.position.set(x+(r()-.5)*.08,y,z);y+=s*.45;G.add(s2)}}}
+ const NL=[];if(!mini){for(const[x,y,z]of[[CX0,3,CZ+3],[CX1,3,CZ+3],[BX+5,3,BZ]]){const L=new THREE.PointLight(0xffc080,0,26,1.5);L.position.set(x,y,z);G.add(L);NL.push(L)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(L=>L.intensity=nk*8)};
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ sp(CX0-3,CZ+4,3.4,'속초 갯배','물길 건너 아바이마을로 가는 갯배예요. 한국전쟁 때 함경도에서 내려온 피란민들이 이룬 마을이라 「아바이(할아버지)」마을이에요. 손님이 쇠갈고리로 줄을 당겨 건너요. 간추려 지었어요.');
+ sp(CX0-3,CZ-2,2.4,'갯배 타는 자리','줄을 번갈아 당겨 건너편에 살살 대 봐요.');
+ sp(0,-60,3.4,'설악산 울산바위','둘레 4km에 이르는 거대한 화강암 바위 봉우리예요. 간추려 멀리 세웠어요.');
+ sp(BX+6,BZ+8,3,'인제 백담사','내설악 깊은 계곡의 절이에요. 계곡엔 오가는 사람들이 소원을 빌며 쌓은 돌탑이 가득해요. 간추려 지었어요.');
+ sp(-60,40,2.4,'발굴 탐지 자리','땅속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
+ /* 갯배 당기기(11/22): 네 번 건너요(갔다 왔다). 「왼손」「오른손」을 번갈아 누르면 줄을 당겨 빨라져요(같은 손을 두 번 누르면 헛손질). 「줄 잡기」를 누르고 있으면 느려져요. 건너편 선착장에 1초에 0.6m보다 느리게 닿으면 살짝, 1.2m보다 빠르면 쿵! */
+ window.__SKFERRY=()=>{if(document.getElementById('skP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(CX0-3,CZ-2,0)}catch(e){}
+  const A=CX0+2.6+3,B=CX1-2.6-3;let leg=0,x=A,v=0,lastHand=0,brake=false,t=0,legT=0,last=performance.now(),done=false,auto=false,msg='',docked=0,autoT=0;const res=[];
+  const dirOf=()=>leg%2===0?1:-1,target=()=>leg%2===0?B:A;
+  window.__GCAM=()=>document.getElementById('skP')?[x-dirOf()*1.5,5.5,CZ+13,x+dirOf()*4,.4,CZ,50]:null;
+  const d=document.createElement('div');d.id='skP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#14262e;border:3px solid #8ac8e8;border-radius:16px;padding:10px 14px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#eef6f8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:300px;max-width:94vw;user-select:none;touch-action:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#bfe4f8">⛴️ 갯배 당기기</b><div data-i style="margin:4px 0;font:14px 'Do Hyeon',sans-serif"></div><div style="position:relative;height:14px;background:#2a3a44;border-radius:7px"><div data-b style="position:absolute;top:1px;width:16px;height:12px;border-radius:3px;background:#8ac8e8;left:0"></div></div><div data-s style="font:13px 'Do Hyeon',sans-serif;margin-top:4px"></div><div style="display:flex;gap:6px;margin-top:6px"><button data-l style="flex:1;font:18px 'Do Hyeon',sans-serif;background:#3a7a9a;color:#fff;border:0;border-radius:12px;padding:10px 0;cursor:pointer;touch-action:none">✋ 왼손</button><button data-r style="flex:1;font:18px 'Do Hyeon',sans-serif;background:#3a7a9a;color:#fff;border:0;border-radius:12px;padding:10px 0;cursor:pointer;touch-action:none">오른손 🤚</button></div><button data-k style="width:100%;margin-top:6px;font:16px 'Do Hyeon',sans-serif;background:#8a5a3a;color:#fff;border:0;border-radius:12px;padding:8px 0;cursor:pointer;touch-action:none">누르는 동안 줄 잡기 (느려져요)</button><div data-m style="font-size:12px;color:#f8e8a0;margin-top:5px">왼손·오른손을 번갈아!</div>`;
+  const iEl=d.querySelector('[data-i]'),bEl=d.querySelector('[data-b]'),sEl=d.querySelector('[data-s]'),mEl=d.querySelector('[data-m]');
+  const snd=(f,len,type='sine')=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s);gg.gain.setValueAtTime(.05,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const pull=h=>{if(done||docked>0)return;if(h===lastHand){msg='같은 손이에요! 헛손질';snd(180,.08,'square');return}lastHand=h;v=Math.min(2.6,v+.45);snd(h<0?440:520,.06,'triangle');msg='';boat.userData.puller.rotation.z=h*.3};
+  d.querySelector('[data-l]').onpointerdown=e=>{e.preventDefault();pull(-1)};d.querySelector('[data-r]').onpointerdown=e=>{e.preventDefault();pull(1)};const kb=d.querySelector('[data-k]');kb.onpointerdown=e=>{e.preventDefault();brake=true};kb.onpointerup=kb.onpointerleave=kb.onpointercancel=()=>brake=false;
+  const kd=e=>{if(e.key==='ArrowLeft')pull(-1);if(e.key==='ArrowRight')pull(1);if(e.code==='Space'){e.preventDefault();brake=true}},ku=e=>{if(e.code==='Space')brake=false};addEventListener('keydown',kd);addEventListener('keyup',ku);
+  const cleanup=()=>{removeEventListener('keydown',kd);removeEventListener('keyup',ku);boat.position.x=A};
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;legT+=dt;
+   if(docked>0){docked-=dt;if(docked<=0){leg++;if(leg>=4){fin();return}lastHand=0;v=0;legT=0;boat.userData.pax.forEach((p,i)=>p.visible=Math.random()<.8)}}
+   else{const rem=Math.abs(target()-x);if(auto){autoT-=dt;brake=v>Math.sqrt(2*1.6*Math.max(0,rem-.3))+.05&&rem<10;if(!brake&&autoT<=0&&v<2.4&&(rem>v*v/3+1.2||v<.25)){pull(lastHand===1?-1:1);autoT=.25}}
+    v=Math.max(0,v-(brake?2:.12)*dt);x+=dirOf()*v*dt;const passed=dirOf()>0?x>=target():x<=target();if(passed){x=target();const sp=v;let sc;if(sp<=.6){sc=1;msg=`살짝 닿았어요! (${sp.toFixed(1)}m/초)`;snd(700,.15)}else if(sp<=1.2){sc=.6;msg=`조금 세게 닿았어요 (${sp.toFixed(1)}m/초)`;snd(400,.2)}else{sc=.2;msg=`쿵! 너무 빨라요 (${sp.toFixed(1)}m/초)`;snd(120,.4,'square')}if(legT>25)sc*=.8;res.push(sc);v=0;docked=1.4}
+    else if(v<.02&&rem>.3&&legT>2&&!brake){/* 멈춰 있으면 안내 */if(!msg)msg='줄을 당겨요!'}}
+   boat.position.x=x;boat.position.y=Math.sin(t*1.6)*.04;
+   bEl.style.left=`calc(${(x-A)/(B-A)*100}% - 8px)`;sEl.textContent=`빠르기 ${v.toFixed(1)}m/초 ${v<=.6?'🟢':v<=1.2?'🟡':'🔴'}`;iEl.textContent=`${Math.min(leg+1,4)} / 4번째 건너기 · ${dirOf()>0?'아바이마을 쪽으로':'돌아오는 길'}`;mEl.textContent=msg||mEl.textContent;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/4*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('sokcho_ferry',Q,'갯배 당기기')}catch(e){}window.__SKQ=Q;snd(660,.3);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#bfe4f8">네 번 다 건넜어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">갯배는 엔진 없이 쇠줄을 당겨 가는 배예요. 배가 한번 움직이면 잘 서지 않아서, 닿기 전에 줄을 잡아 천천히 대야 해요. 아바이마을 사람들은 수십 년 동안 이 배로 시장을 오갔어요.</div><div style="font-size:24px;color:#8ac8e8">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#8ac8e8;color:#14262e;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#eef6f8;border:2px solid #eef6f8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__SKFERRY()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__SKG={set auto(v){auto=v},pull,get done(){return done},get res(){return res.slice()},get st(){return [x,v,leg,docked,brake,lastHand]}};try{ctx.say('왼손 오른손, 번갈아 당겨요!',2)}catch(e){}};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const ITEMS=[
+  {n:'갯배 쇠갈고리',h:'줄을 당기던 쇠갈고리 끝이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.TorusGeometry(.07,.02,6,12,Math.PI*1.4),M(0x4a4a4a,{metalness:.6})))})},
+  {n:'오징어 말리던 꼬챙이',h:'속초 바닷가에서 오징어를 말리던 대나무 꼬챙이예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.01,.01,.4,5),M(0x9a8a5a)))})},
+  {n:'막새 기와',h:'백담사 지붕 끝 기와예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.04,18),M(0x5a5a5a)))})},
+  {n:'백자 접시',h:'조선 때 접시 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.2,.12,.05,18),M(0xf0ece0,{roughness:.3})))})},
+  {n:'상평통보',h:'옛 엽전이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.02,20),M(0x6a5a30,{metalness:.6})))})}];
+ window.__SKDIG=()=>{window.__DETECT&&window.__DETECT({key:'sokcho_dig',title:'속초·인제 발굴 탐지',emoji:'⛏️',bg:'#14262e',count:4,TL:150,cand:[[-60,40],[-50,10],[0,40],[-10,-40],[-70,-30],[10,55],[-30,50],[0,20]],items:ITEMS,intro:'땅속에 옛 사람들의 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'속초·인제는 설악산과 바다의 고장이에요.'})};
+ const meta={quest:{t:'속초·인제 둘러보기',d:'갯배와 울산바위, 백담사를 둘러보세요.',steps:[['갯배','속초 갯배'],['울산바위','설악산 울산바위'],['백담사','인제 백담사']]},
+  title:'속초·인제·고성 갯배·설악산·백담사',hint:'아바이마을 갯배·울산바위·백담사를 공개 사진으로 간추려 지었어요. 줄을 번갈아 당겨 건너고 살살 대 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-4,z:16,lines:['속초·인제·고성','아바이마을 갯배','설악산 · 백담사','간추려 지음']}},
+  npc:[['science',[[-8,12],[4,12],[4,22],[-8,22]]]],bounds:[-90,19.2,-90,90],level:()=>'속초',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:1.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#8a9a5a';g.fillRect(0,0,300,300);g.fillStyle='#2a6a8a';g.fillRect(X(CX0),0,W*S,300);g.fillStyle='#6aa0b0';g.fillRect(X(BX+10),0,12*S,300);g.fillStyle='#9a3a26';g.fillRect(X(BX-3),Z(BZ-4.5),6*S,9*S);g.fillStyle='#c8c0b4';g.fillRect(X(-45),Z(-92),100*S,14*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:20,yaw:Math.PI},size:{}},meta)}
