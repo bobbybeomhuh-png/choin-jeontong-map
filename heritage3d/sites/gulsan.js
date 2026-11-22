@@ -1,10 +1,10 @@
 /* 강릉 굴산사지 마당(2026-11-21): 스케치팹 lacomi1975 사진 측량(CC BY 4.0) 굴산사지 당간지주(보물)와 승탑(보물)을 실제 높이(둘 다 5.4m)로 맞춰 놓음.
    신라 말 범일국사가 세운 큰 절 굴산사의 터. 당간(쇠 깃대)은 사라지고 받침 기둥만 남아 있어, 놀이로 당간을 세우고 깃발을 올려 봄. */
-import {photoSite} from './photosite.js';
+import {photoSite,photoDig} from './photosite.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
-export function buildGulsan(opts={}){return photoSite('gulsan',opts,{h0:0,groundY:-2,groundColor:0x6a8a4a,
+export function buildGulsan(opts={}){const R=photoSite('gulsan',opts,{h0:0,groundY:-2,groundColor:0x6a8a4a,
  title:'강릉 굴산사지',hint:'사진 측량한 굴산사지 당간지주와 승탑을 실제 높이로 놓았어요. 사라진 당간을 다시 세우고 깃발을 올려 봐요. '+SRC,
  quest:{t:'굴산사지 둘러보기',d:'당간지주와 승탑을 실측 그대로 둘러보세요.',steps:[['당간지주','굴산사지 당간지주'],['승탑','굴산사지 승탑']]},
  spawn:{x:2.9,z:12,yaw:Math.PI},bounds:[-13,13,-18,18],level:'굴산사지',env:{fog:[90,400],sign:{x:-4,z:12,y:-.3,lines:['강릉 굴산사지','신라 말 범일국사의 절터','당간지주 · 승탑(보물)','실측 3D · 실제 높이']}},
@@ -40,4 +40,4 @@ export function buildGulsan(opts={}){return photoSite('gulsan',opts,{h0:0,ground
    window.__GSG={set hold(v){hold=v},get y(){return y}};try{ctx.say('사라진 당간을 다시 세웠어요! 깃발을 꼭대기까지 올려 봐요.',3)}catch(e){}};
   spots.push({x:6,y:0,z:6,r:2.4,t:'깃발 올리는 자리',h:'당간지주 사이에 쇠 당간을 다시 세우고 깃발을 올려 봐요.'});
  },
- mini:{S:6,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#6a8a4a';g.fillRect(0,0,300,300);g.fillStyle='#9a948a';g.fillRect(X(1.5),Z(1),.8*S,.8*S);g.fillRect(X(3.6),Z(1),.8*S,.8*S);g.beginPath();g.arc(X(-5),Z(1),1.5*S,0,7);g.fill()}}})}
+ mini:{S:6,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#6a8a4a';g.fillRect(0,0,300,300);g.fillStyle='#9a948a';g.fillRect(X(1.5),Z(1),.8*S,.8*S);g.fillRect(X(3.6),Z(1),.8*S,.8*S);g.beginPath();g.arc(X(-5),Z(1),1.5*S,0,7);g.fill()}}});R.key='gulsan_dig';return photoDig(R,{fn:'GSSDIG',key:'gulsan_dig',title:'굴산사지 발굴 탐지',intro:'굴산사지 흙 속에 신라 말 큰 절의 흔적이 묻혀 있대요. 탐지기로 찾아 봐요!',ok:'굴산사는 신라 말 범일국사가 세운 큰 절로, 지금은 당간지주와 승탑이 남아 있어요.',items:[['신라 기와','절 지붕의 신라 기와 조각이에요.','tile',0x6a6660],['토기 조각','회색 토기 조각이에요.','shard',0x6a6a68],['쇠 못','건물을 짓던 쇠못이에요.','rod',0x4a4440],['금동 장식','절을 꾸미던 금동 장식이에요.','ring',0xc8a040],['주춧돌 조각','건물 주춧돌 조각이에요.','stone',0x9a948a]]})}

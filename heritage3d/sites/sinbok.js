@@ -1,8 +1,8 @@
 /* 강릉 신복사지 마당(2026-11-21): 스케치팹 lacomi1975 사진 측량(CC BY 4.0) 신복사지 삼층석탑(보물)과 탑 앞 석조보살좌상(보물).
    실측 단위가 깨져 있어 탑 실제 높이 4.55m에 맞춰 줄임. 보살이 탑 앞에 무릎 꿇고 공양하는 모습 그대로. 놀이: 탑 둘레 등 공양. */
-import {photoSite} from './photosite.js';
+import {photoSite,photoDig} from './photosite.js';
 const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
-export function buildSinbok(opts={}){return photoSite('sinbok',opts,{h0:-.2,groundY:-.25,groundColor:0x7a8a5a,
+export function buildSinbok(opts={}){const R=photoSite('sinbok',opts,{h0:-.2,groundY:-.25,groundColor:0x7a8a5a,
  title:'강릉 신복사지',hint:'사진 측량한 신복사지 삼층석탑과 석조보살좌상을 실제 높이로 놓았어요. 보살처럼 탑 둘레에 등을 밝혀 공양해 봐요. '+SRC,
  quest:{t:'신복사지 둘러보기',d:'고려 탑과 공양하는 보살을 실측 그대로 둘러보세요.',steps:[['석탑','신복사지 삼층석탑'],['보살','석조보살좌상']]},
  spawn:{x:-.3,z:6,yaw:Math.PI},bounds:[-9,9,-9,9],level:'신복사지',env:{fog:[60,300],sign:{x:-3.5,z:5,y:-.2,lines:['강릉 신복사지','삼층석탑 · 석조보살좌상','보물 · 고려','실측 3D · 실제 높이']}},
@@ -25,4 +25,4 @@ export function buildSinbok(opts={}){return photoSite('sinbok',opts,{h0:-.2,grou
    window.__SBG={L,get n(){return n}};try{ctx.say('탑 앞 보살처럼 등을 밝혀 공양해 봐요!',2.5)}catch(e){}};
   spots.push({x:2.5,y:0,z:5,r:1.6,t:'등 공양 자리',h:'탑 둘레에 등을 밝혀 공양해 봐요.'});
  },
- mini:{S:15,ox:-.3,oz:.5,draw(g,X,Z,S){g.fillStyle='#7a8a5a';g.fillRect(0,0,300,300);g.fillStyle='#9a948a';g.fillRect(X(-1.7),Z(2.6),2.8*S,4.1*S)}}})}
+ mini:{S:15,ox:-.3,oz:.5,draw(g,X,Z,S){g.fillStyle='#7a8a5a';g.fillRect(0,0,300,300);g.fillStyle='#9a948a';g.fillRect(X(-1.7),Z(2.6),2.8*S,4.1*S)}}});R.key='sinbok_dig';return photoDig(R,{fn:'SBKDIG',key:'sinbok_dig',title:'신복사지 발굴 탐지',intro:'신복사지 흙 속에 고려 절의 흔적이 묻혀 있대요. 탐지기로 찾아 봐요!',ok:'신복사지에는 고려 삼층석탑과 공양하는 석조보살좌상이 남아 있어요(보물).',items:[['고려 기와','절 지붕의 고려 기와 조각이에요.','tile',0x5a5a54],['청자 조각','고려 청자 그릇 조각이에요.','shard',0x8ab8a0],['향로 조각','공양 때 쓰던 향로 조각이에요.','bowl',0x5a4a30],['주춧돌 조각','건물 주춧돌 조각이에요.','stone',0x9a948a],['엽전','고려·조선 때 쓰던 동전이에요.','coin',0x6a5a30]]})}

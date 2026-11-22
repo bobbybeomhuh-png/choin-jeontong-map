@@ -1,8 +1,8 @@
 /* 김천 방초정 마당(2026-11-21): 스케치팹 lacomi1975 사진 측량(CC BY 4.0), 측량좌표 그대로 실제 크기.
    조선 1625년 이정복이 세운 2층 정자(보물)와 네모난 연못(최씨담), 둘레 논. 놀이: 방초정 앞 논 모심기. */
-import {photoSite} from './photosite.js';
+import {photoSite,photoDig} from './photosite.js';
 const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
-export function buildBangcho(opts={}){return photoSite('bangcho',opts,{h0:2,
+export function buildBangcho(opts={}){const R=photoSite('bangcho',opts,{h0:2,
  title:'김천 방초정',hint:'사진 측량한 방초정과 연못, 둘레 논을 실제 크기로 놓았어요. 연못 둘레를 걷고 논에서 모심기도 해 봐요. '+SRC,
  quest:{t:'방초정 둘러보기',d:'조선 정자와 연못을 실측 그대로 둘러보세요.',steps:[['방초정','방초정'],['연못','최씨담 연못'],['논','방초정 앞 논']]},
  spawn:{x:22,z:-20,yaw:Math.PI},bounds:[-40,40,-42,42],level:'방초정',
@@ -28,4 +28,4 @@ export function buildBangcho(opts={}){return photoSite('bangcho',opts,{h0:2,
    window.__BRG={P,get n(){return n}};try{ctx.say('방초정 앞 논에 모를 심어요! 노란 고리마다 꽂아 봐요.',2.5)}catch(e){}};
   spots.push({x:20,y:0,z:-11,r:2.4,t:'모심기 자리',h:'방초정 앞 논에서 모심기를 해 봐요.'});
  },
- mini:{S:3,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#7a9a48';g.fillRect(0,0,300,300);g.fillStyle='#4a6a7a';g.fillRect(X(-10),Z(10),20*S,14*S)}}})}
+ mini:{S:3,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#7a9a48';g.fillRect(0,0,300,300);g.fillStyle='#4a6a7a';g.fillRect(X(-10),Z(10),20*S,14*S)}}});R.key='bangcho_dig';return photoDig(R,{fn:'BCHDIG',key:'bangcho_dig',title:'방초정 발굴 탐지',intro:'방초정 둘레 흙 속에 옛 물건이 묻혀 있대요. 탐지기로 찾아 봐요!',ok:'방초정은 조선 중기에 지은 정자로, 앞 연못과 함께 김천 원터마을을 지켜 왔어요.',items:[['백자 잔','정자에서 쓰던 백자 잔이에요.','bowl',0xf0ece0],['벼루 조각','글을 쓰던 벼루 조각이에요.','stone',0x2a2a2e],['기와 조각','정자 지붕의 기와 조각이에요.','tile',0x5a5a54],['호미 날','앞 논을 매던 쇠 호미 날이에요.','rod',0x4a4440],['엽전','조선 상평통보예요.','coin',0x6a5a30]]})}

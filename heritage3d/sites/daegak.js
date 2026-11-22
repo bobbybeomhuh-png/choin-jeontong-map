@@ -1,7 +1,7 @@
 /* 부산 대각사 마당(2026-11-21): 스케치팹 Redpiggy 드론 사진 측량(RealityScan, CC BY 4.0) 부산 중구 도심의 절 대각사를 실제 크기로. 큰 건물 사이 기와 법당과 마당. 놀이: 도심 절 마당 연등 달기. */
-import {photoSite} from './photosite.js';
+import {photoSite,photoDig} from './photosite.js';
 const SRC='(3D: Redpiggy, Sketchfab, CC BY 4.0)';
-export function buildDaegak(opts={}){return photoSite('daegak',opts,{h0:1,groundY:-1.2,groundColor:0x6a6a66,
+export function buildDaegak(opts={}){const R=photoSite('daegak',opts,{h0:1,groundY:-1.2,groundColor:0x6a6a66,
  title:'부산 대각사',hint:'드론으로 사진 측량한 부산 도심의 절 대각사를 실제 크기로 놓았어요. 큰 건물 사이 법당 마당에 연등을 달아 봐요. '+SRC,
  quest:{t:'대각사 둘러보기',d:'도심 속 절을 실측 그대로 둘러보세요.',steps:[['대각사','대각사'],['법당','대각사 법당']]},
  spawn:{x:24,z:4,yaw:-Math.PI/2},bounds:[-29,31,-46,47],level:'대각사',env:{fog:[90,420],sign:{x:24,z:10,y:0,lines:['부산 대각사','부산 중구 도심의 절','기와 법당 · 마당','드론 실측 3D']}},
@@ -24,4 +24,4 @@ export function buildDaegak(opts={}){return photoSite('daegak',opts,{h0:1,ground
    window.__DGG={L,get n(){return n}};try{ctx.say('도심 절 마당에 연등을 달아 봐요!',2.5)}catch(e){}};
   spots.push({x:22,y:0,z:-4,r:2,t:'연등 다는 자리',h:'절 마당에 연등을 달아 봐요.'});
  },
- mini:{S:2.5,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#6a6a66';g.fillRect(0,0,300,300);g.fillStyle='#4a4038';g.fillRect(X(-20),Z(15),20*S,30*S)}}})}
+ mini:{S:2.5,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#6a6a66';g.fillRect(0,0,300,300);g.fillStyle='#4a4038';g.fillRect(X(-20),Z(15),20*S,30*S)}}});R.key='daegak_dig';return photoDig(R,{fn:'DGKDIG',key:'daegak_dig',title:'대각사 발굴 탐지',intro:'도심 절 대각사 마당 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 찾아 봐요!',ok:'대각사는 부산 원도심의 절로, 둘레가 옛 부산포 거리였어요.',items:[['기와 조각','법당 지붕의 기와 조각이에요.','tile',0x5a5a54],['염주 알','스님의 염주 알이에요.','stone',0x5a3a20],['놋 촛대 조각','초를 꽂던 놋 촛대 조각이에요.','rod',0xb89a50],['사기 그릇 조각','절에서 쓰던 그릇 조각이에요.','shard',0xe8e4d8],['옛 동전','근대에 쓰던 동전이에요.','coin',0xa87a40]]})}

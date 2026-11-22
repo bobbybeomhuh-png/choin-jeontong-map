@@ -1,8 +1,8 @@
 /* 영양 서석지 마당(2026-11-21): 스케치팹 lacomi1975 사진 측량(CC BY 4.0), 측량좌표 그대로 실제 크기.
    조선 광해군 때(1613) 정영방이 지은 정원(국가민속문화유산). 연못 안팎 상서로운 돌(서석)에 이름을 붙이고, 경정·주일재 같은 집을 지음. */
-import {photoSite} from './photosite.js';
+import {photoSite,photoDig} from './photosite.js';
 const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
-export function buildSeoseok(opts={}){return photoSite('seoseok',opts,{h0:1,groundY:-.5,groundColor:0x3a5a58,
+export function buildSeoseok(opts={}){const R=photoSite('seoseok',opts,{h0:1,groundY:-.5,groundColor:0x3a5a58,
  title:'영양 서석지',hint:'사진 측량한 서석지 정원을 실제 크기로 놓았어요. 연못 둘레를 돌며 이름 붙은 돌을 찾아 봐요. '+SRC,
  quest:{t:'서석지 둘러보기',d:'조선 선비의 연못 정원을 실측 그대로 둘러보세요.',steps:[['서석지','서석지'],['경정','경정']]},
  spawn:{x:-20,z:-20,yaw:Math.PI},bounds:[-27,27,-29,29],level:'서석지',env:{fog:[80,360],sign:{x:-22,z:-16,y:0,lines:['영양 서석지','국가민속문화유산','조선 선비 정원(1613)','실측 3D · 실제 크기']}},
@@ -25,4 +25,4 @@ export function buildSeoseok(opts={}){return photoSite('seoseok',opts,{h0:1,grou
     requestAnimationFrame(loop)};loop();window.__SSG={R,get idx(){return idx}};try{ctx.say('서석지 연못 둘레 이름 붙은 돌을 찾아 봐요!',2.5)}catch(e){}};
   spots.push({x:-16,y:0,z:-16,r:2.4,t:'돌 이름 찾는 자리',h:'서석지 돌에 붙은 이름을 찾아 연못 둘레를 돌아요.'});
  },
- mini:{S:4,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#6a7a4a';g.fillRect(0,0,300,300);g.fillStyle='#4a6a7a';g.fillRect(X(-11),Z(15),14*S,14*S)}}})}
+ mini:{S:4,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#6a7a4a';g.fillRect(0,0,300,300);g.fillStyle='#4a6a7a';g.fillRect(X(-11),Z(15),14*S,14*S)}}});R.key='seoseok_dig';return photoDig(R,{fn:'SSKDIG',key:'seoseok_dig',title:'서석지 발굴 탐지',intro:'서석지 정원 흙 속에 선비의 흔적이 묻혀 있대요. 탐지기로 찾아 봐요!',ok:'서석지는 1613년 정영방이 지은 정원으로, 연못 속 돌마다 이름을 붙였어요.',items:[['백자 잔','정자에서 쓰던 백자 잔이에요.','bowl',0xf0ece0],['먹 조각','시를 짓던 먹 조각이에요.','stone',0x1a1a1a],['기와 조각','경정 지붕의 기와 조각이에요.','tile',0x5a5a54],['붓 대','대나무 붓대예요.','rod',0xb89a60],['엽전','조선 상평통보예요.','coin',0x6a5a30]]})}
