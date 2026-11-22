@@ -1,0 +1,79 @@
+/* 몽골 초원길 마당(2026-11-22, G16): 비단길 북쪽의 초원길. 말을 탄 유목민이 동서를 이었고, 신라 무덤의 금관·말갖춤도 초원 문화와 닮았어요.
+   실측: 「Bronze Age Horse Cranium - Mongolia」(william.tt.taylor 스케치팹 CC BY, 몽골 국립박물관·스미스소니언 발굴, 기원전 1200년쯤, 단위가 mm라 길이 53.4cm 그대로),
+         「Mongolia Gobi Petroglyph」(alexandiir 스케치팹 CC BY, 고비 바위그림, 단위 표기가 없어 자료 수치를 미터로 보아 가로 약 1.85m).
+   게르·초원 언덕은 간추려 지었어요.
+   놀이: 게르 세우기(접이 벽을 늘이고 줄여 둥근 바닥에 꼭 맞게 닫기, 그다음 지붕 서까래를 꽂는데 한쪽으로 몰리면 천창이 기울어 떨어져요. 마주 보는 쪽을 번갈아 꽂기, 새 방식), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {tex,mulb} from './sungnyemun.js';
+export function buildChowon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1200);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.95},o));
+ const FE=tex(128,128,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<600;i++){const v=215+(r()*40|0);q.fillStyle=`rgb(${v},${v},${v-6})`;q.fillRect(r()*w,r()*h,3,2)}},[3,1]);
+ const LT=tex(256,128,(q,w,h)=>{q.fillStyle='rgba(0,0,0,0)';q.clearRect(0,0,w,h);q.strokeStyle='#b8302a';q.lineWidth=7;for(let x=-h;x<w+h;x+=32){q.beginPath();q.moveTo(x,0);q.lineTo(x+h,h);q.stroke();q.beginPath();q.moveTo(x+h,0);q.lineTo(x,h);q.stroke()}},[1,1]);
+ /* 둘레 게르 셋(간추림) */const mkGer=(x,z,R,door)=>{const g=new THREE.Group();g.position.set(x,0,z);const wall=new THREE.Mesh(new THREE.CylinderGeometry(R,R,1.6,32,1,true),M(0xf0ead8,{map:FE,side:THREE.DoubleSide}));wall.position.y=.8;g.add(wall);const roof=new THREE.Mesh(new THREE.ConeGeometry(R+.1,1.3,32,1,true),M(0xe8e0cc,{map:FE,side:THREE.DoubleSide}));roof.position.y=2.25;g.add(roof);const band=new THREE.Mesh(new THREE.CylinderGeometry(R+.02,R+.02,.12,32,1,true),M(0x3a5a9a));band.position.y=1.3;g.add(band);const dr=new THREE.Mesh(new THREE.PlaneGeometry(.9,1.4),M(0xd8a020));dr.position.set(Math.sin(door)*(R+.02),.7,Math.cos(door)*(R+.02));dr.rotation.y=door;g.add(dr);G.add(g);solids.push({cx:x,cz:z,r:R+.1,y0:0,y1:2.9})};
+ mkGer(-16,-10,3,0);mkGer(-8,-16,2.6,0);mkGer(14,-14,3.2,0);
+ /* 실측 둘: 바위그림, 말 머리뼈 */const RX=6,RZ=-4,HX=-4,HZ=2;
+ {const ped=new THREE.Mesh(new THREE.BoxGeometry(.9,1,.6),M(0x3a2e26));ped.position.set(HX,.5,HZ);G.add(ped);const gl=new THREE.Mesh(new THREE.BoxGeometry(.8,.4,.5),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.1,roughness:.05}));gl.position.set(HX,1.2,HZ);G.add(gl);solids.push({x0:HX-.5,x1:HX+.5,y0:0,y1:1.4,z0:HZ-.35,z1:HZ+.35});const L=new THREE.PointLight(0xfff0d8,1,2.4,2);L.position.set(HX,1.5,HZ+.3);G.add(L);
+  const T=tex(320,72,(q,w,h)=>{q.fillStyle='#f4ecd8';q.fillRect(0,0,w,h);q.fillStyle='#2a2018';q.font='bold 22px sans-serif';q.textAlign='center';q.fillText('청동기 시대 말 머리뼈',w/2,30);q.font='16px sans-serif';q.fillText('실측 · 실제 길이 53.4cm',w/2,56)});const lb=new THREE.Mesh(new THREE.PlaneGeometry(.7,.16),new THREE.MeshStandardMaterial({map:T}));lb.position.set(HX,.8,HZ+.31);G.add(lb)}
+ solids.push({x0:RX-1,x1:RX+1,y0:0,y1:1.3,z0:RZ-.8,z1:RZ+.8});
+ if(!mini){const L=new GLTFLoader();L.load(new URL('../models/chowon/rock.glb',import.meta.url).href,m=>{const o=m.scene;o.traverse(e=>{if(e.isMesh)e.receiveShadow=true});const w=new THREE.Group();w.add(o);w.userData.noBatch=true;const b=new THREE.Box3().setFromObject(o);o.position.y-=b.min.y;w.position.set(RX,0,RZ);G.add(w)},undefined,()=>{});
+  L.load(new URL('../models/chowon/horse.glb',import.meta.url).href,m=>{const o=m.scene;o.traverse(e=>{if(e.isMesh){e.material=new THREE.MeshStandardMaterial({color:0xe0d4b8,roughness:.8})}});const w=new THREE.Group();w.add(o);w.userData.noBatch=true;w.rotation.y=Math.PI/2;w.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(w);w.position.set(HX-(b.min.x+b.max.x)/2,1-b.min.y,HZ-(b.min.z+b.max.z)/2);G.add(w)},undefined,()=>{})}
+ /* 오보(돌무지)와 말 매는 줄 */{const ob=new THREE.Mesh(new THREE.ConeGeometry(1.4,1.8,9),M(0x8a8478));ob.position.set(-14,.9,6);G.add(ob);const pl=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,3,6),M(0x5a3a24));pl.position.set(-14,2.2,6);G.add(pl);for(let i=0;i<5;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(.3,1.4),new THREE.MeshStandardMaterial({color:[0x2a6ab8,0xf0f0f0,0xc8302a,0x3a8a4a,0xd8b020][i],side:THREE.DoubleSide}));s.position.set(-14+Math.cos(i*1.25)*.35,2.6,6+Math.sin(i*1.25)*.35);s.rotation.y=i*1.25;G.add(s)}solids.push({cx:-14,cz:6,r:1.4,y0:0,y1:1.8})}
+ /* 게르 세우기 마당 */const GX=12,GZ=8;{const fl=new THREE.Mesh(new THREE.CircleGeometry(3.2,40),M(0xc8a878,{map:FE}));fl.rotation.x=-Math.PI/2;fl.position.set(GX,.03,GZ);G.add(fl)}
+ const gg=new THREE.Group();gg.userData.noBatch=true;gg.position.set(GX,0,GZ);G.add(gg);
+ const NL=[];if(!mini){for(const[x,y,z]of[[0,4,0],[GX,3,GZ+3],[-14,3,8]]){const P=new THREE.PointLight(0xffc080,0,26,1.5);P.position.set(x,y,z);G.add(P);NL.push(P)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(P=>P.intensity=nk*8)};
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ sp(RX,RZ+2,2,'고비 바위그림','고비 사막 바위에 새긴 말과 사람 그림이에요. 사진 실측(CC BY), 자료 수치 그대로 가로 약 1.85m예요.');
+ sp(HX,HZ+1.6,1.6,'청동기 시대 말 머리뼈','기원전 1200년쯤 몽골 북부에서 나온 말 머리뼈예요. 코뼈에 굴레 자국이 있어 사람이 말을 부린 가장 오래된 증거 가운데 하나예요. 실측, 실제 길이 53.4cm예요.');
+ sp(-14,8.6,2,'오보','초원의 돌무지 오보예요. 길손이 돌을 얹고 오색 천을 매며 길이 무사하길 빌어요. 간추려 지었어요.');
+ sp(GX-4,GZ+3,2,'게르 세우기 마당','접이 벽과 서까래로 게르를 세워 봐요.');
+ sp(-20,18,2.4,'발굴 탐지 자리','초원 땅속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
+ sp(0,22,2.4,'세계로 가는 나루로 돌아가기','인천 「세계로 가는 나루」로 돌아가요.');
+ /* 게르 세우기(11/22) */
+ window.__CWGER=()=>{if(document.getElementById('cwP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(GX-5,GZ+3,0)}catch(e){}
+  window.__GCAM=()=>document.getElementById('cwP')?[GX,6.4,GZ+6.6,GX,.6,GZ,50]:null;
+  const RD=[{R:2.2,n:8},{R:2.6,n:12},{R:3,n:12}];const DOOR=.9,NP=5;let rd=0,stage='wall',e=1,need=1,poles=[],ins=[],tilt=new THREE.Vector2(),fell=false,sc1=0,auto=false,done=false,last=performance.now(),msg='',wait=0,at=0,dragX=null;const res=[];
+  const d=document.createElement('div');d.id='cwP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#26302a;border:3px solid #d8b020;border-radius:16px;padding:9px 12px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:310px;max-width:94vw;user-select:none;touch-action:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#fff">⛺ 게르 세우기</b><div data-i style="margin:3px 0;font:14px 'Do Hyeon',sans-serif"></div><div data-h style="font-size:11.5px;color:#e0d8c0"></div><button data-o style="width:100%;margin-top:6px;font:14px 'Do Hyeon',sans-serif;background:#d8b020;color:#26302a;border:0;border-radius:10px;padding:7px 0;cursor:pointer">벽 다 폈어요</button><div data-m style="font-size:12px;color:#f8e8a0;margin-top:4px"></div>`;
+  const q=k=>d.querySelector(k);const iEl=q('[data-i]'),hEl=q('[data-h]'),mEl=q('[data-m]'),oB=q('[data-o]');
+  const snd=(f,len,type='sine',v=.05)=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),g2=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s);g2.gain.setValueAtTime(v,s);g2.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(g2).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e2){}};
+  let wallM=null,doorM=null,crown=null,cols=[],sockets=[];
+  const clear=()=>{while(gg.children.length)gg.remove(gg.children[0]);poles=[];ins=[];sockets=[]};
+  const span=()=>{const R=RD[rd].R;const circ=2*Math.PI*R;return Math.min(1.4,(NP*e*(circ-DOOR)/NP)/(circ-DOOR))};
+  const buildWall=()=>{if(wallM)gg.remove(wallM);const R=RD[rd].R;const circ=2*Math.PI*R;const want=circ-DOOR;const have=NP*(want/NP)*e/need;const th=Math.min(2*Math.PI-.01,have/R);const ok=Math.abs(have-want)<.12;const g=new THREE.CylinderGeometry(R,R,1.5,48,1,true,DOOR/2/R,th);const mat=new THREE.MeshStandardMaterial({map:LT,transparent:true,side:THREE.DoubleSide,color:have>want+.12?0xff6060:ok?0x80ff80:0xffffff});LT.repeat.set(Math.max(1,Math.round(th*R/1)),1);wallM=new THREE.Mesh(g,mat);wallM.position.y=.75;gg.add(wallM);return{have,want,ok}};
+  const newRound=()=>{clear();wallM=null;const R=RD[rd].R;need=.75+Math.random()*.5;e=need*(Math.random()<.5?.7:1.3);fell=false;tilt.set(0,0);stage='wall';doorM=new THREE.Mesh(new THREE.BoxGeometry(DOOR,1.5,.12),M(0xd8a020));doorM.position.set(0,.75,R);gg.add(doorM);buildWall();oB.style.display='';oB.textContent='벽 다 폈어요';msg=`${rd+1}번째 게르: 화면을 옆으로 밀어 벽을 늘이고 줄여요`;hEl.textContent='벽 끝이 문에 꼭 닿으면 초록빛이 돼요. 넘치면 붉어요'};
+  const toRoof=()=>{const w=buildWall();sc1=Math.max(0,1-Math.abs(w.have-w.want)/w.want*6);stage='roof';oB.style.display='none';const R=RD[rd].R,n=RD[rd].n;crown=new THREE.Group();crown.position.y=2.7;gg.add(crown);const ring=new THREE.Mesh(new THREE.TorusGeometry(.5,.07,8,24),M(0xc8302a));ring.rotation.x=Math.PI/2;crown.add(ring);for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,2.7,8),M(0xc8902a));c.position.set(s*.25,1.35,0);gg.add(c);cols.push(c)}
+   for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const sk=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),new THREE.MeshBasicMaterial({color:0xffd040}));sk.position.set(Math.sin(a)*R,1.55,Math.cos(a)*R);sk.userData.a=a;sk.userData.i=i;gg.add(sk);sockets.push(sk)}msg='노란 자리를 눌러 서까래를 꽂아요';hEl.textContent='한쪽으로 몰아 꽂으면 천창이 기울어 떨어져요. 마주 보는 쪽을 번갈아요';snd(520,.15)};
+  const putPole=sk=>{if(stage!=='roof'||sk.userData.done)return;sk.userData.done=1;sk.visible=false;const R=RD[rd].R,a=sk.userData.a;const p=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1,6),M(0xc8902a));const A=new THREE.Vector3(Math.sin(a)*R,1.5,Math.cos(a)*R),B=new THREE.Vector3(Math.sin(a)*.5,2.7,Math.cos(a)*.5);p.position.copy(A).add(B).multiplyScalar(.5);p.scale.y=A.distanceTo(B);p.lookAt(B);p.rotateX(Math.PI/2);gg.add(p);poles.push(p);ins.push(a);tilt.x+=Math.sin(a);tilt.y+=Math.cos(a);snd(640,.08,'triangle',.04);const n=RD[rd].n;const lim=2.2;if(tilt.length()>lim&&ins.length<n){fell=true;msg='천창이 한쪽으로 기울어 떨어졌어요!';snd(160,.5,'sawtooth',.06);endRound()}else if(ins.length>=n){msg='서까래를 다 꽂았어요!';endRound()}else msg=`기울기 ${(tilt.length()/lim*100|0)}%`};
+  const endRound=()=>{stage='wait';wait=2.4;const sc2=fell?0:1;res.push(sc1*.5+sc2*.5);if(!fell)snd(780,.3)};
+  oB.onclick=()=>{if(stage==='wall')toRoof()};
+  const pc=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,100);const rc=new THREE.Raycaster();const ov=document.createElement('div');ov.id='cwO';ov.style.cssText='position:fixed;inset:0;z-index:55;touch-action:none';document.body.appendChild(ov);
+  ov.onpointerdown=ev=>{if(stage==='wall'){dragX=ev.clientX;return}if(stage!=='roof')return;const C=window.__GCAM();if(!C)return;pc.aspect=innerWidth/innerHeight;pc.position.set(C[0],C[1],C[2]);pc.lookAt(C[3],C[4],C[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();gg.updateMatrixWorld(true);rc.setFromCamera(new THREE.Vector2(ev.clientX/innerWidth*2-1,-(ev.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects(sockets.filter(s=>!s.userData.done),false)[0];if(h)putPole(h.object)};
+  ov.onpointermove=ev=>{if(stage!=='wall'||dragX==null)return;e=Math.max(.4,Math.min(1.8,e+(ev.clientX-dragX)*.004));dragX=ev.clientX;buildWall()};ov.onpointerup=ov.onpointerleave=ov.onpointercancel=()=>{dragX=null};
+  const cleanup=()=>{ov.remove();clear();cols=[]};
+  newRound();
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   if(auto){at+=dt;if(stage==='wall'){e+=(need-e)*Math.min(1,dt*4);buildWall();if(Math.abs(e-need)<.005&&at>1){at=0;toRoof()}}else if(stage==='roof'&&at>.25){at=0;const n=RD[rd].n,k=ins.length;const order=[];for(let i=0;i<n/2;i++){order.push(i,i+n/2)}const s=sockets.find(s=>s.userData.i===order[k]);if(s)putPole(s)}}
+   if(crown){const tl=Math.min(.5,tilt.length()*.12);crown.rotation.x=tilt.y?-Math.sign(tilt.y)*tl*Math.abs(tilt.y)/Math.max(.01,tilt.length()):0;crown.rotation.z=tilt.x?Math.sign(tilt.x)*tl*Math.abs(tilt.x)/Math.max(.01,tilt.length()):0;if(fell)crown.position.y=Math.max(.2,crown.position.y-dt*4)}
+   if(stage==='wall'){const w=buildWall.last;}
+   if(stage==='wait'){wait-=dt;if(wait<=0){rd++;crown=null;cols=[];if(rd>=3){fin();return}newRound()}}
+   iEl.textContent=`${Math.min(rd+1,3)} / 3채 · ${stage==='wall'?'벽 펴기':stage==='roof'?`서까래 ${ins.length}/${RD[Math.min(rd,2)].n}`:'다음 게르로'}`;mEl.textContent=msg;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('chowon_ger',Q,'게르 세우기')}catch(e2){}window.__CWQ=Q;snd(660,.4);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#fff">게르를 다 세웠어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">게르의 접이 벽은 늘이고 줄여 크기를 맞추고, 천창은 기둥 둘이 받친 채 서까래를 마주 보는 쪽부터 번갈아 꽂아 균형을 잡아요. 그래서 유목민은 몇 시간 만에 집을 세우고 거둬 옮겨 다녀요.</div><div style="font-size:24px;color:#d8b020">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#d8b020;color:#26302a;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__CWGER()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__CWG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()}};try{ctx.say('게르를 세워 봐요!',2)}catch(e2){}};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const ITEMS=[
+  {n:'청동 재갈 조각',h:'말 입에 물리던 청동 재갈 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.TorusGeometry(.06,.012,6,14),M(0x6a7a50,{metalness:.5})))})},
+  {n:'화살촉',h:'초원 사냥꾼의 쇠 화살촉이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.ConeGeometry(.03,.16,4),M(0x4a3a30,{metalness:.6})))})},
+  {n:'동물 무늬 장식',h:'사슴 무늬를 새긴 청동 장식이에요. 초원 미술의 대표 무늬예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.16,.1,.02),M(0xb89a40,{metalness:.7})))})},
+  {n:'펠트 조각',h:'게르를 덮던 양털 펠트 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.02,.14),M(0xe8e0cc)))})},
+  {n:'토기 조각',h:'유목민이 쓰던 토기 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.14,.1,.08,12,1,true,0,2),M(0x8a6a4a)))})}];
+ window.__CWDIG=()=>{window.__DETECT&&window.__DETECT({key:'chowon_dig',title:'초원 발굴 탐지',emoji:'⛏️',bg:'#26302a',count:4,TL:150,cand:[[-20,18],[-28,4],[24,20],[28,-2],[-26,-20],[26,-24],[8,24],[-8,26]],items:ITEMS,intro:'초원 땅속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'초원길은 말을 탄 사람들이 동서를 이은 길이에요.'})};
+ const meta={quest:{t:'초원길 둘러보기',d:'바위그림과 말 머리뼈, 오보, 게르 세우기 마당을 둘러보세요.',steps:[['바위그림','고비 바위그림'],['말','청동기 시대 말 머리뼈'],['오보','오보'],['게르','게르 세우기 마당']]},
+  title:'몽골 초원길',hint:'바위그림과 말 머리뼈는 사진·스캔 실측, 게르와 오보는 간추려 지었어요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-6,z:14,lines:['몽골 초원길','고비 바위그림 · 말 머리뼈(실측)','게르 · 오보','간추려 지음']}},
+  npc:[['science',[[-10,10],[-2,10],[-2,16],[-10,16]]]],bounds:[-40,40,-30,32],level:()=>'세계',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e2){}},
+  mini:{S:2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#a8b870';g.fillRect(0,0,300,300);g.fillStyle='#f0ead8';for(const[x,z,R]of[[-16,-10,3],[-8,-16,2.6],[14,-14,3.2],[GX,GZ,3.2]]){g.beginPath();g.arc(X(x),Z(z),R*S,0,7);g.fill()}}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:20,yaw:Math.PI},size:{}},meta)}
