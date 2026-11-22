@@ -1,0 +1,70 @@
+/* 완도 보길도 세연정 마당(2026-11-23, 2단계 열째 묶음): 고산 윤선도가 꾸민 보길도 원림(명승) 가운데 세연정 일대.
+   공개 실측 3D(CC BY)가 없어 공개 사진으로 간추려 지음(배치·크기 어림). 같은 보길도의 동천석실 마당(dongcheon)은 실측이 따로 있음.
+   계곡물을 돌 보(판석보)로 막아 만든 연못 세연지와 회수담, 그 사이 정자 세연정(가운데 방, 사방 마루), 동대·서대(춤추던 단이라 전해 옴), 옥소대(바위 단), 연못 속 일곱 바위 칠암(그중 혹약암은 엎드린 소 모양).
+   판석보는 비가 오면 물을 막는 보, 마르면 건너는 돌다리가 되었어요. 윤선도는 세연지에 배를 띄우고 「어부사시사」를 부르게 했다고 전해 와요(전해 오는 이야기).
+   놀이: 세연지 뱃놀이(배가 저절로 나아가요. ⬅➡로 노를 저어 연꽃 표지 사이로 지나고 칠암을 피해요. 이어지는 키 잡기, 새 방식), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {tex,mulb} from './sungnyemun.js';
+export function buildSeyeon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1637);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x6e9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
+ for(let i=0;i<9;i++){const h=new THREE.Mesh(new THREE.SphereGeometry(20+r()*8,14,8,0,Math.PI*2,0,Math.PI/2),M(0x3a6a3a,{flatShading:true}));h.scale.y=.7;h.position.set(-80+i*20,0,-70-r()*10);G.add(h)}
+ /* 세연지(큰 연못) + 회수담 */const PW=[-14,12],PL=[-24,20];const WM=M(0x4a7a7a,{roughness:.15,metalness:.05});{const w=new THREE.Mesh(new THREE.PlaneGeometry(PW[1]-PW[0],PL[1]-PL[0]),WM);w.rotation.x=-Math.PI/2;w.position.set((PW[0]+PW[1])/2,.05,(PL[0]+PL[1])/2);G.add(w);const w2=new THREE.Mesh(new THREE.PlaneGeometry(10,22),WM);w2.rotation.x=-Math.PI/2;w2.position.set(25,.05,-2);G.add(w2);
+  const BANK=M(0x8e8a7e,{flatShading:true});for(let i=0;i<40;i++){const t=i/40;let x,z;if(i<10){x=PW[0]+t*4*(PW[1]-PW[0]);z=PL[0]-.6}else if(i<20){x=PW[1]+.6;z=PL[0]+(t-.25)*4*(PL[1]-PL[0])}else if(i<30){x=PW[1]-(t-.5)*4*(PW[1]-PW[0]);z=PL[1]+.6}else{x=PW[0]-.6;z=PL[1]-(t-.75)*4*(PL[1]-PL[0])}const b=new THREE.Mesh(new THREE.DodecahedronGeometry(.7+r()*.4),BANK);b.scale.y=.6;b.position.set(x,.2,z);G.add(b)}}
+ /* 판석보(남쪽 돌 보·돌다리) */{const pb=new THREE.Mesh(new THREE.BoxGeometry(PW[1]-PW[0]+2,.6,2),M(0x9a968a));pb.position.set((PW[0]+PW[1])/2,.3,PL[1]+1.4);G.add(pb);for(let i=0;i<12;i++){const s=new THREE.Mesh(new THREE.BoxGeometry(2.2,.08,1.8),M(0xa8a294));s.position.set(PW[0]+1+i*2.2,.64,PL[1]+1.4);G.add(s)}}
+ sp(-1,PL[1]+5,3,'판석보','넓적한 돌을 세워 계곡물을 막은 보예요. 비가 오면 물을 가두고, 마르면 사람이 건너는 돌다리가 되었어요.');
+ /* 칠암(연못 속 일곱 바위) */const ROCKS=[[-8,8,1.3],[4,10,1.1],[-3,-2,1.4],[7,-6,1.2],[-9,-12,1.1],[2,-16,1.3],[-6,-20,1]];{const RM=M(0x7a766c,{flatShading:true});ROCKS.forEach(([x,z,s],i)=>{const k=new THREE.Mesh(new THREE.DodecahedronGeometry(s),RM);k.scale.set(1.3,.6,1);k.position.set(x,.35,z);k.rotation.y=i;G.add(k)})}
+ sp(-3,2,2.6,'칠암','연못 속 일곱 바위예요. 그 가운데 혹약암은 엎드린 소처럼 생겼어요. 윤선도는 이 바위들 사이로 배를 띄웠대요(전해 오는 이야기).');
+ /* 세연정(가운데 방 + 사방 마루) */const SX=18,SZ=-2;const ST=M(0xa8a296),WOOD=M(0x8a7458),ROOF=M(0x4a4a50);{const b=new THREE.Mesh(new THREE.BoxGeometry(8,.8,8),ST);b.position.set(SX,.4,SZ);G.add(b);const fl=new THREE.Mesh(new THREE.BoxGeometry(7.4,.2,7.4),WOOD);fl.position.set(SX,.9,SZ);G.add(fl);const rm=new THREE.Mesh(new THREE.BoxGeometry(3,2.4,3),M(0xeee6d4));rm.position.set(SX,2.2,SZ);G.add(rm);for(let i=0;i<4;i++)for(let j=0;j<4;j++){if(i>0&&i<3&&j>0&&j<3)continue;const c=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,2.8,8),WOOD);c.position.set(SX-3.3+i*2.2,2.3,SZ-3.3+j*2.2);G.add(c)}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(7,1.8,7);rf.position.set(SX,4.5,SZ);G.add(rf);const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText('亭然洗',ww/2,66)});const pl=new THREE.Mesh(new THREE.PlaneGeometry(1.3,.47),new THREE.MeshBasicMaterial({map:LT}));pl.position.set(SX-1.52,2.9,SZ);pl.rotation.y=-Math.PI/2;G.add(pl);solids.push({x0:SX-4,x1:SX+4,y0:0,y1:3.6,z0:SZ-4,z1:SZ+4})}
+ sp(SX,SZ+5.6,2.8,'세연정','세연지와 회수담 사이에 앉은 정자예요. "물에 씻은 듯 깨끗하다"는 뜻의 이름이에요. 가운데 방을 두고 사방에 마루를 둘렀어요.');
+ /* 동대·서대 */for(const[x,z,n]of[[SX,SZ-9,'동대'],[SX,SZ+9,'서대']]){const t=new THREE.Mesh(new THREE.BoxGeometry(4,.8,3),ST);t.position.set(x,.4,z);G.add(t);const t2=new THREE.Mesh(new THREE.BoxGeometry(3,.5,2.2),ST);t2.position.set(x,1.05,z);G.add(t2);solids.push({x0:x-2,x1:x+2,y0:0,y1:1.3,z0:z-1.5,z1:z+1.5})}
+ sp(SX+3.6,SZ-9,2.2,'동대','돌로 쌓은 단이에요. 이곳에서 춤을 추게 하고 정자에서 바라봤다고 전해 와요(전해 오는 이야기).');sp(SX+3.6,SZ+9,2.2,'서대','동대와 마주한 돌 단이에요.');
+ /* 옥소대 */{const k=new THREE.Mesh(new THREE.DodecahedronGeometry(3),M(0x8e8a7e,{flatShading:true}));k.scale.set(1.2,.6,1.4);k.position.set(-20,1.2,-6);G.add(k);solids.push({cx:-20,cz:-6,r:3.4,y0:0,y1:2.4})}
+ sp(-20,-1,2.6,'옥소대','연못 서쪽의 너른 바위 단이에요. 이곳에서 연못에 비친 모습을 즐겼다고 해요.');
+ /* 세연지 뱃놀이(11/23) — 실제 연못 위 */const boat=new THREE.Group();boat.visible=false;G.add(boat);{const h=new THREE.Mesh(new THREE.BoxGeometry(1.2,.4,3),M(0x7a5a3a));h.position.y=.2;boat.add(h);const bow=new THREE.Mesh(new THREE.ConeGeometry(.6,1,4),M(0x7a5a3a));bow.rotation.x=-Math.PI/2;bow.rotation.y=Math.PI/4;bow.scale.set(1,1,.4);bow.position.set(0,.2,-1.9);boat.add(bow);const mb=new THREE.Mesh(new THREE.SphereGeometry(.26,12,10),M(0xf4f0e4));mb.position.set(0,.68,.3);boat.add(mb);const mh=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.04,12),M(0x2a2622));mh.position.set(0,.96,.3);boat.add(mh);const oar=new THREE.Mesh(new THREE.BoxGeometry(.06,.06,2.2),M(0x9a7a52));oar.position.set(.6,.5,.8);oar.rotation.x=.3;oar.name='oar';boat.add(oar)}
+ const course=new THREE.Group();G.add(course);
+ window.__SYBOAT=()=>{if(document.getElementById('sybP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(-1,PL[1]+5,0)}catch(e){}boat.visible=true;
+  let rd=0,bx=0,bz=PL[1]-2,vx=0,inp=0,gates=[],gi=0,passed=0,bumps=0,hitT=0,done=false,auto=false,last=performance.now(),wait=0;const res=[];const NR=3;const SPD=[2.6,3.4,4.2],NG=[6,8,10];
+  const camA=()=>{const k=innerWidth<innerHeight?1.5:1;return[bx,4.5*k,bz+7*k,bx,0,bz-4,55]};window.__GCAM=()=>document.getElementById('sssX')?null:document.getElementById('sybP')?camA():null;
+  const snd=(f,len=.1,ty='triangle',v=.06)=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=ty;o.frequency.value=f;gg.gain.setValueAtTime(v,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const LOT=M(0xf0a0c0),PAD=M(0x4a8a3a,{side:THREE.DoubleSide});
+  const newRound=()=>{while(course.children.length)course.remove(course.children[0]);gates=[];const n=NG[rd];const z0=PL[1]-6,z1=PL[0]+3;for(let i=0;i<n;i++){const z=z0+(z1-z0)*i/(n-1);const px=gates.length?gates[gates.length-1].x:0;let x=px;for(let t=0;t<60;t++){x=Math.max(PW[0]+3,Math.min(PW[1]-3,px+(r()-.5)*9));if(!ROCKS.some(([rx,rz,rs])=>Math.hypot(rx-x,rz-z)<rs+2.4))break}const w=[3.4,2.9,2.5][rd];gates.push({x,z,w,ok:null});for(const s of[-1,1]){const g=new THREE.Group();g.position.set(x+s*w/2,.06,z);course.add(g);const pd=new THREE.Mesh(new THREE.CircleGeometry(.5,14),PAD);pd.rotation.x=-Math.PI/2;g.add(pd);const fl=new THREE.Mesh(new THREE.SphereGeometry(.25,10,8),LOT);fl.scale.y=.7;fl.position.y=.2;g.add(fl)}}
+   bx=0;bz=PL[1]-2;vx=0;gi=0;passed=0;bumps=0;ui()};
+  const d=document.createElement('div');d.id='sybP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#1e2c2a;border:3px solid #7ab8a8;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#eef6f4;box-shadow:0 6px 18px rgba(0,0,0,.35);width:230px;user-select:none";document.body.appendChild(d);
+  const B=(k,t)=>`<button data-b="${k}" style="font:20px 'Do Hyeon',sans-serif;background:#7ab8a8;color:#1e2c2a;border:0;border-radius:10px;width:70px;height:48px;margin:3px;cursor:pointer;touch-action:none">${t}</button>`;
+  const ui=(msg='')=>{if(done)return;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#c0e8e0">⛵ 세연지 뱃놀이 ${rd+1}/${NR}</b><div style="font-size:12px;margin:4px 0;line-height:1.5">배는 저절로 앞으로 가요. ⬅➡를 누르고 있으면 노를 저어 옆으로 움직여요. 연꽃 두 송이 사이로 지나고, 칠암 바위는 피해요!</div><div id="sybS" style="font-size:13px">통과 ${passed}/${gates.length} · 쿵 ${bumps}</div><div style="font-size:13px;color:#c0e8e0;min-height:18px">${msg}</div><div>${B(-1,'⬅')}${B(1,'➡')}</div><button data-x style="font:12px 'Do Hyeon',sans-serif;background:transparent;color:#eef6f4;border:1px solid #eef6f4;border-radius:8px;padding:2px 8px;margin-top:4px;cursor:pointer">그만</button>`;
+   d.querySelectorAll('[data-b]').forEach(bt=>{bt.onpointerdown=e=>{e.preventDefault();inp=+bt.dataset.b};bt.onpointerup=bt.onpointerleave=bt.onpointercancel=e=>{e.preventDefault();inp=0}});d.querySelector('[data-x]').onclick=()=>{cleanup();d.remove()}};
+  const stat=()=>{const el=d.querySelector('#sybS');if(el)el.textContent=`통과 ${passed}/${gates.length} · 쿵 ${bumps}`};
+  const cleanup=()=>{boat.visible=false;while(course.children.length)course.remove(course.children[0])};
+  const fin=()=>{done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/res.length);const s2=Q>=80?3:Q>=55?2:Q>0?1:0;try{ctx.done('seyeon_boat',Q,'세연지 뱃놀이')}catch(e){}window.__SYBQ=Q;
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#c0e8e0">뱃놀이 끝! ${Q}점</b><div style="font-size:13px;margin:4px 0">윤선도는 판석보로 계곡물을 막아 세연지를 만들고, 일곱 바위 사이로 배를 띄워 「어부사시사」를 부르게 했다고 전해 와요(전해 오는 이야기). 보길도 원림은 우리나라 대표 민간 정원이에요(명승).</div><div style="font-size:24px;color:#7ab8a8">${'★'.repeat(s2)}${'☆'.repeat(3-s2)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#7ab8a8;color:#1e2c2a;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#eef6f4;border:2px solid #eef6f4;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__SYBOAT()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   if(wait<=0){if(auto){const g=gates[gi];let tx=g?g.x:0;for(const[rx,rz,rs]of ROCKS){if(rz<bz&&rz>bz-6&&Math.abs(rx-bx)<rs+1.2){tx=bx+(bx>=rx?1:-1)*3}}inp=Math.max(-1,Math.min(1,(tx-bx)*1.2-vx*.5))}
+    vx+=inp*9*dt;vx*=Math.pow(.15,dt);bx+=vx*dt;bx=Math.max(PW[0]+1,Math.min(PW[1]-1,bx));bz-=SPD[rd]*dt*(hitT>0?.4:1);if(hitT>0)hitT-=dt;
+    for(const[rx,rz,rs]of ROCKS){if(hitT<=0&&Math.hypot(rx-bx,rz-bz)<rs+.6){bumps++;hitT=.8;vx=(bx>=rx?1:-1)*4;snd(120,.3,'sawtooth');ui('쿵! 바위에 부딪혔어요')}}
+    const g=gates[gi];if(g&&bz<=g.z){g.ok=Math.abs(bx-g.x)<g.w/2;if(g.ok){passed++;snd(700+passed*30,.12,'sine')}else snd(260,.12,'square');gi++;stat()}
+    if(bz<=PL[0]+1){const sc=Math.max(10,Math.round(passed/gates.length*100-bumps*12));res.push(sc);wait=1.8;snd(820,.5,'sine');ui(`연못 끝에 닿았어요! ${passed}/${gates.length} · ${sc}점`)}}
+   boat.position.set(bx,.06,bz);boat.rotation.z=-vx*.04;boat.rotation.y=-vx*.05;const oar=boat.getObjectByName('oar');if(oar)oar.rotation.y=Math.sin(now/200)*.4;
+   if(wait>0){wait-=dt;if(wait<=0){rd++;if(rd>=NR){fin();return}newRound()}}
+   requestAnimationFrame(step)};
+  newRound();requestAnimationFrame(step);
+  window.__SYBG={set auto(v){auto=v;if(!v)inp=0},get done(){return done},get res(){return res.slice()},steer:x=>{inp=x},get pos(){return[bx,bz]},get passed(){return passed},get bumps(){return bumps}};try{ctx.say('노를 저어 연꽃 사이로 배를 몰아요!',2.4)}catch(e){}};
+ /* 밤 */const NL=[];if(!mini){for(const[x,y,z]of[[-1,2,PL[1]+4],[SX-5,3,SZ],[SX,3,SZ-6],[SX,3,SZ+6],[-20,3,-1],[-3,2,2]]){const Lt=new THREE.PointLight(0xffc080,0,26,1.5);Lt.position.set(x,y,z);G.add(Lt);NL.push(Lt)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(Lt=>Lt.intensity=nk*8)};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const DIG=[
+  {n:'기와 조각',h:'세연정 지붕의 기와 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.03,.14),M(0x5a5a58)))})},
+  {n:'백자 술잔',h:'정자에서 쓰던 작은 백자 잔이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.035,.05,12,1,true),M(0xf0ece0)))})},
+  {n:'노 손잡이',h:'뱃놀이 배의 노 손잡이 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,.16,6),M(0x8a6a3a)))})},
+  {n:'조개껍데기',h:'섬이라 흙 속에 조개껍데기도 나와요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.06,10,6,0,Math.PI*2,0,Math.PI/2),M(0xe8dcc8)))})},
+  {n:'엽전',h:'조선 상평통보예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.01,18),M(0x6a5a30,{metalness:.6})))})}];
+ sp(-24,26,2.4,'발굴 탐지 자리','원림 들머리 흙 속에 옛 흔적이 묻혀 있대요. 무이 탐지기로 찾아 봐요.');
+ window.__SYDIG=()=>{window.__DETECT&&window.__DETECT({key:'seyeon_dig',title:'세연정 발굴 탐지',emoji:'⛏️',bg:'#1e2c2a',count:4,TL:150,cand:[[-22,30],[8,30],[-26,10],[-26,-16],[22,14],[32,-16],[-8,-30],[16,-24],[30,18],[-18,20]],items:DIG,intro:'세연정 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'세연정 일대는 윤선도가 꾸민 보길도 원림이에요(명승).'})};
+ const meta={quest:{t:'세연정 둘러보기',d:'판석보를 건너 칠암과 세연지, 세연정, 동대·서대, 옥소대를 둘러보세요.',steps:[['판석보','판석보'],['칠암','칠암'],['세연정','세연정'],['동대','동대'],['서대','서대'],['옥소대','옥소대']]},
+  title:'완도 보길도 세연정',hint:'세연정 일대를 공개 사진으로 간추려 지었어요(배치·크기 어림). 판석보 앞에서 뱃놀이를 시작해 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-8,z:32,lines:['보길도 세연정','윤선도 원림(명승)','세연지 · 칠암 · 판석보','간추려 지음']}},
+  npc:[['science',[[-8,30],[4,30],[4,36],[-8,36]]]],bounds:[-40,40,-34,44],level:()=>'완도 보길도 세연정',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:2.4,ox:0,oz:2,draw(g,X,Z,S){g.fillStyle='#6e9a48';g.fillRect(0,0,300,300);g.fillStyle='#4a7a7a';g.fillRect(150+PW[0]*S,150+(PL[0]-2)*S,(PW[1]-PW[0])*S,(PL[1]-PL[0])*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:-1,z:34,yaw:Math.PI},size:{}},meta)}
