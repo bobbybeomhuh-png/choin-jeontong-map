@@ -1,0 +1,74 @@
+/* 신라 황금 길 마당(2026-11-22, G18): 경주 계림로 보검처럼 먼 서쪽 초원과 닮은 신라 황금 유물의 길.
+   3D 자료: 국가유산청 KHS_Asset 스케치팹 CC BY 「Gold Crown from the Geumgwanchong Tomb」(금관총 금관, 드리개까지 자료 크기 그대로 높이 약 67cm), 「Gold Belt from the Geumryeong Tomb」(금령총 금허리띠, 자료 크기 그대로).
+   계림로 보검(1973년 경주 계림로 14호 무덤에서 나온 금 장식 칼, 길이 약 36cm): 금판에 석류석을 박고 금 알갱이로 꾸몄어요. 카자흐스탄·흑해 쪽에서 나온 칼 장식과 닮아 먼 서쪽에서 왔다고 보는 견해가 많아요. 공개 실측이 없어 놀이용으로 크게 간추려 지었어요.
+   놀이: 석류석 상감 맞추기(금 칸마다 물방울 석류석을 돌려 칸 모양에 맞추기. 둘째 판부터 한 알을 돌리면 옆 알도 같이 돌아가요, 새 방식), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {tex,mulb} from './sungnyemun.js';
+export function buildHwanggeum(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1973);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ /* 고분 언덕 셋(간추림) */for(const[x,z,R,h]of[[-22,-26,10,6],[4,-34,13,8],[26,-24,8,5]]){const m=new THREE.Mesh(new THREE.SphereGeometry(R,24,12,0,Math.PI*2,0,Math.PI/2),M(0x6a9a4a));m.scale.y=h/R;m.position.set(x,0,z);G.add(m);solids.push({cx:x,cz:z,r:R,y0:0,y1:h})}
+ /* 진열 전각: 금관·금허리띠 */const HX=0,HZ=-6;{const fl=new THREE.Mesh(new THREE.BoxGeometry(10,.3,6),M(0x7a6a5a));fl.position.set(HX,.15,HZ);G.add(fl);for(const[a,b]of[[-4.8,-2.8],[4.8,-2.8],[-4.8,2.8],[4.8,2.8]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.14,.14,3.4,8),M(0x8a2a22));p.position.set(HX+a,1.85,HZ+b);G.add(p);solids.push({cx:HX+a,cz:HZ+b,r:.2,y0:0,y1:3.6})}const rf=new THREE.Mesh(new THREE.BoxGeometry(11,.3,7),M(0x3a3a3a));rf.position.set(HX,3.7,HZ);G.add(rf)}
+ const CS=[{x:-2,f:'crown.glb',n:'금관총 금관',s:'국가유산청 3D 자료 · 드리개 포함 약 67cm'},{x:2,f:'belt.glb',n:'금령총 금허리띠',s:'국가유산청 3D 자료 · 자료 크기 그대로'}];
+ CS.forEach(C=>{const ped=new THREE.Mesh(new THREE.BoxGeometry(.9,.5,.9),M(0x2a2420));ped.position.set(HX+C.x,.55,HZ-1);G.add(ped);const gl=new THREE.Mesh(new THREE.BoxGeometry(.85,.9,.85),new THREE.MeshPhysicalMaterial({color:0xffffff,transparent:true,opacity:.1,roughness:.05}));gl.position.set(HX+C.x,1.25,HZ-1);G.add(gl);solids.push({x0:HX+C.x-.5,x1:HX+C.x+.5,y0:0,y1:1.75,z0:HZ-1.5,z1:HZ-.5});const LT=tex(320,72,(q,w,h)=>{q.fillStyle='#f4ecd8';q.fillRect(0,0,w,h);q.fillStyle='#2a2018';q.font='bold 22px sans-serif';q.textAlign='center';q.fillText(C.n,w/2,30);q.font='15px sans-serif';q.fillText(C.s,w/2,56)});const lb=new THREE.Mesh(new THREE.PlaneGeometry(.8,.18),new THREE.MeshStandardMaterial({map:LT}));lb.position.set(HX+C.x,.6,HZ-.54);G.add(lb);const L=new THREE.PointLight(0xfff0d0,1.6,3,2);L.position.set(HX+C.x,1.9,HZ-.6);G.add(L)
+  if(!mini){new GLTFLoader().load(new URL('../models/hwanggeum/'+C.f,import.meta.url).href,m=>{const o=m.scene;o.traverse(e=>{if(e.isMesh&&e.material){e.material.metalness=Math.max(e.material.metalness||0,.6);e.material.roughness=Math.min(e.material.roughness??1,.45)}});const w=new THREE.Group();w.add(o);w.userData.noBatch=true;w.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(o);o.position.set(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);w.position.set(HX+C.x,.81,HZ-1);G.add(w)},undefined,()=>{})}});
+ /* 이야기 판 */const BX=-10,BZ=4;{const T=tex(512,320,(q,w,h)=>{q.fillStyle='#f0e4c8';q.fillRect(0,0,w,h);q.strokeStyle='#a8802a';q.lineWidth=6;q.strokeRect(3,3,w-6,h-6);q.fillStyle='#2a2018';q.font='bold 30px serif';q.textAlign='center';q.fillText('계림로 보검이 온 길',w/2,46);q.font='20px sans-serif';['1973년 경주 계림로 무덤에서 나온 금 장식 칼.','석류석을 박고 금 알갱이로 꾸몄어요.','카자흐스탄·흑해 쪽 칼 장식과 닮아','먼 서쪽에서 왔다고 보는 견해가 많아요.'].forEach((t,i)=>q.fillText(t,w/2,98+i*36))});const bd=new THREE.Mesh(new THREE.PlaneGeometry(3,1.9),new THREE.MeshStandardMaterial({map:T}));bd.position.set(BX,1.6,BZ);G.add(bd);for(const k of[-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(.12,2.6,.12),M(0xa8802a));p.position.set(BX+k*1.55,1.3,BZ-.05);G.add(p)}solids.push({x0:BX-1.6,x1:BX+1.6,y0:0,y1:2.6,z0:BZ-.25,z1:BZ+.1})}
+ /* 상감 탁자와 놀이용 큰 보검 칼집 */const TX=10,TZ=5,TY=.9,NC=8,CW=.24;{const t=new THREE.Mesh(new THREE.BoxGeometry(3,TY,1.4),M(0x4a3020));t.position.set(TX,TY/2,TZ);G.add(t);solids.push({x0:TX-1.5,x1:TX+1.5,y0:0,y1:TY,z0:TZ-.7,z1:TZ+.7})}
+ const GD=M(0xd8b040,{metalness:.85,roughness:.3});const sc=new THREE.Group();sc.userData.noBatch=true;sc.position.set(TX,TY,TZ);G.add(sc);{const pl=new THREE.Mesh(new THREE.BoxGeometry(NC*CW+.3,.04,.42),GD);pl.position.y=.02;sc.add(pl);const tip=new THREE.Mesh(new THREE.CylinderGeometry(.21,.21,.04,24,1,false,0,Math.PI),GD);tip.position.set(-(NC*CW+.3)/2,.02,0);tip.rotation.y=Math.PI/2;sc.add(tip);const hd=new THREE.Mesh(new THREE.TorusGeometry(.16,.04,8,20),GD);hd.rotation.x=Math.PI/2;hd.position.set((NC*CW+.3)/2+.14,.04,0);sc.add(hd)}
+ const DROP=(q,w,h,fill,stroke,lw)=>{q.save();q.translate(w/2,h/2);q.beginPath();q.moveTo(0,-h*.38);q.bezierCurveTo(w*.34,-h*.05,w*.3,h*.36,0,h*.38);q.bezierCurveTo(-w*.3,h*.36,-w*.34,-h*.05,0,-h*.38);q.closePath();if(fill){q.fillStyle=fill;q.fill()}if(stroke){q.strokeStyle=stroke;q.lineWidth=lw;q.stroke()}q.restore()};
+ const GEM=tex(128,128,(q,w,h)=>{q.clearRect(0,0,w,h);const g=q.createRadialGradient(54,46,4,64,64,60);g.addColorStop(0,'#ff8a8a');g.addColorStop(.4,'#b8102a');g.addColorStop(1,'#5a0010');DROP(q,w,h,g,'#3a0008',3)});
+ const NL=[];if(!mini){for(const[x,y,z]of[[HX,3,HZ+2],[BX,3,BZ+2],[TX,3,TZ+2]]){const P=new THREE.PointLight(0xffc080,0,26,1.5);P.position.set(x,y,z);G.add(P);NL.push(P)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(P=>P.intensity=nk*8)};
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ sp(HX-2,HZ+1.4,1.4,'금관총 금관','1921년 경주 금관총에서 처음 나온 신라 금관이에요. 나뭇가지 모양 출(出) 자 장식과 사슴뿔 장식, 곱은옥이 달렸어요. 국가유산청 3D 자료예요.');
+ sp(HX+2,HZ+1.4,1.4,'금령총 금허리띠','금령총에서 나온 금허리띠예요. 늘어뜨린 띠드리개가 열세 줄이에요. 국가유산청 3D 자료예요.');
+ sp(BX,BZ+2,2,'계림로 보검이 온 길','석류석을 박은 계림로 보검은 카자흐스탄·흑해 쪽 장식과 닮아 먼 서쪽에서 왔다고 보는 견해가 많아요.');
+ sp(TX-2.4,TZ+1.6,1.8,'상감 탁자','놀이용으로 크게 만든 보검 칼집에 석류석을 맞춰 박아 봐요.');
+ sp(-24,16,2.4,'발굴 탐지 자리','고분 둘레 땅속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
+ sp(0,22,2.4,'세계로 가는 나루로 돌아가기','인천 「세계로 가는 나루」로 돌아가요.');
+ /* 석류석 상감 맞추기(11/22): 칸마다 목표 방향 t[i], 알 방향 a[i](0~3, 90도씩). 판에 따라 누르면 옆 알도 돈다 */
+ window.__HGINLAY=()=>{if(document.getElementById('hgP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(TX-2.6,TZ+1.8,0)}catch(e){}
+  window.__GCAM=()=>document.getElementById('hgP')?[TX,TY+3.9,TZ+1.8,TX,TY,TZ-.05,50]:null;
+  const LK=[[0],[0,1],[-1,0,1]];let rd=0,tgt=[],ang=[],gems=[],frames=[],taps=0,par=0,phase='play',wait=0,auto=false,done=false,msg='',last=performance.now(),plan=[],at=0,T=0;const res=[];
+  const d=document.createElement('div');d.id='hgP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#2a1e1a;border:3px solid #d8b040;border-radius:16px;padding:9px 12px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#f8ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:310px;max-width:94vw;user-select:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#fff">💎 석류석 상감 맞추기</b><div data-i style="margin:3px 0;font:14px 'Do Hyeon',sans-serif"></div><div data-h style="font-size:11.5px;color:#e8dcc8"></div><div data-m style="font-size:12px;color:#f8e8a0;margin-top:4px"></div>`;
+  const iEl=d.querySelector('[data-i]'),hEl=d.querySelector('[data-h]'),mEl=d.querySelector('[data-m]');
+  const snd=(f,len,type='sine',v=.05)=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s);g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(g).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const FR=tex(128,128,(q,w,h)=>{q.fillStyle='#c8a030';q.fillRect(0,0,w,h);DROP(q,w,h,'#3a2a10','#f8e080',7)});
+  const clear=()=>{gems.forEach(g=>sc.remove(g));frames.forEach(f=>sc.remove(f));gems=[];frames=[]};
+  const tapIdx=i=>{LK[rd].forEach(o=>{const j=i+o;if(j>=0&&j<NC)ang[j]=(ang[j]+1)%4})};
+  const allOk=()=>ang.every((a,i)=>a===tgt[i]);
+  const newRound=()=>{clear();tgt=[...Array(NC)].map(()=>Math.floor(Math.random()*4));ang=tgt.slice();const n=6+rd*3;for(let k=0;k<n;k++)tapIdx(Math.floor(Math.random()*NC));if(allOk())tapIdx(2);taps=0;
+   par=solve().length;for(let i=0;i<NC;i++){const x=(i-(NC-1)/2)*CW;const f=new THREE.Mesh(new THREE.PlaneGeometry(CW*.92,CW*.92),new THREE.MeshStandardMaterial({map:FR,metalness:.6,roughness:.4}));f.rotation.x=-Math.PI/2;f.rotation.z=-tgt[i]*Math.PI/2;f.position.set(x,.041,0);sc.add(f);frames.push(f);const g=new THREE.Mesh(new THREE.PlaneGeometry(CW*.8,CW*.8),new THREE.MeshStandardMaterial({map:GEM,transparent:true,roughness:.15,metalness:.1,emissive:0xff2040,emissiveIntensity:0}));g.rotation.x=-Math.PI/2;g.position.set(x,.05,0);g.userData.i=i;g.userData.rz=-ang[i]*Math.PI/2;g.rotation.z=g.userData.rz;sc.add(g);gems.push(g)}
+   phase='play';msg=`${rd+1}판: 알을 눌러 90도씩 돌려요`;hEl.textContent=['알 하나만 돌아요.','이번엔 누른 알과 오른쪽 알이 같이 돌아요.','이번엔 누른 알과 양옆 알이 같이 돌아요.'][rd];plan=[]};
+  /* 풀이: 판1·2는 왼쪽부터, 판3은 첫 알 횟수를 0~3 해 보고 쫓아가기 */
+  const solve=()=>{const L=LK[rd];if(rd<2){const a=ang.slice(),p=[];for(let i=0;i<NC;i++){while(a[i]!==tgt[i]){p.push(i);L.forEach(o=>{const j=i+o;if(j>=0&&j<NC)a[j]=(a[j]+1)%4})}}return p}
+   for(let t0=0;t0<4;t0++){const a=ang.slice(),p=[];const tp=i=>{p.push(i);[-1,0,1].forEach(o=>{const j=i+o;if(j>=0&&j<NC)a[j]=(a[j]+1)%4})};for(let k=0;k<t0;k++)tp(0);for(let i=1;i<NC;i++){while(a[i-1]!==tgt[i-1])tp(i)}if(a[NC-1]===tgt[NC-1])return p}return[]};
+  const press=i=>{if(phase!=='play')return;tapIdx(i);taps++;snd(520+i*30,.06,'triangle',.04);if(allOk()){const s=taps<=par?1:Math.max(.4,1-(taps-par)/(par*2+4));res.push(s);msg=`다 맞췄어요! ${taps}번(가장 적게 ${par}번)`;snd(880,.3);phase='wait';wait=2.4}else msg=`누른 횟수 ${taps}`};
+  const pc=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.05,100);const rc=new THREE.Raycaster();const ov=document.createElement('div');ov.id='hgO';ov.style.cssText='position:fixed;inset:0;z-index:55;cursor:pointer';document.body.appendChild(ov);
+  ov.onpointerdown=e=>{const C=window.__GCAM();if(!C)return;pc.aspect=innerWidth/innerHeight;pc.position.set(C[0],C[1],C[2]);pc.lookAt(C[3],C[4],C[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();sc.updateMatrixWorld(true);rc.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects(gems.concat(frames),false)[0];if(!h)return;const i=h.object.userData.i!=null?h.object.userData.i:frames.indexOf(h.object);if(i>=0)press(i)};
+  const cleanup=()=>{ov.remove();clear()};
+  newRound();
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;
+   if(phase==='play'&&auto){at+=dt;if(!plan.length)plan=solve();if(at>.3&&plan.length){at=0;press(plan.shift())}}
+   gems.forEach((g,i)=>{const tz=-ang[i]*Math.PI/2;let dz=tz-g.userData.rz;dz=((dz%(2*Math.PI))+3*Math.PI)%(2*Math.PI)-Math.PI;g.userData.rz+=dz*Math.min(1,dt*12);g.rotation.z=g.userData.rz;g.material.emissiveIntensity=ang[i]===tgt[i]?.35+Math.sin(T*4+i)*.15:0});
+   if(phase==='wait'){wait-=dt;if(wait<=0){rd++;if(rd>=3){fin();return}newRound()}}
+   iEl.textContent=`${Math.min(rd+1,3)} / 3판 · 맞은 알 ${ang.filter((a,i)=>a===tgt[i]).length}/${NC}`;mEl.textContent=msg;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('hwanggeum_inlay',Q,'석류석 상감 맞추기')}catch(e){}window.__HGQ=Q;snd(660,.4);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#fff">보검 칼집을 다 꾸몄어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">계림로 보검은 금판으로 칸을 세우고 그 안에 석류석을 깎아 맞춰 박았어요. 칸과 알이 꼭 맞아야 빠지지 않아요. 이런 솜씨는 흑해에서 초원을 거쳐 동쪽까지 퍼졌어요.</div><div style="font-size:24px;color:#d8b040">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#d8b040;color:#2a1e1a;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f8ecd8;border:2px solid #f8ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__HGINLAY()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__HGG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()}};try{ctx.say('칸 모양을 잘 봐요!',2)}catch(e){}};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const ITEMS=[
+  {n:'금 알갱이',h:'금 장식에 붙이던 작은 금 알갱이예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.04,10,8),M(0xd8b040,{metalness:.9,roughness:.3})))})},
+  {n:'석류석 조각',h:'금 칸에 박던 붉은 석류석 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.OctahedronGeometry(.05),M(0xa8102a,{roughness:.2})))})},
+  {n:'곱은옥',h:'금관에 매달던 곱은옥이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.TorusGeometry(.05,.02,8,12,Math.PI*1.3),M(0x3a8a6a,{roughness:.3})))})},
+  {n:'금 달개',h:'금관에 달던 둥근 금 달개예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.005,16),M(0xd8b040,{metalness:.9,roughness:.3})))})},
+  {n:'쇠칼 조각',h:'녹슨 쇠칼 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.01,.04),M(0x5a3a2a,{metalness:.4})))})}];
+ window.__HGDIG=()=>{window.__DETECT&&window.__DETECT({key:'hwanggeum_dig',title:'신라 황금 길 발굴 탐지',emoji:'⛏️',bg:'#2a1e1a',count:4,TL:150,cand:[[-24,16],[-30,2],[22,14],[30,-4],[-12,22],[12,22],[-30,18],[30,18]],items:ITEMS,intro:'고분 둘레 땅속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'신라의 금은 초원길을 따라 먼 서쪽과 이어졌어요.'})};
+ const meta={quest:{t:'신라 황금 길 둘러보기',d:'금관과 금허리띠, 이야기 판, 상감 탁자를 둘러보세요.',steps:[['금관','금관총 금관'],['금허리띠','금령총 금허리띠'],['보검 이야기','계림로 보검이 온 길'],['상감','상감 탁자']]},
+  title:'신라 황금 길',hint:'금관과 금허리띠는 국가유산청 3D 자료, 고분 언덕과 놀이용 보검은 간추려 지었어요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-6,z:14,lines:['신라 황금 길','금관 · 금허리띠(자료)','계림로 보검 이야기','간추려 지음']}},
+  npc:[['science',[[-12,10],[-4,10],[-4,16],[-12,16]]]],bounds:[-40,40,-40,32],level:()=>'경주',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:2,ox:0,oz:-6,draw(g,X,Z,S){g.fillStyle='#9ab070';g.fillRect(0,0,300,300);g.fillStyle='#6a9a4a';for(const[x,z,R]of[[-22,-26,10],[4,-34,13],[26,-24,8]]){g.beginPath();g.arc(X(x),Z(z),R*S,0,7);g.fill()}}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:20,yaw:Math.PI},size:{}},meta)}
