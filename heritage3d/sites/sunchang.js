@@ -1,0 +1,67 @@
+/* 순창·임실·장수 마당(2026-11-22, W64): 순창 고추장 장독대, 임실 오수 의견비, 장수 의암사(논개 사당).
+   실측: 옹기 항아리·물동이(국가유산청 KHS 공개 실측 「Jar」「Water_Jar」, CC BY, 실제 크기 그대로: 항아리 높이 약 50cm).
+   나머지(장독대·함지박·의견비·사당)는 공개 사진으로 간추려 지음.
+   놀이: 고추장 버무리기(함지박에 재료를 차례로 넣고 둥글게 저어 고루 섞기, 너무 빨리 저으면 튀어요), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {tex,mulb} from './sungnyemun.js';
+import {buildHall} from './hallkit.js';
+export function buildSunchang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1392);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,color:0x8a9a4a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
+ /* 장독대: 돌 단 + 항아리 줄(실측) */const JX=0,JZ=-14;const jarSpots=[];{const pl=new THREE.Mesh(new THREE.BoxGeometry(10,.5,5),M(0xa8a296));pl.position.set(JX,.25,JZ);G.add(pl);solids.push({x0:JX-5,x1:JX+5,y0:0,y1:1,z0:JZ-2.5,z1:JZ+2.5});for(let i=0;i<5;i++)for(let j=0;j<3;j++)jarSpots.push([JX-3.6+i*1.8,.5,JZ-1.4+j*1.4,1.1-j*.15]);
+  const wall=new THREE.Mesh(new THREE.BoxGeometry(12,1.6,.5),M(0xb8a888));wall.position.set(JX,.8,JZ-3.2);G.add(wall);const rf=new THREE.Mesh(new THREE.BoxGeometry(12.4,.2,.9),M(0x4a4440));rf.position.set(JX,1.7,JZ-3.2);G.add(rf)}
+ /* 함지박(버무리는 자리) */const HX=8,HZ=-6;const paste=document.createElement('canvas');paste.width=paste.height=256;const pq=paste.getContext('2d');const ptex=new THREE.CanvasTexture(paste);ptex.colorSpace=THREE.SRGBColorSpace;
+ {const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.75,.55,.32,24,1,true),M(0x9a6a3a,{side:THREE.DoubleSide}));bowl.position.set(HX,.16,HZ);G.add(bowl);const bot=new THREE.Mesh(new THREE.CircleGeometry(.55,24),M(0x8a5a30));bot.rotation.x=-Math.PI/2;bot.position.set(HX,.02,HZ);G.add(bot);const rim=new THREE.Mesh(new THREE.TorusGeometry(.75,.03,6,32),M(0x7a4a28));rim.rotation.x=Math.PI/2;rim.position.set(HX,.32,HZ);G.add(rim);
+  pq.fillStyle='#e8dcc0';pq.fillRect(0,0,256,256);ptex.needsUpdate=true;const ps=new THREE.Mesh(new THREE.CircleGeometry(.68,32),new THREE.MeshStandardMaterial({map:ptex,roughness:.6}));ps.rotation.x=-Math.PI/2;ps.position.set(HX,.22,HZ);G.add(ps);solids.push({cx:HX,cz:HZ,r:.8,y0:0,y1:.4})}
+ const paddle=new THREE.Group();{const st=new THREE.Mesh(new THREE.CylinderGeometry(.025,.03,1,6),M(0x8a6a44));st.position.y=.5;paddle.add(st);const bl=new THREE.Mesh(new THREE.BoxGeometry(.12,.25,.03),M(0x8a6a44));bl.position.y=.05;paddle.add(bl);paddle.position.set(HX+.3,.15,HZ);paddle.rotation.z=.3;G.add(paddle)}
+ /* 임실 오수 의견비: 개 돌상 + 비석 */const OX=-22,OZ=4;{const ped=new THREE.Mesh(new THREE.BoxGeometry(2,.6,1.4),M(0x9a9488));ped.position.set(OX,.3,OZ);G.add(ped);const dg=new THREE.Group();const DM=M(0xa8a296,{flatShading:true});const b=new THREE.Mesh(new THREE.BoxGeometry(1,.45,.4),DM);b.position.y=.5;dg.add(b);const h=new THREE.Mesh(new THREE.BoxGeometry(.35,.35,.32),DM);h.position.set(.6,.85,0);dg.add(h);const sn=new THREE.Mesh(new THREE.BoxGeometry(.2,.15,.18),DM);sn.position.set(.82,.8,0);dg.add(sn);for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.ConeGeometry(.07,.16,4),DM);e.position.set(.55,1.08,s*.12);dg.add(e)}for(const[lx,lz]of[[-.35,-.13],[-.35,.13],[.35,-.13],[.35,.13]]){const l=new THREE.Mesh(new THREE.BoxGeometry(.1,.35,.1),DM);l.position.set(lx,.18,lz);dg.add(l)}const tl=new THREE.Mesh(new THREE.BoxGeometry(.35,.08,.08),DM);tl.position.set(-.6,.7,0);tl.rotation.z=.6;dg.add(tl);dg.position.set(OX-.3,.6,OZ);G.add(dg);const stl=new THREE.Mesh(new THREE.BoxGeometry(.7,1.6,.25),M(0x7a7468));stl.position.set(OX+1.6,.8,OZ);G.add(stl);solids.push({x0:OX-1.1,x1:OX+2,y0:0,y1:1.6,z0:OZ-.8,z1:OZ+.8})}
+ /* 장수 의암사(논개 사당) */const NX=-26,NZ=-30;if(!mini){const h=buildHall({x:NX,z:NZ,ry:0,W:7,D:5,nx:3,nz:1,FY:.9,PH:2.8,roof:'gable',name:'義巖祠',pillar:0x9a3a26,bracket:'ik',front:'door',roofScale:.9,solids,light:false});G.add(h.group);h.group.traverse(e=>{if(e.isMesh)cam.push(e)})}
+ {for(let k=0;k<20;k++){const t=new THREE.Mesh(new THREE.ConeGeometry(1.3,4.5,7),M(0x2a4a24));t.position.set(NX-18+r()*36,2.2,NZ-8-r()*10);G.add(t)}}
+ if(!mini){const L=new GLTFLoader();const prep=m=>{const o=m.scene;o.traverse(e=>{if(e.isMesh){e.castShadow=true}});const b=new THREE.Box3().setFromObject(o);const c=b.getCenter(new THREE.Vector3());o.position.set(-c.x,-b.min.y,-c.z);const w=new THREE.Group();w.add(o);w.userData.noBatch=true;return w};
+  L.load(new URL('../models/sunchang/jar.glb',import.meta.url).href,m=>{const w=prep(m);jarSpots.forEach(([x,y,z,s])=>{const c2=w.clone();c2.position.set(x,y,z);c2.scale.setScalar(s);c2.rotation.y=r()*6;G.add(c2)})},undefined,()=>{});
+  L.load(new URL('../models/sunchang/water_jar.glb',import.meta.url).href,m=>{const w=prep(m);for(const[x,z]of[[HX+1.4,HZ+.4],[HX+1.9,HZ-.3]]){const c2=w.clone();c2.position.set(x,0,z);G.add(c2)}},undefined,()=>{})}
+ const NL=[];if(!mini){for(const[x,y,z]of[[JX,3,JZ+4],[OX,3,OZ+3],[NX,3,NZ+6]]){const L=new THREE.PointLight(0xffc080,0,26,1.5);L.position.set(x,y,z);G.add(L);NL.push(L)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(L=>L.intensity=nk*8)};
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ sp(JX,JZ+4,3.4,'순창 고추장 장독대','순창은 고추장으로 이름난 고장이에요. 장독대의 옹기 항아리는 국가유산청 공개 실측 3D를 실제 크기(높이 약 50cm)로 놓았어요. 옹기는 숨을 쉬어 장이 잘 익어요.');
+ sp(HX,HZ+1.6,2.2,'고추장 버무리는 자리','함지박에 재료를 차례로 넣고 둥글게 저어 고루 섞어 봐요.');
+ sp(OX,OZ+3,3,'임실 오수 의견비','불이 난 들판에서 잠든 주인을 살리고 숨진 충직한 개를 기린 비석이에요(오수의 개 이야기). 간추려 지었어요.');
+ sp(NX,NZ+6,3,'장수 의암사','장수에서 태어난 논개를 기리는 사당이에요. 간추려 지었어요.');
+ sp(40,40,2.4,'발굴 탐지 자리','땅속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
+ /* 고추장 버무리기(11/22): 넷째 재료까지. 재료를 넣으면 함지박 위에서 손가락(마우스)으로 둥글게 저어요. 네 바퀴 고루 저으면 다음 재료. 너무 빨리 저으면 튀어서 흘려요 */
+ window.__SCMIX=()=>{if(document.getElementById('scP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(HX-1.4,HZ+1.2,0)}catch(e){}
+  window.__GCAM=()=>document.getElementById('scP')?[HX,2.3,HZ+.02,HX,0,HZ,45]:null;
+  const STEPS=[['찹쌀죽',[232,220,192]],['메줏가루',[184,144,96]],['고춧가루',[184,48,42]],['소금·조청',[160,42,34]]];let si=0,ang=0,lastA=null,lastT=0,mix=0,spl=0,done=false,auto=false,last=performance.now(),msg='',prev=[232,220,192],w=0,splT=0;const NEED=Math.PI*8;
+  const blobs=[];const addBlobs=()=>{blobs.length=0;for(let k=0;k<9;k++)blobs.push([64+Math.random()*128,64+Math.random()*128,14+Math.random()*22])};addBlobs();
+  const drawPaste=()=>{const c=STEPS[si][1],m=Math.min(1,mix/NEED);const base=prev.map((v,k)=>Math.round(v+(c[k]-v)*m*.85));pq.fillStyle=`rgb(${base})`;pq.fillRect(0,0,256,256);if(si>0||mix>0){pq.globalAlpha=1-m;pq.fillStyle=`rgb(${c})`;blobs.forEach(([x,y,rr])=>{pq.beginPath();pq.arc(x,y,rr,0,7);pq.fill()});pq.globalAlpha=1}pq.strokeStyle=`rgba(255,255,255,${.12+(1-m)*.15})`;pq.lineWidth=3;for(let k=0;k<4;k++){pq.beginPath();pq.arc(128,128,30+k*22,ang+k,ang+k+1.6);pq.stroke()}ptex.needsUpdate=true};
+  const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:55;touch-action:none';document.body.appendChild(ov);
+  const d=document.createElement('div');d.id='scP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#2a1812;border:3px solid #c84a3a;border-radius:16px;padding:10px 14px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#f8ece4;box-shadow:0 6px 18px rgba(0,0,0,.35);width:290px;max-width:94vw;user-select:none";document.body.appendChild(d);
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#f8b8a8">🌶️ 고추장 버무리기</b><div data-i style="margin:4px 0;font:14px 'Do Hyeon',sans-serif"></div><div style="height:10px;background:#4a2a22;border-radius:5px;overflow:hidden"><div data-p style="height:100%;width:0;background:#c84a3a"></div></div><div data-s style="font-size:13px;margin-top:4px"></div><div data-m style="font-size:12px;color:#f8d8a0;margin-top:4px">함지박 위에서 둥글게 저어요(천천히 고르게)</div>`;
+  const iEl=d.querySelector('[data-i]'),pEl=d.querySelector('[data-p]'),sEl=d.querySelector('[data-s]'),mEl=d.querySelector('[data-m]');
+  const snd=(f,len,type='sine')=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s);gg.gain.setValueAtTime(.05,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const stir=(a,tm)=>{if(done)return;if(lastA===null){lastA=a;lastT=tm;return}let da=a-lastA;if(da>Math.PI)da-=Math.PI*2;if(da<-Math.PI)da+=Math.PI*2;const dt=Math.max(.008,(tm-lastT)/1000);lastA=a;lastT=tm;const om=Math.abs(da)/dt;w=w*.7+om*.3;ang+=da;
+   if(w>13){if(splT<=0){spl++;splT=.5;snd(160,.2,'square');msg='철퍼덕! 너무 빨라 튀었어요'}mix+=Math.abs(da)*.3}else mix+=Math.abs(da);
+   if(mix>=NEED){snd(780,.2,'triangle');prev=prev.map((v,k)=>Math.round(v+(STEPS[si][1][k]-v)*.85));si++;mix=0;lastA=null;msg=si<STEPS.length?`잘 섞였어요! 이번엔 「${STEPS[si][0]}」을 넣어요`:'';if(si>=STEPS.length){fin();return}addBlobs()}};
+  const angOf=e=>Math.atan2(e.clientY-innerHeight/2,e.clientX-innerWidth/2);let dn=false;ov.onpointerdown=e=>{dn=true;lastA=null;stir(angOf(e),performance.now())};ov.onpointermove=e=>{if(dn)stir(angOf(e),performance.now())};ov.onpointerup=ov.onpointercancel=()=>{dn=false;lastA=null};
+  let ba=0;const step=now=>{if(!d.isConnected){ov.remove();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;splT-=dt;w*=Math.pow(.2,dt);
+   if(auto){ba+=dt*6;stir(ba,now)}
+   paddle.position.set(HX+Math.cos(ang)*.35,.15,HZ+Math.sin(ang)*.35);drawPaste();pEl.style.width=Math.min(100,mix/NEED*100)+'%';iEl.textContent=`${Math.min(si+1,4)} / 4 · 「${STEPS[Math.min(si,3)][0]}」 넣고 젓기`;sEl.textContent=`젓는 빠르기 ${w<6?'🟢 알맞아요':w<13?'🟡 조금 빨라요':'🔴 너무 빨라요'} · 튄 횟수 ${spl}`;mEl.textContent=msg||mEl.textContent;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;ov.remove();const Q=Math.max(20,100-spl*8);const st=Q>=85?3:Q>=60?2:1;try{ctx.done('sunchang_mix',Q,'고추장 버무리기')}catch(e){}window.__SCQ=Q;snd(660,.3);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#f8b8a8">고추장을 다 버무렸어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">엿기름으로 삭힌 찹쌀죽에 메줏가루와 고춧가루를 넣고 고루 버무린 뒤 소금과 조청으로 간을 맞춰요. 항아리에 담아 장독대에서 햇볕과 바람에 익히면 깊은 맛이 들어요.</div><div style="font-size:24px;color:#c84a3a">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#c84a3a;color:#fff;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f8ece4;border:2px solid #f8ece4;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();pq.fillStyle='#e8dcc0';pq.fillRect(0,0,256,256);ptex.needsUpdate=true;window.__SCMIX()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  drawPaste();requestAnimationFrame(step);window.__SCG={set auto(v){auto=v},get done(){return done},get spl(){return spl},get si(){return si}};try{ctx.say('둥글게 고루 저어요!',2)}catch(e){}};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const ITEMS=[
+  {n:'옹기 조각',h:'장독 옹기 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.03,.15),M(0x5a3a2a,{roughness:.5})))})},
+  {n:'메주 끈',h:'메주를 매달던 짚 끈 토막이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.TorusGeometry(.08,.015,5,12),M(0xc8a860)))})},
+  {n:'개 목걸이 방울',h:'개 목에 달던 작은 방울이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.SphereGeometry(.05,10,8),M(0xb8902a,{metalness:.7})))})},
+  {n:'백자 접시',h:'조선 때 접시 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.2,.12,.05,18),M(0xf0ece0,{roughness:.3})))})},
+  {n:'상평통보',h:'옛 엽전이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.02,20),M(0x6a5a30,{metalness:.6})))})}];
+ window.__SCDIG=()=>{window.__DETECT&&window.__DETECT({key:'sunchang_dig',title:'순창·임실·장수 발굴 탐지',emoji:'⛏️',bg:'#2a1812',count:4,TL:150,cand:[[40,40],[-40,40],[10,40],[50,-30],[-50,-10],[30,20],[-10,30],[60,10]],items:ITEMS,intro:'땅속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'순창·임실·장수는 장맛과 충직한 이야기의 고장이에요.'})};
+ const meta={quest:{t:'순창·임실·장수 둘러보기',d:'장독대와 오수 의견비, 의암사를 둘러보세요.',steps:[['장독대','순창 고추장 장독대'],['의견비','임실 오수 의견비'],['의암사','장수 의암사']]},
+  title:'순창·임실·장수 장독대·의견비·의암사',hint:'옹기 항아리·물동이(국가유산청 실측)를 실제 크기로, 나머지는 간추려 지었어요. 함지박에서 고추장을 둥글게 저어 버무려 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-4,z:16,lines:['순창·임실·장수','고추장 장독대(옹기 실측)','오수 의견비 · 의암사','간추려 지음']}},
+  npc:[['science',[[-8,12],[4,12],[4,22],[-8,22]]]],bounds:[-90,90,-90,90],level:()=>'순창',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:1.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#8a9a4a';g.fillRect(0,0,300,300);g.fillStyle='#a8a296';g.fillRect(X(JX-5),Z(JZ-2.5),10*S,5*S);g.fillStyle='#9a6a3a';g.beginPath();g.arc(X(HX),Z(HZ),1.5*S,0,7);g.fill();g.fillStyle='#7a7468';g.fillRect(X(OX-1),Z(OZ-.7),3*S,1.4*S);g.fillStyle='#9a3a26';g.fillRect(X(NX-3.5),Z(NZ-2.5),7*S,5*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:22,yaw:Math.PI},size:{}},meta)}
