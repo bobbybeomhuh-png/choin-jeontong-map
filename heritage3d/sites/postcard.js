@@ -21,6 +21,7 @@ export const STAMPS={
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
  wolji:{p:'stamps/wolji.jpg',n:'경주 동궁과 월지',e:'통일신라',c:'무이 월드 장면',msg:'주령구를 굴렸더니 벌칙이 나왔어요. 밤 연못이 정말 예뻤어요.'},
+ bodhgaya:{p:'stamps/wolji.jpg',n:'부다가야',e:'실측 3D',c:'무이 월드 장면',msg:'혜초가 찾아간 부다가야에서 탑돌이를 했어요!'},
  heohwang:{p:'stamps/wolji.jpg',n:'허황후 바닷길',e:'3D 자료',c:'무이 월드 장면',msg:'허황옥이 건너온 바닷길에서 배에 짐을 실어 봤어요!'},
  hwanggeum:{p:'stamps/wolji.jpg',n:'신라 황금 길',e:'3D 자료',c:'무이 월드 장면',msg:'금관을 보고 보검 칼집에 석류석을 박았어요!'},
  shosoin:{p:'stamps/wolji.jpg',n:'나라 쇼소인',e:'실측 3D',c:'무이 월드 장면',msg:'쇼소인에서 신라금 줄을 골라 봤어요!'},
