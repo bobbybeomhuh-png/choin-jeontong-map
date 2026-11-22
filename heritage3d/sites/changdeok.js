@@ -1,0 +1,85 @@
+/* 서울 창덕궁 마당(2026-11-23, 2단계 넷째 묶음): 1405년 태종이 지은 궁궐(사적, 유네스코 세계유산 1997).
+   실측: 스케치팹 juanbrualla(CC BY 4.0) 「Changdeokgung Palace roof details」 궐 안 붉은 문간 처마와 벽돌 담 모서리. 자료에 크기 단위가 없어 벽돌 켜 수로 높이 약 3.6m로 어림(크기 어림), 22만 면.
+   후원 부용지·어수문 실측은 한양 마당에 이미 넣어서, 여기는 나머지를 공개 사진으로 간추려 지음(배치·크기 어림).
+   돈화문 → 금천교(1411, 남은 궁궐 돌다리 가운데 가장 오래됨) → 인정전(국보) / 선정전(지금 남은 유일한 청기와 궁궐 건물) / 낙선재(창살 무늬가 다양함) / 후원 애련지·애련정, 연경당.
+   놀이: 낙선재 창살 짝 맞추기(반쪽 창살 무늬를 보고 나머지 반쪽 살을 눌러 거울처럼 맞추기, 마지막 판은 네 쪽 대칭, 새 방식), 발굴 탐지, 밤 등. */
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+import {tex,mulb} from './sungnyemun.js';
+export function buildChangdeok(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1405);
+ const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
+ const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
+ for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(22+r()*10,24+r()*10,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,10,-110-r()*10);G.add(c)}
+ const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),BLUE=M(0x2a6a8a,{roughness:.4,metalness:.1});
+ const roof=(x,y,z,W,D,h,m=ROOF)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),m);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
+ const hall=(x,z,W,D,PH,base=.6,rm=ROOF)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8,rm);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ /* 돈화문(가운데 지나감) */const DZ=48;{for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.BoxGeometry(6,4.4,4),WALLW);w.position.set(s*5,2.2,DZ);G.add(w);solids.push({x0:s*5-3,x1:s*5+3,y0:0,y1:4.4,z0:DZ-2,z1:DZ+2})}const up=new THREE.Mesh(new THREE.BoxGeometry(16,2.2,4.4),WALLW);up.position.set(0,5.5,DZ);G.add(up);roof(0,6.6,DZ,19,8,2.6);plaque(0,5.8,DZ+2.25,'門化敦',2)}
+ sp(0,DZ+5,3.4,'돈화문','창덕궁의 정문이에요(보물). 1609년에 다시 지은 것으로, 지금 남은 궁궐 정문 가운데 가장 오래됐어요.');
+ /* 금천(동서로 흐름) + 금천교 */const KZ=34;{const w=new THREE.Mesh(new THREE.PlaneGeometry(220,4),M(0x5a8a9a,{roughness:.2}));w.rotation.x=-Math.PI/2;w.position.set(0,.04,KZ);G.add(w);solids.push({x0:-110,x1:-3,y0:-2,y1:3,z0:KZ-2,z1:KZ+2},{x0:3,x1:110,y0:-2,y1:3,z0:KZ-2,z1:KZ+2});const br=new THREE.Mesh(new THREE.BoxGeometry(6,.3,5),ST);br.position.set(0,.15,KZ);G.add(br);for(const s of[-1,1]){const rl=new THREE.Mesh(new THREE.BoxGeometry(.3,.7,5),ST);rl.position.set(s*3,.5,KZ);G.add(rl);solids.push({x0:s*3-.2,x1:s*3+.2,y0:0,y1:.9,z0:KZ-2.5,z1:KZ+2.5});const a=new THREE.Mesh(new THREE.TorusGeometry(.8,.25,8,16,Math.PI),ST2);a.position.set(s*1.4,0,KZ);a.rotation.y=Math.PI/2;G.add(a)}for(const s of[-1,1]){const t=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(.5,.5,.9),ST);t.add(b);const h=new THREE.Mesh(new THREE.SphereGeometry(.3,8,6),ST);h.position.set(0,.2,.45);t.add(h);t.position.set(s*1.6,.1,KZ+2.9);G.add(t)}}
+ sp(4.6,KZ+4,3,'금천교','1411년에 놓은 돌다리로, 지금 남은 궁궐 돌다리 가운데 가장 오래됐어요(보물). 다리 아래 해태와 거북 조각이 물길을 지켜요.');
+ /* 인정전 마당 */const IZ=-6;{const y=hall(0,IZ,16,9,4.6,1.6);plaque(0,y-.7,IZ+4.55,'殿政仁',2.4);for(let i=0;i<5;i++)for(const s of[-1,1]){const pg=new THREE.Mesh(new THREE.BoxGeometry(.35,.6,.25),ST);pg.position.set(s*2.4,.3,IZ+9+i*2.2);G.add(pg)}}
+ sp(0,IZ+9.5,3.4,'인정전','창덕궁의 정전이에요(국보). 즉위식과 외국 사신 맞이 같은 큰 행사를 열었어요. 안에는 근대에 들인 전등과 커튼도 남아 있어요.');
+ {const y=hall(26,IZ,10,6,3.2,1,BLUE);plaque(26,y-.45,IZ+3.05,'殿政宣',1.8)}
+ sp(26,IZ+6,3,'선정전','임금이 신하들과 나랏일을 의논하던 편전이에요. 푸른 유약을 바른 청기와 지붕을 얹은, 지금 남은 유일한 궁궐 건물이에요.');
+ /* 낙선재 + 창살 놀이 자리 */const NX=-28,NZ=-10;hall(NX,NZ,12,5,2.8,.7);sp(NX,NZ+5.5,3,'낙선재','헌종이 지은 소박한 단청 없는 건물이에요. 문과 창의 살 무늬가 여러 가지라 「창살 박물관」 같다고 해요. 조선 왕실의 마지막 가족이 머물기도 했어요.');
+ /* 실측 담장·문간 모서리 */const WX=-22,WZ=14;if(!mini){const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);gl.load(new URL('../models/changdeok/wallgate.glb',import.meta.url).href,g=>{const o=g.scene;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=true;e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0}cam.push(e)}});o.position.set(WX,0,WZ);G.add(o)},undefined,()=>{})}solids.push({x0:WX-2,x1:WX+2,y0:0,y1:3,z0:WZ-1.2,z1:WZ+1.2});
+ sp(WX,WZ+4,3,'궐 안 담장과 문간','붉은 문간 처마와 벽돌 담 모서리를 실측 그대로 옮겼어요. 기와 끝 막새와 벽돌 쌓은 결이 그대로 보여요. (3D: juanbrualla, Sketchfab, CC BY 4.0, 크기는 벽돌 켜로 어림)');
+ /* 후원: 애련지·애련정, 연경당 */const AZ=-44;{const p=new THREE.Mesh(new THREE.PlaneGeometry(14,10),M(0x4a7a8a,{roughness:.2}));p.rotation.x=-Math.PI/2;p.position.set(0,.05,AZ);G.add(p);const rim=new THREE.Mesh(new THREE.BoxGeometry(15,.5,11),ST2);rim.position.set(0,.0,AZ);G.add(rim);solids.push({x0:-7.5,x1:7.5,y0:-2,y1:3,z0:AZ-5.5,z1:AZ+5.5});const px=0,pz=AZ-5;for(const[i,j]of[[-1,-1],[1,-1],[-1,1],[1,1]]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,3,8),WOOD);c.position.set(px+i*1.3,1.5,pz+j*1.3);G.add(c)}const fl=new THREE.Mesh(new THREE.BoxGeometry(3,.15,3),M(0x8a6a4a));fl.position.set(px,1.2,pz);G.add(fl);roof(px,3,pz,4.6,4.6,1.4)}
+ sp(0,AZ+7.5,3,'애련지·애련정','네모난 연못과 연못에 발을 담근 작은 정자예요. 숙종이 「연꽃을 사랑한다」는 뜻으로 이름 지었어요.');
+ {hall(22,AZ,12,5,2.6,.6);sp(22,AZ+5.5,3,'연경당','단청을 하지 않은 사대부 집처럼 지은 집이에요. 순조 때 효명세자가 지었다고 해요.')}
+ /* 창살 짝 맞추기(11/23) */const FX=NX,FZ=NZ+9;const fg=new THREE.Group();fg.position.set(FX,0,FZ);fg.visible=false;G.add(fg);
+ window.__CDLATTICE=()=>{if(document.getElementById('cdlP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(FX,FZ+9,0)}catch(e){}fg.visible=true;
+  const camA=()=>{const k=innerWidth<innerHeight?1.8:1;return[FX,1.55,FZ+2.6*k,FX,1.5,FZ,50]};window.__GCAM=()=>document.getElementById('cdlP')?camA():null;
+  const N=6,CS=.28,OY=.7;let rd=0,cur={},tgt={},given=new Set(),edit=[],clicks=0,need=0,mist=0,done=false,auto=false,last=perfNow(),t0=0,wait=0;const res=[];function perfNow(){return performance.now()}
+  const WD=M(0x7a5634),GH=new THREE.MeshBasicMaterial({color:0xb08a60,transparent:true,opacity:.38,depthWrite:false}),HIT=new THREE.MeshBasicMaterial({visible:false});
+  const snd=(f,len=.1,ty='triangle')=>{try{const AC=ctx.ac();if(!AC)return;const s=AC.currentTime,o=AC.createOscillator(),gg=AC.createGain();o.type=ty;o.frequency.value=f;gg.gain.setValueAtTime(.06,s);gg.gain.exponentialRampToValueAtTime(.0001,s+len);o.connect(gg).connect(ctx.out()||AC.destination);o.start(s);o.stop(s+len+.02)}catch(e){}};
+  const segs={};const clr=()=>{while(fg.children.length)fg.remove(fg.children[0]);for(const k in segs)delete segs[k];edit=[]};
+  /* 살 이름: h,r,c (가로: r 0..N, c 0..N-1) / v,r,c (세로: r 0..N-1, c 0..N) */const all=[];for(let r2=0;r2<=N;r2++)for(let c=0;c<N;c++)all.push('h,'+r2+','+c);for(let r2=0;r2<N;r2++)for(let c=0;c<=N;c++)all.push('v,'+r2+','+c);
+  const mirX=k=>{const[t,a,b]=k.split(',');return t==='h'?`h,${a},${N-1-b}`:`v,${a},${N-b}`};const mirY=k=>{const[t,a,b]=k.split(',');return t==='h'?`h,${N-a},${b}`:`v,${N-1-a},${b}`};
+  const inLeft=k=>{const[t,a,b]=k.split(',').map((v,i)=>i?+v:v);return t==='h'?b<N/2:b<=N/2};const inTop=k=>{const[t,a]=k.split(',').map((v,i)=>i?+v:v);return t==='h'?a<=N/2:a<N/2};
+  const pos=k=>{const[t,a,b]=k.split(',').map((v,i)=>i?+v:v);const x0=-N*CS/2,y0=OY+N*CS;return t==='h'?[x0+(b+.5)*CS,y0-a*CS,0]:[x0+b*CS,y0-(a+.5)*CS,1]};
+  const draw=()=>{for(const k of all){const s=segs[k];const on=!!cur[k];s.bar.visible=on;s.bar.material=given.has(k)?WD:M(0x9a6a40);s.ghost.visible=!on&&!given.has(k)}};
+  const newRound=()=>{clr();const quad=rd===2;tgt={};given=new Set();
+   const base=all.filter(k=>quad?inLeft(k)&&inTop(k):inLeft(k));const pick=base.filter(()=>r()<(rd===0?.38:.45));const fullSet=new Set();pick.forEach(k=>{fullSet.add(k);fullSet.add(mirX(k));if(quad){fullSet.add(mirY(k));fullSet.add(mirX(mirY(k)))}});
+   all.forEach(k=>{if(fullSet.has(k))tgt[k]=1});cur={};base.forEach(k=>{if(tgt[k]){cur[k]=1}given.add(k)});edit=all.filter(k=>!given.has(k));need=edit.filter(k=>tgt[k]).length;clicks=0;mist=0;
+   /* 살대가 하나도 안 그려지면 다시 */if(need<3){newRound();return}
+   const fr=new THREE.Mesh(new THREE.BoxGeometry(N*CS+.24,N*CS+.24,.06),M(0x5a3a22));fr.position.set(0,OY+N*CS/2,-.06);fg.add(fr);const pap=new THREE.Mesh(new THREE.PlaneGeometry(N*CS,N*CS),M(0xf4ecd8));pap.position.set(0,OY+N*CS/2,-.025);fg.add(pap);const ax=new THREE.Mesh(new THREE.PlaneGeometry(.01,N*CS),new THREE.MeshBasicMaterial({color:0xd08a50}));ax.position.set(0,OY+N*CS/2,-.02);fg.add(ax);if(quad){const ay=new THREE.Mesh(new THREE.PlaneGeometry(N*CS,.01),new THREE.MeshBasicMaterial({color:0xd08a50}));ay.position.set(0,OY+N*CS/2,-.02);fg.add(ay)}
+   for(let i=0;i<4;i++){const leg=new THREE.Mesh(new THREE.BoxGeometry(.08,OY,.08),M(0x5a3a22));leg.position.set((i<2?-1:1)*(N*CS/2+.1),OY/2,(i%2?-.1:-.02));fg.add(leg)}
+   for(const k of all){const[x,y,vert]=pos(k);const L=CS+.03;const bar=new THREE.Mesh(new THREE.BoxGeometry(vert?.035:L,vert?L:.035,.04),WD);bar.position.set(x,y,0);fg.add(bar);const ghost=new THREE.Mesh(new THREE.BoxGeometry(vert?.02:L*.9,vert?L*.9:.02,.01),GH);ghost.position.set(x,y,.005);fg.add(ghost);const hit=new THREE.Mesh(new THREE.BoxGeometry(vert?.1:L*.8,vert?L*.8:.1,.05),HIT);hit.position.set(x,y,.01);hit.userData.k=k;fg.add(hit);segs[k]={bar,ghost,hit}}
+   draw();t0=performance.now()/1000;ui()};
+  const d=document.createElement('div');d.id='cdlP';d.style.cssText="position:fixed;right:16px;bottom:150px;z-index:60;background:#2a2418;border:3px solid #c8a868;border-radius:16px;padding:12px 16px;text-align:center;font:14px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:236px;user-select:none";document.body.appendChild(d);
+  const ui=(msg='')=>{if(done)return;const left=edit.filter(k=>!!cur[k]!==!!tgt[k]).length;d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#f0d890">🪟 창살 짝 맞추기 ${rd+1}/3</b><div style="font-size:12px;margin:4px 0;line-height:1.5">${rd===2?'왼쪽 위 네 칸 무늬를 보고 나머지 세 쪽을 위아래·좌우 거울처럼':'왼쪽 반 무늬를 보고 오른쪽 반을 거울처럼'} 채워요. 흐린 자리를 누르면 살이 끼워지고, 다시 누르면 빠져요.</div><div style="font-size:13px;color:#f0d890;min-height:18px">${msg}</div><div style="font-size:12px">누른 횟수 ${clicks}</div><button data-x style="font:12px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:1px solid #f4ecd8;border-radius:8px;padding:2px 8px;margin-top:4px;cursor:pointer">그만</button>`;d.querySelector('[data-x]').onclick=()=>{cleanup();d.remove()}};
+  const tap=k=>{if(done||wait>0||given.has(k))return;cur[k]=cur[k]?0:1;clicks++;if(cur[k]&&!tgt[k])mist++;snd(cur[k]?520:380,.06);draw();const ok=edit.every(k2=>!!cur[k2]===!!tgt[k2]);ui(ok?'무늬가 꼭 맞았어요!':'');if(ok){wait=1.2;snd(700,.4,'sine')}};
+  const pc=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.05,200);const rc=new THREE.Raycaster();const ov=document.createElement('div');ov.id='cdlO';ov.style.cssText='position:fixed;inset:0;z-index:55;cursor:pointer';document.body.appendChild(ov);
+  const setPC=()=>{const C=camA();pc.aspect=innerWidth/innerHeight;pc.position.set(C[0],C[1],C[2]);pc.lookAt(C[3],C[4],C[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();G.updateMatrixWorld()};
+  ov.onpointerdown=e=>{setPC();rc.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects(Object.values(segs).map(s=>s.hit),false)[0];if(h)tap(h.object.userData.k)};
+  const cleanup=()=>{ov.remove();clr();fg.visible=false};
+  const fin=()=>{done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3);const s2=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('changdeok_lattice',Q,'창살 짝 맞추기')}catch(e){}window.__CDQ=Q;
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#f0d890">창살을 다 짰어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">옛 목수는 창살을 좌우·위아래가 맞도록 짜서 창호지 너머 빛이 고르게 들게 했어요. 낙선재에는 띠살·아자살·귀갑살·얼음 깨진 무늬 같은 여러 창살이 남아 있어요(놀이판의 무늬는 간추린 것).</div><div style="font-size:24px;color:#c8a868">${'★'.repeat(s2)}${'☆'.repeat(3-s2)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#c8a868;color:#2a2418;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__CDLATTICE()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  let at=0;const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   if(auto&&wait<=0){at+=dt;if(at>.12){at=0;const k=edit.find(k=>!!cur[k]!==!!tgt[k]);if(k)tap(k)}}
+   if(wait>0){wait-=dt;if(wait<=0){const el=performance.now()/1000-t0;res.push(Math.max(30,Math.round(100-mist*6-Math.max(0,clicks-need-mist*2)*3-Math.max(0,el-30-rd*15)*.3)));rd++;if(rd>=3){fin();return}newRound()}}
+   requestAnimationFrame(step)};
+  newRound();requestAnimationFrame(step);window.__CDG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()},get need(){return need},scr:k=>{setPC();const v=new THREE.Vector3();segs[k].hit.getWorldPosition(v);v.project(pc);return[(v.x+1)/2*innerWidth,(1-v.y)/2*innerHeight]},get firstEdit(){return edit.find(k=>tgt[k])}};try{ctx.say('창살 무늬를 거울처럼 맞춰 봐요!',2.4)}catch(e){}};
+ spots.push({x:FX,y:0,z:FZ+3,r:2.6,t:'창살 짜는 자리',h:'낙선재 창살처럼 무늬를 거울처럼 맞춰 짜 봐요.'});
+ /* 밤 */const NL=[];if(!mini){for(const[x,y,z]of[[0,3,DZ+3],[0,2.4,KZ+3],[0,3,IZ+9],[26,3,IZ+5],[NX,3,NZ+6],[0,2.4,AZ+7]]){const Lt=new THREE.PointLight(0xffc080,0,26,1.5);Lt.position.set(x,y,z);G.add(Lt);NL.push(Lt)}}
+ let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(Lt=>Lt.intensity=nk*8)};
+ const mk=fn=>()=>{const g=new THREE.Group();fn(g);return g};
+ const DIG=[
+  {n:'청기와 조각',h:'푸른 유약을 바른 청기와 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.03,.14),M(0x2a6a8a,{roughness:.4})))})},
+  {n:'백자 접시 조각',h:'궁궐에서 쓰던 흰 접시 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.12,.08,.03,16,1,false,0,3.6),M(0xe8e4d8)))})},
+  {n:'쇠 문고리',h:'궁궐 문짝의 쇠고리예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.TorusGeometry(.07,.012,8,18),M(0x3a3632,{metalness:.6})))})},
+  {n:'벽돌 조각',h:'궁궐 담을 쌓던 벽돌 조각이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.BoxGeometry(.2,.06,.1),M(0x9a6a52)))})},
+  {n:'상평통보',h:'조선 엽전이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.01,18),M(0x8a6a3a,{metalness:.6})))})}];
+ sp(12,52,2.4,'발굴 탐지 자리','창덕궁 앞 흙 속에 옛 흔적이 묻혀 있대요. 무이 탐지기로 찾아 봐요.');
+ window.__CDDIG=()=>{window.__DETECT&&window.__DETECT({key:'changdeok_dig',title:'창덕궁 발굴 탐지',emoji:'⛏️',bg:'#2a2418',count:4,TL:150,cand:[[-12,52],[14,40],[-14,40],[14,20],[-14,20],[40,10],[-40,10],[-40,-30],[30,-30],[-14,-30]],items:DIG,intro:'창덕궁 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'창덕궁은 자연 지형을 따라 건물을 앉힌 궁궐로, 후원과 함께 유네스코 세계유산이에요.'})};
+ const meta={quest:{t:'창덕궁 둘러보기',d:'돈화문으로 들어가 금천교를 건너 인정전·선정전·낙선재를 보고 후원까지 가 보세요.',steps:[['돈화문','돈화문'],['금천교','금천교'],['인정전','인정전'],['선정전','선정전'],['담장','궐 안 담장과 문간'],['낙선재','낙선재'],['애련지','애련지·애련정'],['연경당','연경당']]},
+  title:'서울 창덕궁',hint:'창덕궁을 공개 사진으로 간추려 지었고, 궐 안 담장 모서리는 실측이에요(juanbrualla CC BY, 크기 어림). 낙선재 앞에서 창살 무늬를 거울처럼 맞춰 봐요.',
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-6,z:56,lines:['서울 창덕궁','유네스코 세계유산 1997','인정전 · 선정전 · 낙선재','간추려 지음 · 담장 실측']}},
+  npc:[['science',[[-6,54],[6,54],[6,60],[-6,60]]]],bounds:[-56,56,-60,64],level:()=>'서울 창덕궁',camCap:()=>Infinity,
+  tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
+  mini:{S:2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#86a04c';g.fillRect(0,0,300,300);g.fillStyle='#5a8a9a';g.fillRect(0,Z(KZ+2),300,4*S);g.fillStyle='#4a7a8a';g.fillRect(X(-7),Z(AZ+5),14*S,10*S)}}};
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:60,yaw:Math.PI},size:{}},meta)}
