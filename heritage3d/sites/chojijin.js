@@ -5,13 +5,13 @@ import {photoSite} from './photosite.js';
 const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
 export function buildChojijin(opts={}){return photoSite('chojijin',opts,{h0:3,groundY:-9,groundColor:0x6a665a,
  title:'강화 초지진',hint:'바다로 들어오는 배를 막던 강화 초지진을 드론 실측 그대로 실제 크기로 놓았어요. 성벽을 돌며 포탄 자국을 찾아 봐요. '+SRC,
- quest:{t:'초지진 둘러보기',d:'바닷가 돈대를 실측 그대로 둘러보세요.',steps:[['초지진','강화 초지진'],['돈대 안','초지진 돈대 안'],['갯벌','초지진 앞 갯벌']]},
+ quest:{t:'초지진 둘러보기',d:'바닷가 돈대를 실측 그대로 둘러보세요.',steps:[['초지진','강화 초지진'],['돈대 성벽','초지진 돈대 성벽'],['갯벌','초지진 앞 갯벌']]},
  spawn:{x:20,z:30,yaw:Math.PI},bounds:[-66,66,-60,60],level:'초지진',env:{fog:[90,460],groundY:-9.1,noHills:true,sign:{x:26,z:26,y:0,lines:['강화 초지진','사적 · 1656 진 · 1679 돈대','신미양요의 포탄 자국','드론 실측 3D']}},
  npc:[['science',[[14,22],[24,22],[24,30],[14,30]]]],
  build({G,spots,hAt,THREE}){
   const sp=(x,z,r,t,h)=>spots.push({x,y:hAt(x,z),z,r,t,h});
   sp(10,20,4,'강화 초지진','효종 7년(1656)에 바다로 들어오는 적을 막으려 세운 진이에요(사적). 1866년 병인양요, 1871년 신미양요 때 미군, 1875년 운요호 사건 때 일본군과 싸운 곳이에요. 지금은 돈대만 남아 다시 쌓았어요. '+SRC);
-  sp(5,-6,4,'초지진 돈대 안','둥글게 돌로 쌓은 돈대 안에 대포를 두고 바다를 지켰어요. 성벽 높이 약 4m, 둘레 약 100m예요. '+SRC);
+  sp(27,-6,3.4,'초지진 돈대 성벽','성벽 아래에서 올려다봐요. 둥글게 돌로 쌓은 돈대 안에 대포를 두고 바다를 지켰어요. 성벽 높이 약 4m, 둘레 약 100m예요. '+SRC);
   sp(-20,-32,4,'초지진 앞 갯벌','강화 바다는 밀물과 썰물 차이가 커서, 물이 빠지면 넓은 갯벌이 드러나요. 큰 배는 물때를 맞춰야 들어올 수 있었어요.');
   /* 포탄 자국 찾기(11/21): 성벽 바깥 둘레에 숨은 자국 여섯. 가까이 가면 빛남. 120초 */
   window.__CJMARK=()=>{if(document.getElementById('cjP'))return;const MK=[];{const c=[5,-6];const top=hAt(c[0],c[1]);for(let k=0;k<16;k++){const a=k/16*Math.PI*2;for(let r=8;r<34;r+=.5){const x=c[0]+Math.cos(a)*r,z=c[1]+Math.sin(a)*r;if(hAt(x,z)<top-1.4){MK.push([x-Math.cos(a)*.6,z-Math.sin(a)*.6,a]);break}}}}const H=window.__H3,ctx=H.ctx();const pool=MK.filter(([x,z,a])=>{const sx=x+Math.cos(a)*2.2,sz=z+Math.sin(a)*2.2;return hAt(sx,sz)>hAt(5,-6)-3.2}).sort(()=>Math.random()-.5).slice(0,6);const _u=MK.slice().sort(()=>Math.random()-.5).slice(0,6);const g=new THREE.Group();G.add(g);
