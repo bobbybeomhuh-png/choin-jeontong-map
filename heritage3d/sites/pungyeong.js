@@ -87,4 +87,4 @@ export function buildPungyeong(opts={}){const mini=!!opts.mini;const G=new THREE
   npc:[['painter',[[12,-14],[16,-14],[16,-10],[12,-10]]]],bounds:[-78,40,-30,15],level:()=>'풍영정',camCap:()=>Infinity,
   tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
   mini:{S:4,ox:0,oz:-4,draw(g,X,Z,S){g.fillStyle='#6a8a4a';g.fillRect(0,0,300,300);g.fillStyle='#3d6a72';g.fillRect(0,Z(15),300,300);g.fillStyle='#5a4a3a';g.fillRect(X(-6.8),Z(-5.2),13.6*S,11*S)}}};
- return Object.assign({group:G,solids,cam,spots,spawn:{x:14,z:-14,yaw:Math.PI*.75},size:{}},meta)}
+ return Object.assign({group:G,solids,cam,spots,spawn:{x:14,z:-14,yaw:-Math.PI/4},size:{}},meta)}
