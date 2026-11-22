@@ -4,6 +4,7 @@
    군포 철쭉 동산: 봄이면 산비탈이 철쭉으로 붉게 물들어요.
    놀이: 단선 신호수(마주 오는 열차들을 한 구간에 하나씩만 내보내고, 가운데 역 비낌 선로(두 칸)를 잘 써서 꽉 막히지 않게 하기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildUiwang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1988);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -67,4 +68,41 @@ export function buildUiwang(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
   npc:[['science',[[-12,0],[-4,0],[-4,10],[-12,10]]]],bounds:[-90,80,-70,60],level:()=>'의왕',camCap:()=>Infinity,
   tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
   mini:{S:1.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#86a24e';g.fillRect(0,0,300,300);g.fillStyle='#4a7a9a';g.beginPath();g.ellipse(X(LX),Z(LZ),27*S,18*S,0,0,7);g.fill();g.fillStyle='#6a6a70';g.fillRect(X(7),Z(-48),2*S,76*S);g.fillStyle='#e84a8a';g.beginPath();g.arc(X(50),Z(-48),18*S,0,7);g.fill()}}};
+ /* 철도박물관 야외 전시(11/22 K3): 한국문화정보원 KCISA 3D 자료(CC BY) 「미카3-161 증기기관차」·「대통령 전용 객차」. 둘 다 의왕 철도박물관에 있어요. 자료에 단위가 없어 기관차 높이 약 4.6m로 어림해 맞췄어요(길이 약 22.6m).
+   놀이: 증기기관차 불 때기(화실에 석탄을 넣으면 증기 압력이 오르고, 보일러 물은 증기로 줄어요. 물과 압력을 둘 다 초록 칸에 두고 달리기, 3D에서 화실·물통을 눌러요, 새 방식) */
+ const RMX=-30,RMZ=50;{const bal=new THREE.Mesh(new THREE.BoxGeometry(30,.3,10),new THREE.MeshStandardMaterial({color:0x8a8478,roughness:1}));bal.position.set(RMX,.15,RMZ+3);G.add(bal);const RM=new THREE.MeshStandardMaterial({color:0x6a6a70,metalness:.7,roughness:.4});for(const z of[RMZ,RMZ+6])for(const s2 of[-.72,.72]){const rl=new THREE.Mesh(new THREE.BoxGeometry(29,.15,.08),RM);rl.position.set(RMX,.38,z+s2);G.add(rl)}for(let x=-14;x<=14;x+=.7)for(const z of[RMZ,RMZ+6]){const sl=new THREE.Mesh(new THREE.BoxGeometry(.22,.1,2.4),new THREE.MeshStandardMaterial({color:0x4a3a2a,roughness:1}));sl.position.set(RMX+x,.32,z);G.add(sl)}solids.push({x0:RMX-12,x1:RMX+12,y0:0,y1:5,z0:RMZ-1.8,z1:RMZ+1.8},{x0:RMX-12,x1:RMX+12,y0:0,y1:4,z0:RMZ+4.2,z1:RMZ+7.8})}
+ let loco=null;if(!mini){const L=new GLTFLoader();L.load(new URL('../models/uiwang/mika.glb',import.meta.url).href,g=>{const o=g.scene;const w=new THREE.Group();w.add(o);w.userData.noBatch=true;w.rotation.y=Math.PI/2;w.position.set(RMX,.45,RMZ);G.add(w);loco=w},undefined,()=>{});L.load(new URL('../models/uiwang/pcoach.glb',import.meta.url).href,g=>{const o=g.scene;const w=new THREE.Group();w.add(o);w.userData.noBatch=true;w.rotation.y=Math.PI/2;w.position.set(RMX,.45,RMZ+6);G.add(w)},undefined,()=>{})}
+ sp(RMX+4,RMZ-3.4,2.4,'미카3-161 증기기관차','1940년 무렵 만든 미카3형 증기기관차예요. 의왕 철도박물관에 있어요. 한국문화정보원 3D 자료, 높이 약 4.6m로 어림해 맞췄어요.');
+ sp(RMX-6,RMZ+10,2.4,'대통령 전용 객차','대통령이 타던 전용 객차예요. 의왕 철도박물관에 있어요. 한국문화정보원 3D 자료, 기관차와 같은 비율로 맞췄어요.');
+ sp(RMX-8,RMZ-3.4,2,'기관사 자리','증기기관차에 불을 때 봐요.');
+ const smoke=[];const SMT=tex(64,64,(q,w,h)=>{const gr=q.createRadialGradient(32,32,2,32,32,30);gr.addColorStop(0,'rgba(90,90,90,.8)');gr.addColorStop(1,'rgba(90,90,90,0)');q.fillStyle=gr;q.fillRect(0,0,w,h)});
+ window.__UWFIRE=()=>{if(document.getElementById('ufP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(RMX-8,RMZ-4,0)}catch(e){}
+  window.__GCAM=()=>document.getElementById('ufP')?[RMX-2,5.5,RMZ-14,RMX-1,2.2,RMZ,50]:null;
+  const RD=[{T:30,use:.05},{T:30,use:.07},{T:30,use:.08}];let rd=0,t=0,P=.5,W=.7,fire=.5,dist=0,good=0,phase='play',wait=0,auto=false,done=false,msg='',last=performance.now(),at=0;const res=[];
+  const d=document.createElement('div');d.id='ufP';d.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:60;background:#222;border:3px solid #c84a2a;border-radius:16px;padding:9px 12px;text-align:center;font:13px 'Gowun Dodum',sans-serif;color:#f4ecd8;box-shadow:0 6px 18px rgba(0,0,0,.35);width:310px;max-width:94vw;user-select:none";document.body.appendChild(d);
+  const bar=(lab,k)=>`<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin:3px 0"><span style="width:56px">${lab}</span><div style="flex:1;height:12px;background:#0006;border-radius:6px;position:relative;overflow:hidden"><div style="position:absolute;left:40%;width:30%;top:0;bottom:0;background:#3a7a3a"></div><div data-${k} style="position:absolute;top:1px;bottom:1px;width:5px;background:#fff;border-radius:2px"></div></div></div>`;
+  d.innerHTML=`<b style="font:16px 'Do Hyeon',sans-serif;color:#fff">🚂 증기기관차 불 때기</b><div data-i style="margin:3px 0;font:14px 'Do Hyeon',sans-serif"></div>${bar('증기 압력','p')}${bar('보일러 물','w')}<div style="font-size:11.5px;color:#e0d8c8;margin-top:3px">기관차 화실(빨간 곳)을 누르면 석탄, 뒤 물통을 누르면 물이 들어가요. 둘 다 초록 칸에</div><div data-m style="font-size:12px;color:#f8e8a0;margin-top:4px"></div>`;
+  const q=k=>d.querySelector(k);const iEl=q('[data-i]'),pEl=q('[data-p]'),wEl=q('[data-w]'),mEl=q('[data-m]');
+  const snd=(f,len,type='sine',v=.05)=>{try{const AC=ctx.ac();if(!AC)return;const s0=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,s0);g.gain.setValueAtTime(v,s0);g.gain.exponentialRampToValueAtTime(.0001,s0+len);o.connect(g).connect(ctx.out()||AC.destination);o.start(s0);o.stop(s0+len+.02)}catch(e){}};
+  const fb=new THREE.Mesh(new THREE.BoxGeometry(3,2.6,3.6),new THREE.MeshBasicMaterial({color:0xff4020,transparent:true,opacity:.22}));fb.position.set(RMX-2.5,1.9,RMZ);fb.userData.k='coal';G.add(fb);const tk=new THREE.Mesh(new THREE.BoxGeometry(6,2.6,3.6),new THREE.MeshBasicMaterial({color:0x2060ff,transparent:true,opacity:.14}));tk.position.set(RMX-8.2,1.9,RMZ);tk.userData.k='water';G.add(tk);
+  const coal=()=>{if(phase!=='play')return;fire=Math.min(1,fire+.18);snd(140,.12,'square',.05)};const water=()=>{if(phase!=='play')return;W=Math.min(1.05,W+.09);P=Math.max(0,P-.05);snd(500,.12,'sine',.04)};
+  const pc=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,.1,200);const rc=new THREE.Raycaster();const ov=document.createElement('div');ov.id='ufO';ov.style.cssText='position:fixed;inset:0;z-index:55;cursor:pointer';document.body.appendChild(ov);
+  ov.onpointerdown=e=>{const C=window.__GCAM();if(!C)return;pc.aspect=innerWidth/innerHeight;pc.position.set(C[0],C[1],C[2]);pc.lookAt(C[3],C[4],C[5]);pc.updateProjectionMatrix();pc.updateMatrixWorld();rc.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),pc);const h=rc.intersectObjects([fb,tk],false)[0];if(h){if(h.object.userData.k==='coal')coal();else water()}};
+  const cleanup=()=>{ov.remove();G.remove(fb);G.remove(tk);smoke.forEach(s0=>G.remove(s0));smoke.length=0};
+  const newRound=()=>{t=0;P=.5;W=.7;fire=.5;dist=0;good=0;phase='play';msg=`${rd+1}판: ${['평지','오르막','긴 오르막'][rd]}을 달려요`};newRound();
+  const inG=v=>v>=.4&&v<=.7;
+  const step=now=>{if(!d.isConnected){cleanup();return}if(done)return;const dt=Math.min(.05,(now-last)/1000);last=now;
+   if(phase==='play'){t+=dt;const use=RD[rd].use;fire=Math.max(0,fire-dt*.07);P+=dt*(fire*.16-use*1.2-(P>.85?.05:0));W-=dt*use*(.6+P);P=Math.max(0,Math.min(1,P));W=Math.max(0,W);
+    if(auto){at+=dt;if(at>.25){at=0;if(W<.5)water();else if(P<.52&&fire<.8)coal()}}
+    const ok=inG(P)&&inG(W);if(ok)good+=dt;dist+=dt*(P>.3&&W>.15?P*14:0);
+    msg=W<.2?'물이 모자라요! 보일러가 위험해요':P<.3?'압력이 낮아 기차가 서요':P>.85?'압력이 너무 높아 안전밸브가 울려요':W>.85?'물이 너무 많아 증기가 약해요':ok?'좋아요, 칙칙폭폭!':msg;
+    if(Math.random()<dt*(2+P*10)){const sm=new THREE.Sprite(new THREE.SpriteMaterial({map:SMT,transparent:true,depthWrite:false}));sm.position.set(RMX+9,4.8,RMZ);sm.scale.setScalar(.8);sm.userData.v=1+P*2;G.add(sm);smoke.push(sm)}
+    if(t>=RD[rd].T){const sc=good/RD[rd].T;res.push(sc);msg=`이번 판 초록 칸 ${(sc*100|0)}%, ${dist|0}m 달렸어요`;snd(sc>.8?820:380,.3);phase='wait';wait=2.4}}
+   for(let i=smoke.length-1;i>=0;i--){const sm=smoke[i];sm.position.y+=dt*sm.userData.v;sm.position.x-=dt*1.2;sm.scale.multiplyScalar(1+dt*.8);sm.material.opacity-=dt*.35;if(sm.material.opacity<=0){G.remove(sm);smoke.splice(i,1)}}
+   fb.material.opacity=.15+fire*.35;
+   if(phase==='wait'){wait-=dt;if(wait<=0){rd++;if(rd>=3){fin();return}newRound()}}
+   pEl.style.left=`calc(${(P*100).toFixed(1)}% - 2px)`;wEl.style.left=`calc(${(Math.min(1,W)*100).toFixed(1)}% - 2px)`;iEl.textContent=`${Math.min(rd+1,3)} / 3판 · 남은 시간 ${Math.max(0,Math.ceil(RD[Math.min(rd,2)].T-t))}초`;mEl.textContent=msg;requestAnimationFrame(step)};
+  const fin=()=>{if(done)return;done=true;cleanup();const Q=Math.round(res.reduce((a,b)=>a+b,0)/3*100);const st=Q>=85?3:Q>=60?2:Q>0?1:0;try{ctx.done('uiwang_fire',Q,'증기기관차 불 때기')}catch(e){}window.__UFQ=Q;snd(660,.4);
+   d.innerHTML=`<b style="font:17px 'Do Hyeon',sans-serif;color:#fff">기관차를 잘 몰았어요! ${Q}점</b><div style="font-size:13px;margin:4px 0">증기기관차는 화실에서 석탄을 태워 보일러 물을 끓이고, 그 증기 힘으로 바퀴를 돌려요. 석탄만 넣으면 물이 줄어 위험하고, 물만 넣으면 압력이 떨어져요. 화부와 기관사는 둘을 늘 함께 살폈어요.</div><div style="font-size:24px;color:#c84a2a">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><button data-a style="font:15px 'Do Hyeon',sans-serif;background:#c84a2a;color:#fff;border:0;border-radius:10px;padding:6px 12px;margin:4px;cursor:pointer">한 번 더</button><button data-x style="font:15px 'Do Hyeon',sans-serif;background:transparent;color:#f4ecd8;border:2px solid #f4ecd8;border-radius:10px;padding:5px 12px;margin:4px;cursor:pointer">그만</button>`;d.querySelector('[data-a]').onclick=()=>{d.remove();window.__UWFIRE()};d.querySelector('[data-x]').onclick=()=>d.remove()};
+  requestAnimationFrame(step);window.__UFG={set auto(v){auto=v},get done(){return done},get res(){return res.slice()}};try{ctx.say('석탄과 물을 같이 봐요!',2)}catch(e){}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:22,yaw:Math.PI},size:{}},meta)}
