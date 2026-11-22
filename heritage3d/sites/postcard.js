@@ -21,6 +21,7 @@ export const STAMPS={
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
  wolji:{p:'stamps/wolji.jpg',n:'경주 동궁과 월지',e:'통일신라',c:'무이 월드 장면',msg:'주령구를 굴렸더니 벌칙이 나왔어요. 밤 연못이 정말 예뻤어요.'},
+ daegwallyeong:{p:'stamps/wolji.jpg',n:'강릉 대관령 옛길',e:'조선 고갯길',c:'무이 월드 장면',msg:'봇짐을 지고 대관령 아흔아홉 굽이를 쉬엄쉬엄 넘었어요!'},
  yonggung:{p:'stamps/wolji.jpg',n:'부산 해동용궁사',e:'사진 실측',c:'무이 월드 장면',msg:'바닷가 절 해동용궁사에서 파도 사이 바위를 건넜어요!'},
  dolmunhwa:{p:'stamps/wolji.jpg',n:'제주 돌문화공원',e:'사진 실측',c:'무이 월드 장면',msg:'제주 돌문화공원에서 바람 구멍 돌담을 쌓았어요!'},
  yukdupum:{p:'stamps/wolji.jpg',n:'신라 6두품 집',e:'복원 3D',c:'무이 월드 장면',msg:'신라 6두품 집에서 줄자로 집터를 재 봤어요!'},
