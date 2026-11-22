@@ -15,7 +15,7 @@ export function buildDongcheon(opts={}){const mini=!!opts.mini;const G=new THREE
  {const gr=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:0x3f5a34,roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.y=-1.5;G.add(gr)}
  const SRC='(3D: lacomi1975, Sketchfab, CC BY 4.0)';
  const AX=-1.9,AZ=-4.5,BX=8.2,BZ=4.5,LX=4,LZ=14;
- spots.push({x:AX+2,y:0,z:AZ+3,r:3,t:'동천석실',h:'윤선도가 보길도 낙서재 맞은편 산 중턱 바위 위에 지은 한 칸 집이에요(명승 보길도 윤선도 원림). 신선이 사는 곳이라 동천석실이라 부르고, 여기서 차를 마시고 시를 지었어요. 사진 측량, 크기는 어림했어요. '+SRC});
+ spots.push({x:AX+2,y:0,z:AZ+3,r:13,t:'동천석실',h:'바위 아래에서 올려다보면 바위 위에 한 칸 집이 보여요. 윤선도가 보길도 낙서재 맞은편 산 중턱 바위 위에 지은 한 칸 집이에요(명승 보길도 윤선도 원림). 신선이 사는 곳이라 동천석실이라 부르고, 여기서 차를 마시고 시를 지었어요. 사진 측량, 크기는 어림했어요. '+SRC});
  spots.push({x:BX-1,y:0,z:BZ+3,r:3,t:'석담과 돌계단',h:'바위 사이에 돌로 쌓은 작은 못(석담)과 돌계단, 돌문이 이어져요. 자연 바위를 그대로 살려 정원으로 꾸몄어요. '+SRC});
  spots.push({x:LX,y:0,z:LZ,r:2.6,t:'도르래 자리',h:'아래에서 바위 위 동천석실까지 도르래로 찬합을 올렸다는 이야기가 전해요. 직접 당겨 봐요.'});
  spots.push({x:-10,y:0,z:10,r:2.4,t:'발굴 탐지 자리',h:'동천석실 둘레 흙 속에 옛 흔적이 남아 있대요.'});
@@ -57,7 +57,7 @@ export function buildDongcheon(opts={}){const mini=!!opts.mini;const G=new THREE
   {n:'엽전',h:'조선 상평통보예요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.015,18),M(0x6a5a30,{metalness:.6})))})}];
  window.__DCDIG=()=>{window.__DETECT&&window.__DETECT({key:'dongcheon_dig',title:'동천석실 발굴 탐지',emoji:'⛏️',bg:'#1e2a22',count:4,TL:150,cand:[[-10,10],[-6,14],[2,10],[10,10],[-12,4],[6,-2],[0,2],[-4,16]],items:ITEMS,intro:'동천석실 둘레 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'동천석실은 보길도 윤선도 원림의 일부예요(명승).'})};
  const meta={quest:{t:'동천석실 둘러보기',d:'바위 위 동천석실과 석담, 도르래 자리를 둘러보세요.',steps:[['동천석실','동천석실'],['석담','석담과 돌계단'],['도르래','도르래 자리']]},
-  title:'완도 보길도 동천석실',hint:'사진 측량한 동천석실 일대예요(크기 어림). 바위를 올라 한 칸 집까지 가 보고 도르래 놀이도 해 봐요. '+SRC,
+  title:'완도 보길도 동천석실',hint:'사진 측량한 동천석실 일대예요(크기 어림). 바위 아래에서 한 칸 집을 올려다보고 도르래 놀이도 해 봐요. '+SRC,
   ibl:true,env:{fog:[80,320],noHills:false,plaza:null,beds:false,trees:false,treeAvoid:()=>true,sign:{x:LX+3,z:LZ+3,y:.6,lines:['완도 보길도 동천석실','명승 · 윤선도 원림','사진 측량 3D','크기 어림']}},
   npc:[['science',[[2,14],[6,14],[6,17],[2,17]]]],bounds:[-21,22,-21,21],level:P=>P.z<0?'바위 위':'아래 마당',camCap:()=>Infinity,
   baseAt:(x,z)=>hAt(x,z),tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
