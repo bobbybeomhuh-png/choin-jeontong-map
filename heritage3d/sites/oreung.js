@@ -1,5 +1,5 @@
 /* 경주 오릉·남산 서쪽 마당(2026-11-22): 신라 시조 박혁거세와 알영부인, 남해왕·유리왕·파사왕의 무덤으로 전해 오는 오릉, 지마왕릉·경애왕릉, 남산 용장사곡 삼층석탑.
-   실측: 국가유산청 KHS_Asset 스케치팹 CC BY 「Five Royal Tombs, Gyeongju」(약 91×126m), 「Tomb Of King Jima」, 「Tomb of King Gyeongae」, 「Three story Stone Pagoda in Yongjangsagok Valley」. 모두 미터 단위라 실제 크기 그대로, 땅 높이만 맞췄어요.
+   실측: 국가유산청 KHS_Asset 스케치팹 CC BY 「Five Royal Tombs, Gyeongju」(약 91×126m), 「Tomb Of King Jima」, 「Tomb of King Gyeongae」, 「Three story Stone Pagoda in Yongjangsagok Valley」, 「Tomb of King Heondeok」, 「Tomb of King Huigang」(11/22 덧붙임). 모두 미터 단위라 실제 크기 그대로, 땅 높이만 맞췄어요.
    삼국유사에는 혁거세가 하늘로 올라간 뒤 몸이 다섯으로 나뉘어 떨어져 따로 묻어서 오릉이라 했다는 이야기가 전해요(전해 오는 이야기).
    놀이: 그림자로 봉분 높이 재기(1m 막대 그림자로 해의 기울기를 알고, 봉분 그림자 끝을 3D에서 눌러 높이를 어림하기. 실측 높이와 견줘요, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
@@ -7,10 +7,10 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildOreung(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(57);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.95},o));
- const PL=[{f:'oreung.glb',x:0,z:-30,y:6.45},{f:'jima.glb',x:78,z:-10,y:1.5},{f:'gyeongae.glb',x:78,z:26,y:1.1},{f:'yongjang.glb',x:-66,z:18,y:2.25}];
+ const PL=[{f:'oreung.glb',x:0,z:-30,y:6.45},{f:'jima.glb',x:78,z:-10,y:1.5},{f:'gyeongae.glb',x:78,z:26,y:1.1},{f:'yongjang.glb',x:-66,z:18,y:2.25},{f:'heondeok.glb',x:-72,z:-42,y:2.3},{f:'huigang.glb',x:78,z:-52,y:.9}];
  const scans=[];if(!mini){const L=new GLTFLoader();PL.forEach(p=>L.load(new URL('../models/oreung/'+p.f,import.meta.url).href,g=>{const o=g.scene;o.traverse(e=>{if(e.isMesh){e.receiveShadow=true;e.castShadow=true}});const w=new THREE.Group();w.add(o);w.userData.noBatch=true;w.position.set(p.x,p.y,p.z);G.add(w);scans.push(w)},undefined,()=>{}))}
  /* 오릉 봉분(실측 위 자리, 걸어 넘지 않게) */const MD=[{x:-3.2,z:12.6,r:13},{x:1.3,z:-22.1,r:8},{x:20.9,z:-26.6,r:8},{x:-22.9,z:-44.8,r:8},{x:-21.4,z:-23.6,r:8}].map(m=>({x:m.x,z:m.z-30,r:m.r}));MD.forEach(m=>solids.push({cx:m.x,cz:m.z,r:m.r*.75,y0:0,y1:12}));
- solids.push({cx:78,cz:-10,r:7,y0:0,y1:6},{cx:78,cz:26,r:6,y0:0,y1:5},{cx:-66,cz:18,r:2.4,y0:0,y1:6});
+ solids.push({cx:-72,cz:-42,r:9,y0:0,y1:8},{cx:78,cz:-52,r:6,y0:0,y1:4},{cx:78,cz:-10,r:7,y0:0,y1:6},{cx:78,cz:26,r:6,y0:0,y1:5},{cx:-66,cz:18,r:2.4,y0:0,y1:6});
  const NL=[];if(!mini){for(const[x,y,z]of[[10,3,-6],[70,3,-2],[70,3,34],[-60,3,24]]){const P=new THREE.PointLight(0xffc080,0,26,1.5);P.position.set(x,y,z);G.add(P);NL.push(P);const lg=new THREE.Group();lg.userData.noBatch=true;const lp=new THREE.Mesh(new THREE.CylinderGeometry(.05,.06,y,6),M(0x3a2a1a));lp.position.y=y/2;lg.add(lp);const lm=new THREE.Mesh(new THREE.SphereGeometry(.34,12,8),new THREE.MeshStandardMaterial({color:0xfff0d0,emissive:0xffc060,emissiveIntensity:0}));lm.position.y=y+.1;lg.add(lm);lg.position.set(x+1.9,0,z);G.add(lg);P.userData.lm=lm}}
  let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(P=>{P.intensity=nk*60;if(P.userData.lm)P.userData.lm.material.emissiveIntensity=nk*8})};
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
@@ -18,6 +18,8 @@ export function buildOreung(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
  sp(70,-1,3,'지마왕릉','신라 제6대 지마왕의 무덤으로 전해요. 국가유산청 실측, 실제 크기예요.');
  sp(70,36,3,'경애왕릉','신라 제55대 경애왕의 무덤으로 전해요. 국가유산청 실측, 실제 크기예요.');
  sp(-60,24,2.6,'용장사곡 삼층석탑','경주 남산 용장골 바위 위에 세운 삼층석탑이에요. 산 전체를 아래층 기단으로 삼았다고들 해요. 국가유산청 실측, 실제 크기예요.');
+ sp(-58,-30,3,'헌덕왕릉','신라 제41대 헌덕왕의 무덤으로 전해요. 둘레돌에 십이지신상이 새겨져 있었대요. 국가유산청 실측, 실제 크기예요.');
+ sp(70,-40,3,'희강왕릉','신라 제43대 희강왕의 무덤으로 전해요. 국가유산청 실측, 실제 크기예요.');
  sp(14,8,2.4,'그림자 재기 자리','막대 그림자로 봉분 높이를 재 봐요.');
  sp(-30,30,2.4,'발굴 탐지 자리','솔숲 흙 속에 옛 흔적이 묻혀 있어요. 무이 탐지기로 찾아 봐요.');
  /* 그림자로 봉분 높이 재기(11/22) */
@@ -55,10 +57,10 @@ export function buildOreung(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
   {n:'쇠못',h:'옛 건물에 쓴 쇠못이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.CylinderGeometry(.015,.01,.18,6),M(0x4a3a30,{metalness:.6})))})},
   {n:'곱은옥',h:'신라 사람들이 지니던 곱은옥이에요.',mk:mk(g=>{g.add(new THREE.Mesh(new THREE.TorusGeometry(.05,.02,8,12,Math.PI*1.3),M(0x3a8a6a)))})}];
  window.__ORDIG=()=>{window.__DETECT&&window.__DETECT({key:'oreung_dig',title:'오릉 솔숲 발굴 탐지',emoji:'⛏️',bg:'#2a2418',count:4,TL:150,cand:[[-30,30],[-40,10],[40,30],[40,-60],[-50,-60],[20,40],[-20,44],[56,-40]],items:ITEMS,intro:'솔숲 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'오릉은 신라가 시작된 이야기가 깃든 곳이에요.'})};
- const meta={quest:{t:'오릉과 남산 서쪽 둘러보기',d:'오릉, 지마왕릉, 경애왕릉, 용장사곡 삼층석탑을 둘러보세요.',steps:[['오릉','경주 오릉'],['지마왕릉','지마왕릉'],['경애왕릉','경애왕릉'],['석탑','용장사곡 삼층석탑']]},
+ const meta={quest:{t:'오릉과 남산 서쪽 둘러보기',d:'오릉, 지마왕릉, 경애왕릉, 헌덕왕릉, 희강왕릉, 용장사곡 삼층석탑을 둘러보세요.',steps:[['오릉','경주 오릉'],['지마왕릉','지마왕릉'],['경애왕릉','경애왕릉'],['석탑','용장사곡 삼층석탑'],['헌덕왕릉','헌덕왕릉'],['희강왕릉','희강왕릉']]},
   title:'경주 오릉·남산 서쪽',hint:'능 셋과 석탑은 국가유산청 실측(실제 크기)이에요. 곳마다 따로 찍은 실측이라 서로 거리는 간추렸어요.',
-  ibl:true,env:{plaza:null,beds:false,trees:true,treeAvoid:(x,z)=>(x>-50&&x<50&&z>-100&&z<36)||Math.hypot(x-78,z-8)<34||Math.hypot(x+66,z-18)<10,noHills:false,sign:{x:-8,z:40,lines:['경주 오릉·남산 서쪽','오릉·지마왕릉·경애왕릉','용장사곡 삼층석탑','모두 실측']}},
-  npc:[['science',[[-6,40],[6,40],[6,46],[-6,46]]]],bounds:[-90,100,-100,60],level:()=>'경주',camCap:()=>Infinity,
+  ibl:true,env:{plaza:null,beds:false,trees:true,treeAvoid:(x,z)=>(x>-50&&x<50&&z>-100&&z<36)||Math.hypot(x-78,z-8)<34||Math.hypot(x+66,z-18)<10||Math.hypot(x+72,z+42)<26||Math.hypot(x-78,z+52)<16,noHills:false,sign:{x:-8,z:40,lines:['경주 오릉·남산 서쪽','오릉·지마왕릉·경애왕릉','용장사곡 삼층석탑','모두 실측']}},
+  npc:[['science',[[-6,40],[6,40],[6,46],[-6,46]]]],bounds:[-100,100,-100,60],level:()=>'경주',camCap:()=>Infinity,
   tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
   mini:{S:1,ox:0,oz:-20,draw(g,X,Z,S){g.fillStyle='#9ab070';g.fillRect(0,0,300,300);g.fillStyle='#c8b080';g.fillRect(X(-45),Z(-93),90*S,126*S);g.fillStyle='#7a9a5a';MD.forEach(m=>{g.beginPath();g.arc(X(m.x),Z(m.z),m.r*S,0,7);g.fill()})}}};
  return Object.assign({group:G,solids,cam,spots,spawn:{x:0,z:48,yaw:Math.PI},size:{}},meta)}
