@@ -29,7 +29,7 @@ export function buildGangneung(opts={}){const mini=!!opts.mini;const MT=material
  {/* 자세한 한옥 부품으로: 왼쪽 두 칸 방(띠살문), 오른쪽 두 칸 대청(열림), 익공, 팔작지붕 */G.add(buildHall({x:HX,z:HZ,W,D,nx:4,nz:2,FY,PH,roof:'hip',name:'夢龍室',pillar:0x7a5634,bracket:'ik',front:['door','door','open','open'],entry:-1,back:'wall',left:'wall',right:'window',mini,solids,light:false,plain:true}).group);
   /* 대청에 발문 두 장 */art('cc_9',1.05,1.22,HX+W*.2,FY+1.7,HZ-D/2+.13,0,.08);art('cc_10',1.05,1.22,HX+W*.38,FY+1.7,HZ-D/2+.13,0,.08);
   spots.push({x:HX-W*.25,y:0,z:HZ+D/2+2.4,r:2.2,t:'몽룡실',h:'신사임당이 검은 용이 바다에서 날아드는 꿈을 꾸고 율곡 이이를 낳았다는 방이에요. 그래서 "용꿈 꾼 방", 몽룡실이라 불러요. 오죽헌 별당은 조선 초 집으로 손꼽히게 오래된 살림집이에요. (본떠 지음)'});
-  spots.push({x:HX+W*.29,y:FY,z:HZ-.6,r:1.8,t:'발문',h:'초충도 화첩 끝에 후대 학자들이 붙인 글(발문)이에요. 그림이 얼마나 생생한지, 누가 어떻게 간직해 왔는지를 적었어요. (사진: 국립중앙박물관 소장품, 공공누리 제1유형)'})}
+  spots.push({x:HX+W*.29,y:FY,z:HZ-.6,r:4.4,t:'발문',h:'초충도 화첩 끝에 후대 학자들이 붙인 글(발문)이에요. 그림이 얼마나 생생한지, 누가 어떻게 간직해 왔는지를 적었어요. (사진: 국립중앙박물관 소장품, 공공누리 제1유형)'})}
  /* ---------- 초충도 전시 정자: 8폭 병풍 ---------- */
  const PX=9,PZ=-6,PW=10,PD=5.5,PPH=3.2,PFY=.4;
  {const base=box(PW+1,PFY,PD+1,M(0xb3aa98));base.position.set(PX,PFY/2,PZ);G.add(base);S(PX-(PW+1)/2,PX+(PW+1)/2,0,PFY,PZ-(PD+1)/2,PZ+(PD+1)/2);const fl=box(PW,.06,PD,M(0x9a7350));fl.position.set(PX,PFY+.03,PZ);G.add(fl);
