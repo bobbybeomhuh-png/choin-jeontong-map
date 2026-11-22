@@ -21,6 +21,7 @@ export const STAMPS={
  suwon:{m:'suwon/geojunggi',n:'거중기',e:'조선 정조 때',c:'3D KBU jiin712921, CC BY',msg:'수원 화성을 쌓을 때 무거운 돌을 들어 올린 거중기를 봤어요.'},
  seokguram:{m:'vairocana',n:'석굴암 본존불',e:'통일신라',c:'3D 스캔 국가유산청 KHS, CC BY',msg:'석굴암 본존불 앞에서 조용히 인사했어요.'},
  wolji:{p:'stamps/wolji.jpg',n:'경주 동궁과 월지',e:'통일신라',c:'무이 월드 장면',msg:'주령구를 굴렸더니 벌칙이 나왔어요. 밤 연못이 정말 예뻤어요.'},
+ dolmunhwa:{p:'stamps/wolji.jpg',n:'제주 돌문화공원',e:'사진 실측',c:'무이 월드 장면',msg:'제주 돌문화공원에서 바람 구멍 돌담을 쌓았어요!'},
  yukdupum:{p:'stamps/wolji.jpg',n:'신라 6두품 집',e:'복원 3D',c:'무이 월드 장면',msg:'신라 6두품 집에서 줄자로 집터를 재 봤어요!'},
  oreung:{p:'stamps/wolji.jpg',n:'경주 오릉',e:'실측 3D',c:'무이 월드 장면',msg:'신라가 시작된 오릉에서 그림자로 봉분 높이를 쟀어요!'},
  dure:{p:'stamps/wolji.jpg',n:'김포 두레 들판',e:'3D 자료',c:'무이 월드 장면',msg:'두레 들판에서 낫·홀태·부뚜로 가을걷이를 했어요!'},
