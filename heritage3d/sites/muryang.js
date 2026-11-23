@@ -3,6 +3,8 @@
    극락전 앞 오층석탑(보물)과 석등(보물). 「금오신화」를 쓴 매월당 김시습이 말년을 보내고 세상을 떠난 절(김시습 부도, 영정을 모신 영각).
    놀이: 매월당 수수께끼(숨겨 둔 오방색 구슬 네 개의 순서를, 맞힐 때마다 받는 실마리(●자리까지 맞음 ○빛깔만 맞음)로 추리해 맞혀요. 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {yardMat} from './yardkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildMuryang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1493);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -11,14 +13,14 @@ export function buildMuryang(opts={}){const mini=!!opts.mini;const G=new THREE.G
  /* 만수산 */for(let i=0;i<9;i++){const h=new THREE.Mesh(new THREE.SphereGeometry(22+r()*10,14,8,0,Math.PI*2,0,Math.PI/2),M(0x4a6a3a,{flatShading:true}));h.scale.y=.6;h.position.set(-80+i*20,0,-96-r()*12);G.add(h)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOODB=M(0x8a7458),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),DAN=M(0x8a3a2a);
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hipRoof=(x,z,W,D,y,H)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set((W+2.4)*.72,H,(D+2.4)*.72);rf.position.set(x,y+H/2-.15,z);G.add(rf)};
- const hall=(x,z,W,D,PH,base=.8)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);for(let i=0;i<=3;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,PH,10),WOODB);c.position.set(x-W/2+i*W/3,base+PH/2,z+j*D/2);G.add(c)}hipRoof(x,z,W,D,base+PH,PH*.75);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
- /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),DAN);c.position.set(s*2,2,46);G.add(c);solids.push({cx:s*2,cz:46,r:.35,y0:0,y1:4})}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(4.3,1.5,2.2);rf.position.set(0,4.75,46);G.add(rf);plaque(0,3.5,46.9,'寺量無山壽萬',2.4)}
+ const hipRoof=(x,z,W,D,y,H)=>{curvedRoof(G,x,(y+H/2-.15)-(H)/2,z,((W+2.4)*.72)/.72,((D+2.4)*.72)/.72,(H)*1.05)};
+ const hall=(x,z,W,D,PH,base=.8)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
+ /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),DAN);c.position.set(s*2,2,46);G.add(c);solids.push({cx:s*2,cz:46,r:.35,y0:0,y1:4})}curvedRoof(G,0,(4.75)-(1.5)/2,46,(4.3)/.72,(2.2)/.72,(1.5)*1.05);plaque(0,3.5,46.9,'寺量無山壽萬',2.4)}
  sp(0,50,3,'일주문','만수산 무량사로 들어가는 문이에요.');
  /* 천왕문 */{const Z=32;for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.BoxGeometry(2.4,3,3.4),WALLW);w.position.set(s*2.4,1.5,Z);G.add(w);solids.push({x0:s*2.4-1.3,x1:s*2.4+1.3,y0:0,y1:3,z0:Z-1.8,z1:Z+1.8})}hipRoof(0,Z,7.2,3.4,3,1.5);plaque(0,2.6,Z+1.75,'門王天',1.4)}
  sp(0,36,3,'천왕문','네 사천왕이 지키는 문이에요.');
  /* 극락전(겉 두 층) */const KZ=-4;{const W=13,D=9,base=1.2;const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.6,base,D+1.6),ST);b.position.set(0,base/2,KZ);G.add(b);const w1=new THREE.Mesh(new THREE.BoxGeometry(W,4,D),WALLW);w1.position.set(0,base+2,KZ);G.add(w1);for(let i=0;i<=4;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.24,.28,4,10),WOODB);c.position.set(-W/2+i*W/4,base+2,KZ+j*D/2);G.add(c)}
-  hipRoof(0,KZ,W,D,base+4,1.3);const w2=new THREE.Mesh(new THREE.BoxGeometry(W*.72,3.7,D*.66),M(0xd8ccb0));w2.position.set(0,base+4+1.85,KZ);G.add(w2);hipRoof(0,KZ,W*.72,D*.66,base+4+1.3+2.4,3);plaque(0,base+4+1.3+1.6,KZ+D*.33+.05,'殿樂極',1.8);solids.push({x0:-W/2-.8,x1:W/2+.8,y0:0,y1:base+4,z0:KZ-D/2-.8,z1:KZ+D/2+.8})}
+  hipRoof(0,KZ,W,D,base+4,1.3);const w2=new THREE.Mesh(new THREE.BoxGeometry(W*.72,3.7,D*.66),yardMat());w2.position.set(0,base+4+1.85,KZ);G.add(w2);hipRoof(0,KZ,W*.72,D*.66,base+4+1.3+2.4,3);plaque(0,base+4+1.3+1.6,KZ+D*.33+.05,'殿樂極',1.8);solids.push({x0:-W/2-.8,x1:W/2+.8,y0:0,y1:base+4,z0:KZ-D/2-.8,z1:KZ+D/2+.8})}
  sp(0,KZ+8,3.4,'극락전','겉으로는 두 층인데 안은 한 층으로 시원하게 트인 드문 불전이에요(보물). 아주 큰 소조 아미타삼존불이 모셔져 있어요.');
  /* 오층석탑·석등 */{let y=0;const X=0,Z=12;const st=(w,h)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),ST);m.position.set(X,y+h/2,Z);G.add(m);y+=h};st(3.4,.5);st(2.6,.9);for(let i=0;i<5;i++){st(1.3-i*.12,.6-i*.06);st(2.4-i*.25,.2)}solids.push({cx:X,cz:Z,r:1.8,y0:0,y1:y});
   const L=new THREE.Group();L.position.set(0,0,7.2);G.add(L);const bs=new THREE.Mesh(new THREE.CylinderGeometry(.5,.6,.4,8),ST);bs.position.y=.2;L.add(bs);const pl=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,1.2,8),ST);pl.position.y=1;L.add(pl);const fb=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.7,8),ST2);fb.position.y=1.95;L.add(fb);const lc=new THREE.Mesh(new THREE.ConeGeometry(.75,.4,8),ST);lc.position.y=2.5;L.add(lc);solids.push({cx:0,cz:7.2,r:.7,y0:0,y1:2.7})}

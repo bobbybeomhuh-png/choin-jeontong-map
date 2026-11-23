@@ -3,6 +3,7 @@
    정지용(옥천 출신 시인, 「향수」)의 생가 초가와 실개천, 청양 칠갑산 장곡사(위·아래 대웅전 둘이 있는 드문 절)는 공개 사진으로 간추려 지음.
    놀이: 키질(키를 흔들어 곡식은 남기고 쭉정이만 바람에 날리기), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {yardMat} from './yardkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {tex,mulb} from './sungnyemun.js';
 import {buildHall} from './hallkit.js';
@@ -10,7 +11,7 @@ export function buildOkcheon(opts={}){const mini=!!opts.mini;const G=new THREE.G
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,color:0x8a9a4a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  /* 정지용 생가: 초가 두 채 + 싸리 울타리 + 실개천 + 흙마당 */const JX=0,JZ=-14;{const yard=new THREE.Mesh(new THREE.PlaneGeometry(18,14),M(0xc8b088,{roughness:1}));yard.rotation.x=-Math.PI/2;yard.position.set(JX,.02,JZ);G.add(yard);
-  for(const[dx,dz,w,ry]of[[0,-4,7,0],[-6.5,1,5,Math.PI/2]]){const h=new THREE.Group();h.position.set(JX+dx,0,JZ+dz);h.rotation.y=ry;const b=new THREE.Mesh(new THREE.BoxGeometry(w,2.4,3.4),M(0xd8ccb0));b.position.y=1.2;h.add(b);const th=new THREE.Mesh(new THREE.SphereGeometry(w*.62,16,8,0,Math.PI*2,0,Math.PI/2),M(0xc8a860,{roughness:1}));th.scale.set(1,.42/(w*.62/4.3),.7*4.3/(w*.62)*.62);th.scale.set(1,.36,.55);th.position.y=2.35;h.add(th);const dr=new THREE.Mesh(new THREE.BoxGeometry(1,1.6,.1),M(0x5a3a24));dr.position.set(0,.9,1.72);h.add(dr);G.add(h);solids.push(ry?{x0:JX+dx-1.8,x1:JX+dx+1.8,y0:0,y1:3.4,z0:JZ+dz-w/2,z1:JZ+dz+w/2}:{x0:JX+dx-w/2,x1:JX+dx+w/2,y0:0,y1:3.4,z0:JZ+dz-1.8,z1:JZ+dz+1.8})}
+  for(const[dx,dz,w,ry]of[[0,-4,7,0],[-6.5,1,5,Math.PI/2]]){const h=new THREE.Group();h.position.set(JX+dx,0,JZ+dz);h.rotation.y=ry;const b=new THREE.Mesh(new THREE.BoxGeometry(w,2.4,3.4),yardMat());b.position.y=1.2;h.add(b);const th=new THREE.Mesh(new THREE.SphereGeometry(w*.62,16,8,0,Math.PI*2,0,Math.PI/2),M(0xc8a860,{roughness:1}));th.scale.set(1,.42/(w*.62/4.3),.7*4.3/(w*.62)*.62);th.scale.set(1,.36,.55);th.position.y=2.35;h.add(th);const dr=new THREE.Mesh(new THREE.BoxGeometry(1,1.6,.1),M(0x5a3a24));dr.position.set(0,.9,1.72);h.add(dr);G.add(h);solids.push(ry?{x0:JX+dx-1.8,x1:JX+dx+1.8,y0:0,y1:3.4,z0:JZ+dz-w/2,z1:JZ+dz+w/2}:{x0:JX+dx-w/2,x1:JX+dx+w/2,y0:0,y1:3.4,z0:JZ+dz-1.8,z1:JZ+dz+1.8})}
   const FM=M(0x9a8a5a);for(const[x0,z0,x1,z1]of[[-9,-7,9,-7],[-9,-7,-9,7],[9,-7,9,7],[-9,7,-2,7],[2,7,9,7]]){const L=Math.hypot(x1-x0,z1-z0);const f=new THREE.Mesh(new THREE.BoxGeometry(L,1,.15),FM);f.position.set(JX+(x0+x1)/2,.5,JZ+(z0+z1)/2);f.rotation.y=-Math.atan2(z1-z0,x1-x0);G.add(f);solids.push({x0:JX+Math.min(x0,x1)-.15,x1:JX+Math.max(x0,x1)+.15,y0:0,y1:1,z0:JZ+Math.min(z0,z1)-.15,z1:JZ+Math.max(z0,z1)+.15})}
   const brook=new THREE.Mesh(new THREE.PlaneGeometry(2.4,80),M(0x7aa8c0,{roughness:.2}));brook.rotation.set(-Math.PI/2,0,.15);brook.position.set(JX+13,.04,JZ);G.add(brook);
   /* 멍석과 고추(실측) */const mat=new THREE.Mesh(new THREE.BoxGeometry(3,.03,2),M(0xc8a860));mat.position.set(JX+4,.03,JZ+2);G.add(mat)}

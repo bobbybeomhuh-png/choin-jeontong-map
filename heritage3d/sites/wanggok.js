@@ -3,19 +3,22 @@
    추운 북쪽 지방식 'ㄱ자 겹집': 방들이 두 줄로 붙고 부엌에 외양간까지 한 지붕 아래 있어 겨울에도 바깥에 나가지 않고 지냄. 흙과 기와로 쌓고 꼭대기에 항아리를 엎어 얹은 '항아리 굴뚝', 앞마당은 햇볕 들게 트고 뒤쪽만 담.
    놀이: 겹집 방 배치 맞히기(실마리를 보고 한 지붕 아래 방들을 제자리에 놓아요. 실마리는 답이 하나뿐이 되게 컴퓨터가 골라요. 조건 맞춰 놓기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {lumpyHill} from './treekit.js';
+import {curvedRoof} from './hallkit.js';
+import {yardMat} from './yardkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildWanggok(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1400);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7c9a4a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- /* 오봉(다섯 봉우리) */for(let i=0;i<5;i++){const a=-Math.PI*.9+i*Math.PI*.45;const h=new THREE.Mesh(new THREE.ConeGeometry(16,26+r()*8,8),M(0x4a6a3a,{flatShading:true}));h.position.set(Math.cos(a)*78,12,Math.sin(a)*60-20);G.add(h)}
+ /* 오봉(다섯 봉우리) *//* 11/23: 뒤쪽 반원에만 울퉁불퉁한 산(전에는 한 봉우리가 들어오는 자리를 덮었음) */for(let i=0;i<5;i++){const a=-Math.PI*.95+i*Math.PI*.225;const h=lumpyHill(24,20+r()*6,0x4a6a3a,i+61);h.position.set(Math.cos(a)*84,-.5,Math.sin(a)*64-20);G.add(h)}
  /* 송지호(동쪽 호수) */{const w=new THREE.Mesh(new THREE.CircleGeometry(16,32),M(0x4a8ab0,{roughness:.2}));w.rotation.x=-Math.PI/2;w.scale.set(1,1.6,1);w.position.set(62,.05,0);G.add(w)}
  /* 마을 앞 실개천 */{const w=new THREE.Mesh(new THREE.PlaneGeometry(110,2.4),M(0x5a8aa8,{roughness:.25}));w.rotation.x=-Math.PI/2;w.position.set(0,.05,30);G.add(w);const br=new THREE.Mesh(new THREE.BoxGeometry(3,.3,3.4),M(0xa8a296));br.position.set(0,.15,30);G.add(br)}
  const ST=M(0xa8a296),WALLW=M(0xe8dcc4),WOOD=M(0x8a7458),ROOFG=M(0x4a4a50),THATCH=M(0xb89a5a,{roughness:1}),CLAY=M(0x9a7a5a),JAR=M(0x4a3020,{roughness:.5});
  /* ㄱ자 겹집 + 항아리 굴뚝 */const house=(x,z,rot,thatch,chim)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;G.add(g);const b=new THREE.Mesh(new THREE.BoxGeometry(11,.5,6.6),ST);b.position.set(0,.25,0);g.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(10.4,2.6,6),WALLW);w.position.set(0,1.8,0);g.add(w);for(let i=0;i<=4;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,2.6,8),WOOD);c.position.set(-5.2+i*2.6,1.8,3.02);g.add(c)}
   const wb=new THREE.Mesh(new THREE.BoxGeometry(3.6,2.4,4),M(0xc8b898));wb.position.set(-3.4,1.7,5);g.add(wb);
   if(thatch){const rf=new THREE.Mesh(new THREE.SphereGeometry(1,14,8,0,Math.PI*2,0,Math.PI/2),THATCH);rf.scale.set(6.6,2,4.2);rf.position.set(0,3.1,0);g.add(rf);const r2=new THREE.Mesh(new THREE.SphereGeometry(1,10,6,0,Math.PI*2,0,Math.PI/2),THATCH);r2.scale.set(2.4,1.4,2.8);r2.position.set(-3.4,2.9,5.4);g.add(r2)}
-  else{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOFG);rf.rotation.y=Math.PI/4;rf.scale.set(9.2,2.2,6.2);rf.position.set(0,4.1,0);g.add(rf);const r2=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOFG);r2.rotation.y=Math.PI/4;r2.scale.set(3.6,1.6,4);r2.position.set(-3.4,3.6,5.4);g.add(r2)}
+  else{curvedRoof(g,0,(4.1)-(2.2)/2,0,(9.2)/.72,(6.2)/.72,(2.2)*1.05);curvedRoof(g,-3.4,(3.6)-(1.6)/2,5.4,(3.6)/.72,(4)/.72,(1.6)*1.05)}
   if(chim){const cx=4,cz=4.6;const c=new THREE.Mesh(new THREE.CylinderGeometry(.42,.5,2.6,10),CLAY);c.position.set(cx,1.3,cz);g.add(c);for(let k=0;k<5;k++){const t=new THREE.Mesh(new THREE.TorusGeometry(.46,.05,4,12),M(0x5a5a58));t.rotation.x=Math.PI/2;t.position.set(cx,.4+k*.5,cz);g.add(t)}const jar=new THREE.Mesh(new THREE.SphereGeometry(.42,12,10),JAR);jar.scale.y=1.2;jar.position.set(cx,2.95,cz);jar.rotation.x=Math.PI;g.add(jar)}
   const cs=Math.cos(rot),sn=Math.sin(rot);const tr=(px,pz)=>[x+px*cs+pz*sn,z-px*sn+pz*cs];const pts=[tr(0,0),tr(-3.4,5)];solids.push({cx:pts[0][0],cz:pts[0][1],r:5.4,y0:0,y1:4});solids.push({cx:pts[1][0],cz:pts[1][1],r:2.2,y0:0,y1:3})};
  house(-10,4,0,false,true);house(12,2,0,true,true);house(-14,-16,.2,true,true);house(10,-18,-.1,false,true);house(30,-6,-.4,true,false);
@@ -43,10 +46,10 @@ export function buildWanggok(opts={}){const mini=!!opts.mini;const G=new THREE.G
   const makeClues=()=>{const all=[];for(const a of rooms){for(const rw of[0,1])all.push(['row',a,rw]);for(const e of['L','R'])all.push(['edge',a,e]);for(const b of rooms){if(a===b)continue;for(const t of['adj','nadj','left','behind','samecol'])all.push([t,a,b])}}const tr=all.filter(cl=>truth(cl,sol));tr.sort(()=>r()-.5);const P=perms(rooms);let cand=P;const out=[];for(const cl of tr){const nc=cand.filter(p=>truth(cl,p));if(nc.length<cand.length){out.push(cl);cand=nc}if(cand.length===1)break}
    for(let i=out.length-1;i>=0;i--){const tryc=out.slice(0,i).concat(out.slice(i+1));if(P.filter(p=>tryc.every(c=>truth(c,p))).length===1)out.splice(i,1)}return out};
   const clr=()=>{while(pg.children.length)pg.remove(pg.children[0]);cellM=[]};
-  const draw=()=>{cellM.forEach(m=>{const n=cur[m.userData.i];m.material=n?new THREE.MeshStandardMaterial({map:lt(n),roughness:.8}):M(0xd8ccb0);m.position.y=BY+(n?.06:.02)})};
+  const draw=()=>{cellM.forEach(m=>{const n=cur[m.userData.i];m.material=n?new THREE.MeshStandardMaterial({map:lt(n),roughness:.8}):yardMat();m.position.y=BY+(n?.06:.02)})};
   const newRound=()=>{clr();const L=LAY[rd];R=L.length;C=L[0].length;sol=L.flat();rooms=sol.slice().sort(()=>r()-.5);cur=new Array(R*C).fill(null);clues=makeClues();selRoom=null;checks=0;badSet=new Set();
    const tb=new THREE.Mesh(new THREE.BoxGeometry(C*CW+.6,.1,R*CD+.6),M(0x6a4a2a));tb.position.y=BY-.06;pg.add(tb);const rf=new THREE.Mesh(new THREE.BoxGeometry(C*CW+.8,.06,.2),ROOFG);rf.position.set(0,BY+.4,-R*CD/2-.25);pg.add(rf);
-   for(let i=0;i<R*C;i++){const rr=(i/C)|0,c=i%C;const m=new THREE.Mesh(new THREE.BoxGeometry(CW*.94,.08,CD*.92),M(0xd8ccb0));m.position.set((c-(C-1)/2)*CW,BY+.02,(rr-(R-1)/2)*CD);m.userData.i=i;pg.add(m);cellM.push(m)}
+   for(let i=0;i<R*C;i++){const rr=(i/C)|0,c=i%C;const m=new THREE.Mesh(new THREE.BoxGeometry(CW*.94,.08,CD*.92),yardMat());m.position.set((c-(C-1)/2)*CW,BY+.02,(rr-(R-1)/2)*CD);m.userData.i=i;pg.add(m);cellM.push(m)}
    const fr=new THREE.Mesh(new THREE.PlaneGeometry(C*CW+.4,.3),new THREE.MeshBasicMaterial({map:tex(256,64,(q,w,h)=>{q.fillStyle='#e8dcc0';q.fillRect(0,0,w,h);q.fillStyle='#2a2622';q.font='bold 26px sans-serif';q.textAlign='center';q.fillText('위쪽=뒷줄 · 아래쪽=앞줄(마당)',w/2,42)},[1,1])}));fr.rotation.x=-Math.PI/2;fr.position.set(0,BY+.01,R*CD/2+.2);pg.add(fr);
    draw();ui()};
   const place=i=>{if(done||wait>0)return;if(selRoom){const prev=cur.indexOf(selRoom);if(prev>=0)cur[prev]=null;const old=cur[i];cur[i]=selRoom;if(old&&prev>=0)cur[prev]=old;selRoom=null;snd(520,.06)}else if(cur[i]){selRoom=cur[i];cur[i]=null;snd(440,.05)}draw();ui()};

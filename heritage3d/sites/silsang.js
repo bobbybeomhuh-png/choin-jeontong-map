@@ -4,16 +4,18 @@
    철불이 일본 쪽 후지산을 바라본다는 이야기는 전해 오는 이야기.
    놀이: 석등 그림자 맞추기(석등 불빛에 비친 돌 조각의 그림자가 벽에 그린 테두리와 꼭 같아지도록 조각을 옆으로 돌리고 앞으로 굴리기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildSilsang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(828);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<7;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(30+r()*10,36+r()*14,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-96+i*32,17,-118-r()*10);G.add(c)}
+ for(let i=0;i<7;i++){const c=lumpyHill((30+r()*10)*1.3,(36+r()*14)*.75,0x4a6a3a,((-96+i*32)*.13+57)|0);c.position.set(-96+i*32,-.5,-118-r()*10);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 만수천 + 해탈교 */const SZ=40;{const w=new THREE.Mesh(new THREE.PlaneGeometry(220,7),M(0x5a8a9a,{roughness:.2}));w.rotation.x=-Math.PI/2;w.position.set(0,.04,SZ);G.add(w);solids.push({x0:-110,x1:-2.6,y0:-2,y1:3,z0:SZ-3.5,z1:SZ+3.5},{x0:2.6,x1:110,y0:-2,y1:3,z0:SZ-3.5,z1:SZ+3.5});const br=new THREE.Mesh(new THREE.BoxGeometry(5.2,.35,8),ST);br.position.set(0,.2,SZ);G.add(br);for(const s of[-1,1]){const rl=new THREE.Mesh(new THREE.BoxGeometry(.3,.6,8),ST2);rl.position.set(s*2.6,.6,SZ);G.add(rl)}}
  sp(0,SZ+6,3,'해탈교','만수천을 건너 실상사로 들어가는 다리예요. 다리 앞뒤에 돌장승이 서서 절을 지켜요.');
  /* 돌장승 셋 */const jang=(x,z,ry,txt)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;const b=new THREE.Mesh(new THREE.CylinderGeometry(.45,.55,2.6,10),M(0x9a9488));b.position.y=1.3;g.add(b);const hd=new THREE.Mesh(new THREE.SphereGeometry(.55,12,10),M(0x9a9488));hd.scale.y=1.1;hd.position.y=2.9;g.add(hd);const cap=new THREE.Mesh(new THREE.CylinderGeometry(.5,.6,.35,12),M(0x8a8478));cap.position.y=3.5;g.add(cap);for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),M(0x2a2622));e.position.set(s*.2,3,.48);g.add(e)}const nose=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),M(0x8a8478));nose.position.set(0,2.8,.52);g.add(nose);const mouth=new THREE.Mesh(new THREE.BoxGeometry(.4,.06,.05),M(0x2a2622));mouth.position.set(0,2.55,.5);g.add(mouth);G.add(g);solids.push({cx:x,cz:z,r:.6,y0:0,y1:3.6})};

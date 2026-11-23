@@ -3,14 +3,16 @@
    솔숲 길 → 네모난 연못 경지와 외나무다리 → 안양루(象王山開心寺 큰 현판) → 대웅보전(보물) / 심검당·범종각(휘어진 나무를 다듬지 않고 그대로 기둥·보로 씀) / 봄에 연둣빛 꽃이 피는 청벚꽃.
    놀이: 휜 기둥 세우기(높이가 저마다 다른 덤벙 주춧돌 위에 길이가 저마다 다른 휜 기둥을 짝지어 세워, 위에 얹은 보가 수평이 되게, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildGaesim(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(654);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(22+r()*10,24+r()*10,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,11,-108-r()*10);G.add(c)}
+ for(let i=0;i<6;i++){const c=lumpyHill((22+r()*10)*1.3,(24+r()*10)*.75,0x4a6a3a,((-80+i*32)*.13+57)|0);c.position.set(-80+i*32,-.5,-108-r()*10);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a6a48),RED=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
  /* 휜 통나무 기둥 */const crook=(L,bend,seed,mat=WOOD,rad=.17)=>{const pts=[];for(let k=0;k<=8;k++){const t=k/8;pts.push(new THREE.Vector3(Math.sin(t*Math.PI)*bend*(seed%2?1:-1)+Math.sin(t*7+seed)*.03,t*L,Math.sin(t*Math.PI*1.3+seed)*bend*.4))}return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),16,rad,8,false),mat)};
  const hall=(x,z,W,D,PH,base=.6,crooked=false)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W-.2,PH,D-.2),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const px=x-W/2+i*W/n,pz=z+j*D/2;if(crooked){const c=crook(PH,.25+r()*.2,i*3+j);c.position.set(px,base,pz);G.add(c)}else{const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),RED);c.position.set(px,base+PH/2,pz);G.add(c)}}if(crooked){const bm=crook(W+.6,.3,7,WOOD,.16);bm.rotation.z=-Math.PI/2;bm.position.set(x-W/2-.3,base+PH,z+D/2);G.add(bm)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};

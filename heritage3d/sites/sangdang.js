@@ -3,6 +3,7 @@
    남문 공남문(무지개 홍예문 위 문루), 동문 진동문, 서문 미호문, 몰래 드나들던 암문, 성벽에서 튀어나온 치성, 성 안 저수지와 산성마을.
    놀이: 산성 병사 우물고누(우리 옛 땅따먹기 놀이 '고누' 가운데 가장 쉬운 우물고누를 컴퓨터와 둬요. 말이 움직일 곳이 없게 막으면 이겨요. 컴퓨터와 차례로 두기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildSangdang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1716);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -15,7 +16,7 @@ export function buildSangdang(opts={}){const mini=!!opts.mini;const G=new THREE.
  /* 성벽(산을 두르는 고리, 남·동·서문과 암문 자리 비움) */const RW=38,NS=60,WH=5;const gaps=[Math.PI/2,0,Math.PI,-Math.PI*.3];
  for(let i=0;i<NS;i++){const a=(i+.5)/NS*Math.PI*2;if(gaps.some(g=>Math.abs(Math.atan2(Math.sin(a-g),Math.cos(a-g)))<.06))continue;const rr=RW;const x=Math.cos(a)*rr,z=Math.sin(a)*rr*.9;const L=2*Math.PI*RW/NS+.5;const seg=new THREE.Mesh(new THREE.BoxGeometry(2.6,WH,L),WALL);seg.position.set(x,WH/2,z);seg.rotation.y=-Math.atan2(z,x);G.add(seg);const cap=new THREE.Mesh(new THREE.BoxGeometry(2.8,.25,L),M(0x8e8676));cap.position.set(x,WH+.12,z);cap.rotation.y=seg.rotation.y;G.add(cap);solids.push({cx:x,cz:z,r:2,y0:0,y1:WH})}
  /* 공남문(남문: 홍예 + 문루) */{const z=RW*.9;for(const s of[-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(3,WH,3.2),WALL);p.position.set(s*3,WH/2,z);G.add(p);solids.push({x0:s*3-1.5,x1:s*3+1.5,y0:0,y1:WH,z0:z-1.6,z1:z+1.6})}const top=new THREE.Mesh(new THREE.BoxGeometry(9,1.6,3.2),WALL);top.position.set(0,WH-.8,z);G.add(top);const arch=new THREE.Mesh(new THREE.TorusGeometry(1.5,.25,6,16,Math.PI),M(0x8e8676));arch.position.set(0,WH-2.6,z+1.62);G.add(arch);
-  for(let i=0;i<=3;i++)for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,2.2,8),DAN);c.position.set(-3.6+i*2.4,WH+1.1,z+s*1.2);G.add(c)}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(7.2,1.6,3.4);rf.position.set(0,WH+2.9,z);G.add(rf);plaque(0,WH+1.7,z+1.25,'門南控',1.4)}
+  for(let i=0;i<=3;i++)for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,2.2,8),DAN);c.position.set(-3.6+i*2.4,WH+1.1,z+s*1.2);G.add(c)}curvedRoof(G,0,(WH+2.9)-(1.6)/2,z,(7.2)/.72,(3.4)/.72,(1.6)*1.05);plaque(0,WH+1.7,z+1.25,'門南控',1.4)}
  sp(0,RW*.9+5,3,'공남문','남쪽 정문이에요. 돌로 무지개처럼 둥글게 쌓은 홍예문 위에 문루를 얹었어요. 숙종 때(1716) 성을 크게 고쳐 쌓았어요.');
  /* 동문 진동문 · 서문 미호문 */for(const[s,n,t]of[[1,'진동문','門東鎭'],[-1,'미호문','門湖弭']]){const x=s*RW;const t1=new THREE.Mesh(new THREE.BoxGeometry(3,1.2,7),WALL);t1.position.set(x,WH-.6,0);G.add(t1);for(const q of[-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(3,WH,2),WALL);p.position.set(x,WH/2,q*2.8);G.add(p);solids.push({cx:x,cz:q*2.8,r:1.6,y0:0,y1:WH})}plaque(x-s*1.55,WH-.6,0,t,1.2);G.children[G.children.length-1].rotation.y=-s*Math.PI/2}
  sp(RW-6,0,2.6,'진동문','동쪽 문이에요.');sp(-RW+6,0,2.6,'미호문','서쪽 문이에요. 문 밖으로 청주 시내가 내려다보여요.');
@@ -25,7 +26,7 @@ export function buildSangdang(opts={}){const mini=!!opts.mini;const G=new THREE.
  sp(Math.cos(Math.PI*.75)*(RW-5),Math.sin(Math.PI*.75)*(RW-5)*.9,2.4,'치성','성벽에서 바깥으로 네모나게 튀어나오게 쌓아, 성벽에 붙은 적을 옆에서 막던 곳이에요.');
  /* 저수지 + 산성마을 */{const w=new THREE.Mesh(new THREE.CircleGeometry(8,28),M(0x4a7a8a,{roughness:.2}));w.rotation.x=-Math.PI/2;w.scale.set(1.3,1,1);w.position.set(8,.05,-12);G.add(w)}
  sp(8,-2.6,2.6,'저수지','성 안의 큰 저수지예요. 오래 버티려면 물이 꼭 있어야 했어요.');
- const house=(x,z,rot)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;G.add(g);const w=new THREE.Mesh(new THREE.BoxGeometry(7,2.4,3.6),M(0xeee6d4));w.position.y=1.5;g.add(w);const b=new THREE.Mesh(new THREE.BoxGeometry(7.6,.3,4.2),ST);b.position.y=.15;g.add(b);const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(5.8,1.4,3.6);rf.position.y=3.3;g.add(rf);solids.push({cx:x,cz:z,r:3.6,y0:0,y1:3})};
+ const house=(x,z,rot)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;G.add(g);const w=new THREE.Mesh(new THREE.BoxGeometry(7,2.4,3.6),M(0xeee6d4));w.position.y=1.5;g.add(w);const b=new THREE.Mesh(new THREE.BoxGeometry(7.6,.3,4.2),ST);b.position.y=.15;g.add(b);curvedRoof(g,0,(3.3)-(1.4)/2,0,(5.8)/.72,(3.6)/.72,(1.4)*1.05);solids.push({cx:x,cz:z,r:3.6,y0:0,y1:3})};
  house(-14,-6,.1);house(-20,6,-.2);house(-8,10,0);house(-16,-18,.3);
  sp(-10,2,2.6,'산성마을','성 안에 자리한 마을이에요. 지금도 사람들이 살며 음식점이 모여 있어요.');
  /* 산성 병사 우물고누(11/23) */const PX=14,PZ=14;const pg=new THREE.Group();pg.position.set(PX,0,PZ);pg.visible=false;G.add(pg);

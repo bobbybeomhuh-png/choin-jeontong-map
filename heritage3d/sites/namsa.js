@@ -3,16 +3,18 @@
    골목마다 흙과 돌을 켜켜이 쌓은 옛 담장, 이씨고가 앞 골목 위로 엇갈려 X자를 이룬 회화나무 두 그루(부부나무라 부름), 최씨고가, 사양정사, 하씨고가의 오래된 매화 원정매, 남사천.
    놀이: 장독 밀기(좁은 뒤뜰에서 장독을 밀어 장독대 자리에 놓기. 밀 수만 있고 끌 수는 없어서 차례를 잘 생각해야 함, 판마다 풀 수 있는지 미리 확인함, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildNamsa(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1700);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x8aa258,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<7;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(28+r()*10,34+r()*14,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-96+i*32,16,-112-r()*10);G.add(c)}
+ for(let i=0;i<7;i++){const c=lumpyHill((28+r()*10)*1.3,(34+r()*14)*.75,0x4a6a3a,((-96+i*32)*.13+57)|0);c.position.set(-96+i*32,-.5,-112-r()*10);G.add(c)}
  const ST=M(0xa8a296),WOOD=M(0x8a6a4a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
  /* 흙돌담 무늬 */const WT=tex(256,128,(q,w,h)=>{q.fillStyle='#b09070';q.fillRect(0,0,w,h);for(let y=8;y<h;y+=22)for(let x=-(y%44)/2;x<w;x+=30){const v=130+(r()*50|0);q.fillStyle=`rgb(${v},${v-8},${v-20})`;q.beginPath();q.ellipse(x+15,y,13,8,0,0,7);q.fill()}},[1,1]);const WALLM=new THREE.MeshStandardMaterial({map:WT,roughness:1});
  const wallSeg=(x0,z0,x1,z1,h=2)=>{const L=Math.hypot(x1-x0,z1-z0);const w=new THREE.Mesh(new THREE.BoxGeometry(x1===x0?.6:L,h,z1===z0?.6:L),WALLM);w.position.set((x0+x1)/2,h/2,(z0+z1)/2);w.castShadow=true;G.add(w);const cap=new THREE.Mesh(new THREE.BoxGeometry(x1===x0?.9:L+.3,.25,z1===z0?.9:L+.3),ROOF);cap.position.set((x0+x1)/2,h+.12,(z0+z1)/2);G.add(cap);solids.push({x0:Math.min(x0,x1)-.3,x1:Math.max(x0,x1)+.3,y0:0,y1:h,z0:Math.min(z0,z1)-.3,z1:Math.max(z0,z1)+.3})};
- const roof=(x,y,z,W,D,h,m=ROOF)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),m);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h,m=ROOF)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const house=(x,z,W,D,PH=2.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1,.5,D+1),ST);b.position.set(x,.25,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,.5+PH/2,z);G.add(w);for(let i=0;i<=Math.round(W/2.6);i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.15,.17,PH,8),WOOD);c.position.set(x-W/2+i*W/Math.round(W/2.6),.5+PH/2,z+j*D/2);G.add(c)}roof(x,.5+PH,z,W+2.4,D+2.4,PH*.75);solids.push({x0:x-W/2-.5,x1:x+W/2+.5,y0:0,y1:.5+PH,z0:z-D/2-.5,z1:z+D/2+.5})};
  /* 골목: 남북 큰길(x=0)과 동서 골목(z=10), 양쪽 담장 */wallSeg(-3,48,-3,14);wallSeg(3,48,3,14);wallSeg(-3,6,-3,-40);wallSeg(3,6,3,-40);wallSeg(-40,14,-22,14);wallSeg(-18,14,-3,14);wallSeg(3,14,20,14);wallSeg(24,14,40,14);wallSeg(-40,6,-16,6);wallSeg(-12,6,-3,6);wallSeg(3,6,16,6);wallSeg(20,6,40,6);
  sp(0,40,3,'옛 담장 골목','흙과 돌을 켜켜이 쌓은 담장이 골목을 따라 이어져요. 「산청 남사리 옛 담장」은 국가등록문화재예요.');

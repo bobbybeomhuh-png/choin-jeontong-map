@@ -3,6 +3,7 @@
    건물(수직사·노안당·노락당·이로당)은 공개 실측이 없어 공개 사진으로 간추려 지음(배치·크기 어림).
    놀이: 노락당 촛불 밝히기(방바닥 칸에 실측 촛대를 놓아 방 안 모든 칸을 밝혀요. 불빛은 가로·세로로 곧게 뻗고 삼층장에 막혀요. 촛대는 적게! 빛 채우기 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {yardMat} from './yardkit.js';
 import {tex,mulb} from './sungnyemun.js';
 import {buildHall} from './hallkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -10,7 +11,7 @@ import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 export function buildUnhyeon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1866);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
- {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x8a9a5a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr);const yd=new THREE.Mesh(new THREE.PlaneGeometry(40,50),M(0xd8ccb0));yd.rotation.x=-Math.PI/2;yd.position.set(0,.02,2);G.add(yd)}
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x8a9a5a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr);const yd=new THREE.Mesh(new THREE.PlaneGeometry(40,50),yardMat());yd.rotation.x=-Math.PI/2;yd.position.set(0,.02,2);G.add(yd)}
  for(let i=0;i<14;i++){const h=12+r()*24;const b=new THREE.Mesh(new THREE.BoxGeometry(8+r()*6,h,8),M(0x9aa4b0));b.position.set(-90+i*14,h/2,-80-r()*10);G.add(b)}
  const ST=M(0xa8a296),WALLW=M(0xeee6d4),WOOD=M(0x8a7458),ROOF=M(0x4a4a50);
  const plaque=(x,y,z,txt,w=1.6)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};

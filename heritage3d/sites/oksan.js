@@ -4,16 +4,18 @@
    독락당: 냇가 쪽 담장에 살창을 내어 안에서 냇물을 내다보게 하고, 냇가 바위 위에 정자 계정을 앉힘.
    놀이: 진설도 외워 차리기(향사 상차림 그림을 잠깐 보고 외운 뒤, 제기를 상 위 제자리에 차리기, 상차림은 간추린 것, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildOksan(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1572);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(22+r()*10,26+r()*10,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,12,-108-r()*10);G.add(c)}
+ for(let i=0;i<6;i++){const c=lumpyHill((22+r()*10)*1.3,(26+r()*10)*.75,0x4a6a3a,((-80+i*32)*.13+57)|0);c.position.set(-80+i*32,-.5,-108-r()*10);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a6a4a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),EARTH=M(0xb8a080);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 한옥 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x6b4a2e,bracket:'ik',bare:true,plain:true,front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  const wallSeg=(x0,z0,x1,z1,h=1.8)=>{const L=Math.hypot(x1-x0,z1-z0);const w=new THREE.Mesh(new THREE.BoxGeometry(x1===x0?.5:L,h,z1===z0?.5:L),EARTH);w.position.set((x0+x1)/2,h/2,(z0+z1)/2);G.add(w);solids.push({x0:Math.min(x0,x1)-.25,x1:Math.max(x0,x1)+.25,y0:0,y1:h,z0:Math.min(z0,z1)-.25,z1:Math.max(z0,z1)+.25})};
  /* 자계천(남북으로 흐름) + 세심대 너럭바위 + 징검돌 */const RX=14;{const w=new THREE.Mesh(new THREE.PlaneGeometry(7,220),M(0x5a8a9a,{roughness:.2}));w.rotation.x=-Math.PI/2;w.position.set(RX,.04,0);G.add(w);solids.push({x0:RX-3.5,x1:RX+3.5,y0:-2,y1:3,z0:-110,z1:26},{x0:RX-3.5,x1:RX+3.5,y0:-2,y1:3,z0:30,z1:110});const rock=new THREE.Mesh(new THREE.CylinderGeometry(4,4.4,.5,9),M(0xc0b8a8,{flatShading:true}));rock.scale.z=.6;rock.position.set(RX,.25,40);G.add(rock);const LT=tex(256,96,(q,w,h)=>{q.fillStyle='rgba(0,0,0,0)';q.clearRect(0,0,w,h);q.fillStyle='#4a4238';q.font='bold 60px serif';q.textAlign='center';q.fillText('洗心臺',w/2,70)});const t=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.9),new THREE.MeshBasicMaterial({map:LT,transparent:true}));t.rotation.x=-Math.PI/2;t.position.set(RX,.52,40);G.add(t);for(let k=0;k<5;k++){const s=new THREE.Mesh(new THREE.CylinderGeometry(.45,.5,.3,8),ST2);s.position.set(RX-2.6+k*1.3,.15,28);G.add(s)}}
  sp(RX-5,40,3,'세심대','자계천의 너럭바위예요. 「마음을 씻는 곳」이라는 뜻의 洗心臺 글씨는 퇴계 이황이 썼다고 전해요.');

@@ -4,6 +4,7 @@
    옛날 강원도 산골 나무를 뗏목으로 엮어 북한강을 타고 가평·두물머리를 지나 한양 마포까지 띄워 보냈음(떼꾼).
    놀이: 뗏목 몰기(북한강 바위를 피해 뗏목을 두물머리까지), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {lumpyHill} from './treekit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {tex,mulb} from './sungnyemun.js';
@@ -14,7 +15,7 @@ export function buildYangpyeong(opts={}){const mini=!!opts.mini;const G=new THRE
  /* 물길: 북한강(북쪽에서 x -10~0), 남한강(동쪽에서 z 10~22), 만나서 한강(서쪽). 두물머리 땅은 북동쪽 */const WM=M(0x4a86a8,{roughness:.18,metalness:.12});
  {const pl=(w,h,x,z)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),WM);m.rotation.x=-Math.PI/2;m.position.set(x,.04,z);G.add(m)};pl(10,112,-5,-44);pl(112,12,44,16);pl(100,12,-60,16);pl(10,12,-5,16);
   const SA=M(0xd8c8a0,{roughness:1});for(const[w,h,x,z]of[[1.4,104,.7,-46],[104,1.4,52,9.3]]){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),SA);m.rotation.x=-Math.PI/2;m.position.set(x,.03,z);G.add(m)}
-  /* 물 건너편(서·남) 산 */for(let k=0;k<18;k++){const t=new THREE.Mesh(new THREE.ConeGeometry(2+r()*2,8+r()*8,7),M(0x3a5a30,{roughness:1}));t.position.set(-30-r()*50,4,-80+k*9);G.add(t)}}
+  /* 물 건너편(서·남) 산 */for(let k=0;k<18;k++){const t=lumpyHill((2+r()*2)*1.3,(8+r()*8)*.75,0x3a5a30,((-30-r()*50)*.13+57)|0);t.position.set(-30-r()*50,-.5,-80+k*9);G.add(t)}}
  /* 두물머리 느티나무(400살) + 황포돛배 */const TX=6,TZ=4;{const tr=new THREE.Mesh(new THREE.CylinderGeometry(.9,1.4,5,10),M(0x5a4434));tr.position.set(TX,2.5,TZ);G.add(tr);const lm=M(0x5a7a2a);for(let k=0;k<9;k++){const a=k/9*Math.PI*2;const c=new THREE.Mesh(new THREE.SphereGeometry(4,10,8),lm);c.scale.y=.6;c.position.set(TX+Math.cos(a)*5,7+r()*1.5,TZ+Math.sin(a)*5);G.add(c)}const c0=new THREE.Mesh(new THREE.SphereGeometry(5,10,8),lm);c0.scale.y=.6;c0.position.set(TX,9,TZ);G.add(c0);solids.push({cx:TX,cz:TZ,r:1.6,y0:0,y1:6})
   for(const[bx,bz,ry]of[[12,15,.2],[22,17,-.1]]){const g=new THREE.Group();g.position.set(bx,.05,bz);g.rotation.y=ry;const h=new THREE.Mesh(new THREE.BoxGeometry(7,.8,2),M(0x8a6a44));h.position.y=.3;g.add(h);const mast=new THREE.Mesh(new THREE.CylinderGeometry(.08,.1,6,6),M(0x6a4a30));mast.position.y=3.5;g.add(mast);const sail=new THREE.Mesh(new THREE.PlaneGeometry(3.4,4.4),M(0xd8a840,{side:THREE.DoubleSide}));sail.position.set(.1,4,0);sail.rotation.y=Math.PI/2;g.add(sail);G.add(g)}}
  /* 용문사: 은행나무(공개 3D, 높이 42m) + 대웅전 */const GX=50,GZ=-48;

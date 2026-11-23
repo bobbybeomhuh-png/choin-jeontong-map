@@ -3,6 +3,7 @@
    복례문 → 만대루(앞면 7칸 2층 누각, 아래로 지나 들어감) → 마당 양쪽 동재·서재 → 강당 입교당 → 뒤 존덕사. 문밖 달팽이 모양 흙담 뒷간. 앞으로 낙동강과 병산 벼랑.
    놀이: 그랭이질(울퉁불퉁한 덤벙 주춧돌 위에 기둥을 세우려 기둥 밑을 쪽쪽 깎아 틈 없이 앉히기. 닿아 있는 쪽을 깎아야 기둥이 내려앉음, 크게 보기 놀이판, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildByeongsan(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1572);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -10,8 +11,8 @@ export function buildByeongsan(opts={}){const mini=!!opts.mini;const G=new THREE
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  /* 낙동강·모래밭·병산 벼랑(남쪽) */{const sand=new THREE.Mesh(new THREE.PlaneGeometry(220,16),M(0xd8c8a0));sand.rotation.x=-Math.PI/2;sand.position.set(0,.02,40);G.add(sand);const w=new THREE.Mesh(new THREE.PlaneGeometry(220,26),M(0x4a7a8a,{roughness:.25}));w.rotation.x=-Math.PI/2;w.position.set(0,.04,60);G.add(w);solids.push({x0:-110,x1:110,y0:-5,y1:6,z0:47,z1:200});for(let i=0;i<9;i++){const c=new THREE.Mesh(new THREE.DodecahedronGeometry(14+r()*6,0),M(0x5a6a48,{flatShading:true}));c.scale.set(1.4,1.6,.7);c.position.set(-80+i*20,8,86+r()*6);G.add(c)}}
  const STONE=M(0xa8a296),WOOD=M(0x8a6a4a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),EARTH=M(0xb8a080);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),STONE);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);for(let i=0;i<=Math.round(W/3);i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/Math.round(W/3),base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7})};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 한옥 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x6b4a2e,bracket:'ik',bare:true,plain:true,front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return undefined};
  const wallSeg=(x0,z0,x1,z1,h=1.8)=>{const L=Math.hypot(x1-x0,z1-z0);const w=new THREE.Mesh(new THREE.BoxGeometry(x1===x0?.5:L,h,z1===z0?.5:L),EARTH);w.position.set((x0+x1)/2,h/2,(z0+z1)/2);G.add(w);solids.push({x0:Math.min(x0,x1)-.25,x1:Math.max(x0,x1)+.25,y0:0,y1:h,z0:Math.min(z0,z1)-.25,z1:Math.max(z0,z1)+.25})};
  /* 복례문과 바깥 담 */const FZ=20;wallSeg(-24,FZ,-1.6,FZ);wallSeg(1.6,FZ,24,FZ);wallSeg(-24,FZ,-24,-32);wallSeg(24,FZ,24,-32);wallSeg(-24,-32,24,-32);roof(0,2.6,FZ,4.4,2.6,1.2);for(const s of[-1,1]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,2.6,8),M(0x8a3a2a));p.position.set(s*1.5,1.3,FZ);G.add(p)}
  sp(0,FZ+4,3.2,'복례문','병산서원 바깥 문이에요. 「예로 돌아간다」는 뜻의 이름이에요.');

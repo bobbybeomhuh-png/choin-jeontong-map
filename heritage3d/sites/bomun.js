@@ -4,6 +4,7 @@
    신라 때 한 어부의 그물에 사람 모양 돌 스물두 개가 걸려 올라와, 꿈의 계시대로 석굴에 모셨다는 이야기가 전해 옴(전해 오는 이야기).
    놀이: 돌부처 굴려 모시기(판을 기울여 돌을 굴려 석굴 감실까지 보내요. 구멍에 빠지면 처음 자리로, 새 방식·기울이기 미로), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildBomun(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(635);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -13,8 +14,8 @@ export function buildBomun(opts={}){const mini=!!opts.mini;const G=new THREE.Gro
  /* 낙가산 */for(let i=0;i<7;i++){const h=new THREE.Mesh(new THREE.SphereGeometry(20+r()*8,14,8,0,Math.PI*2,0,Math.PI/2),M(0x4a6a3a,{flatShading:true}));h.scale.y=.7;h.position.set(-40+i*16,0,-70-r()*10);G.add(h)}
  const ST=M(0xa8a296),ROCK=M(0x8a867c,{flatShading:true}),WOODB=M(0x8a7458),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),DAN=M(0x8a3a2a);
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.8)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);for(let i=0;i<=3;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,PH,10),WOODB);c.position.set(x-W/2+i*W/3,base+PH/2,z+j*D/2);G.add(c)}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set((W+2.4)*.72,PH*.75,(D+2.4)*.72);rf.position.set(x,base+PH+PH*.37,z);G.add(rf);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
- /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),DAN);c.position.set(s*2,2,46);G.add(c);solids.push({cx:s*2,cz:46,r:.35,y0:0,y1:4})}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(4.3,1.5,2.2);rf.position.set(0,4.75,46);G.add(rf);plaque(0,3.5,46.9,'寺門普山伽洛',2.4)}
+ const hall=(x,z,W,D,PH,base=.8)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
+ /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),DAN);c.position.set(s*2,2,46);G.add(c);solids.push({cx:s*2,cz:46,r:.35,y0:0,y1:4})}curvedRoof(G,0,(4.75)-(1.5)/2,46,(4.3)/.72,(2.2)/.72,(1.5)*1.05);plaque(0,3.5,46.9,'寺門普山伽洛',2.4)}
  sp(0,50,3,'일주문','낙가산 보문사로 들어가는 문이에요. 낙가산은 관음보살이 사는 산(보타락가)에서 따온 이름이에요.');
  /* 극락보전 */const KZ=-2;{const y=hall(0,KZ,11,7,3.6,1);plaque(0,y-.5,KZ+3.55,'殿寶樂極',2)}
  sp(0,KZ+7.4,3.2,'극락보전','보문사의 큰 법당이에요.');

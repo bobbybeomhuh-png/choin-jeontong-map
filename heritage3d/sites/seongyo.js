@@ -4,6 +4,7 @@
    연못 위 정자 활래정(1816) → 길게 이어진 행랑채와 솟을대문 → 사랑채 열화당(1815, 앞에 서양식 차양을 덧댐) / 안채 / 동별당.
    놀이: 숫자 무늬 맞추기(줄마다 적힌 숫자만큼 이어진 칸을 칠해 숨은 무늬를 찾기, 노노그램, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildSeongyo(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1703);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -11,9 +12,9 @@ export function buildSeongyo(opts={}){const mini=!!opts.mini;const G=new THREE.G
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  for(let i=0;i<24;i++){const x=-50+i*4.4+r()*2,z=-36-r()*8;const t=new THREE.Mesh(new THREE.CylinderGeometry(.25,.35,7,7),M(0x6a4030));t.position.set(x,3.5,z);t.rotation.z=(r()-.5)*.3;G.add(t);const c=new THREE.Mesh(new THREE.ConeGeometry(2.2,2.4,8),M(0x2f5a2a));c.scale.y=.6;c.position.set(x,7,z);G.add(c)}
  const ST=M(0xa8a296),WOOD=M(0x8a6a48),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),EARTH=M(0xb8a080);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.2,base,D+1.2),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/2.6));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+2.6,D+2.6,PH*.8);solids.push({x0:x-W/2-.6,x1:x+W/2+.6,y0:0,y1:base+PH,z0:z-D/2-.6,z1:z+D/2+.6});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 한옥 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x6b4a2e,bracket:'ik',bare:true,plain:true,front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 연못과 활래정(앞) */const PZ=30;{const p=new THREE.Mesh(new THREE.PlaneGeometry(22,12),M(0x4a7a8a,{roughness:.2}));p.rotation.x=-Math.PI/2;p.position.set(-12,.05,PZ);G.add(p);solids.push({x0:-23,x1:-1,y0:-2,y1:3,z0:PZ-6,z1:PZ+6});for(let i=0;i<20;i++){const l=new THREE.Mesh(new THREE.CircleGeometry(.5+r()*.3,12),M(0x3a7a3a));l.rotation.x=-Math.PI/2;l.position.set(-21+r()*18,.07,PZ-5+r()*10);G.add(l);if(i%4===0){const f=new THREE.Mesh(new THREE.SphereGeometry(.2,8,6),M(0xf0a0b8));f.position.set(l.position.x,.3,l.position.z);G.add(f)}}
   const X=-6,Z=PZ-2;for(const[i,j]of[[-1,-1],[1,-1],[-1,1],[1,1],[-1,0],[1,0]]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.15,.17,3.2,8),WOOD);c.position.set(X+i*2.2,1.6,Z+j*1.8);G.add(c)}const dk=new THREE.Mesh(new THREE.BoxGeometry(5,.2,4.2),WOOD);dk.position.set(X,1.2,Z);G.add(dk);roof(X,3.2,Z,7,6.4,1.6);plaque(X,2.9,Z+2.12,'亭來活',1.4)}
  sp(-6,PZ+7.5,3,'활래정','연못에 기둥을 담그고 선 정자예요(1816). 「살아 있는 물이 흘러온다」는 뜻으로, 연꽃 핀 연못을 내려다봐요.');

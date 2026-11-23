@@ -4,6 +4,7 @@
    절을 다시 짓던 날 밤 정조가 여의주를 문 용이 하늘로 오르는 꿈을 꾸어 '용주사'라 했다는 이야기가 전해 옴(전해 오는 이야기).
    놀이: 범종 치기(당목을 눌러 당겼다 놓아 알맞은 힘으로 종을 쳐요. 너무 약해도 세도 안 되고, 판마다 알맞은 힘 자리가 좁아지고 움직여요, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildYongju(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1790);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -12,8 +13,8 @@ export function buildYongju(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
  /* 화산 낮은 언덕 */for(let i=0;i<9;i++){const h=new THREE.Mesh(new THREE.SphereGeometry(18+r()*8,14,8,0,Math.PI*2,0,Math.PI/2),M(0x557a44,{flatShading:true}));h.scale.y=.45;h.position.set(-80+i*20,0,-92-r()*10);G.add(h)}
  const ST=M(0xa8a296),WOODB=M(0x8a7458),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),DAN=M(0x8a3a2a),RED=M(0xb03a2a);
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hipRoof=(x,z,W,D,y,H)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set((W+2.4)*.72,H,(D+2.4)*.72);rf.position.set(x,y+H/2-.15,z);G.add(rf)};
- const hall=(x,z,W,D,PH,base=.8)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);for(let i=0;i<=3;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,PH,10),WOODB);c.position.set(x-W/2+i*W/3,base+PH/2,z+j*D/2);G.add(c)}hipRoof(x,z,W,D,base+PH,PH*.75);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hipRoof=(x,z,W,D,y,H)=>{curvedRoof(G,x,(y+H/2-.15)-(H)/2,z,((W+2.4)*.72)/.72,((D+2.4)*.72)/.72,(H)*1.05)};
+ const hall=(x,z,W,D,PH,base=.8)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 홍살문 */{const Z=46;for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,6,10),RED);c.position.set(s*2.8,3,Z);G.add(c);solids.push({cx:s*2.8,cz:Z,r:.26,y0:0,y1:6})}const bm=new THREE.Mesh(new THREE.BoxGeometry(6.2,.22,.22),RED);bm.position.set(0,5.4,Z);G.add(bm);for(let i=0;i<11;i++){const a=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,1.2,6),RED);a.position.set(-2.5+i*.5,6.1,Z);G.add(a)}const tg=new THREE.Mesh(new THREE.TorusGeometry(.32,.06,8,16),RED);tg.position.set(0,6.1,Z);G.add(tg)}
  sp(0,50,3,'홍살문','왕릉이나 향교 앞에 세우는 붉은 살 문이에요. 왕실이 세운 절이라 절 앞에도 서 있어요.');
  /* 삼문 + 행랑 */const SZ=32;{for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.BoxGeometry(8,3,3),WALLW);w.position.set(s*6.6,1.5,SZ);G.add(w);solids.push({x0:s*6.6-4,x1:s*6.6+4,y0:0,y1:3,z0:SZ-1.6,z1:SZ+1.6})}hipRoof(0,SZ,20,3,3,1.4);for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.22,.24,3,10),WOODB);c.position.set(s*2.6,1.5,SZ+1.5);G.add(c);solids.push({cx:s*2.6,cz:SZ+1.5,r:.28,y0:0,y1:3})}plaque(0,2.6,SZ+1.6,'門三',1.2)}

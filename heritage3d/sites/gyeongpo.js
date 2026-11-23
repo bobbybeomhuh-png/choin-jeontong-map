@@ -5,6 +5,7 @@
    호수 속 홍장암: 강원 안렴사 박신과 기생 홍장의 이야기가 전해 오는 바위(전해 오는 이야기).
    놀이: 다섯 달 거울 비추기(호수 위 청동 거울을 눌러 '/'·'\'로 돌려, 하늘 달빛을 꺾어 달 자리마다 닿게 해요. 빛을 반사시켜 길을 잇는 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildGyeongpo(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1347);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -18,7 +19,7 @@ export function buildGyeongpo(opts={}){const mini=!!opts.mini;const G=new THREE.
  {const b=new THREE.Mesh(new THREE.BoxGeometry(PW+1.2,FY-.2,PD+1.2),ST);b.position.set(PX,(FY-.2)/2,PZ);G.add(b);const fl=new THREE.Mesh(new THREE.BoxGeometry(PW+.4,.2,PD+.4),M(0x9a7a58));fl.position.set(PX,FY-.1,PZ);G.add(fl);
   for(let i=0;i<=5;i++)for(let j=0;j<=4;j++){const edge=i===0||i===5||j===0||j===4;const inner=(i===1||i===4)&&(j===1||j===3);if(!edge&&!inner)continue;const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.23,3.3,10),WOOD);c.position.set(PX-PW/2+i*PW/5,FY+1.65,PZ-PD/2+j*PD/4);G.add(c)}
   const bm=new THREE.Mesh(new THREE.BoxGeometry(PW+.6,.4,PD+.6),M(0x3a6a5a));bm.position.set(PX,FY+3.4,PZ);G.add(bm);
-  const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set((PW+4.4)*.72,3.2,(PD+4.4)*.72);rf.position.set(PX,FY+5.2,PZ);G.add(rf);const rg=new THREE.Mesh(new THREE.BoxGeometry(PW*.5,.45,.5),ROOF);rg.position.set(PX,FY+6.6,PZ);G.add(rg);
+  curvedRoof(G,PX,(FY+5.2)-(3.2)/2,PZ,((PW+4.4)*.72)/.72,((PD+4.4)*.72)/.72,(3.2)*1.05);const rg=new THREE.Mesh(new THREE.BoxGeometry(PW*.5,.45,.5),ROOF);rg.position.set(PX,FY+6.6,PZ);G.add(rg);
   for(const[txt,z,ry]of[['臺浦鏡',PZ+PD/2+.32,0],['山江一第',PZ-PD/2-.32,Math.PI]]){const LT=tex(320,110,(q,w,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,w,h);q.strokeStyle='#c8a040';q.lineWidth=6;q.strokeRect(5,5,w-10,h-10);q.fillStyle='#f0e0a0';q.font='bold 62px serif';q.textAlign='center';q.fillText(txt,w/2,78)});const pl=new THREE.Mesh(new THREE.PlaneGeometry(2.4,.82),new THREE.MeshBasicMaterial({map:LT}));pl.position.set(PX,FY+2.9,z);pl.rotation.y=ry;G.add(pl)}
   for(const s of[-1,1]){const st=new THREE.Mesh(new THREE.BoxGeometry(2.4,.6,1),ST);st.position.set(PX+s*4.4,.3,PZ+PD/2+1.1);G.add(st)}
   solids.push({x0:PX-PW/2-.6,x1:PX+PW/2+.6,y0:0,y1:FY+3.6,z0:PZ-PD/2-.6,z1:PZ+PD/2+.6})}

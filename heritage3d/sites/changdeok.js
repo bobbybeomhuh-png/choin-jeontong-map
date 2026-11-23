@@ -4,32 +4,34 @@
    돈화문 → 금천교(1411, 남은 궁궐 돌다리 가운데 가장 오래됨) → 인정전(국보) / 선정전(지금 남은 유일한 청기와 궁궐 건물) / 낙선재(창살 무늬가 다양함) / 후원 애련지·애련정, 연경당.
    놀이: 낙선재 창살 짝 맞추기(반쪽 창살 무늬를 보고 나머지 반쪽 살을 눌러 거울처럼 맞추기, 마지막 판은 네 쪽 대칭, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
-import {tex,mulb} from './sungnyemun.js';
+import {tex,mulb,materials} from './sungnyemun.js';
 export function buildChangdeok(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1405);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(22+r()*10,24+r()*10,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,10,-110-r()*10);G.add(c)}
+ for(let i=0;i<6;i++){const c=lumpyHill((22+r()*10)*1.3,(24+r()*10)*.75,0x4a6a3a,((-80+i*32)*.13+57)|0);c.position.set(-80+i*32,-.5,-110-r()*10);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),BLUE=M(0x2a6a8a,{roughness:.4,metalness:.1});
- const roof=(x,y,z,W,D,h,m=ROOF)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),m);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h,m=ROOF)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6,rm=ROOF)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8,rm);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
- /* 돈화문(가운데 지나감) */const DZ=48;{for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.BoxGeometry(6,4.4,4),WALLW);w.position.set(s*5,2.2,DZ);G.add(w);solids.push({x0:s*5-3,x1:s*5+3,y0:0,y1:4.4,z0:DZ-2,z1:DZ+2})}const up=new THREE.Mesh(new THREE.BoxGeometry(16,2.2,4.4),WALLW);up.position.set(0,5.5,DZ);G.add(up);roof(0,6.6,DZ,19,8,2.6);plaque(0,5.8,DZ+2.25,'門化敦',2)}
+ /* 11/23 품질: 상자+원뿔 → hallkit 전각(선정전은 청기와) */const hall=(x,z,W,D,PH,base=.6,rm=ROOF,name,o={})=>{const h=buildHall(Object.assign({x,z,W,D,nx:Math.max(3,Math.round(W/3.2)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH,roof:'hip',name,pillar:0x9a3a26,bracket:'dapo',front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false},o));if(rm===BLUE){const T=materials().tile;const B2=T.clone();B2.color=new THREE.Color(0x7aa6d8);h.group.traverse(e=>{if(e.isMesh&&e.material===T)e.material=B2})}G.add(h.group);return h.top};
+ /* 돈화문(가운데 지나감, 11/23 hallkit 궁궐 정문 5칸) */const DZ=48;{const h=buildHall({x:0,z:DZ,W:16,D:6,nx:5,nz:2,FY:0,PH:4.8,base:false,floor:false,roof:'hip',name:'門化敦',pillar:0x9a3a26,bracket:'dapo',front:['door','open','open','open','door'],back:['door','open','open','open','door'],left:'wall',right:'wall',stairs:'none',mini,solids,light:false,roofScale:1.1});G.add(h.group)}
  sp(0,DZ+5,3.4,'돈화문','창덕궁의 정문이에요(보물). 1609년에 다시 지은 것으로, 지금 남은 궁궐 정문 가운데 가장 오래됐어요.');
  /* 금천(동서로 흐름) + 금천교 */const KZ=34;{const w=new THREE.Mesh(new THREE.PlaneGeometry(220,4),M(0x5a8a9a,{roughness:.2}));w.rotation.x=-Math.PI/2;w.position.set(0,.04,KZ);G.add(w);solids.push({x0:-110,x1:-3,y0:-2,y1:3,z0:KZ-2,z1:KZ+2},{x0:3,x1:110,y0:-2,y1:3,z0:KZ-2,z1:KZ+2});const br=new THREE.Mesh(new THREE.BoxGeometry(6,.3,5),ST);br.position.set(0,.15,KZ);G.add(br);for(const s of[-1,1]){const rl=new THREE.Mesh(new THREE.BoxGeometry(.3,.7,5),ST);rl.position.set(s*3,.5,KZ);G.add(rl);solids.push({x0:s*3-.2,x1:s*3+.2,y0:0,y1:.9,z0:KZ-2.5,z1:KZ+2.5});const a=new THREE.Mesh(new THREE.TorusGeometry(.8,.25,8,16,Math.PI),ST2);a.position.set(s*1.4,0,KZ);a.rotation.y=Math.PI/2;G.add(a)}for(const s of[-1,1]){const t=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(.5,.5,.9),ST);t.add(b);const h=new THREE.Mesh(new THREE.SphereGeometry(.3,8,6),ST);h.position.set(0,.2,.45);t.add(h);t.position.set(s*1.6,.1,KZ+2.9);G.add(t)}}
  sp(4.6,KZ+4,3,'금천교','1411년에 놓은 돌다리로, 지금 남은 궁궐 돌다리 가운데 가장 오래됐어요(보물). 다리 아래 해태와 거북 조각이 물길을 지켜요.');
- /* 인정전 마당 */const IZ=-6;{const y=hall(0,IZ,16,9,4.6,1.6);plaque(0,y-.7,IZ+4.55,'殿政仁',2.4);for(let i=0;i<5;i++)for(const s of[-1,1]){const pg=new THREE.Mesh(new THREE.BoxGeometry(.35,.6,.25),ST);pg.position.set(s*2.4,.3,IZ+9+i*2.2);G.add(pg)}}
+ /* 인정전 마당 */const IZ=-6;{hall(0,IZ,16,9,4.6,1.6,ROOF,'殿政仁');for(let i=0;i<5;i++)for(const s of[-1,1]){const pg=new THREE.Mesh(new THREE.BoxGeometry(.35,.6,.25),ST);pg.position.set(s*2.4,.3,IZ+9+i*2.2);G.add(pg)}}
  sp(0,IZ+9.5,3.4,'인정전','창덕궁의 정전이에요(국보). 즉위식과 외국 사신 맞이 같은 큰 행사를 열었어요. 안에는 근대에 들인 전등과 커튼도 남아 있어요.');
- {const y=hall(26,IZ,10,6,3.2,1,BLUE);plaque(26,y-.45,IZ+3.05,'殿政宣',1.8)}
+ {hall(26,IZ,10,6,3.2,1,BLUE,'殿政宣')}
  sp(26,IZ+6,3,'선정전','임금이 신하들과 나랏일을 의논하던 편전이에요. 푸른 유약을 바른 청기와 지붕을 얹은, 지금 남은 유일한 궁궐 건물이에요.');
- /* 낙선재 + 창살 놀이 자리 */const NX=-28,NZ=-10;hall(NX,NZ,12,5,2.8,.7);sp(NX,NZ+5.5,3,'낙선재','헌종이 지은 소박한 단청 없는 건물이에요. 문과 창의 살 무늬가 여러 가지라 「창살 박물관」 같다고 해요. 조선 왕실의 마지막 가족이 머물기도 했어요.');
+ /* 낙선재 + 창살 놀이 자리 */const NX=-28,NZ=-10;hall(NX,NZ,12,5,2.8,.7,ROOF,'齋善樂',{bare:true,plain:true,bracket:'ik',pillar:0x6b4a2e,roofScale:.8});sp(NX,NZ+5.5,3,'낙선재','헌종이 지은 소박한 단청 없는 건물이에요. 문과 창의 살 무늬가 여러 가지라 「창살 박물관」 같다고 해요. 조선 왕실의 마지막 가족이 머물기도 했어요.');
  /* 실측 담장·문간 모서리 */const WX=-22,WZ=14;if(!mini){const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);gl.load(new URL('../models/changdeok/wallgate.glb',import.meta.url).href,g=>{const o=g.scene;o.userData.noBatch=true;o.traverse(e=>{if(e.isMesh){e.castShadow=true;e.receiveShadow=true;if(e.material){e.material.roughness=.85;e.material.metalness=0}cam.push(e)}});o.position.set(WX,0,WZ);G.add(o)},undefined,()=>{})}solids.push({x0:WX-2,x1:WX+2,y0:0,y1:3,z0:WZ-1.2,z1:WZ+1.2});
  sp(WX,WZ+4,3,'궐 안 담장과 문간','붉은 문간 처마와 벽돌 담 모서리를 실측 그대로 옮겼어요. 기와 끝 막새와 벽돌 쌓은 결이 그대로 보여요. (3D: juanbrualla, Sketchfab, CC BY 4.0, 크기는 벽돌 켜로 어림)');
  /* 후원: 애련지·애련정, 연경당 */const AZ=-44;{const p=new THREE.Mesh(new THREE.PlaneGeometry(14,10),M(0x4a7a8a,{roughness:.2}));p.rotation.x=-Math.PI/2;p.position.set(0,.05,AZ);G.add(p);const rim=new THREE.Mesh(new THREE.BoxGeometry(15,.5,11),ST2);rim.position.set(0,.0,AZ);G.add(rim);solids.push({x0:-7.5,x1:7.5,y0:-2,y1:3,z0:AZ-5.5,z1:AZ+5.5});const px=0,pz=AZ-5;for(const[i,j]of[[-1,-1],[1,-1],[-1,1],[1,1]]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,3,8),WOOD);c.position.set(px+i*1.3,1.5,pz+j*1.3);G.add(c)}const fl=new THREE.Mesh(new THREE.BoxGeometry(3,.15,3),M(0x8a6a4a));fl.position.set(px,1.2,pz);G.add(fl);roof(px,3,pz,4.6,4.6,1.4)}
  sp(0,AZ+7.5,3,'애련지·애련정','네모난 연못과 연못에 발을 담근 작은 정자예요. 숙종이 「연꽃을 사랑한다」는 뜻으로 이름 지었어요.');
- {hall(22,AZ,12,5,2.6,.6);sp(22,AZ+5.5,3,'연경당','단청을 하지 않은 사대부 집처럼 지은 집이에요. 순조 때 효명세자가 지었다고 해요.')}
+ {hall(22,AZ,12,5,2.6,.6,ROOF,'堂慶演',{bare:true,plain:true,bracket:'ik',pillar:0x6b4a2e,roofScale:.8});sp(22,AZ+5.5,3,'연경당','단청을 하지 않은 사대부 집처럼 지은 집이에요. 순조 때 효명세자가 지었다고 해요.')}
  /* 창살 짝 맞추기(11/23) */const FX=NX,FZ=NZ+9;const fg=new THREE.Group();fg.position.set(FX,0,FZ);fg.visible=false;G.add(fg);
  window.__CDLATTICE=()=>{if(document.getElementById('cdlP'))return;const H3=window.__H3,ctx=H3.ctx();try{H3.tp(FX,FZ+9,0)}catch(e){}fg.visible=true;
   const camA=()=>{const k=innerWidth<innerHeight?1.8:1;return[FX,1.55,FZ+2.6*k,FX,1.5,FZ,50]};window.__GCAM=()=>document.getElementById('cdlP')?camA():null;

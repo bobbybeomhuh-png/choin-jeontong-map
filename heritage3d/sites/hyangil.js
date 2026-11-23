@@ -3,6 +3,7 @@
    돌계단 길 → 큰 바위 사이 좁은 틈 해탈문(몸을 낮춰 지나감) → 원통보전 / 관음전(벼랑 위) / 해돋이 보는 자리. 금오산 바위에는 거북 등 무늬 같은 결이 있어 산 모양을 거북에 빗대요.
    놀이: 이끼 바위 미끄럼 길(한 번 밀면 바위에 막힐 때까지 미끄러지는 거북 돌을 밀어 해돋이 자리에 닿게, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildHyangil(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(644);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -13,7 +14,7 @@ export function buildHyangil(opts={}){const mini=!!opts.mini;const G=new THREE.G
  /* 거북 등 무늬 바위 */const GT2=tex(128,128,(q,w,h)=>{q.fillStyle='#8a8478';q.fillRect(0,0,w,h);q.strokeStyle='#5a564c';q.lineWidth=3;for(let y=0;y<h;y+=26)for(let x=-(y/26%2)*15;x<w;x+=30){q.beginPath();for(let k=0;k<6;k++){const a=k/6*Math.PI*2;const px=x+15+Math.cos(a)*13,py=y+13+Math.sin(a)*12;k?q.lineTo(px,py):q.moveTo(px,py)}q.closePath();q.stroke()}},[2,2]);const SHELL=new THREE.MeshStandardMaterial({map:GT2,roughness:1,flatShading:true});
  const boulder=(x,z,s,sy=1,mat=ROCK)=>{const b=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),mat);b.scale.y=sy;b.position.set(x,s*sy*.6,z);b.rotation.y=r()*3;G.add(b);solids.push({cx:x,cz:z,r:s*.9,y0:0,y1:s*sy*1.4});return b};
  /* 뒤 금오산 바위들 */for(let i=0;i<10;i++)boulder(-30-r()*14,-40+i*9,5+r()*3,1.4,SHELL);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2,ry=0)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);bd.rotation.y=ry;G.add(bd)};
  /* 돌계단 길 + 해탈문 둘(큰 바위 사이 좁은 틈) */{const p=new THREE.Mesh(new THREE.PlaneGeometry(3,40),M(0xb0a890));p.rotation.x=-Math.PI/2;p.position.set(0,.02,30);G.add(p);for(const gz of[34,20]){boulder(-3.4,gz,2.8,1.5,SHELL);boulder(3.4,gz,2.8,1.5,SHELL);const cap=new THREE.Mesh(new THREE.DodecahedronGeometry(2.2,0),SHELL);cap.scale.set(1.6,.5,1);cap.position.set(0,4.4,gz);G.add(cap)}plaque(0,3.6,36.9,'門脫解',1.2)}
  sp(0,40,3,'해탈문','커다란 바위 두 개가 맞대어 생긴 좁은 틈이에요. 몸을 낮추고 지나야 해서 「번뇌를 벗는 문」이라 불러요. 이런 바위 틈이 여러 곳 있어요.');

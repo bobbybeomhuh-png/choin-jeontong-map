@@ -3,13 +3,14 @@
    홍화문(정문) → 금천 위 옥천교(보물) → 명정문 → 명정전(국보, 지금 남은 조선 궁궐 정전 가운데 가장 오래됨) / 함인정 / 통명전 / 풍기대(보물, 바람 깃발을 꽂던 돌) / 관천대(보물, 하늘을 살피던 돌 대) / 춘당지.
    놀이: 풍기대 바람 읽기(깃발이 날리는 쪽의 반대가 바람이 불어오는 쪽. 방위판에서 바람이 오는 방위를 눌러 관상감 일지에 적기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildChanggyeong(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1484);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  const STONE=M(0xa8a296),STONE2=M(0x948e82),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),WALL=M(0xb89880);
- const roof=(x,y,z,W,D,h,ry=0)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4+ry;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h,ry=0)=>{curvedRoof(G,x,y,z,W,D,h*1.05,{ry})};
  const plaque=(x,y,z,txt,w=2,ry=0)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);bd.rotation.y=ry;G.add(bd)};
  /* 동쪽을 보는 건물: W는 남북 길이, D는 동서 깊이 */const hallE=(x,z,W,D,PH,base=.8)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(D+1.4,base,W+1.4),STONE);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(D,PH,W),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),WOOD);c.position.set(x+j*D/2,base+PH/2,z-W/2+i*W/n);G.add(c)}roof(x,base+PH,z,D+3,W+3,PH*.8);solids.push({x0:x-D/2-.7,x1:x+D/2+.7,y0:0,y1:base+PH,z0:z-W/2-.7,z1:z+W/2+.7});return base+PH};
  const wallSeg=(x0,z0,x1,z1,h=2.6)=>{const L=Math.hypot(x1-x0,z1-z0);const w=new THREE.Mesh(new THREE.BoxGeometry(x1===x0?.6:L,h,z1===z0?.6:L),WALL);w.position.set((x0+x1)/2,h/2,(z0+z1)/2);G.add(w);solids.push({x0:Math.min(x0,x1)-.3,x1:Math.max(x0,x1)+.3,y0:0,y1:h,z0:Math.min(z0,z1)-.3,z1:Math.max(z0,z1)+.3})};

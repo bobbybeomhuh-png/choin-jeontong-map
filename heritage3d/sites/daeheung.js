@@ -4,16 +4,18 @@
    위쪽 일지암: 초의선사가 머물며 차를 가꾼 작은 암자, 샘·차밭.
    놀이: 물 끓는 모습 읽기(초의선사가 엮은 『다신전』의 탕변처럼 거품이 새우눈·게눈·물고기눈·구슬 꿰듯·물결 북치듯으로 바뀌는 것을 보고, 다 끓은 순숙에 불에서 내리기. 온도계 없이 눈과 김으로만, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildDaeheung(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1828);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- /* 두륜산 봉우리(뒤) */for(let i=0;i<7;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(26+r()*10,36+r()*14,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-90+i*30,16,-110-r()*10);G.add(c)}
+ /* 두륜산 봉우리(뒤) */for(let i=0;i<7;i++){const c=lumpyHill((26+r()*10)*1.3,(36+r()*14)*.75,0x4a6a3a,((-90+i*30)*.13+57)|0);c.position.set(-90+i*30,-.5,-110-r()*10);G.add(c)}
  const STONE=M(0xa8a296),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),STONE);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4.4,12),WOOD);c.position.set(s*2,2.2,44);G.add(c);solids.push({cx:s*2,cz:44,r:.35,y0:0,y1:4.4})}roof(0,4.4,44,6,3,1.6);plaque(0,3.9,44.9,'寺興大山輪頭',2.4)}
  sp(0,48,3.2,'일주문','두륜산 대흥사로 들어가는 첫 문이에요. 기둥이 한 줄로만 서 있어 일주문이라 해요.');
  /* 흙길·개울·돌다리 */{const p=new THREE.Mesh(new THREE.PlaneGeometry(4,50),M(0xc8b890));p.rotation.x=-Math.PI/2;p.position.set(0,.02,24);G.add(p);const cr=new THREE.Mesh(new THREE.PlaneGeometry(200,5),M(0x5a8a9a,{roughness:.25}));cr.rotation.x=-Math.PI/2;cr.position.set(0,.03,22);G.add(cr);solids.push({x0:-100,x1:-2.2,y0:-2,y1:3,z0:19.5,z1:24.5},{x0:2.2,x1:100,y0:-2,y1:3,z0:19.5,z1:24.5});const br=new THREE.Mesh(new THREE.BoxGeometry(4.2,.3,6),STONE);br.position.set(0,.15,22);G.add(br)}

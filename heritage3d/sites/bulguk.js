@@ -4,30 +4,33 @@
    석가탑을 무영탑(그림자 없는 탑)이라 부르는 아사달·아사녀 이야기는 전해 오는 이야기.
    놀이: 석축 돌 끼우기(석축 빈자리에 맞는 돌을 골라 90도씩 돌려 끼우기, 뒤집힌 모양 돌은 돌려도 안 맞음, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {yardMat} from './yardkit.js';
+import {lumpyHill} from './treekit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {tex,mulb} from './sungnyemun.js';
+import {buildHall,curvedRoof} from './hallkit.js';
 export function buildBulguk(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(751);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h,y=0)=>spots.push({x,y,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(200,200),new THREE.MeshStandardMaterial({map:GT,color:0x86a04c,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(24+r()*10,28+r()*10,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,12,-110-r()*10);G.add(c)}
+ for(let i=0;i<6;i++){const c=lumpyHill((24+r()*10)*1.3,(28+r()*10)*.75,0x4a6a3a,((-80+i*32)*.13+57)|0);c.position.set(-80+i*32,-.5,-110-r()*10);G.add(c)}
  const ST=M(0xb4aea2),ST2=M(0x9a9488),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
  const TY=3.6,TZ0=0,TZ1=-44,TX0=-30,TX1=30;
  /* 석축 + 위 마당(걸어 다니는 높은 바닥) */{const w=new THREE.Mesh(new THREE.BoxGeometry(TX1-TX0,TY,1),ST2);w.position.set(0,TY/2,TZ0-.5);G.add(w);for(let i=0;i<40;i++){const x=TX0+1+r()*(TX1-TX0-2),y=.3+r()*(TY-.8);const s=new THREE.Mesh(new THREE.DodecahedronGeometry(.35+r()*.3,0),ST);s.scale.z=.3;s.position.set(x,y,TZ0+.02);G.add(s)}for(const y of[1.3,TY-.1]){const b=new THREE.Mesh(new THREE.BoxGeometry(TX1-TX0,.3,.4),ST);b.position.set(0,y,TZ0+.1);G.add(b)}for(let x=TX0;x<=TX1;x+=5){const p=new THREE.Mesh(new THREE.BoxGeometry(.35,TY,.4),ST);p.position.set(x,TY/2,TZ0+.1);G.add(p)}
-  const top=new THREE.Mesh(new THREE.BoxGeometry(TX1-TX0,.2,TZ0-TZ1),M(0xd8ccb0));top.position.set(0,TY-.1,(TZ0+TZ1)/2);G.add(top);solids.push({x0:TX0,x1:TX1,y0:-2,y1:TY,z0:TZ1,z1:TZ0})}
+  const top=new THREE.Mesh(new THREE.BoxGeometry(TX1-TX0,.2,TZ0-TZ1),yardMat());top.position.set(0,TY-.1,(TZ0+TZ1)/2);G.add(top);solids.push({x0:TX0,x1:TX1,y0:-2,y1:TY,z0:TZ1,z1:TZ0})}
  /* 계단 다리(돌계단): x자리, 폭 */const stair=(x,W,label)=>{const n=12;for(let i=1;i<=n;i++){const z0=TZ0+(n-i)*.55,z1=z0+.55,h=TY*i/n;solids.push({x0:x-W/2,x1:x+W/2,y0:-2,y1:h,z0,z1});const s=new THREE.Mesh(new THREE.BoxGeometry(W,h,.55),ST);s.position.set(x,h/2,(z0+z1)/2);G.add(s)}for(const s of[-1,1]){const rl=new THREE.Mesh(new THREE.BoxGeometry(.3,.8,n*.55),ST2);rl.position.set(x+s*(W/2+.15),TY*.5+.2,TZ0+n*.55/2);rl.rotation.x=Math.atan2(TY,n*.55);G.add(rl)}const a=new THREE.Mesh(new THREE.TorusGeometry(1,.3,8,16,Math.PI),ST2);a.position.set(x,0,TZ0+2.5);a.rotation.y=Math.PI/2;G.add(a)};
  const CX=8,YX=-16;stair(CX,3.4);stair(YX,2.6);
  sp(CX,TZ0+8.5,3,'청운교·백운교','자하문으로 오르는 두 겹 돌계단 다리예요(국보). 아래 청운교, 위 백운교, 모두 서른세 계단이라 해요. 아래에 무지개 모양 홍예가 있어요.');
  sp(YX,TZ0+8.5,2.6,'연화교·칠보교','극락전의 안양문으로 오르는 돌계단 다리예요(국보). 계단마다 연꽃잎을 새겼어요.');
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,.7,D+1.4),ST);b.position.set(x,TY+.35,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,TY+.7+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),WOOD);c.position.set(x-W/2+i*W/n,TY+.7+PH/2,z+j*D/2);G.add(c)}roof(x,TY+.7+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:TY-1,y1:TY+.7+PH,z0:z-D/2-.7,z1:z+D/2+.7});return TY+.7+PH};
- /* 문(가운데로 지나감) */const gate=(x,z,txt)=>{for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.BoxGeometry(2.6,3,2.4),WALLW);w.position.set(x+s*2.9,TY+1.5,z);G.add(w);solids.push({x0:x+s*2.9-1.3,x1:x+s*2.9+1.3,y0:TY-1,y1:TY+3,z0:z-1.2,z1:z+1.2})}roof(x,TY+3,z,9.5,4,1.8);plaque(x,TY+2.7,z+1.25,txt,1.6)};
+ /* 11/23 품질: 상자+원뿔 지붕 → hallkit 다포 법당(석축 위 TY에 올림) */const lift=(h,n0)=>{h.group.position.y=TY;G.add(h.group);for(let i=n0;i<solids.length;i++){solids[i].y0=(solids[i].y0||0)+TY;solids[i].y1+=TY}};const hall=(x,z,W,D,PH,name)=>{const n0=solids.length;const h=buildHall({x,z,W,D,nx:Math.max(3,Math.round(W/3)),nz:Math.max(2,Math.round(D/3)),FY:.7,PH,roof:'hip',name,pillar:0x9a3a26,bracket:'dapo',front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false});lift(h,n0);return h.top+TY};
+ /* 문(가운데로 지나감, 11/23 hallkit 문루) */const gate=(x,z,txt)=>{const n0=solids.length;const h=buildHall({x,z,W:8.4,D:3.6,nx:3,nz:1,FY:0,PH:3,base:false,floor:false,roof:'hip',name:txt,pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'wall',right:'wall',stairs:'none',mini,solids,light:false,roofScale:.8});lift(h,n0)};
  gate(CX,-3,'門霞紫');gate(YX,-3,'門養安');
  sp(CX,-6.5,2.6,'자하문','대웅전 마당으로 들어가는 문이에요. 「붉은 안개의 문」이라는 뜻이에요.',TY);
- {const y=hall(CX,-30,13,7,3.4);plaque(CX,y-.5,-30+3.55,'殿雄大',2)}sp(CX,-24,3,'대웅전','불국사의 큰 법당이에요. 지금 건물은 1765년에 다시 지었어요.',TY);
- {const y=hall(YX,-28,9,6,3);plaque(YX,y-.45,-28+3.05,'殿樂極',1.8)}sp(YX,-23,2.6,'극락전','아미타 부처를 모신 전각이에요. 연화교·칠보교로 올라 안양문을 지나 들어가요.',TY);
+ {hall(CX,-30,13,7,3.4,'殿雄大')}sp(CX,-24,3,'대웅전','불국사의 큰 법당이에요. 지금 건물은 1765년에 다시 지었어요.',TY);
+ {hall(YX,-28,9,6,3,'殿樂極')}sp(YX,-23,2.6,'극락전','아미타 부처를 모신 전각이에요. 연화교·칠보교로 올라 안양문을 지나 들어가요.',TY);
  /* 석가탑(서, 약 10.7m 간추림) */const SKX=CX-6,SKZ=-15;{let y=TY;const st=(w,h,m=ST)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),m);b.position.set(SKX,y+h/2,SKZ);b.castShadow=true;G.add(b);y+=h};st(4.4,.6,ST2);st(3.6,1.1);st(3.2,.3,ST2);st(2.6,.9);for(let i=0;i<3;i++){st(1.6-i*.22,1-i*.15);st(2.6-i*.35,.3,ST2)}const sg=new THREE.Mesh(new THREE.CylinderGeometry(.12,.25,1.8,8),M(0x8a8478));sg.position.set(SKX,y+.9,SKZ);G.add(sg);solids.push({x0:SKX-2.2,x1:SKX+2.2,y0:TY-1,y1:y,z0:SKZ-2.2,z1:SKZ+2.2})}
  sp(SKX,SKZ+4,2.6,'석가탑','통일신라 삼층석탑의 본보기예요(국보). 1966년 고칠 때 탑 안에서 세계에서 가장 오래된 목판 인쇄물로 꼽히는 『무구정광대다라니경』이 나왔어요. 그림자가 비치지 않는 무영탑이라는 아사달·아사녀 이야기가 전해 와요(전해 오는 이야기).',TY);
  /* 다보탑(동, 약 10.3m 간추림) */const DBX=CX+6,DBZ=-15;{let y=TY;const g=new THREE.Group();G.add(g);const box=(w,h,d=w,m=ST)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.set(DBX,y+h/2,DBZ);b.castShadow=true;g.add(b);return b};box(4.4,1.2,4.4,ST2);for(const[ax,az]of[[0,1],[0,-1],[1,0],[-1,0]]){const s=new THREE.Mesh(new THREE.BoxGeometry(az?1.2:.8,1.2,az?.8:1.2),ST);s.position.set(DBX+ax*2.5,y+.4,DBZ+az*2.5);g.add(s)}y+=1.2;for(const[i,j]of[[-1,-1],[1,-1],[-1,1],[1,1],[0,0]]){const c=new THREE.Mesh(new THREE.BoxGeometry(.4,1.6,.4),ST);c.position.set(DBX+i*1.3,y+.8,DBZ+j*1.3);g.add(c)}y+=1.6;box(3.4,.35,3.4,ST2);y+=.35;

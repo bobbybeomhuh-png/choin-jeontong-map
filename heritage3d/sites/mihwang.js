@@ -4,16 +4,18 @@
    돌배가 경전과 불상을 싣고 와 소에 싣고 가다 소가 누운 자리에 절을 지었다는 이름 이야기는 전해 오는 이야기.
    놀이: 승탑 옥개석 옮기기(부도밭 받침 셋 사이에서 옥개석을 한 번에 하나씩, 큰 돌을 작은 돌 위에 올리지 않고 다른 받침으로 모두 옮기기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildMihwang(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(749);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- /* 달마산 바위 능선 */for(let i=0;i<16;i++){const k=new THREE.Mesh(new THREE.ConeGeometry(4+r()*4,16+r()*16,5),M(0xb4b0a4,{flatShading:true}));k.position.set(-70+i*9+r()*4,10,-80-r()*10);k.rotation.y=r()*3;G.add(k)}for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(24+r()*8,20,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,6,-90);G.add(c)}
+ /* 달마산 바위 능선 */for(let i=0;i<16;i++){const k=lumpyHill((4+r()*4)*1.3,(16+r()*16)*.75,0xb4b0a4,((-70+i*9+r()*4)*.13+57)|0);k.position.set(-70+i*9+r()*4,-.5,-80-r()*10);k.rotation.y=r()*3;G.add(k)}for(let i=0;i<6;i++){const c=lumpyHill((24+r()*8)*1.3,16,0x4a6a3a,i+51);c.position.set(-80+i*32,-.5,-90);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOODB=M(0x8a7458),WALLW=M(0xe6dcc8),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),WOODB);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),M(0x8a3a2a));c.position.set(s*2,2,42);G.add(c);solids.push({cx:s*2,cz:42,r:.35,y0:0,y1:4})}roof(0,4,42,6,3,1.6);plaque(0,3.5,42.9,'寺黃美山磨達',2.4)}
  sp(0,46,3,'일주문','달마산 미황사로 들어가는 첫 문이에요. 땅끝 가까이 있는 절이라 「땅끝 절」이라고도 해요.');
  /* 자하루(아래로 지나감) */const JZ=22;{const deck=new THREE.Mesh(new THREE.BoxGeometry(12,.25,5),M(0x8a6a4a));deck.position.set(0,2.6,JZ);G.add(deck);for(let i=0;i<=4;i++)for(const j of[-1,1]){const x=-6+i*3;const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,5,10),WOODB);c.position.set(x,2.5,JZ+j*2.5);G.add(c);if(i!==2)solids.push({cx:x,cz:JZ+j*2.5,r:.28,y0:0,y1:5})}roof(0,5,JZ,15,8,2);plaque(0,4.4,JZ+2.6,'樓霞紫',1.6)}

@@ -4,6 +4,7 @@
    도선국사가 하룻밤에 천 개의 탑과 부처를 세우려 했는데, 닭이 울어 와불을 세우지 못했다는 이야기가 전해 옴(전해 오는 이야기).
    놀이: 하룻밤 탑 쌓기(좌우로 흔들리는 탑돌을 꼭 맞을 때 떨어뜨려 쌓기, 어긋난 만큼 깎여 위로 갈수록 좁아짐, 닭이 울기 전에, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildUnju(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1000);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -24,7 +25,7 @@ export function buildUnju(opts={}){const mini=!!opts.mini;const G=new THREE.Grou
  sp(QX+5,QZ+10,3.4,'칠성바위','둥근 돌 일곱이 북두칠성처럼 놓여 있어요. 돌 크기와 놓인 자리가 실제 별의 밝기·모양과 닮았다는 연구도 있어요.');
  /* 와불: 서쪽 언덕 위 누운 부처 둘(길이 약 12m·10m, 크기 어림) */const WX=-40,WZ=4;for(const[dz,L]of[[0,12],[3.4,10]]){const g=new THREE.Group();g.position.set(WX,.4,WZ+dz);const b=new THREE.Mesh(new THREE.BoxGeometry(L,.9,2.4),ST);g.add(b);const hd=new THREE.Mesh(new THREE.SphereGeometry(1.1,12,10),ST);hd.scale.set(1,.6,1);hd.position.set(-L/2+.6,.4,0);g.add(hd);G.add(g);solids.push({x0:WX-L/2,x1:WX+L/2,y0:0,y1:1.3,z0:WZ+dz-1.2,z1:WZ+dz+1.2})}
  sp(WX,WZ+7,3.4,'와불','언덕 위 바위에 새긴 채 누워 있는 부처 둘이에요. 이 부처가 일어서면 새 세상이 온다는 이야기가 전해 와요(전해 오는 이야기).');
- /* 대웅전(간추림) */{const b=new THREE.Mesh(new THREE.BoxGeometry(10,3,6),M(0xeee6d4));b.position.set(0,2.1,-40);G.add(b);const st=new THREE.Mesh(new THREE.BoxGeometry(11.4,.6,7.4),ST2);st.position.set(0,.3,-40);G.add(st);const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),M(0x4a4a50));rf.rotation.y=Math.PI/4;rf.scale.set(9.5,2.4,6.6);rf.position.set(0,4.8,-40);G.add(rf);solids.push({x0:-5.7,x1:5.7,y0:0,y1:3.6,z0:-43.7,z1:-36.3})}
+ /* 대웅전(간추림) */{const b=new THREE.Mesh(new THREE.BoxGeometry(10,3,6),M(0xeee6d4));b.position.set(0,2.1,-40);G.add(b);const st=new THREE.Mesh(new THREE.BoxGeometry(11.4,.6,7.4),ST2);st.position.set(0,.3,-40);G.add(st);curvedRoof(G,0,3.6,-40,9.5/.72,6.6/.72,2.5);solids.push({x0:-5.7,x1:5.7,y0:0,y1:3.6,z0:-43.7,z1:-36.3})}
  sp(0,-34.5,3,'대웅전','골짜기 안쪽의 법당이에요.');
  /* 하룻밤 탑 쌓기(11/23) */const PX=22,PZ=14;spots.push({x:PX,y:0,z:PZ+5,r:3,t:'탑 쌓는 자리',h:'닭이 울기 전에 하룻밤 동안 탑을 쌓아 봐요.'});{const pl=new THREE.Mesh(new THREE.BoxGeometry(5,.3,5),ST2);pl.position.set(PX,.15,PZ);G.add(pl);solids.push({x0:PX-2.5,x1:PX+2.5,y0:0,y1:.3,z0:PZ-2.5,z1:PZ+2.5})}
  const tg=new THREE.Group();tg.position.set(PX,.3,PZ);G.add(tg);

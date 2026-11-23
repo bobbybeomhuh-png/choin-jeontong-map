@@ -4,17 +4,19 @@
    원효대사가 백일기도를 마치던 날 연못에서 아홉 마리 용이 하늘로 오르는 것을 보고 '관룡(용을 봄)'이라 했다는 이야기가 전해 옴(전해 오는 이야기).
    놀이: 아홉 용 승천길 잇기(같은 빛깔 여의주 두 개를 칸을 따라 손으로 이어요. 길끼리 엇갈리거나 겹치면 안 돼요. 넘버링크형, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildGwallyong(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(583);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7c984a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- /* 화왕산 바위 봉우리 */for(let i=0;i<12;i++){const k=new THREE.Mesh(new THREE.ConeGeometry(5+r()*5,16+r()*14,6),M(0x9a968a,{flatShading:true}));k.position.set(-66+i*12,8,-90-r()*12);k.rotation.y=r()*3;G.add(k)}
+ /* 화왕산 바위 봉우리 */for(let i=0;i<12;i++){const k=lumpyHill((5+r()*5)*1.3,(16+r()*14)*.75,0x9a968a,((-66+i*12)*.13+57)|0);k.position.set(-66+i*12,-.5,-90-r()*12);k.rotation.y=r()*3;G.add(k)}
  const ST=M(0xa8a296),ROCK=M(0x8e8a80,{flatShading:true}),WOODB=M(0x8a7458),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50),DAN=M(0x8a3a2a);
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd);return bd};
- const hipRoof=(x,z,W,D,y,H)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set((W+2.4)*.72,H,(D+2.4)*.72);rf.position.set(x,y+H/2-.15,z);G.add(rf)};
- const hall=(x,z,W,D,PH,base=.8)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);for(let i=0;i<=3;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,PH,10),WOODB);c.position.set(x-W/2+i*W/3,base+PH/2,z+j*D/2);G.add(c)}hipRoof(x,z,W,D,base+PH,PH*.75);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
- /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),DAN);c.position.set(s*2,2,48);G.add(c);solids.push({cx:s*2,cz:48,r:.35,y0:0,y1:4})}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(4.3,1.5,2.2);rf.position.set(0,4.75,48);G.add(rf);plaque(0,3.5,48.9,'寺龍觀山旺火',2.4)}
+ const hipRoof=(x,z,W,D,y,H)=>{curvedRoof(G,x,(y+H/2-.15)-(H)/2,z,((W+2.4)*.72)/.72,((D+2.4)*.72)/.72,(H)*1.05)};
+ const hall=(x,z,W,D,PH,base=.8)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
+ /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),DAN);c.position.set(s*2,2,48);G.add(c);solids.push({cx:s*2,cz:48,r:.35,y0:0,y1:4})}curvedRoof(G,0,(4.75)-(1.5)/2,48,(4.3)/.72,(2.2)/.72,(1.5)*1.05);plaque(0,3.5,48.9,'寺龍觀山旺火',2.4)}
  sp(0,52,3,'일주문','화왕산 관룡사로 들어가는 문이에요.');
  /* 돌장승 한 쌍 */for(const s of[-1,1]){const g=new THREE.Group();g.position.set(s*3.2,0,40);G.add(g);const bd=new THREE.Mesh(new THREE.CylinderGeometry(.42,.5,2.2,10),ST);bd.position.y=1.1;g.add(bd);const hd=new THREE.Mesh(new THREE.SphereGeometry(.55,12,10),ST);hd.scale.y=1.15;hd.position.y=2.5;g.add(hd);for(const e of[-1,1]){const ey=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),M(0x6a665e));ey.position.set(e*.2,2.6,.46);g.add(ey)}const ns=new THREE.Mesh(new THREE.SphereGeometry(.14,8,6),ST);ns.position.set(0,2.4,.52);g.add(ns);const mo=new THREE.Mesh(new THREE.BoxGeometry(.3,.05,.05),M(0x6a665e));mo.position.set(0,2.15,.48);g.add(mo);solids.push({cx:s*3.2,cz:40,r:.55,y0:0,y1:3})}
  sp(0,40,2.6,'돌장승','절 입구를 지키는 돌장승 한 쌍이에요. 툭 튀어나온 눈과 주먹코가 익살스러워요.');

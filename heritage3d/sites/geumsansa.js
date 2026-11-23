@@ -3,16 +3,18 @@
    일주문 → 금강문 → 천왕문 → 보제루 → 미륵전(국보, 겉은 3층, 안은 하나로 트여 큰 미륵불이 섬) / 방등계단(보물, 종 모양 사리탑)과 오층석탑(보물) / 육각다층석탑(보물, 검은 점판암) / 노주(보물).
    놀이: 단청 칸 칠하기(맞닿은 칸끼리 같은 색이 되지 않게, 정해진 색 수만으로 들보 무늬를 모두 칠하기, 칸 모양과 규칙은 간추린 것, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildGeumsansa(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(766);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<7;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(24+r()*10,28+r()*12,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-96+i*32,13,-112-r()*10);G.add(c)}
+ for(let i=0;i<7;i++){const c=lumpyHill((24+r()*10)*1.3,(28+r()*12)*.75,0x4a6a3a,((-96+i*32)*.13+57)|0);c.position.set(-96+i*32,-.5,-112-r()*10);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  const gate=(z,txt,W=6)=>{for(const s of[-1,1]){const w=new THREE.Mesh(new THREE.BoxGeometry(W/2-1.5,3,2.4),WALLW);w.position.set(s*(W/4+.75),1.5,z);G.add(w);solids.push({x0:s>0?1.5:-W/2,x1:s>0?W/2:-1.5,y0:0,y1:3,z0:z-1.2,z1:z+1.2})}roof(0,3,z,W+2.4,4,1.6);plaque(0,2.7,z+1.25,txt,1.5)};
  /* 일주문·금강문·천왕문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),WOOD);c.position.set(s*2,2,48);G.add(c);solids.push({cx:s*2,cz:48,r:.35,y0:0,y1:4})}roof(0,4,48,6,3,1.6);plaque(0,3.5,48.9,'寺山金山岳母',2.4)}
  gate(38,'門剛金',9);gate(28,'門王天',10);

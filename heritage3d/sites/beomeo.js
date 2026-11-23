@@ -4,16 +4,18 @@
    금정산 꼭대기 바위의 금샘: 금빛 물고기가 오색구름을 타고 내려와 놀았다 해서 금정(金井)·범어(梵魚)라는 이름이 났다는 이야기가 전해 옴(전해 오는 이야기).
    놀이: 금샘 햇빛 거울(바위 위 놋거울을 눌러 45도씩 돌려 햇빛을 꺾어 금샘에 닿게 하면 금빛 물고기가 나옴, 세 판, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildBeomeo(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(678);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<6;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(24+r()*10,30+r()*12,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-80+i*32,14,-110-r()*10);G.add(c)}
+ for(let i=0;i<6;i++){const c=lumpyHill((24+r()*10)*1.3,(30+r()*12)*.75,0x4a6a3a,((-80+i*32)*.13+57)|0);c.position.set(-80+i*32,-.5,-110-r()*10);G.add(c)}
  const STONE=M(0xa8a296),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),STONE);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 문 셋: 가운데로 지나가는 문간(양쪽 벽만 막힘) */const gateB=(z,W,D,PH,txt,stoneCol=false)=>{for(const s of[-1,1]){if(stoneCol){for(const dz of[-D/2,D/2]){const sc=new THREE.Mesh(new THREE.CylinderGeometry(.32,.36,2.4,12),STONE);sc.position.set(s*W/2,1.2,z+dz);G.add(sc);const wc=new THREE.Mesh(new THREE.CylinderGeometry(.22,.24,1.6,10),WOOD);wc.position.set(s*W/2,3.2,z+dz);G.add(wc);solids.push({cx:s*W/2,cz:z+dz,r:.38,y0:0,y1:4})}}else{const w=new THREE.Mesh(new THREE.BoxGeometry(W/2-1.6,PH,D),WALLW);w.position.set(s*(W/4+.8),PH/2,z);G.add(w);solids.push({x0:s>0?1.6:-W/2,x1:s>0?W/2:-1.6,y0:0,y1:PH,z0:z-D/2,z1:z+D/2})}}roof(0,stoneCol?4:PH,z,W+3,D+2.4,1.6);plaque(0,(stoneCol?4:PH)-.4,z+D/2+.08,txt,1.8)};
  gateB(46,6,2.2,4,'門溪曹',true);sp(0,50,3.2,'조계문','범어사의 일주문이에요(보물). 높은 돌기둥 위에 짧은 나무 기둥을 얹어, 네 기둥이 한 줄로 서 있어요.');
  gateB(32,10,5,3.4,'門王天');sp(0,36,3,'천왕문','네 하늘 임금(사천왕)이 절을 지킨다는 문이에요.');

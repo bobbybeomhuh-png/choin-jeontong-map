@@ -4,16 +4,18 @@
    선각대사탑비(보물, 946), 삼층석탑.
    놀이: 엿보지 말고 맞히기(덮개 판이 하나씩 걷히며 숨은 것이 조금씩 드러나요. 일찍 맞힐수록 높은 점수, 틀리면 감점, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildMuwi(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1430);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- /* 월출산 바위 봉우리 */for(let i=0;i<12;i++){const k=new THREE.Mesh(new THREE.ConeGeometry(6+r()*5,22+r()*16,5),M(0xb0aca0,{flatShading:true}));k.position.set(-60+i*11,11,-90-r()*10);k.rotation.y=r()*3;G.add(k)}
+ /* 월출산 바위 봉우리 */for(let i=0;i<12;i++){const k=lumpyHill((6+r()*5)*1.3,(22+r()*16)*.75,0xb0aca0,((-60+i*11)*.13+57)|0);k.position.set(-60+i*11,-.5,-90-r()*10);k.rotation.y=r()*3;G.add(k)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOODB=M(0x8a7458),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- /* 맞배지붕 건물 */const gable=(x,z,W,D,PH,base=.8)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);for(let i=0;i<=3;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.24,PH,10),WOODB);c.position.set(x-W/2+i*W/3,base+PH/2,z+j*D/2);G.add(c)}const sh=new THREE.Shape();sh.moveTo(-(D/2+1.4),0);sh.lineTo(0,PH*.75);sh.lineTo(D/2+1.4,0);sh.lineTo(-(D/2+1.4),0);const rf=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:W+1.6,bevelEnabled:false}),ROOF);rf.rotation.y=Math.PI/2;rf.position.set(x-(W+1.6)/2,base+PH,z);G.add(rf);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
- /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),M(0x8a3a2a));c.position.set(s*2,2,44);G.add(c);solids.push({cx:s*2,cz:44,r:.35,y0:0,y1:4})}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(4.3,1.5,2.2);rf.position.set(0,4.75,44);G.add(rf);plaque(0,3.5,44.9,'寺爲無山岬月',2.4)}
+ /* 맞배지붕 건물 */const gable=(x,z,W,D,PH,base=.8)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'gable',pillar:0x9a3a26,bracket:'jusim',front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
+ /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4,12),M(0x8a3a2a));c.position.set(s*2,2,44);G.add(c);solids.push({cx:s*2,cz:44,r:.35,y0:0,y1:4})}curvedRoof(G,0,(4.75)-(1.5)/2,44,(4.3)/.72,(2.2)/.72,(1.5)*1.05);plaque(0,3.5,44.9,'寺爲無山岬月',2.4)}
  sp(0,48,3,'일주문','월출산 무위사로 들어가는 문이에요.');
  /* 삼층석탑 */{const X=-6,Z=8;let y=0;const st=(w,h)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,w),ST);m.position.set(X,y+h/2,Z);G.add(m);y+=h};st(2.6,.5);st(2,.8);for(let i=0;i<3;i++){st(1-i*.13,.6-i*.08);st(1.7-i*.22,.2)}solids.push({cx:X,cz:Z,r:1.4,y0:0,y1:y})}
  sp(-6,12,2.6,'삼층석탑','극락보전 앞의 삼층석탑이에요.');

@@ -4,6 +4,7 @@
    팔영산: 여덟 봉우리가 늘어선 산.
    놀이: 귀얄 바르기(물레가 도는 그릇에 귀얄을 대고 꼭 한 바퀴 돈 뒤 떼어 흰 띠를 잇기), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildGoheung(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1420);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
@@ -17,7 +18,7 @@ export function buildGoheung(opts={}){const mini=!!opts.mini;const G=new THREE.G
   const pts=[];for(let i=0;i<=20;i++){const t=i/20;pts.push(new THREE.Vector2(.07+.18*Math.sin(t*Math.PI*.55)+t*.03,t*.16))}const lg=new THREE.LatheGeometry(pts,48);const bm=new THREE.Mesh(lg,new THREE.MeshStandardMaterial({map:btex,roughness:.7,side:THREE.DoubleSide}));bowl.add(bm);const foot=new THREE.Mesh(new THREE.CircleGeometry(.075,24),new THREE.MeshStandardMaterial({color:0x6a6e6a,side:THREE.DoubleSide}));foot.rotation.x=-Math.PI/2;foot.position.y=.002;bowl.add(foot);bowl.position.set(WX,.74,WZ);bowl.scale.setScalar(.45);G.add(bowl)}
  const resetBowl=()=>{bctx.fillStyle='#6a6e6a';bctx.fillRect(0,0,BW,BH);for(let i=0;i<400;i++){bctx.fillStyle=`rgba(${80+Math.random()*30|0},${84+Math.random()*30|0},${80+Math.random()*30|0},.5)`;bctx.fillRect(Math.random()*BW,Math.random()*BH,2,2)}btex.needsUpdate=true};if(!mini)resetBowl();
  const brush=new THREE.Group();{const h=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.22,6),M(0x8a6a44));h.rotation.z=Math.PI/2;h.position.x=.11;brush.add(h);const b=new THREE.Mesh(new THREE.BoxGeometry(.012,.035,.05),M(0xe8dcc0));brush.add(b);brush.position.set(WX+.26,.82,WZ);G.add(brush)}
- /* 팔영산: 여덟 봉우리 */{for(let k=0;k<8;k++){const p=new THREE.Mesh(new THREE.ConeGeometry(5+r()*2,14+r()*8,6),M(0x8a8478,{flatShading:true}));p.position.set(-35+k*10,8,-80-r()*6);G.add(p)}const sea=new THREE.Mesh(new THREE.PlaneGeometry(300,60),M(0x3a7a9a,{roughness:.2,metalness:.12}));sea.rotation.x=-Math.PI/2;sea.position.set(0,.04,95);G.add(sea);solids.push({x0:-150,x1:150,y0:-1,y1:4,z0:66,z1:130})}
+ /* 팔영산: 여덟 봉우리 */{for(let k=0;k<8;k++){const p=lumpyHill((5+r()*2)*1.3,(14+r()*8)*.75,0x8a8478,((-35+k*10)*.13+57)|0);p.position.set(-35+k*10,-.5,-80-r()*6);G.add(p)}const sea=new THREE.Mesh(new THREE.PlaneGeometry(300,60),M(0x3a7a9a,{roughness:.2,metalness:.12}));sea.rotation.x=-Math.PI/2;sea.position.set(0,.04,95);G.add(sea);solids.push({x0:-150,x1:150,y0:-1,y1:4,z0:66,z1:130})}
  const NL=[];if(!mini){for(const[x,y,z]of[[KX+3,3,KZ+6],[WX,3,WZ+3]]){const L=new THREE.PointLight(0xffc080,0,26,1.5);L.position.set(x,y,z);G.add(L);NL.push(L)}}
  const glow=new THREE.PointLight(0xff6a1a,0,10,2);glow.position.set(KX,1,KZ+6.4);G.add(glow);
  let nk=0,tt=0;const nightTick=dt=>{tt+=dt;const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(L=>L.intensity=nk*8);glow.intensity=nk*(5+Math.sin(tt*7)*1.5)};

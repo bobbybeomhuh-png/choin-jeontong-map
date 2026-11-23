@@ -4,6 +4,7 @@
    충청수영성: 오천항의 조선 수군 성(돌로 쌓은 무지개문). 계룡산: 북쪽 산줄기.
    놀이: 탁본 뜨기(3D 비석 앞면 종이를 문질러 새긴 글씨를 먹으로 떠내기), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildBoryeong(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(890);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
@@ -23,7 +24,7 @@ export function buildBoryeong(opts={}){const mini=!!opts.mini;const G=new THREE.
   const SWT=tex(256,128,(q,w,h)=>{q.fillStyle='#8a8478';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=16)for(let x=(y/16%2)*14;x<w;x+=28){const v=(r()*40|0);q.fillStyle=`rgb(${150+v},${145+v},${132+v})`;q.fillRect(x+1,y+1,26,14)}},[4,1]);const sw=new THREE.MeshStandardMaterial({map:SWT,roughness:1});
   for(const[z0,z1]of[[-24,-2.2],[2.2,24]]){const w=new THREE.Mesh(new THREE.BoxGeometry(2.6,4,z1-z0),sw);w.position.set(CX,2,CZ+(z0+z1)/2);G.add(w);solids.push({x0:CX-1.3,x1:CX+1.3,y0:0,y1:4,z0:CZ+z0,z1:CZ+z1})}
   const top=new THREE.Mesh(new THREE.BoxGeometry(2.6,1.2,4.4),sw);top.position.set(CX,3.4,CZ);G.add(top);const arch=new THREE.Mesh(new THREE.TorusGeometry(2.2,.45,6,16,Math.PI),sw);arch.rotation.y=Math.PI/2;arch.position.set(CX,2.6,CZ);G.add(arch)}
- /* 계룡산: 북쪽 산줄기 */{for(let k=0;k<7;k++){const h=new THREE.Mesh(new THREE.ConeGeometry(12+r()*6,18+r()*10,7),M(0x4a6a3a,{flatShading:true}));h.position.set(-40+k*14,9,-80-r()*8);G.add(h)}}
+ /* 계룡산: 북쪽 산줄기 */{for(let k=0;k<7;k++){const h=lumpyHill((12+r()*6)*1.3,(18+r()*10)*.75,0x4a6a3a,((-40+k*14)*.13+57)|0);h.position.set(-40+k*14,-.5,-80-r()*8);G.add(h)}}
  const NL=[];if(!mini){for(const[x,y,z]of[[SX,4,SZ+12],[BX,3,BZ+4],[CX+4,3,CZ]]){const L=new THREE.PointLight(0xffc080,0,26,1.5);L.position.set(x,y,z);G.add(L);NL.push(L)}}
  let nk=0;const nightTick=dt=>{const n=!!(window.__WX&&window.__WX.night);nk+=((n?1:0)-nk)*Math.min(1,dt*2);NL.forEach(L=>L.intensity=nk*8)};
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});

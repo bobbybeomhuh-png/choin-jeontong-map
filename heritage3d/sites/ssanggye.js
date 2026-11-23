@@ -4,16 +4,18 @@
    서쪽 차 시배지: 828년 김대렴이 당에서 가져온 차 씨를 지리산에 심었다는 『삼국사기』 기록이 있고, 쌍계사 둘레가 그 자리로 전해 옴. 북쪽 산속 불일폭포.
    놀이: 차밭 한 줄로 따기(차나무를 밟지 않게, 모든 차나무를 꼭 한 번씩만 지나며 찻잎을 따는 길을 이어 긋기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {curvedRoof,buildHall} from './hallkit.js';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildSsanggye(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(840);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<7;i++){const c=new THREE.Mesh(new THREE.ConeGeometry(26+r()*10,34+r()*14,7),M(0x4a6a3a,{flatShading:true}));c.position.set(-96+i*32,16,-112-r()*10);G.add(c)}
+ for(let i=0;i<7;i++){const c=lumpyHill((26+r()*10)*1.3,(34+r()*14)*.75,0x4a6a3a,((-96+i*32)*.13+57)|0);c.position.set(-96+i*32,-.5,-112-r()*10);G.add(c)}
  const ST=M(0xa8a296),ST2=M(0x948e82),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
- const roof=(x,y,z,W,D,h)=>{const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(W*.72,h,D*.72);rf.position.set(x,y+h/2,z);rf.castShadow=true;G.add(rf)};
+ const roof=(x,y,z,W,D,h)=>{curvedRoof(G,x,(y+h/2)-(h)/2,z,(W*.72)/.72,(D*.72)/.72,(h)*1.05)};
  const plaque=(x,y,z,txt,w=2)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const hall=(x,z,W,D,PH,base=.6)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.4,base,D+1.4),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.set(x,base+PH/2,z);G.add(w);const n=Math.max(2,Math.round(W/3));for(let i=0;i<=n;i++)for(const j of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.2,PH,10),WOOD);c.position.set(x-W/2+i*W/n,base+PH/2,z+j*D/2);G.add(c)}roof(x,base+PH,z,W+3,D+3,PH*.8);solids.push({x0:x-W/2-.7,x1:x+W/2+.7,y0:0,y1:base+PH,z0:z-D/2-.7,z1:z+D/2+.7});return base+PH};
+ const hall=(x,z,W,D,PH,base=.6)=>{/* 11/23 품질: 흰 상자 벽+기둥 → hallkit 법당 */const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH:PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return base+PH};
  /* 쌍계석문: 길 양쪽 큰 바위에 새긴 글씨 */for(const[s,txt]of[[-1,'磎雙'],[1,'門石']]){const b=new THREE.Mesh(new THREE.DodecahedronGeometry(2.2,0),M(0x9a9488,{flatShading:true}));b.scale.set(.9,1.5,.9);b.position.set(s*4,2,42);G.add(b);solids.push({cx:s*4,cz:42,r:2,y0:0,y1:4});const LT=tex(128,256,(q,w,h)=>{q.clearRect(0,0,w,h);q.fillStyle='#3a3228';q.font='bold 96px serif';q.textAlign='center';q.fillText(txt[1],w/2,110);q.fillText(txt[0],w/2,226)});const p=new THREE.Mesh(new THREE.PlaneGeometry(.8,1.6),new THREE.MeshBasicMaterial({map:LT,transparent:true}));p.position.set(s*4-s*.4,2.2,43.9);p.rotation.y=-s*.3;G.add(p)}
  sp(0,46,3,'쌍계석문','절 들머리 길 양쪽 바위에 雙磎·石門 네 글자가 새겨져 있어요. 신라 최치원이 지팡이로 쓴 글씨라는 이야기가 전해 와요(전해 오는 이야기).');
  /* 일주문 */{for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.3,.32,4.2,12),WOOD);c.position.set(s*2,2.1,32);G.add(c);solids.push({cx:s*2,cz:32,r:.35,y0:0,y1:4.2})}roof(0,4.2,32,6,3,1.6);plaque(0,3.7,32.9,'寺磎雙山異智',2.4)}

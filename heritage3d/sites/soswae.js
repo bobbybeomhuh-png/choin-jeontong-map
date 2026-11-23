@@ -2,6 +2,7 @@
    건물은 공개 3D 한옥(hanokkit.js 출처)과 이 파일이 지은 작은 정자, 배치는 소쇄원을 본떠 작게 지음(실제 거리와 다름).
    새 놀이: 징검다리 건너기(계곡 돌을 밟고 건너편까지, 물에 빠지면 처음부터). */
 import * as THREE from 'three';
+import {yardMat} from './yardkit.js';
 import {tex,mulb,materials,hipRoof} from './sungnyemun.js';
 import {placeHanok,hanokWall} from './hanokkit.js';
 import {chogaHut} from './vernacular.js';
@@ -24,7 +25,7 @@ export function buildSoswae(opts={}){const mini=!!opts.mini;const MT=materials()
  const SZ=6,STONES=[];{const st=M(0xa8a296,{roughness:.85});for(let i=0;i<7;i++){const t=i/6,x=SX(SZ)-SW-.2+(SW*2+.4)*t,z=SZ+Math.sin(i*1.9)*.55;const s=new THREE.Mesh(new THREE.CylinderGeometry(.34,.4,.42,9),st);s.position.set(x,.21,z);s.castShadow=!TOUCH;G.add(s);STONES.push({x,z,m:s})}}
  /* 계곡 위 외나무 다리(남쪽 입구 쪽) */{const bz=19,c=SX(bz);const b=box(SW*2+1.4,.16,.9,M(0x7a5a3a));b.position.set(c,.32,bz);G.add(b);S(c-SW-.7,c+SW+.7,0,.4,bz-.45,bz+.45)}
  /* ---------- 오곡문 담장: 계곡을 가로지르는 담, 밑에 물길 구멍 ---------- */
- {const WZ=-16,c=SX(WZ);const wl=M(0xd8ccb0),cap=M(0x3a3e44),st=M(0x8e887c);for(const[x0,x1]of[[-14,c-SW-.2],[c+SW+.2,14]]){const L=x1-x0;const b=box(L,1.6,.45,wl);b.position.set((x0+x1)/2,.8+.2,WZ);G.add(b);const base=box(L,.4,.55,st);base.position.set((x0+x1)/2,.2,WZ);G.add(base);const k=box(L+.2,.18,.7,cap);k.position.set((x0+x1)/2,1.88,WZ);G.add(k);S(x0,x1,0,2.2,WZ-.3,WZ+.3)}
+ {const WZ=-16,c=SX(WZ);const wl=yardMat(),cap=M(0x3a3e44),st=M(0x8e887c);for(const[x0,x1]of[[-14,c-SW-.2],[c+SW+.2,14]]){const L=x1-x0;const b=box(L,1.6,.45,wl);b.position.set((x0+x1)/2,.8+.2,WZ);G.add(b);const base=box(L,.4,.55,st);base.position.set((x0+x1)/2,.2,WZ);G.add(base);const k=box(L+.2,.18,.7,cap);k.position.set((x0+x1)/2,1.88,WZ);G.add(k);S(x0,x1,0,2.2,WZ-.3,WZ+.3)}
   /* 물 위로 건너지른 담: 돌 기둥 둘이 받치고 그 아래로 물이 흘러듦 */for(const sx of[-1,1]){const p=box(.5,1.2,.55,st);p.position.set(c+sx*(SW+.05),.6,WZ);G.add(p)}const over=box(SW*2+.6,.9,.45,wl);over.position.set(c,1.55,WZ);G.add(over);const k2=box(SW*2+.8,.18,.7,cap);k2.position.set(c,2.08,WZ);G.add(k2);S(c-SW-.3,c+SW+.3,1.1,2.3,WZ-.3,WZ+.3)}
  /* ---------- 대숲: 서쪽 비탈, 남쪽 입구 길 양옆 ---------- */
  if(!mini){const bm=new THREE.MeshStandardMaterial({color:0x6a8a3a,roughness:.6}),lm=new THREE.MeshStandardMaterial({color:0x4f7a30,roughness:.8,side:THREE.DoubleSide});/* 바람에 흔들림(1119): 꼭대기로 갈수록 크게, 대마다 다르게 */const WU={value:0};G.userData.windU=WU;const sway=(m,k)=>{m.onBeforeCompile=sh=>{sh.uniforms.uWT=WU;sh.vertexShader='uniform float uWT;\n'+sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvec4 iw=instanceMatrix*vec4(0.,0.,0.,1.);float hh='+k+';transformed.x+=sin(uWT*1.7+iw.x*.55+iw.z*.31)*.09*hh;transformed.z+=cos(uWT*1.3+iw.z*.47)*.06*hh;')}};sway(bm,'clamp(position.y+.5,0.,1.)');sway(lm,'1.');const N=260;const stem=new THREE.InstancedMesh(new THREE.CylinderGeometry(.045,.06,1,6),bm,N),leaf=new THREE.InstancedMesh(new THREE.PlaneGeometry(.9,.3),lm,N*3);const o=new THREE.Object3D();let k=0,kl=0;
