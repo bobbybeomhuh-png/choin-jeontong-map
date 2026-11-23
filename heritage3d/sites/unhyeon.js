@@ -4,6 +4,7 @@
    놀이: 노락당 촛불 밝히기(방바닥 칸에 실측 촛대를 놓아 방 안 모든 칸을 밝혀요. 불빛은 가로·세로로 곧게 뻗고 삼층장에 막혀요. 촛대는 적게! 빛 채우기 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
 import {tex,mulb} from './sungnyemun.js';
+import {buildHall} from './hallkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 export function buildUnhyeon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1866);
@@ -13,17 +14,17 @@ export function buildUnhyeon(opts={}){const mini=!!opts.mini;const G=new THREE.G
  for(let i=0;i<14;i++){const h=12+r()*24;const b=new THREE.Mesh(new THREE.BoxGeometry(8+r()*6,h,8),M(0x9aa4b0));b.position.set(-90+i*14,h/2,-80-r()*10);G.add(b)}
  const ST=M(0xa8a296),WALLW=M(0xeee6d4),WOOD=M(0x8a7458),ROOF=M(0x4a4a50);
  const plaque=(x,y,z,txt,w=1.6)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const wing=(x,z,W,D,H,base=.7)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(W+.6,base,D+.6),ST);b.position.set(x,base/2,z);G.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),WALLW);w.position.set(x,base+H/2,z);G.add(w);const n=Math.max(2,Math.round(W/2.2));for(let i=0;i<=n;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.14,.16,H,8),WOOD);c.position.set(x-W/2+i*W/n,base+H/2,z+D/2+.02);G.add(c)}const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set((W+1.8)*.72,1.6,(D+1.8)*.72);rf.position.set(x,base+H+.65,z);G.add(rf);solids.push({x0:x-W/2-.3,x1:x+W/2+.3,y0:0,y1:base+H,z0:z-D/2-.3,z1:z+D/2+.3});return base+H};
+ /* 11/23 품질: 상자+원뿔 지붕 → hallkit 한옥(민가 지붕·띠살문·주춧돌) */const wing=(x,z,W,D,H,base=.7,name)=>{const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/2.6)),nz:1,FY:base,PH:H,roof:'hip',name,pillar:0x6b4a2e,bracket:'ik',front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,plain:true,bare:true,roofScale:.75});G.add(h.group);return h.top};
  /* 담장 + 정문 */for(const[w,d,x,z]of[[18,.5,-12,26],[18,.5,12,26],[.5,52,-21,0],[.5,52,21,0],[42,.5,0,-26]]){const m=new THREE.Mesh(new THREE.BoxGeometry(w,2,d),M(0xc8b898));m.position.set(x,1,z);G.add(m);solids.push({x0:x-w/2,x1:x+w/2,y0:0,y1:2,z0:z-d/2,z1:z+d/2})}
- {const rf=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),ROOF);rf.rotation.y=Math.PI/4;rf.scale.set(3,1.2,2);rf.position.set(0,3.2,26);G.add(rf);for(const s of[-1,1]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.16,.18,2.8,8),WOOD);c.position.set(s*1.5,1.4,26);G.add(c)}}
+ {const h=buildHall({x:0,z:26,W:3.2,D:1.8,nx:1,nz:1,FY:.3,PH:2.9,roof:'gable',pillar:0x6b4a2e,bracket:'ik',front:'open',back:'open',left:'wall',right:'wall',stairs:'none',mini,solids,light:false,plain:true,bare:true,roofScale:.6});G.add(h.group)}
  sp(0,29.5,3,'운현궁 정문','흥선대원군의 집 운현궁이에요. 아들 고종이 열두 살에 왕이 되면서 "궁"이라 불렸어요.');
- /* 수직사 */{wing(12,20,12,3,2.2);plaque(12,2.5,21.52,'舍直守',1.2)}
+ /* 수직사 */{wing(12,20,12,3,2.2,.7,'舍直守')}
  sp(12,23.6,3,'수직사','운현궁을 지키던 사람들이 머물던 행랑채예요.');
- /* 노안당(사랑채) */{const y=wing(-8,8,12,4.2,2.8);plaque(-8,y-.5,10.12,'堂安老')}
+ /* 노안당(사랑채) */{wing(-8,8,12,4.2,2.8,.7,'堂安老')}
  sp(-8,13,2.8,'노안당','흥선대원군이 머물던 사랑채예요. 현판은 추사 김정희의 글씨를 모아 새겼다고 해요. 처마 끝에 햇빛 가리개 차양이 달린 게 특징이에요.');
- /* 노락당(안채, 가례) */const NZ=-6;{const y=wing(6,NZ,13,5,3);plaque(6,y-.5,NZ+2.52,'堂樂老')}
+ /* 노락당(안채, 가례) */const NZ=-6;{wing(6,NZ,13,5,3,.9,'堂樂老')}
  sp(6,NZ+5.6,3,'노락당','운현궁에서 가장 큰 안채예요. 1866년 고종과 명성황후의 가례가 이곳에서 열렸어요. 해마다 가을에 재현 행사가 열려요.');
- /* 이로당(ㅁ자 안채) */{const X=-8,Z=-17;wing(X,Z-3,10,2.6,2.4);wing(X,Z+3,10,2.6,2.2);wing(X-4,Z,2,3.4,2.2);wing(X+4,Z,2,3.4,2.2);plaque(X,2.6,Z+4.32,'堂老二',1.3)}
+ /* 이로당(ㅁ자 안채) */{const X=-8,Z=-17;wing(X,Z-3,10,2.6,2.4);wing(X,Z+3,10,2.6,2.2,.7,'堂老二')}
  sp(-8,-12,2.4,'이로당','바깥 출입이 적은 여인들이 지내던 ㅁ자 안채예요. 안으로 둘러싸 바깥에서 들여다보이지 않아요.');
  /* 실측 살림(노락당 툇마루 앞 전시) */const PX0=6,PZ0=NZ+3.6;let CANDLE=null;const SCAN=[];
  if(!mini){const gl=new GLTFLoader();const dr=new DRACOLoader();dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/');gl.setDRACOLoader(dr);

@@ -25,7 +25,7 @@ function column(h,rMax,bae=true){const pts=[];for(let i=0;i<=12;i++){const t=i/1
 /* spec: x,z,ry, W,D,nx,nz, FY(기단 높이), PH(기둥 높이), roof:'hip'|'gable', name(현판), pillar(색), bae(배흘림), bracket:'jusim'|'dapo'|'ik',
    front/back/left/right: 칸 채움 배열 또는 한 값('door'|'window'|'wall'|'open'), entry: 앞 칸 중 열어 둔 칸 번호(기본 가운데),
    loft:{h, stone:true} 누각(아래층 기둥 높이 h, 돌기둥), rail: 위층 난간, stairs:'front'|'none'|'east', roofScale, mini, solids(배열), light */
-export function buildHall(spec){const K=kitMats(),{MT,M}=K;const s=Object.assign({ry:0,nx:3,nz:2,FY:.9,PH:4,roof:'hip',pillar:0x9a3a26,bae:true,bracket:'jusim',front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',roofScale:1,light:true},spec);
+export function buildHall(spec){const K0=kitMats();/* 11/23 spec.bare: 단청 없는 민가·사대부가(운현궁 등) — 창방·공포를 맨 나무색으로 */const K=spec&&spec.bare?(K0._bare||(K0._bare=Object.assign({},K0,{dan:K0.M(0x7a5638,{roughness:.8}),dan2:K0.M(0x6e4c30,{roughness:.8}),bk:K0.M(0x7a5638,{roughness:.8}),grn:K0.M(0x6e4c30,{roughness:.8})}))):K0,{MT,M}=K;const s=Object.assign({ry:0,nx:3,nz:2,FY:.9,PH:4,roof:'hip',pillar:0x9a3a26,bae:true,bracket:'jusim',front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',roofScale:1,light:true},spec);
  const {W,D,nx,nz,FY,PH}=s;const G=new THREE.Group();G.position.set(s.x||0,0,s.z||0);G.rotation.y=s.ry;const SOL=s.solids||[];
  const cs=Math.cos(s.ry),sn=Math.sin(s.ry);const wx=(lx,lz)=>[s.x+lx*cs+lz*sn,s.z-lx*sn+lz*cs];
  const S=(x0,x1,y0,y1,z0,z1)=>{const a=wx(x0,z0),b=wx(x1,z1);SOL.push({x0:Math.min(a[0],b[0]),x1:Math.max(a[0],b[0]),y0,y1,z0:Math.min(a[1],b[1]),z1:Math.max(a[1],b[1])})};
