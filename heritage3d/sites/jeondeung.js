@@ -3,7 +3,7 @@
    삼랑성 동문(돌 홍예문), 대웅보전(보물, 1621년 고쳐 지음, 네 귀퉁이 처마 밑 나부상 — 도편수와 주모 이야기는 전해 오는 이야기), 범종(보물, 중국 송나라 종), 정족산사고(조선왕조실록을 지키던 곳, 장사각·선원보각 다시 지음), 양헌수 승전비(1866 병인양요 정족산성 싸움).
    놀이: 실록 포쇄(햇볕에 책 말리기: 구름 그림자가 마당을 지나가니 책 꾸러미를 햇볕 드는 멍석으로 옮겨 말리고, 소나기 구름이 오기 전에 사고에 들이기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
-import {curvedRoof} from './hallkit.js';
+import {curvedRoof,buildHall} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildJeondeung(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1621);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -11,7 +11,7 @@ export function buildJeondeung(opts={}){const mini=!!opts.mini;const G=new THREE
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,200),new THREE.MeshStandardMaterial({map:GT,color:0x7a9a48,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  const STONE=M(0xa8a296),WOOD=M(0x8a3a2a),WALLW=M(0xeee6d4),ROOF=M(0x4a4a50);
  const box=(w,h,d,x,y,z,m,sol=true)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.position.set(x,y+h/2,z);b.castShadow=true;b.receiveShadow=true;G.add(b);if(sol)solids.push({x0:x-w/2,x1:x+w/2,y0:0,y1:y+h,z0:z-d/2,z1:z+d/2});return b};
- const hall=(x,z,W,D,PH,base=.6,ry=0)=>{const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;G.add(g);const b=new THREE.Mesh(new THREE.BoxGeometry(W+1.6,base,D+1.6),STONE);b.position.y=base/2;g.add(b);const w=new THREE.Mesh(new THREE.BoxGeometry(W,PH,D),WALLW);w.position.y=base+PH/2;g.add(w);for(const[i,j]of[[-1,-1],[1,-1],[-1,1],[1,1],[0,1],[0,-1]]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.2,.22,PH,10),WOOD);c.position.set(i*W/2,base+PH/2,j*D/2);g.add(c)}curvedRoof(g,0,(base+PH+PH*.37)-(PH*.75)/2,0,((W+3)*.72)/.72,((D+3)*.72)/.72,(PH*.75)*1.05);const c=Math.cos(ry),s=Math.sin(ry),hw=W/2+.9,hd=D/2+.9;const xs=[-hw,hw].map(a=>a*c),zs=[-hd,hd];solids.push({x0:x-Math.abs(hw*c)-Math.abs(hd*s),x1:x+Math.abs(hw*c)+Math.abs(hd*s),y0:0,y1:base+PH,z0:z-Math.abs(hw*s)-Math.abs(hd*c),z1:z+Math.abs(hw*s)+Math.abs(hd*c)});return{g,top:base+PH}};
+ /* 11/23 품질: 흰 상자 → hallkit 법당 */const hall=(x,z,W,D,PH,base=.6,ry=0)=>{const h=buildHall({x,z,W,D,ry,nx:Math.max(1,Math.round(W/3)),nz:Math.max(1,Math.round(D/3.2)),FY:base,PH,roof:'hip',pillar:0x9a3a26,bracket:(W>=8?'dapo':'ik'),front:'door',back:'wall',left:'wall',right:'wall',stairs:'front',mini,solids,light:false,roofScale:.9});G.add(h.group);return{g:h.group,top:base+PH}};
  /* 삼랑성 동문(돌 홍예문)과 성벽 */const GZ=40;{for(const s of[-1,1]){box(30,4,3,s*17.4,0,GZ,STONE)}box(4.8,1.4,3,0,2.6,GZ,STONE,false);for(const s of[-1,1])box(.6,2.6,3,s*2.1,0,GZ,M(0x948e82));curvedRoof(G,0,(5.2)-(1.6)/2,GZ,(4.4)/.72,(2.6)/.72,(1.6)*1.05)}
  sp(0,GZ+5,3.4,'삼랑성 동문','단군의 세 아들이 쌓았다는 이야기가 전해 오는 정족산성(삼랑성)의 동문이에요. 돌로 쌓은 무지개 문을 지나 전등사로 들어가요.');
  /* 양헌수 승전비 */{box(1,2.2,.4,-9,.5,30,M(0xc0bcb0));box(1.6,.5,1,-9,0,30,STONE)}

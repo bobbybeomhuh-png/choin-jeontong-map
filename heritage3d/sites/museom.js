@@ -3,7 +3,7 @@
    외나무다리(폭 약 30cm, 마을과 바깥을 잇던 유일한 길, 중간중간 비켜 서는 다리), 해우당(1836)·만죽재(1666) 같은 ㅁ자 기와집, 까치구멍집, 초가, 모래톱, 수도교.
    놀이: 외나무다리 건너기(걸으면서 바람에 흔들리는 몸의 균형을 ⬅➡로 잡아요. 기울면 강물에 풍덩, 비켜 선 다리에서 다시 출발. 실시간 균형 잡기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
-import {curvedRoof} from './hallkit.js';
+import {curvedRoof,buildHall} from './hallkit.js';
 import {tex,mulb} from './sungnyemun.js';
 export function buildMuseom(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1666);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
@@ -20,7 +20,7 @@ export function buildMuseom(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
  sp(26,50,2.6,'수도교','1983년에 놓인 시멘트 다리예요. 그 뒤로 외나무다리는 잠시 사라졌다가 다시 놓였어요.');
  /* ㅁ자 집 */const ROOFG=M(0x4a4a50),THATCH=M(0xb89a5a,{roughness:1}),WALLW=M(0xeee6d4),WOOD=M(0x8a7458),ST=M(0xa8a296);
  const plaque=(x,y,z,txt,w=1.4)=>{const LT=tex(256,96,(q,ww,h)=>{q.fillStyle='#2a2a30';q.fillRect(0,0,ww,h);q.fillStyle='#e8d890';q.font='bold 52px serif';q.textAlign='center';q.fillText(txt,ww/2,66)});const bd=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.36),new THREE.MeshBasicMaterial({map:LT}));bd.position.set(x,y,z);G.add(bd)};
- const wing=(x,z,W,D,H,thatch)=>{const w=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),WALLW);w.position.set(x,.5+H/2,z);G.add(w);const b=new THREE.Mesh(new THREE.BoxGeometry(W+.4,.5,D+.4),ST);b.position.set(x,.25,z);G.add(b);if(thatch){const rf=new THREE.Mesh(new THREE.SphereGeometry(1,12,8,0,Math.PI*2,0,Math.PI/2),THATCH);rf.scale.set(W*.62,1.3,D*.75);rf.position.set(x,.5+H,z);G.add(rf)}else{curvedRoof(G,x,(.5+H+.55)-(1.4)/2,z,((W+1.6)*.72)/.72,((D+1.6)*.72)/.72,(1.4)*1.05)}};
+ /* 11/23 품질: 흰 상자 → hallkit 한옥 벽(띠살문·주춧돌), 초가는 짚 지붕을 얹고 기와집은 곡선 기와 */const wing=(x,z,W,D,H,thatch)=>{const h=buildHall({x,z,W,D,nx:Math.max(1,Math.round(W/2.6)),nz:1,FY:.5,PH:H,roof:thatch?'none':'hip',pillar:0x6b4a2e,bracket:'ik',bare:true,plain:true,front:'door',back:'wall',left:'wall',right:'wall',stairs:'none',mini,solids,light:false,roofScale:.75});G.add(h.group);if(thatch){const rf=new THREE.Mesh(new THREE.SphereGeometry(1,16,8,0,Math.PI*2,0,Math.PI/2),THATCH);rf.scale.set(W*.66,1.4,D*.8);rf.position.set(x,h.top,z);rf.castShadow=true;G.add(rf)}};
  const mhouse=(x,z,S,thatch,name)=>{const t=1.8;wing(x,z+S/2-t/2,S,t,2.6,thatch);wing(x,z-S/2+t/2,S,t,2.4,thatch);wing(x-S/2+t/2,z,t,S-2*t,2.4,thatch);wing(x+S/2-t/2,z,t,S-2*t,2.4,thatch);solids.push({x0:x-S/2-.2,x1:x+S/2+.2,y0:0,y1:3.4,z0:z-S/2-.2,z1:z+S/2+.2});if(name)plaque(x,2.6,z+S/2+.02,name)};
  mhouse(-9,4,8,false,'堂愚海');sp(-9,10.4,2.6,'해우당','1836년에 지은 ㅁ자 기와집이에요. 사랑채가 높아 마을과 강이 내려다보여요. 흥선대원군이 쓴 현판이 걸려 있다고 전해 와요(전해 오는 이야기).');
  mhouse(10,2,7.4,false,'齋竹晩');sp(10,8,2.6,'만죽재','1666년, 무섬마을에 처음 들어온 반남 박씨가 지은 마을에서 가장 오래된 집이에요.');
