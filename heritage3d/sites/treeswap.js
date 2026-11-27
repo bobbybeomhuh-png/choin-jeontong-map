@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import {tamePineRoots,leafCloudGeo,leafMat,lumpyHill} from './treekit.js';
 import {getModel} from './hanokkit.js';
+import {curvedRoof} from './hallkit.js';
 const FOL=new Set(['ConeGeometry','IcosahedronGeometry','DodecahedronGeometry','OctahedronGeometry','SphereGeometry']);
 const isGreen=c=>{const h={};c.getHSL(h);return h.h>.17&&h.h<.48&&h.s>.15&&h.l<.62};
 const isBrown=c=>{const h={};c.getHSL(h);return (h.h<.13||h.h>.95)&&h.s>.12&&h.l<.5};
@@ -21,7 +22,7 @@ export function findToyTrees(scene,GY=0){scene.updateMatrixWorld(true);const fol
  out.blobs=fol.filter(f=>!f.cone);return out}
 let PINE=null;
 async function pineParts(){if(PINE)return PINE;const s0=await getModel('misc/pine_lo');if(!s0)return null;const src=s0.clone(true);tamePineRoots(src);src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(new THREE.Vector3());const inv=new THREE.Matrix4().makeTranslation(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);const parts=[];src.traverse(e=>{if(e.isMesh&&e.material&&e.material.visible!==false)parts.push({g:e.geometry,m:e.material,mw:inv.clone().multiply(e.matrixWorld)})});return PINE={parts,h:sz.y}}
-export async function swapToyTrees(scene,{GY=0,max=400}={}){try{swapToyHills(scene)}catch(e){console.warn('산 바꾸기',e)}const ALL=findToyTrees(scene,GY),T=ALL.slice(0,max);T.blobs=ALL.blobs;if(!T.length&&!T.blobs.length)return 0;
+export async function swapToyTrees(scene,{GY=0,max=400}={}){try{swapToyHills(scene)}catch(e){console.warn('산 바꾸기',e)}try{window.__RSWAP=(window.__RSWAP||0)+swapToyRoofs(scene,GY)}catch(e){console.warn('지붕 바꾸기',e)}const ALL=findToyTrees(scene,GY),T=ALL.slice(0,max);T.blobs=ALL.blobs;if(!T.length&&!T.blobs.length)return 0;
  const pines=T.filter(t=>t.cone);let n=0;
  if(pines.length){const P=await pineParts();if(P){const o=new THREE.Object3D(),M=new THREE.Matrix4();let s=7;const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647};const mats=pines.map(t=>{o.position.set(t.x,t.base,t.z);o.rotation.set(0,rnd()*6.28,0);o.scale.setScalar(t.H*1.2/P.h);o.updateMatrix();return o.matrix.clone()});
    for(const p of P.parts){const im=new THREE.InstancedMesh(p.g,p.m,mats.length);mats.forEach((m,i)=>im.setMatrixAt(i,M.copy(m).multiply(p.mw)));im.castShadow=true;im.receiveShadow=true;im.userData.noPhoto=1;im.computeBoundingSphere&&im.computeBoundingSphere();im.frustumCulled=false;scene.add(im)}
@@ -33,3 +34,7 @@ export async function swapToyTrees(scene,{GY=0,max=400}={}){try{swapToyHills(sce
 export function swapToyHills(scene){scene.updateMatrixWorld(true);const L=[];scene.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||!o.visible||!o.geometry||o.geometry.type!=='SphereGeometry')return;const P=o.geometry.parameters;if(!P||P.radius<6||Math.abs((P.thetaLength||Math.PI)-Math.PI/2)>.01)return;const m=o.material;if(!m||Array.isArray(m)||m.map||m.vertexColors||!m.color||!isGreen(m.color))return;L.push(o)});
  let k=0;for(const o of L){const sc=new THREE.Vector3();o.getWorldScale(sc);const rr=P_(o).radius*Math.max(sc.x,sc.z),h=P_(o).radius*sc.y;const m=lumpyHill(rr,h,o.material.color.getHex(),++k);const wp=new THREE.Vector3();o.getWorldPosition(wp);m.position.copy(wp);m.receiveShadow=true;scene.add(m);o.visible=false}return L.length}
 const P_=o=>o.geometry.parameters;
+
+/* 4면 원뿔 지붕(피라미드) → 처마 곡선 있는 기와 우진각 지붕 / 초가는 둥근 이엉 지붕. 크기·자리 그대로 */
+export function swapToyRoofs(scene,GY=0){scene.updateMatrixWorld(true);const L=[],bb=new THREE.Box3(),sz=new THREE.Vector3();scene.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||!o.visible||!o.geometry||o.geometry.type!=='ConeGeometry')return;const P=o.geometry.parameters;if(!P||P.radialSegments!==4||P.radius<1.2)return;const m=o.material;if(!m||Array.isArray(m)||!m.color||m.transparent)return;bb.setFromObject(o,true);bb.getSize(sz);if(bb.min.y<GY+1.4||sz.y>Math.max(sz.x,sz.z)*1.1)return;const h={};m.color.getHSL(h,THREE.SRGBColorSpace);const tile=h.s<.25&&h.l<.42,thatch=h.h>.07&&h.h<.16&&h.s>.2&&h.l>.3;if(!tile&&!thatch)return;L.push({o,tile,x:(bb.min.x+bb.max.x)/2,z:(bb.min.z+bb.max.z)/2,y:bb.min.y,W:sz.x,D:sz.z,H:sz.y,c:m.color.getHex()})});
+ for(const t of L){const par=scene;if(t.tile){/* 처마가 조금 더 나오게 */curvedRoof(par,t.x,t.y-.1,t.z,Math.max(t.W,t.D)*.98,Math.min(t.W,t.D)*.98,t.H*.95,{ry:t.W>=t.D?0:Math.PI/2})}else{const g=new THREE.SphereGeometry(1,28,10,0,Math.PI*2,0,Math.PI/2);const pa=g.attributes.position,v=new THREE.Vector3();for(let i=0;i<pa.count;i++){v.fromBufferAttribute(pa,i);const n=1+.03*Math.sin(Math.atan2(v.z,v.x)*9);pa.setXYZ(i,v.x*n,v.y,v.z*n)}g.computeVertexNormals();const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:new THREE.Color(t.c).lerp(new THREE.Color(0x9a8458),.4),roughness:1}));m.scale.set(t.W*.58,t.H*.9,t.D*.58);m.position.set(t.x,t.y,t.z);m.castShadow=m.receiveShadow=true;par.add(m)}t.o.visible=false}return L.length}
