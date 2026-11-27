@@ -15,6 +15,11 @@ function broadGeo(){if(BROAD)return BROAD;const r=rng(5),bark=[],leaf=[];
  for(const g of bark){g.deleteAttribute('uv');g.deleteAttribute('normal');g.computeVertexNormals()}
  BROAD={bark:mergeGeometries(bark.map(g=>g.toNonIndexed())),leaf:mergeGeometries(leaf.map(g=>g.toNonIndexed()))};return BROAD}
 /* list: [[x,y,z,ry,scale,colorHex]] */
+
+/* 잎 구름(11/28): 반지름 1 공 안팎에 잎 판을 흩은 것. 각진 공 나무를 이것으로 바꿈(treeswap). 아래쪽은 어둡게(정점 색) */
+let CLOUD=null,LEAFM=null;export function leafCloudGeo(){if(CLOUD)return CLOUD;const r=rng(31),L=[];for(let i=0;i<64;i++){const u=r()*6.28,v=Math.acos(2*r()-1),R=.55+r()*.5;const p=new THREE.Vector3(Math.sin(v)*Math.cos(u)*R,Math.cos(v)*R,Math.sin(v)*Math.sin(u)*R);const s=.55+r()*.35,g=new THREE.PlaneGeometry(s,s);g.applyMatrix4(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(r()*3.14,r()*3.14,r()*3.14)));g.translate(p.x,p.y,p.z);const n=g.attributes.position.count,col=new Float32Array(n*3);for(let k=0;k<n;k++){const y=g.attributes.position.getY(k),b=.62+.38*Math.min(1,Math.max(0,(y+.9)/1.8));col[k*3]=col[k*3+1]=col[k*3+2]=b}g.setAttribute('color',new THREE.BufferAttribute(col,3));L.push(g.toNonIndexed())}CLOUD=mergeGeometries(L);return CLOUD}
+export function leafTexture(){return leafTex()}
+export function leafMat(){return LEAFM||(LEAFM=new THREE.MeshStandardMaterial({map:leafTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:.9,vertexColors:true}))}
 export function plantBroad(parent,list,{shadow=true,chunk=0}={}){
  /* chunk(m): 넓은 땅에 흩어 심을 때 칸별로 나눠 묶음 → 화면 밖 칸은 그리지 않음. 돌려주는 값은 [껍질 묶음들, 잎 묶음들] */
  if(chunk&&list.length>60){const cells=new Map();for(const t of list){const k=Math.floor(t[0]/chunk)+','+Math.floor(t[2]/chunk);if(!cells.has(k))cells.set(k,[]);cells.get(k).push(t)}const B=[],L=[];for(const part of cells.values()){const r=plantBroad(parent,part,{shadow});if(r){r[0].computeBoundingSphere();r[1].computeBoundingSphere();B.push(r[0]);L.push(r[1])}}return [B,L]}
@@ -32,8 +37,8 @@ function paintedPineTex(){if(PPT)return PPT;const W=128,H=256,c=document.createE
 export function paintedPines(N){const a=new THREE.PlaneGeometry(1,2).translate(0,1,0),b=a.clone().rotateY(Math.PI/2);const geo=mergeGeometries([a,b]);
  const m=new THREE.MeshStandardMaterial({map:paintedPineTex(),alphaTest:.4,side:THREE.DoubleSide,roughness:1});return new THREE.InstancedMesh(geo,m,N)}
 /* 울퉁불퉁한 산: 반구에 잔물결 능선과 아래 어둡고 위 밝은 색 */
-export function lumpyHill(rr,h,col,seed=1){const r=rng(seed*7+3),g=new THREE.SphereGeometry(rr,64,20,0,Math.PI*2,0,Math.PI/2),p=g.attributes.position,c=new Float32Array(p.count*3),base=new THREE.Color(col),hi=base.clone().offsetHSL(.02,-.05,.08),lo=base.clone().offsetHSL(-.02,0,-.1),k1=r()*6,k2=r()*6,tmp=new THREE.Color();
- for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),t=y/rr;const n=1+.07*Math.sin(a*5+k1)*Math.sin(t*4+k2)+.04*Math.sin(a*11+k2*2)*(1-t);p.setXYZ(i,x*n,y*(1+.12*Math.sin(a*3+k1))*h/rr,z*n);tmp.copy(lo).lerp(hi,Math.min(1,t*1.3));c[i*3]=tmp.r;c[i*3+1]=tmp.g;c[i*3+2]=tmp.b}
+export function lumpyHill(rr,h,col,seed=1){const r=rng(seed*7+3),g=new THREE.SphereGeometry(rr,96,28,0,Math.PI*2,0,Math.PI/2),p=g.attributes.position,c=new Float32Array(p.count*3),base=new THREE.Color(col).lerp(new THREE.Color(0x3a4e32),.55),hi=base.clone().offsetHSL(.02,-.05,.08),lo=base.clone().offsetHSL(-.02,0,-.1),k1=r()*6,k2=r()*6,tmp=new THREE.Color();
+ for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),t=y/rr;const n=1+.07*Math.sin(a*5+k1)*Math.sin(t*4+k2)+.04*Math.sin(a*11+k2*2)*(1-t)+.025*Math.sin(a*23+k1*3)*Math.sin(t*9);/* 11/28: 능선 굴곡(봉우리·안부)과 잔주름 — 매끈한 돔이 장난감처럼 보이던 것 */const tw=Math.min(1,t*1.6)*Math.max(0,1-t*t*1.1);const ry=1+.12*Math.sin(a*3+k1)*(1-t*t)+.07*Math.sin(a*7+k2)*tw+.03*Math.sin(a*17+k1*2)*tw;p.setXYZ(i,x*n,y*ry*h/rr,z*n);tmp.copy(lo).lerp(hi,Math.min(1,t*1.3));c[i*3]=tmp.r;c[i*3+1]=tmp.g;c[i*3+2]=tmp.b}
  g.setAttribute('color',new THREE.BufferAttribute(c,3));g.computeVertexNormals();const mm=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});mm.userData.finKind='forest';return new THREE.Mesh(g,mm)}
 /* 소나무 모델(pine_lo) 밑동 뿌리 판 오므리기: 아래 12% 높이에서 옆으로 뻗은 납작한 뿌리가 거미 다리처럼 보임 → 줄기 둘레로 당김. 원본에 한 번만 */
 export function tamePineRoots(root){if(!root||root.userData.tamed)return root;root.userData.tamed=true;root.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(root),H=b.max.y-b.min.y;if(!(H>0))return root;
