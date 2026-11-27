@@ -4,17 +4,20 @@
    놀이: 성 안 돌무더기 치우기(가로·세로로만 밀리는 돌덩이들을 밀어 비켜, 돌 수레를 서쪽 성문으로 빼내요. 막힌 길 풀기형, 판은 답이 있는지 계산해 만듦, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
 import {tex,mulb} from './sungnyemun.js';
+import {lumpyHill} from './treekit.js';
+import {fortWall,thinMat,stoneBlock} from './seongkit.js';
 export function buildSamnyeon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(470);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9},o));
  const sp=(x,z,rr,t,h)=>spots.push({x,y:0,z,r:rr,t,h});
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9448,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
- for(let i=0;i<10;i++){const h=new THREE.Mesh(new THREE.SphereGeometry(20+r()*10,14,8,0,Math.PI*2,0,Math.PI/2),M(0x557a44,{flatShading:true}));h.scale.y=.55;h.position.set(-90+i*20,0,-96-r()*10);G.add(h)}
- /* 성벽 고리(남문·서문 자리 비움) */const SW=tex(256,256,(q,w,h)=>{q.fillStyle='#8e8676';q.fillRect(0,0,w,h);for(let y=0;y<h;y+=16){const off=(y/16)%2?12:0;for(let x=-off;x<w;x+=26){const v=110+(r()*40|0);q.fillStyle=`rgb(${v+10},${v+4},${v-8})`;q.fillRect(x+1,y+1,24,14)}}},[2,2]);const WALL=new THREE.MeshStandardMaterial({map:SW,roughness:1});
- const RW=36,NS=56,WH=7;const gateS=Math.PI/2,gateW=Math.PI;/* 남(+z), 서(-x) */
- for(let i=0;i<NS;i++){const a=(i+.5)/NS*Math.PI*2;const dS=Math.abs(Math.atan2(Math.sin(a-gateS),Math.cos(a-gateS))),dW=Math.abs(Math.atan2(Math.sin(a-gateW),Math.cos(a-gateW)));if(dS<.07)continue;const x=Math.cos(a)*RW,z=Math.sin(a)*RW;const L=2*Math.PI*RW/NS+.15;
-  const isW=dW<.07;const h=isW?3:WH;const seg=new THREE.Mesh(new THREE.BoxGeometry(5.5,h,L),WALL);seg.position.set(x,h/2,z);seg.rotation.y=-a;G.add(seg);if(isW){const up=new THREE.Mesh(new THREE.BoxGeometry(5.5,1.4,L),WALL);up.position.set(x,WH-.7,z);up.rotation.y=-a;G.add(up)}
-  solids.push({cx:x,cz:z,r:2.9,y0:0,y1:WH})}
- /* 곡성(동쪽 반달 치성) */{const c=new THREE.Mesh(new THREE.CylinderGeometry(5,5.4,WH,20,1,false,-Math.PI/2,Math.PI),WALL);c.position.set(RW+2.6,WH/2,0);G.add(c);solids.push({cx:RW+3,cz:0,r:5})}
+ for(let i=0;i<10;i++){const rr=20+r()*10;const h=lumpyHill(rr,rr*.55,0x557a44,(i*11+31)|0);h.position.set(-90+i*20,0,-96-r()*10);h.rotation.y=r()*3;G.add(h)}
+ /* 성벽 고리(남문 자리 비움): 신라식 납작돌 켜쌓기(점판암), 여장 없이 위가 평평, seongkit */
+ const RW=36,WH=7,TM=thinMat(),GTOP=M(0x6a8a44,{roughness:1});
+ {const seg=(a0,a1)=>{const N=Math.ceil((a1-a0)/.1),run=[];for(let k=0;k<=N;k++){const a=a0+k/N*(a1-a0);run.push([Math.cos(a)*RW,Math.sin(a)*RW])}fortWall(G,solids,run,{H:WH,T:5.5,batter:.18,par:false,mat:TM,top:GTOP})};seg(Math.PI/2+.11,Math.PI-.075);seg(Math.PI+.075,Math.PI*2.5-.11)}
+ /* 서문(현문): 문턱이 3m 높이, 위아래 성벽 사이로 문길이 뚫림 */{const x=-RW;for(const[y0,h]of[[0,3],[WH-1.4,1.4]]){const b=stoneBlock(5.6,h,3.6,TM);b.position.set(x,y0+h/2,0);b.castShadow=b.receiveShadow=true;G.add(b)}const fl=new THREE.Mesh(new THREE.BoxGeometry(5.6,.15,3.6),M(0x6a5a44));fl.position.set(x,3.07,0);G.add(fl);for(const q of[-1,1]){const j=stoneBlock(5.6,WH,.6,TM);j.position.set(x,WH/2,q*2.1);G.add(j)}}
+
+
+ /* 곡성(동쪽 반달 치성): 성벽 밖으로 둥글게 */{const P=[];for(let k=0;k<=10;k++){const a=-1.75+k/10*3.5;P.push([RW-1+Math.cos(a)*4.6,Math.sin(a)*4.6])}fortWall(G,solids,P,{H:WH,T:6.6,batter:.12,par:false,mat:TM,top:GTOP})}
  /* 남문 터 */for(const s of[-1,1]){const p=new THREE.Mesh(new THREE.BoxGeometry(1.2,.4,1.2),M(0xa8a296));p.position.set(s*2.4,.2,RW);G.add(p)}
  sp(0,RW+4,3,'남문 터','성으로 드나들던 남쪽 문 자리예요. 둘레 1.7km, 높이 13~20m의 돌 성을 3년 걸려 쌓았다 해서 삼년산성이에요(470년).');
  /* 현문식 서문 + 사다리 */{const x=-RW+3.4;for(let k=0;k<2;k++){const rl=new THREE.Mesh(new THREE.BoxGeometry(.08,3.6,.08),M(0x8a6a3a));rl.position.set(x,1.6,(k-.5)*.8);rl.rotation.z=-.35;G.add(rl)}for(let i=0;i<7;i++){const rg=new THREE.Mesh(new THREE.BoxGeometry(.06,.06,.9),M(0x8a6a3a));rg.position.set(x+.55-i*.17,.3+i*.48,0);G.add(rg)}}
