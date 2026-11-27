@@ -52,9 +52,31 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 .seg.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 9px rgba(59,51,38,.25);}
 .seg.on .tl i{color:rgba(243,236,224,.82);}
 .seg:not(.on):hover{background:rgba(255,255,255,.5);color:var(--ink);}
-@media(max-width:1240px){.chtabs{display:none;}}
+.chtab{white-space:nowrap;flex-shrink:0}
+@media(max-width:1450px){.chface{display:none}}
+@media(max-width:1100px){.title small{display:none;}}
+@media(max-width:1560px){
+ header{flex-wrap:wrap;row-gap:8px;}
+ .title{flex:1 1 0;min-width:0;}
+ header>.spacer{display:none;}
+ .chtabs{order:9;flex:0 0 100%;margin-left:0;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 0 2px;}
+ .chtabs::-webkit-scrollbar{display:none;}
+ .chtab{font-size:13px;padding:7px 12px;}
+}
 @media(max-width:1000px){.seg{flex-basis:auto;}.seg .tl i{display:none;}}
 @media(max-width:760px){header{flex-wrap:wrap;gap:7px 10px;padding:10px 13px;}.title{font-size:16px;line-height:1.15;}.title small{font-size:10px;}.homelogo img{width:38px;height:38px;}.lang button{padding:6px 11px;}}
+@media(max-width:780px){
+ header{position:static;}
+ .title{flex:1 1 0;min-width:0;font-size:15px;}
+ .title small{display:none;}
+ header>.spacer{display:none;}
+ header>.lang:not(#viewsw){order:1;flex:0 0 auto;}
+ .segtabs{order:2;flex:1 1 100%;margin-left:0;padding:4px;}
+ .seg{flex:1 1 0;justify-content:center;height:42px;padding:0 8px;}
+ .chtabs{order:3;}
+ #viewsw{order:4;margin-right:0 !important;}
+ .lang button{min-height:34px;}
+}
 
 .hero{max-width:1200px;margin:0 auto;padding:60px 30px 34px;}
 .hero .kick{margin-bottom:16px;}
@@ -186,6 +208,18 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 .lb .info h3{font-family:var(--serif);font-size:23px;font-weight:800;margin:6px 0 4px;}
 .lb .info .venue{font-size:12.5px;color:var(--bandgold);margin-bottom:6px;}
 .lb .info p{color:#c9bda3;font-size:13.5px;max-width:660px;margin:0 auto;}
+/* 폰: 설명이 길어도 영상이 찌그러지지 않게 — 위에 영상, 아래로 스크롤해서 읽기 */
+@media(max-width:760px){
+ .lb{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:56px 14px 28px;}
+ .lb .stage{flex:0 0 auto;}
+ .lb .media{width:100%;max-height:none;}
+ .lb .info{text-align:left;padding:16px 4px 4px;}
+ .lb .info h3{font-size:21px;}
+ .lb .info p{font-size:14.5px;line-height:1.7;}
+ .lb .x{position:fixed;top:8px;right:14px;font-size:34px;padding:2px 8px;}
+ .lb .nav{position:fixed;top:118px;transform:none;padding:14px 10px;opacity:.85;text-shadow:0 1px 6px #000;}
+ .lb .prev{left:0;}.lb .next{right:0;}
+}
 /* --- 브랜드 리뉴얼 액센트 (2026) --- */
 .wwd{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:clamp(17px,2.4vw,25px);font-weight:700;margin-top:16px;letter-spacing:.3px}
 .herofig{max-width:1200px;margin:6px auto 0;padding:0 30px}
@@ -220,26 +254,26 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 
 <header>
   <a class="homelogo" href="index.html" title="메인으로"><img src="logo_full.png" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"></a>
-  <div class="title">초인, 대한민국의 전통을 이야기하다<small>대한민국 전역의 전통을 미디어아트로 다시 잇다 · 90개 도시</small></div>
+  <div class="title" data-en="CHOIN — Retelling Korea's Heritage&lt;small&gt;Reviving Korea's heritage as media art, nationwide · 90 cities&lt;/small&gt;">초인, 대한민국의 전통을 이야기하다<small>대한민국 전역의 전통을 미디어아트로 다시 잇다 · 90개 도시</small></div>
   <nav class="chtabs">
-    <a class="chtab" id="tab-portfolio" href="초인_포트폴리오.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a">✦ 초인 포트폴리오</a>
-    <a class="chtab" id="tab-muui" href="muui/index.html"><img src="muui_avatar.png" class="chface" alt="무이">▶ 무이 유물단</a>
-    <a class="chtab" id="tab-suksu" href="대령숙수.html"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
-    <a class="chtab" id="tab-lab" href="lab/index.html" style="background:#1E6B58">✎ 제작 배움터</a>
+    <a class="chtab" id="tab-portfolio" href="초인_포트폴리오.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a" data-en="✦ CHOIN Portfolio">✦ 초인 포트폴리오</a>
+    <a class="chtab" id="tab-muui" href="muui/index.html"><img src="muui_avatar.png" class="chface" alt="무이"><span data-en="▶ MUUI Relic Squad">▶ 무이 유물단</span></a>
+    <a class="chtab" id="tab-suksu" href="대령숙수.html"><img src="suksu_avatar.png" class="chface" alt="대령숙수"><span data-en="▶ Royal Chef">▶ 대령숙수</span></a>
+    <a class="chtab" id="tab-lab" href="lab/index.html" style="background:#1E6B58" data-en="✎ Making Lab">✎ 제작 배움터</a>
   </nav>
   <div class="segtabs" role="tablist">
-    <a class="seg on" href="index.html"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>되살린 전통을 본다</i></span></a>
-    <a class="seg" href="index.html#meet"><span class="ico">✦</span><span class="tl"><b>만남의 장</b><i>기회를 잡고 함께한다</i></span></a>
+    <a class="seg on" href="index.html"><span class="ico">🗺</span><span class="tl"><b data-en="Heritage Stories">전통 이야기</b><i data-en="See heritage revived">되살린 전통을 본다</i></span></a>
+    <a class="seg" href="index.html#meet"><span class="ico">✦</span><span class="tl"><b data-en="Meeting Place">만남의 장</b><i data-en="Find opportunities">기회를 잡고 함께한다</i></span></a>
   </div>
   <div class="spacer"></div>
-  <div class="lang" style="margin-right:8px"><button onclick="location.href='index.html'">▦ 전체보기</button><button onclick="location.href='index.html'">✎ 자랑 모음</button></div>
-  <div class="lang"><button class="on">한국어</button><button>EN</button></div>
+  <div class="lang" id="viewsw" style="margin-right:8px"><button onclick="location.href='index.html'" data-en="▦ All cities">▦ 전체보기</button><button onclick="location.href='index.html'" data-en="✎ Board">✎ 자랑 모음</button></div>
+  <div class="lang"><button class="on" id="bk" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 
 <section class="hero">
   <div class="kick">CHOIN Studio — Selected Works</div>
-  <h1>전통을 빛으로,<br><em>공간을</em> 이야기로.</h1>
-  <p class="lead">초인은 대한민국의 전통을 미디어아트로 되살리는 스튜디오입니다. 미디어파사드, 실감 전시, 유물 복원, 캐릭터 IP까지 — 우리가 만든 장면들을 모았습니다.</p>
+  <h1 data-en="Heritage into light,<br><em>space</em> into story.">전통을 빛으로,<br><em>공간을</em> 이야기로.</h1>
+  <p class="lead" data-en="CHOIN is a studio that revives Korea's heritage as media art. Media facades, immersive exhibitions, relic restoration and character IP — these are the scenes we have made.">초인은 대한민국의 전통을 미디어아트로 되살리는 스튜디오입니다. 미디어파사드, 실감 전시, 유물 복원, 캐릭터 IP까지 — 우리가 만든 장면들을 모았습니다.</p>
   <div class="wwd">What We Do Is Korea.</div>
 </section>
 
@@ -247,7 +281,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 
 <section class="prod">
   <div class="inner">
-    <div class="hd"><div class="lbl"><span class="dot"></span>NOW IN PRODUCTION</div><div class="sub">2026 진행 중인 대형 프로젝트</div></div>
+    <div class="hd"><div class="lbl"><span class="dot"></span>NOW IN PRODUCTION</div><div class="sub" data-en="Large-scale projects under way in 2026">2026 진행 중인 대형 프로젝트</div></div>
     <div class="prodgrid" id="prodgrid"></div>
   </div>
 </section>
@@ -273,9 +307,9 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
     <div class="cjfeat-img"><img src="poster/cheongju_cheoldanggan.jpg" alt="2026 청주 국가유산 미디어아트 · 용두사지 철당간 미디어파사드" loading="lazy"></div>
     <div class="cjfeat-txt">
       <div class="cjfeat-kick">Featured Project · 2026</div>
-      <h2>청주 국가유산 미디어아트<br><em>빛으로 여는 청주의 보물</em></h2>
-      <p>원도심 파사드 거점 세 곳과 성안길 빈 점포 팝업까지. 공간 기획부터 콘텐츠 제작, 굿즈 운영까지 전 과정을 맡은 2026년 대표 프로젝트.</p>
-      <span class="cjfeat-cta">프로젝트 자세히 보기</span>
+      <h2 data-en="Cheongju National Heritage Media Art<br><em>Cheongju's Treasures, Opened with Light</em>">청주 국가유산 미디어아트<br><em>빛으로 여는 청주의 보물</em></h2>
+      <p data-en="Three facade sites in the old downtown, plus a pop-up in a vacant shop on Seongan-gil. Our flagship project of 2026, covering the whole process from space planning and content production to merchandise.">원도심 파사드 거점 세 곳과 성안길 빈 점포 팝업까지. 공간 기획부터 콘텐츠 제작, 굿즈 운영까지 전 과정을 맡은 2026년 대표 프로젝트.</p>
+      <span class="cjfeat-cta" data-en="See the project">프로젝트 자세히 보기</span>
     </div>
   </a>
 </section>
@@ -295,18 +329,18 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 @media(max-width:860px){.wgrid{grid-template-columns:1fr}}
 </style>
 <section class="websec" id="webSec">
-  <h2>웹에서 바로 걸어 보는 유산</h2>
-  <p class="wsub">설치 없이 휴대폰과 PC에서 바로 열립니다. 공공 3D 자료와 사진을 바탕으로 유산 19곳을 걸어 다니는 공간으로 만들었고, 지역별로 같은 방식의 공간을 제작할 수 있습니다.</p>
+  <h2 data-en="Heritage you can walk through on the web">웹에서 바로 걸어 보는 유산</h2>
+  <p class="wsub" data-en="Opens straight away on a phone or PC, with nothing to install. Using public 3D data and photographs, we turned 19 heritage sites into spaces you can walk around, and we can build the same kind of space for any region.">설치 없이 휴대폰과 PC에서 바로 열립니다. 공공 3D 자료와 사진을 바탕으로 유산 19곳을 걸어 다니는 공간으로 만들었고, 지역별로 같은 방식의 공간을 제작할 수 있습니다.</p>
   <div class="wgrid">
-    <a class="wcard" href="heritage3d/?site=worldmap" target="_blank" rel="noopener"><img src="poster/web3d_map.jpg" alt="무이 전국 지도 3D" loading="lazy"><div><b>무이 전국 지도</b><p>동고서저 지형 위로 말을 타고 날아 16개 도시, 유산 19곳에 내려앉습니다. 도시마다 도장과 쇼츠가 이어집니다.</p><span>전국 지도 열기</span></div></a>
-    <a class="wcard" href="heritage3d/?site=suwon" target="_blank" rel="noopener"><img src="poster/web3d_suwon.jpg" alt="수원 화성 장안문 3D" loading="lazy"><div><b>수원 화성 장안문</b><p>실측 3D 장안문과 거중기, 화성능행도 병풍까지. 유산 마당 하나가 이런 모습으로 만들어집니다.</p><span>유산 마당 걸어 보기</span></div></a>
-    <a class="wcard" href="dcube/" target="_blank" rel="noopener"><img src="dcube/media/pambok_poster.jpg" alt="초인 실감 상영관" loading="lazy"><div><b>초인 실감 상영관</b><p>전주 팔복예술공장 D-CUBE 상영작을 웹에서 다시 봅니다. 실감 전시를 집에서 이어 보는 방식입니다.</p><span>상영관 들어가기</span></div></a>
+    <a class="wcard" href="heritage3d/?site=worldmap" target="_blank" rel="noopener"><img src="poster/web3d_map.jpg" alt="무이 전국 지도 3D" loading="lazy"><div><b data-en="MUUI Map of Korea">무이 전국 지도</b><p data-en="Fly on horseback over terrain that is high in the east and low in the west, and land at 19 heritage sites in 16 cities. Each city leads on to stamps and short videos.">동고서저 지형 위로 말을 타고 날아 16개 도시, 유산 19곳에 내려앉습니다. 도시마다 도장과 쇼츠가 이어집니다.</p><span data-en="Open the map">전국 지도 열기</span></div></a>
+    <a class="wcard" href="heritage3d/?site=suwon" target="_blank" rel="noopener"><img src="poster/web3d_suwon.jpg" alt="수원 화성 장안문 3D" loading="lazy"><div><b data-en="Janganmun Gate, Suwon Hwaseong">수원 화성 장안문</b><p data-en="A surveyed 3D Janganmun, the geojunggi crane, and the folding screen of the royal procession to Hwaseong. This is what one heritage yard looks like.">실측 3D 장안문과 거중기, 화성능행도 병풍까지. 유산 마당 하나가 이런 모습으로 만들어집니다.</p><span data-en="Walk the heritage yard">유산 마당 걸어 보기</span></div></a>
+    <a class="wcard" href="dcube/" target="_blank" rel="noopener"><img src="dcube/media/pambok_poster.jpg" alt="초인 실감 상영관" loading="lazy"><div><b data-en="CHOIN Immersive Theater">초인 실감 상영관</b><p data-en="Watch again, on the web, the work screened at D-CUBE in Palbok Art Factory, Jeonju. A way to continue an immersive exhibition at home.">전주 팔복예술공장 D-CUBE 상영작을 웹에서 다시 봅니다. 실감 전시를 집에서 이어 보는 방식입니다.</p><span data-en="Enter the theater">상영관 들어가기</span></div></a>
   </div>
 </section>
 
 <section class="blk" id="histSec">
   <div class="wrap">
-    <h2>선정 · 수상 · 전시</h2>
+    <h2 data-en="Selections · Awards · Exhibitions">선정 · 수상 · 전시</h2>
     <div class="hist" id="hist"></div>
   </div>
 </section>
@@ -315,10 +349,10 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <div class="top">
     <h2>Selected Works</h2>
     <div class="filt" id="filt">
-      <button class="f on" data-f="all">전체</button>
-      <button class="f" data-f="facade">미디어파사드</button>
-      <button class="f" data-f="immersive">실감 전시</button>
-      <button class="f" data-f="art">아트필름</button>
+      <button class="f on" data-f="all" data-en="All">전체</button>
+      <button class="f" data-f="facade" data-en="Media facade">미디어파사드</button>
+      <button class="f" data-f="immersive" data-en="Immersive">실감 전시</button>
+      <button class="f" data-f="art" data-en="Art film">아트필름</button>
     </div>
   </div>
   <div class="grid" id="grid"></div>
@@ -326,66 +360,66 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 
 <section class="works" id="eduSec" style="padding-top:8px">
   <div class="top" style="display:block">
-    <h2>교육 · 다큐멘터리</h2>
-    <div style="color:var(--t3);font-size:13px;margin-top:7px;max-width:720px">초인은 미디어아트 제작을 넘어 <b style="color:var(--t2)">강의(3D·AI)·다큐멘터리</b> 등 다양한 영역에서 전통과 기술을 잇습니다. 만드는 것에 그치지 않고, 가르치고 기록합니다.</div>
+    <h2 data-en="Education · Documentary">교육 · 다큐멘터리</h2>
+    <div style="color:var(--t3);font-size:13px;margin-top:7px;max-width:720px" data-en="Beyond producing media art, CHOIN connects heritage and technology through <b style=&quot;color:var(--t2)&quot;>teaching (3D · AI) and documentary</b>. We do not stop at making; we teach and we record.">초인은 미디어아트 제작을 넘어 <b style="color:var(--t2)">강의(3D·AI)·다큐멘터리</b> 등 다양한 영역에서 전통과 기술을 잇습니다. 만드는 것에 그치지 않고, 가르치고 기록합니다.</div>
   </div>
   <div class="grid" id="grid2"></div>
 </section>
 
 <section class="blk">
   <div class="kick">WHAT WE MAKE</div>
-  <h2>우리가 만드는 것</h2>
-  <div class="bsub">전통의 이야기를 네 가지 형태로 짓습니다.</div>
+  <h2 data-en="What we make">우리가 만드는 것</h2>
+  <div class="bsub" data-en="We build the stories of heritage in four forms.">전통의 이야기를 네 가지 형태로 짓습니다.</div>
   <div class="wwmgrid">
-    <div class="wwmc"><div class="ic">🏛</div><b>미디어파사드</b><span>랜드마크 건축과 공간을 빛의 서사로. 초대형 LED·프로젝션 매핑.</span></div>
-    <div class="wwmc"><div class="ic">✨</div><b>실감 · 인터랙티브 전시</b><span>다면 영상과 인터랙션으로 관객이 걸어 들어가는 몰입 공간.</span></div>
-    <div class="wwmc"><div class="ic">🏺</div><b>유물 복원 · 캐릭터 IP</b><span>사라진 유물과 설화를 AI·3D로 되살리고, 무이 등 전통 IP로 확장.</span></div>
-    <div class="wwmc"><div class="ic">🎬</div><b>영상 · 교육 · 다큐</b><span>브랜드 필름과 다큐멘터리, 3D·AI 제작 강의까지 — 만들고 가르칩니다.</span></div>
+    <div class="wwmc"><div class="ic">🏛</div><b data-en="Media facade">미디어파사드</b><span data-en="Landmark buildings and spaces turned into narratives of light. Giant LED and projection mapping.">랜드마크 건축과 공간을 빛의 서사로. 초대형 LED·프로젝션 매핑.</span></div>
+    <div class="wwmc"><div class="ic">✨</div><b data-en="Immersive · interactive exhibitions">실감 · 인터랙티브 전시</b><span data-en="Immersive spaces the audience walks into, built from multi-surface video and interaction.">다면 영상과 인터랙션으로 관객이 걸어 들어가는 몰입 공간.</span></div>
+    <div class="wwmc"><div class="ic">🏺</div><b data-en="Relic restoration · character IP">유물 복원 · 캐릭터 IP</b><span data-en="Lost relics and folktales revived with AI and 3D, and extended into heritage IP such as MUUI.">사라진 유물과 설화를 AI·3D로 되살리고, 무이 등 전통 IP로 확장.</span></div>
+    <div class="wwmc"><div class="ic">🎬</div><b data-en="Film · education · documentary">영상 · 교육 · 다큐</b><span data-en="Brand films and documentaries, and classes on 3D and AI production — we make and we teach.">브랜드 필름과 다큐멘터리, 3D·AI 제작 강의까지 — 만들고 가르칩니다.</span></div>
   </div>
 </section>
 
 <section class="blk">
   <div class="kick">CHOIN METHOD</div>
-  <h2>전통을 오늘로 잇는 5단계</h2>
-  <div class="bsub">유산을 그대로 옮기지 않습니다. 발견하고, 해석하고, 다시 짓습니다.</div>
+  <h2 data-en="Five steps that carry heritage into today">전통을 오늘로 잇는 5단계</h2>
+  <div class="bsub" data-en="We do not copy heritage as it is. We discover it, interpret it and build it again.">유산을 그대로 옮기지 않습니다. 발견하고, 해석하고, 다시 짓습니다.</div>
   <div class="msteps">
-    <div class="mstep"><div class="no">01</div><div class="en">Discover</div><b>발견</b><span>기억·정서·생활문화 속에서 이야기의 본질을 찾습니다.</span></div>
-    <div class="mstep"><div class="no">02</div><div class="en">Interpret</div><b>해석</b><span>고증과 자료를 바탕으로 오늘의 관객이 공감할 의미로 읽어냅니다.</span></div>
-    <div class="mstep"><div class="no">03</div><div class="en">Reconstruct</div><b>재구성</b><span>전통의 형태·질감·색을 미디어아트의 언어로 다시 설계합니다.</span></div>
-    <div class="mstep"><div class="no">04</div><div class="en">Produce</div><b>제작</b><span>Houdini·Unreal·TouchDesigner·AI로 공간에 구현합니다.</span></div>
-    <div class="mstep"><div class="no">05</div><div class="en">Expand</div><b>확장</b><span>전시·파사드에서 IP·굿즈·교육으로 — 살아남는 문화로 잇습니다.</span></div>
+    <div class="mstep"><div class="no">01</div><div class="en">Discover</div><b data-en="">발견</b><span data-en="We look for the essence of a story in memory, sentiment and everyday culture.">기억·정서·생활문화 속에서 이야기의 본질을 찾습니다.</span></div>
+    <div class="mstep"><div class="no">02</div><div class="en">Interpret</div><b data-en="">해석</b><span data-en="Working from historical research and sources, we read it into a meaning today's audience can relate to.">고증과 자료를 바탕으로 오늘의 관객이 공감할 의미로 읽어냅니다.</span></div>
+    <div class="mstep"><div class="no">03</div><div class="en">Reconstruct</div><b data-en="">재구성</b><span data-en="We redesign the forms, textures and colors of tradition in the language of media art.">전통의 형태·질감·색을 미디어아트의 언어로 다시 설계합니다.</span></div>
+    <div class="mstep"><div class="no">04</div><div class="en">Produce</div><b data-en="">제작</b><span data-en="We realize it in space with Houdini, Unreal, TouchDesigner and AI.">Houdini·Unreal·TouchDesigner·AI로 공간에 구현합니다.</span></div>
+    <div class="mstep"><div class="no">05</div><div class="en">Expand</div><b data-en="">확장</b><span data-en="From exhibitions and facades to IP, merchandise and education — carried on as culture that survives.">전시·파사드에서 IP·굿즈·교육으로 — 살아남는 문화로 잇습니다.</span></div>
   </div>
 </section>
 
 <section class="blk">
   <div class="kick">PRODUCTION CAPABILITY</div>
-  <h2>제작 역량</h2>
-  <div class="bsub">기획부터 촬영·3D·실시간 렌더링·송출까지 자체 제작합니다.</div>
+  <h2 data-en="Production capability">제작 역량</h2>
+  <div class="bsub" data-en="From planning to shooting, 3D, real-time rendering and playout, we produce in-house.">기획부터 촬영·3D·실시간 렌더링·송출까지 자체 제작합니다.</div>
   <div class="caps">
-    <span class="cap"><b>Houdini</b> 시뮬레이션·FX</span>
-    <span class="cap"><b>Unreal Engine</b> 실시간 렌더</span>
-    <span class="cap"><b>TouchDesigner</b> 인터랙션·송출</span>
+    <span class="cap" data-en="<b>Houdini</b> simulation · FX"><b>Houdini</b> 시뮬레이션·FX</span>
+    <span class="cap" data-en="<b>Unreal Engine</b> real-time rendering"><b>Unreal Engine</b> 실시간 렌더</span>
+    <span class="cap" data-en="<b>TouchDesigner</b> interaction · playout"><b>TouchDesigner</b> 인터랙션·송출</span>
     <span class="cap"><b>Blender · Cinema4D</b> 3D</span>
-    <span class="cap"><b>Generative AI</b> 이미지·영상</span>
-    <span class="cap"><b>8K · 멀티프로젝션</b> 대형 출력</span>
+    <span class="cap" data-en="<b>Generative AI</b> image · video"><b>Generative AI</b> 이미지·영상</span>
+    <span class="cap" data-en="<b>8K · multi-projection</b> large-format output"><b>8K · 멀티프로젝션</b> 대형 출력</span>
   </div>
 </section>
 
 <section class="about" id="about">
   <div class="kick">ABOUT CHOIN</div>
-  <h2>초인 소개</h2>
-  <p class="lead2">초인(CHOIN)은 한국인의 기억과 정서, 생활문화 속에서 <b style="color:var(--ink);font-weight:700">이야기의 본질</b>을 발견하고, 그것을 오늘의 언어 — 미디어아트로 번역합니다. 소비되고 사라지는 문화가 아니라, 다시 경험되고 <b style="color:var(--ink);font-weight:700">살아남는 문화</b>를 만드는 것. 그것이 우리가 하는 모든 일의 이유입니다.</p>
+  <h2 data-en="About CHOIN">초인 소개</h2>
+  <p class="lead2" data-en="CHOIN finds <b style=&quot;color:var(--ink);font-weight:700&quot;>the essence of a story</b> in the memory, sentiment and everyday culture of Koreans, and translates it into the language of today — media art. Not culture that is consumed and disappears, but <b style=&quot;color:var(--ink);font-weight:700&quot;>culture that is experienced again and survives</b>. That is the reason behind everything we do.">초인(CHOIN)은 한국인의 기억과 정서, 생활문화 속에서 <b style="color:var(--ink);font-weight:700">이야기의 본질</b>을 발견하고, 그것을 오늘의 언어 — 미디어아트로 번역합니다. 소비되고 사라지는 문화가 아니라, 다시 경험되고 <b style="color:var(--ink);font-weight:700">살아남는 문화</b>를 만드는 것. 그것이 우리가 하는 모든 일의 이유입니다.</p>
   <div class="abgrid">
-    <div><b>제작 영역</b><span>미디어파사드 · 실감/인터랙티브 전시 · 유물 복원 미디어아트 · 캐릭터 IP · 교육/다큐</span></div>
-    <div><b>기술</b><span>Houdini · Blender · Unreal Engine · TouchDesigner · AI</span></div>
-    <div><b>함께한 곳</b><span>국가유산청 · 문화체육관광부 · 전주문화재단(팔복예술공장) · 청주시문화산업진흥재단 · 아트코리아랩(예술경영지원센터) · 충북콘텐츠코리아랩 · 신세계 · 중앙일보 · CJ CGV · Getty Images Korea · MUSEUM HEI · 대기업 신사옥·랜드마크 파사드 다수</span></div>
-    <div><b>거점</b><span>서울 마포 · 대구·경북</span></div>
+    <div><b data-en="Fields">제작 영역</b><span data-en="Media facades · immersive/interactive exhibitions · relic-restoration media art · character IP · education/documentary">미디어파사드 · 실감/인터랙티브 전시 · 유물 복원 미디어아트 · 캐릭터 IP · 교육/다큐</span></div>
+    <div><b data-en="Technology">기술</b><span>Houdini · Blender · Unreal Engine · TouchDesigner · AI</span></div>
+    <div><b data-en="Worked with">함께한 곳</b><span data-en="Korea Heritage Service · Ministry of Culture, Sports and Tourism · Jeonju Cultural Foundation (Palbok Art Factory) · Cheongju Cultural Industry Promotion Foundation · Art Korea Lab (Korea Arts Management Service) · Chungbuk Content Korea Lab · Shinsegae · JoongAng Ilbo · CJ CGV · Getty Images Korea · MUSEUM HEI · many corporate headquarters and landmark facades">국가유산청 · 문화체육관광부 · 전주문화재단(팔복예술공장) · 청주시문화산업진흥재단 · 아트코리아랩(예술경영지원센터) · 충북콘텐츠코리아랩 · 신세계 · 중앙일보 · CJ CGV · Getty Images Korea · MUSEUM HEI · 대기업 신사옥·랜드마크 파사드 다수</span></div>
+    <div><b data-en="Bases">거점</b><span data-en="Mapo, Seoul · Daegu and Gyeongbuk">서울 마포 · 대구·경북</span></div>
   </div>
-  <a class="abmail" href="mailto:choin2626@gmail.com">협업 문의 · choin2626@gmail.com →</a>
+  <a class="abmail" href="mailto:choin2626@gmail.com" data-en="Work with us · choin2626@gmail.com →">협업 문의 · choin2626@gmail.com →</a>
 </section>
 
 <footer><div class="foot">
-  <div class="slo">한국 전통을 <em>미디어아트</em>, 그 너머로.</div>
+  <div class="slo" data-en="Korean heritage as <em>media art</em>, and beyond.">한국 전통을 <em>미디어아트</em>, 그 너머로.</div>
   <a class="mail" href="mailto:choin2626@gmail.com">choin2626@gmail.com</a>
 </div></footer>
 
@@ -440,8 +474,180 @@ var WORKS=[
  {cat:'edu',size:'std',title:'대구 평생교육원 AI 수업',sub:'교육 · AI 콘텐츠 · 2025',src:'poster/ai_class_1.jpg',venue:'대구 평생교육 · AI 콘텐츠 마케팅 과정',
   desc:'대구 평생교육 「AI 콘텐츠 마케팅」 과정 강의(강사 초인). GPT·제미나이로 대본을 쓰고 Vrew로 쇼츠를 만들어 각자 유튜브에 올리는 실습 중심 과정. 초인이 제작을 넘어 교육으로 노하우를 나눕니다. (수강생 초상권 보호를 위해 얼굴은 모자이크 처리)'}
 ];
+// ===== 영어 번역표 (EN 버튼). 키: 작품=한국어 제목, 선정·수상/진행중=배열 순번. 없는 항목은 한국어 원문 표시 =====
+var EN_W={
+ "무이유물복원단 × 청주": {
+  "title": "MUUI Relic Restoration Squad × Cheongju",
+  "sub": "Pop-up exhibition planning & operation · 2026",
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · Scene 7, “A Space of Creation, Tomorrow Blooming in Light” · pop-up exhibition in a vacant shop on Seongan-gil, Cheongju",
+  "desc": "A project that brought a vacant shop on Seongan-gil, in the old downtown, back to life as a pop-up exhibition space. A collaborative character-IP exhibition based on local national heritage, for which we handled space planning, content screening and merchandise. By combining an analog space with digital media technology, it aimed to bring the flow of people back to a declining shopping street. It ran for 22 days, from October 3 to 24. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
+ },
+ "한 땀의 도시, 청주": {
+  "title": "Cheongju, City of a Single Stitch",
+  "sub": "Media facade · 2026",
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at the Iron Flagpole of Yongdusa Temple Site (National Treasure) · broadcast as the backdrop of CJB Cheongju Broadcasting's opening coverage",
+  "desc": "Media art that builds an imagined landscape of Cheongju with the craft techniques of jogakbo patchwork and quilted cloth. Every element — buildings, clouds, flowers, roads, even an airplane — is made of the grain of needlework, of cloth joined and layered. Like joining different pieces one stitch at a time, it weaves together the touch of the people and the time of craft accumulated in Cheongju. The flat-iron airplane, a symbol of Cheongju Airport, carries the wish that the sense of craft and creative energy will spread far. It shows Cheongju not only as a city that preserves the craft of the past, but as a city still being made with the sensibility of today. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
+ },
+ "무이 수호대, 청주 수호 작전": {
+  "title": "MUUI Guardians: Operation Protect Cheongju",
+  "sub": "Media facade · 2026",
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at the Gate of the Chungcheong-do Army Commander's Headquarters",
+  "desc": "The Gate of the Chungcheong-do Army Commander's Headquarters was the entrance to the garrison that oversaw military affairs in Chungcheong-do during the Joseon period. The work retells the gate's historical role as a story of guarding Cheongju. Six MUUI appear in the windows, stand against an attack, and join forces to spread a guardian light. A protective formation of arrows, light, traditional patterns and white magnolias turns the gate into a stage for a dynamic adventure. On the gate of a former garrison, it speaks of protecting today's Cheongju, its cultural heritage and the peace of everyday life together. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
+ },
+ "무이풍물단, 망선루로 가는 길": {
+  "title": "MUUI Pungmul Troupe: The Road to Mangseonnu",
+  "sub": "Media facade · 2026",
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at Mangseonnu Pavilion",
+  "desc": "A work that reinterprets the memories left at Mangseonnu — royal processions, state examinations and banquets — as a march of the MUUI pungmul troupe. Mangseonnu is a heritage site whose history runs from King Gongmin of Goryeo's stay in Cheongju through education, assemblies and civic activity. With the rhythm, landscapes of nature, heritage, city and madang awaken, and the MUUI march toward Mangseonnu. The parade is a festival scene that shares the old processions, the footsteps of scholars and the joy of banquets with today's audience. In light and movement it revives the meaning of Mangseonnu, where people gathered to share learning, joy and the memory of community. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
+ },
+ "헤이와 둥둥": {
+  "title": "Hei and Dungdung",
+  "sub": "Immersive exhibition · landscape · 1 min 15 s",
+  "venue": "Myeongdong Jayu Sangga · shown on the large LED facade of Pepper Savings Bank, Bundang · archive screening at MUSEUM HEI",
+  "desc": "A visual transposition of traditional narrative. “Seocheon Flower Garden”, the source of life in Korean folktales, is built as a 3D space textured with traditional quilting, visualizing a story of birth and circulation. “Hei”, who carries the meaning of protection, and the “Dungdung” pungmul troupe guide the audience through an immersive narrative of emotional connection with a virtual world."
+ },
+ "신명, 길을 열다": {
+  "title": "Sinmyeong Opens the Way",
+  "sub": "Ultra-wide media facade · 2025",
+  "desc": "A story of sinmyeong (exuberant joy) spread across an ultra-wide screen. Against Seoul's night skyline, a pungmul troupe of snowmen opens the way."
+ },
+ "홍천": {
+  "title": "Hongcheon",
+  "sub": "Immersive content · 2025",
+  "desc": "Immersive content carrying the nature and stories of Hongcheon."
+ },
+ "낙재의 궤적": {
+  "title": "Nakjae: Traces of Falling Ash",
+  "sub": "Media art · 2025",
+  "venue": "Myeongdong Jayu Sangga · shown on the large LED facade of Pepper Savings Bank, Bundang · archive screening at MUSEUM HEI, Paju",
+  "desc": "Media art by digital artists 최수한, 유승대, 허범 and 홍경진. The fire of a traditional wood-fired kiln (an unglazed wood kiln in Cheongdo) and its traces are visualized with AI, 3D, video and sound. “Clay is the wave of the earth, and fire is the vibration of change” — a work that records that wave in light and video (project “A Record of Fire and Waves”)."
+ },
+ "HARMONY": {
+  "sub": "Art film · portrait · 25 s · 4K",
+  "desc": "On a white background, natural objects, organic forms and flowing fluids unfold to classical music, each element appearing with its own beauty. They then entwine and combine, converging into one harmonious structure and finally completing a single object. The work turns the invisible structure of scent into a visual experience and explores the transfer between senses."
+ },
+ "MIDNIGHT WAVE": {
+  "sub": "Art film · landscape · 1 min",
+  "desc": "In the deepest night we finally face the nature of light. The invisible flow of time is visualized as the movement of particles, and through the unchanging presence of the moon the work offers a message of inner calm and healing."
+ },
+ "Spring bubble": {
+  "sub": "Art film · landscape · 40 s",
+  "desc": "Media art that recomposes the feeling of spring as light, air and the flow of fine particles. Transparent spheres and drifting particles give form to traces of light, and flowers act as a medium that holds light and responds to it. It is designed to feel like a living space."
+ },
+ "Blue blocks": {
+  "sub": "Art film · landscape · 1 min 30 s",
+  "desc": "Organic creatures such as whales, rays and jellyfish are built from repeated units of blue toy bricks, and through their disassembly and recombination the work visualizes not a fixed form but “a being that is continuously generated”. It explores the similarity between the flow of nature and the principles of digital generation."
+ },
+ "White": {
+  "sub": "Art film · portrait · 1 min 20 s",
+  "desc": "The work questions the common notion that individuality is understood only by outward standards such as being special or showy. It invites the audience to look again and see that individuality is not an external yardstick but an inherent quality that flows naturally from existence itself."
+ },
+ "계성고등학교 신태식 다큐멘터리": {
+  "title": "Gyeseong High School · Shin Tae-sik Documentary",
+  "sub": "Documentary · 2025",
+  "desc": "Documentary on Shin Tae-sik of Gyeseong High School."
+ },
+ "후디니 입문 · 시뮬레이션과 VEX": {
+  "title": "Intro to Houdini · Simulation and VEX",
+  "sub": "Education · CLASS101 · 3D",
+  "desc": "CHOIN's online introductory class on Houdini — first steps in simulation and VEX. Our 3D content production know-how, as a course."
+ },
+ "대구 평생교육원 AI 수업": {
+  "title": "AI Class, Daegu Lifelong Education",
+  "sub": "Education · AI content · 2025",
+  "venue": "Daegu lifelong education · AI content marketing course",
+  "desc": "A lecture in Daegu's lifelong-education “AI Content Marketing” course (instructor: CHOIN). A hands-on course in which participants write scripts with GPT and Gemini, make shorts with Vrew and upload them to their own YouTube channels. CHOIN shares its know-how through teaching as well as production. (Faces are blurred to protect the students' portrait rights.)"
+ }
+};
+var EN_H={
+ "0": {
+  "t": "National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light”",
+  "r": "Participating artist",
+  "w": "Cheongju, City of a Single Stitch · MUUI Guardians: Operation Protect Cheongju · MUUI Pungmul Troupe: The Road to Mangseonnu",
+  "v": "Media facades at the Iron Flagpole of Yongdusa Temple Site · Gate of the Chungcheong-do Army Commander's Headquarters · Mangseonnu Pavilion",
+  "h": "Hosted by Korea Heritage Service · Chungcheongbuk-do · Cheongju City / Organized by Korea Heritage Agency · Cheongju Cultural Industry Promotion Foundation"
+ },
+ "1": {
+  "t": "National Heritage Media Art Cheongju · Seongan-gil pop-up store",
+  "r": "Participant",
+  "w": "MUUI Relic Restoration Squad × Cheongju",
+  "v": "Collaborative exhibition with a local national-heritage character IP · exhibition space planning and operation",
+  "h": "Hosted by Korea Heritage Service · Chungcheongbuk-do · Cheongju City / Organized by Korea Heritage Agency · Cheongju Cultural Industry Promotion Foundation"
+ },
+ "2": {
+  "t": "Korea's Culture City Jeonju · Traditional-Culture Immersive Media Testbed",
+  "r": "Selected",
+  "w": "Ppaelbul Tonggama",
+  "v": "Selected in the media-art category · on-site demonstration in the immersive media space at Palbok Art Factory",
+  "h": "Hosted by Jeonju City / Organized by Jeonju Cultural Foundation"
+ },
+ "3": {
+  "t": "1st Shinsegae Square Media Art Awards",
+  "r": "Top Excellence Award, Original category",
+  "w": "Yeomin, 樂",
+  "v": "Screened at Shinsegae Square, Shinsegae Department Store main store",
+  "h": "Co-hosted by Korea Heritage Service · Shinsegae Department Store"
+ },
+ "4": {
+  "t": "Art Korea Lab Art-Technology Convergence Testbed",
+  "r": "Selected for the giant media facade project",
+  "w": "MUUI Roams Deoksugung Palace",
+  "v": "Screened on the Kyowon Square media facade",
+  "h": "Hosted by Ministry of Culture, Sports and Tourism / Organized by Korea Arts Management Service, Art Korea Lab"
+ },
+ "5": {
+  "t": "6th JoongAng Media Art Competition",
+  "r": "Excellence Award",
+  "w": "Four Seasons City Chronicle 四季都市錄",
+  "v": "Shown at COEX · Parnas Media Tower",
+  "h": "Hosted and organized by JoongAng Ilbo · WTC Seoul / Sponsored by Korean Air"
+ },
+ "6": {
+  "t": "Moving Korean Painting: AI Media Art Competition",
+  "r": "Finalist",
+  "w": "Hwaryongjeomjeong",
+  "h": "Hosted and organized by CJ CGV · EASYWITH / Supported by Ministry of Culture, Sports and Tourism · Korea Creative Content Agency"
+ },
+ "7": {
+  "t": "Getty Images Korea media-art artist",
+  "w": "Seocheon Flower Garden · Cotton World",
+  "v": "Screened on large digital signage at Myeongdong Jayu Sangga Building · Pepper Savings Bank, Bundang",
+  "h": "Platform: Getty Images Korea · Getty Media Art"
+ },
+ "8": {
+  "t": "MUSEUM HEI, Paju · media-art artist · screening",
+  "w": "Seocheon Flower Garden · Cotton World · Nakjae: Traces of Falling Ash",
+  "v": "HEI PARK digital artist exhibition space",
+  "h": "Institution: MUSEUM HEI / Operated by Hei Media Co., Ltd."
+ }
+};
+var EN_P={
+ "0": {
+  "loc": "Euljiro, Seoul",
+  "scale": "Landmark-scale giant LED media facade",
+  "status": "Confirmed · in production"
+ },
+ "1": {
+  "loc": "Jeonju",
+  "scale": "Four-wall D-CUBE immersive exhibition",
+  "status": "Confirmed · in production"
+ },
+ "2": {
+  "loc": "Gangnam, Seoul",
+  "scale": "Landmark-scale giant media billboard",
+  "status": "Confirmed · in production"
+ },
+ "3": {
+  "loc": "Myeongdong, Seoul",
+  "scale": "Landmark-scale giant LED media facade",
+  "status": "In discussion (round 1 done · round 2 under way)"
+ }
+};
 var CATL={facade:'MEDIA FACADE',immersive:'IMMERSIVE',art:'ART FILM',docu:'DOCUMENTARY',edu:'EDUCATION'};
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+var LANG='ko';
+// 영어 모드일 때만 EN_* 표에서 찾아 쓰고, 없으면 한국어 원문 그대로
+function tr(tbl,key,field,ko){ if(LANG!=='en') return ko||''; var e=tbl[key]; return (e&&e[field]!=null)?e[field]:(ko||''); }
 function poster(w){ return w.src ? w.src : (w.video ? (GT+w.video+'&sz=w1400') : ''); }
 
 var HIST=[
@@ -491,35 +697,38 @@ var HIST=[
   v:'HEI PARK 디지털 아티스트 전시공간',
   h:'전시기관 MUSEUM HEI / 운영 ㈜헤이미디어'}
 ];
-(function(){
+function renderHist(){
   var el=document.getElementById('hist'); if(!el) return;
-  el.innerHTML=HIST.map(function(x){
+  el.innerHTML=HIST.map(function(x0,i){
+    var x={y:x0.y,img:x0.img,soon:x0.soon,on:x0.on,link:x0.link,t:tr(EN_H,i,'t',x0.t),r:tr(EN_H,i,'r',x0.r),w:tr(EN_H,i,'w',x0.w),v:tr(EN_H,i,'v',x0.v),h:tr(EN_H,i,'h',x0.h)};
     var ph='<div class="ph">'+esc(x.w||x.t)
-        +(x.soon?'<span class="soon">이미지 준비 중</span>':'')+'</div>';
+        +(x.soon?'<span class="soon">'+(LANG==='en'?'Image coming soon':'이미지 준비 중')+'</span>':'')+'</div>';
     var th=x.img
       ? '<div class="hthumb"><img src="'+x.img+'" alt="" loading="lazy" data-ph="'+ph.replace(/"/g,'&quot;')+'" onerror="this.parentNode.innerHTML=this.getAttribute(\'data-ph\')"></div>'
       : '<div class="hthumb">'+ph+'</div>';
     var b='<div class="hbadge">'
       +(x.y?'<span class="yr">'+esc(x.y)+'</span>':'')
       +(x.r?'<span class="role">'+esc(x.r)+'</span>':'')
-      +(x.on?'<span class="on"><i></i>상영 중</span>':'')+'</div>';
+      +(x.on?'<span class="on"><i></i>'+(LANG==='en'?'Now showing':'상영 중')+'</span>':'')+'</div>';
     var lk=x.link?' style="cursor:pointer" onclick="window.open(\''+x.link+'\',\'_blank\',\'noopener\')"':'';
     return '<div class="hitem"'+lk+'>'+th+'<div>'+b
       +'<div class="ht">'+esc(x.t)+'</div>'
-      +(x.w?'<div class="hw"><b>작품</b>'+esc(x.w)+'</div>':'')
+      +(x.w?'<div class="hw"><b>'+(LANG==='en'?'Work':'작품')+'</b>'+esc(x.w)+'</div>':'')
       +(x.v?'<div class="hv">'+esc(x.v)+'</div>':'')
       +(x.h?'<div class="hh">'+esc(x.h)+'</div>':'')
       +'</div></div>';
   }).join('');
-})();
+}
 
-document.getElementById('prodgrid').innerHTML=PROD.map(function(p,i){
+function renderProd(){ document.getElementById('prodgrid').innerHTML=PROD.map(function(p0,i){
+  var p={ok:p0.ok,loc:tr(EN_P,i,'loc',p0.loc),scale:tr(EN_P,i,'scale',p0.scale),status:tr(EN_P,i,'status',p0.status)};
   var st=p.ok?'<div class="st go"><i></i>'+esc(p.status)+'</div>':'<div class="st talk"><i></i>'+esc(p.status)+'</div>';
   return '<div class="pitem"><div class="no">0'+(i+1)+'</div><div class="loc">'+esc(p.loc)+'</div><div class="scale">'+esc(p.scale)+'</div>'+st+'</div>';
-}).join('');
+}).join(''); }
 
 var CUR='all';
-function tileEl(w,idx){
+function tileEl(w0,idx){
+  var w=Object.assign({},w0,{title:tr(EN_W,w0.title,'title',w0.title),sub:tr(EN_W,w0.title,'sub',w0.sub)});
   var el=document.createElement('div');
   var isVid=!!(w.video||w.yt), pu=poster(w);
   el.className='tile'+(w.size==='feat'?' feat':(w.size==='pano'?' pano':''))+(isVid?' vid':'')+(pu?'':' noimg');
@@ -545,7 +754,8 @@ function openLB(idx){
   LBLIST=WORKS.map(function(w,i){return i;});
   LBI=LBLIST.indexOf(idx);if(LBI<0)LBI=0;showLB();document.getElementById('lb').classList.add('on');document.body.style.overflow='hidden';}
 function showLB(){
-  var w=WORKS[LBLIST[LBI]],m=document.getElementById('lbmedia');
+  var w0=WORKS[LBLIST[LBI]],m=document.getElementById('lbmedia');
+  var w=Object.assign({},w0,{title:tr(EN_W,w0.title,'title',w0.title),venue:tr(EN_W,w0.title,'venue',w0.venue),desc:tr(EN_W,w0.title,'desc',w0.desc)});
   if(w.yt){m.innerHTML='<iframe src="https://www.youtube.com/embed/'+w.yt+'?autoplay=1&rel=0" allow="autoplay; fullscreen" allowfullscreen></iframe>';}
   else if(w.video){m.innerHTML='<iframe src="https://drive.google.com/file/d/'+w.video+'/preview" allow="autoplay" allowfullscreen></iframe>';}
   else if(w.src){m.innerHTML='<img src="'+w.src+'" alt="'+esc(w.title)+'">';}
@@ -560,7 +770,20 @@ function closeLB(){document.getElementById('lb').classList.remove('on');document
 document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLB();});
 document.addEventListener('keydown',function(e){if(!document.getElementById('lb').classList.contains('on'))return;if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')stepLB(-1);if(e.key==='ArrowRight')stepLB(1);});
 
-render();
+function setLang(l){
+  LANG=(l==='en')?'en':'ko';
+  document.documentElement.lang=LANG;
+  document.getElementById('bk').classList.toggle('on',LANG==='ko');
+  document.getElementById('be').classList.toggle('on',LANG==='en');
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(el.dataset.ko==null) el.dataset.ko=el.innerHTML;
+    el.innerHTML=(LANG==='en')?el.dataset.en:el.dataset.ko;
+  });
+  try{localStorage.setItem('choin_lang',LANG);}catch(e){}
+  renderHist(); renderProd(); render();
+  if(document.getElementById('lb').classList.contains('on')) showLB();
+}
+setLang((function(){try{return localStorage.getItem('choin_lang')==='en'?'en':'ko';}catch(e){return 'ko';}})());
 </script>
 </body>
 </html>
