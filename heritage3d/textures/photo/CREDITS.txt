@@ -1,0 +1,8 @@
+실사 재질 출처 (모두 CC0, Poly Haven https://polyhaven.com)
+grass.jpg    = leafy_grass
+grass2.jpg   = grass_ground
+yard.jpg     = pebble_ground_01
+yard2.jpg    = raked_dirt
+bakseok.jpg  = grey_stone_path
+wall.jpg, wall_n.jpg = japanese_stone_wall
+2026-11-27 받음. 1k 해상도.
