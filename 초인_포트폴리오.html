@@ -248,6 +248,72 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 .caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
 .caps .cap{font-size:12px;font-weight:600;color:var(--t2);border:1px solid var(--line);border-radius:999px;padding:6px 13px}
 .caps .cap b{color:var(--ink);font-weight:700}
+
+/* ===== 폰(≤780px) 포트폴리오: QR로 들어온 사람이 바로 읽게 =====
+   머리말은 한 줄, 그 아래 바로가기 줄(고정). 순서: 소개 → 하는 일 → 작품 → 대표 프로젝트 → 선정·수상 → 진행 중 → … */
+#tab-map,.qnav{display:none;}
+html{scroll-behavior:smooth;}
+@media(max-width:780px){
+ body{display:flex;flex-direction:column;font-size:16px;}
+ body>*{order:50;}
+ header{order:0;padding:9px 14px;border-bottom:0;}
+ header .segtabs,header #viewsw,#tab-portfolio{display:none;}
+ #tab-map{display:inline-flex;}
+ .qnav{order:1;display:flex;gap:6px;position:sticky;top:0;z-index:19;background:var(--bg);padding:8px 14px;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+ .qnav::-webkit-scrollbar{display:none;}
+ .qnav a{flex:0 0 auto;font-size:14.5px;font-weight:700;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;white-space:nowrap;}
+ .qnav a.q-mail{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+ .hero{order:2;padding:22px 18px 14px;}
+ .herofig{order:3;padding:0 18px;}
+ #makeSec{order:4;} #worksSec{order:5;} #featSec{order:6;} #histSec{order:7;} #prodSec{order:8;}
+ #webSec{order:9;} #eduSec{order:10;} #methodSec{order:11;} #capSec{order:12;} #about{order:13;} footer{order:60;}
+ section[id],.about{scroll-margin-top:58px;}
+ .hero .kick{margin-bottom:10px;letter-spacing:2.5px;}
+ .hero h1{font-size:37px;line-height:1.12;}
+ .hero .lead{font-size:16.5px;line-height:1.65;color:#544b3d;margin-top:14px;}
+ .hero .wwd{margin-top:12px;}
+ .blk,.about{margin-top:36px;padding:0 18px;}
+ .blk h2,.works h2{font-size:26px;}
+ .blk .bsub{font-size:15px;color:var(--t2);margin-bottom:16px;}
+ .works{padding:36px 18px 6px;}
+ .works .top{margin-bottom:14px;}
+ .f{font-size:14px;padding:8px 14px;}
+ .wwmgrid{grid-template-columns:1fr 1fr !important;gap:10px;}
+ .wwmc{padding:14px 13px;}
+ .wwmc .ic{margin-bottom:6px;}
+ .wwmc b{font-size:16px;margin-bottom:5px;}
+ .wwmc span{font-size:13.5px;line-height:1.55;}
+ .tile .cap{padding:14px 15px;transform:none;}
+ .tile .cap .ttl{font-size:19px;}
+ .tile .cap .sub{font-size:13px;}
+ .cjfeat{margin:30px 0 0;padding:0 18px;}
+ .cjfeat-txt p{font-size:15px;}
+ .websec{margin:36px auto 0;padding:0 18px;}
+ .websec .wsub{font-size:15px;}
+ .wcard p{font-size:14px;}
+ /* 선정·수상: 작은 그림 + 글 한 줄 묶음으로 촘촘하게 */
+ #histSec .wrap{padding:0;}
+ .hitem{grid-template-columns:104px 1fr;gap:0 13px;padding:16px 0;align-items:start;}
+ .hitem .hthumb{aspect-ratio:1/1;}
+ .hitem .hthumb .ph{font-size:12px;padding:6px;}
+ .hitem .hthumb .ph .soon{font-size:10px;margin-top:4px;}
+ .hitem .hbadge{gap:6px;margin-bottom:6px;}
+ .hitem .hbadge .role{font-size:12.5px;padding:3px 9px;color:var(--ink);}
+ .hitem .ht{font-size:17px;line-height:1.38;}
+ .hitem .hw{font-size:14.5px;margin-top:6px;}
+ .hitem .hv{font-size:13.5px;margin-top:4px;}
+ .hitem .hh{font-size:12.5px;color:var(--t2);margin-top:5px;}
+ .prod .inner{padding:24px 18px 8px;}
+ .prodgrid{grid-template-columns:1fr 1fr !important;gap:0 14px;}
+ .pitem .loc{font-size:17px;}
+ .pitem .scale{font-size:13.5px;min-height:0;}
+ .pitem .st{font-size:11.5px;}
+ .mstep span,.abgrid span{font-size:14.5px;}
+ .caps .cap{font-size:13.5px;}
+ .about .lead2{font-size:16px;line-height:1.75;}
+ .abmail{font-size:16px;}
+ .foot{padding:30px 18px;}
+}
 </style>
 </head>
 <body>
@@ -256,6 +322,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <a class="homelogo" href="index.html" title="메인으로"><img src="logo_full.png" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"></a>
   <div class="title" data-en="CHOIN — Retelling Korea's Heritage&lt;small&gt;Reviving Korea's heritage as media art, nationwide · 90 cities&lt;/small&gt;">초인, 대한민국의 전통을 이야기하다<small>대한민국 전역의 전통을 미디어아트로 다시 잇다 · 90개 도시</small></div>
   <nav class="chtabs">
+    <a class="chtab" id="tab-map" href="index.html" style="background:#3b3326" data-en="🗺 Heritage map">🗺 전통 지도</a>
     <a class="chtab" id="tab-portfolio" href="초인_포트폴리오.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a" data-en="✦ CHOIN Portfolio">✦ 초인 포트폴리오</a>
     <a class="chtab" id="tab-muui" href="muui/index.html"><img src="muui_avatar.png" class="chface" alt="무이"><span data-en="▶ MUUI Relic Squad">▶ 무이 유물단</span></a>
     <a class="chtab" id="tab-suksu" href="대령숙수.html"><img src="suksu_avatar.png" class="chface" alt="대령숙수"><span data-en="▶ Royal Chef">▶ 대령숙수</span></a>
@@ -270,6 +337,15 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <div class="lang"><button class="on" id="bk" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 
+<nav class="qnav" id="qnav" aria-label="포트폴리오 바로가기">
+  <a href="#makeSec" data-en="What we do">하는 일</a>
+  <a href="#worksSec" data-en="Works">작품</a>
+  <a href="#histSec" data-en="Awards">선정·수상</a>
+  <a href="#prodSec" data-en="In production">진행 중</a>
+  <a href="#about" data-en="About">소개</a>
+  <a class="q-mail" href="mailto:choin2626@gmail.com" data-en="Contact">문의</a>
+</nav>
+
 <section class="hero">
   <div class="kick">CHOIN Studio — Selected Works</div>
   <h1 data-en="Heritage into light,<br><em>space</em> into story.">전통을 빛으로,<br><em>공간을</em> 이야기로.</h1>
@@ -279,7 +355,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 
 <div class="herofig"><img src="poster/sinmyeong_alt1.jpg" alt="신명, 길을 열다 · 초광폭 미디어파사드"></div>
 
-<section class="prod">
+<section class="prod" id="prodSec">
   <div class="inner">
     <div class="hd"><div class="lbl"><span class="dot"></span>NOW IN PRODUCTION</div><div class="sub" data-en="Large-scale projects under way in 2026">2026 진행 중인 대형 프로젝트</div></div>
     <div class="prodgrid" id="prodgrid"></div>
@@ -302,7 +378,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 .cjfeat-wrap:hover .cjfeat-cta{text-decoration:underline;text-underline-offset:4px;}
 @media(max-width:760px){.cjfeat-wrap{grid-template-columns:1fr;}.cjfeat-img{min-height:210px;}.cjfeat-img::after{background:linear-gradient(180deg,transparent 60%,rgba(28,23,16,.6));}}
 </style>
-<section class="cjfeat">
+<section class="cjfeat" id="featSec">
   <a class="cjfeat-wrap" href="cheongju.html">
     <div class="cjfeat-img"><img src="poster/cheongju_cheoldanggan.jpg" alt="2026 청주 국가유산 미디어아트 · 용두사지 철당간 미디어파사드" loading="lazy"></div>
     <div class="cjfeat-txt">
@@ -345,7 +421,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   </div>
 </section>
 
-<section class="works">
+<section class="works" id="worksSec">
   <div class="top">
     <h2>Selected Works</h2>
     <div class="filt" id="filt">
@@ -366,7 +442,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   <div class="grid" id="grid2"></div>
 </section>
 
-<section class="blk">
+<section class="blk" id="makeSec">
   <div class="kick">WHAT WE MAKE</div>
   <h2 data-en="What we make">우리가 만드는 것</h2>
   <div class="bsub" data-en="We build the stories of heritage in four forms.">전통의 이야기를 네 가지 형태로 짓습니다.</div>
@@ -378,7 +454,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   </div>
 </section>
 
-<section class="blk">
+<section class="blk" id="methodSec">
   <div class="kick">CHOIN METHOD</div>
   <h2 data-en="Five steps that carry heritage into today">전통을 오늘로 잇는 5단계</h2>
   <div class="bsub" data-en="We do not copy heritage as it is. We discover it, interpret it and build it again.">유산을 그대로 옮기지 않습니다. 발견하고, 해석하고, 다시 짓습니다.</div>
@@ -391,7 +467,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
   </div>
 </section>
 
-<section class="blk">
+<section class="blk" id="capSec">
   <div class="kick">PRODUCTION CAPABILITY</div>
   <h2 data-en="Production capability">제작 역량</h2>
   <div class="bsub" data-en="From planning to shooting, 3D, real-time rendering and playout, we produce in-house.">기획부터 촬영·3D·실시간 렌더링·송출까지 자체 제작합니다.</div>
@@ -485,20 +561,20 @@ var EN_W={
  "한 땀의 도시, 청주": {
   "title": "Cheongju, City of a Single Stitch",
   "sub": "Media facade · 2026",
-  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at the Iron Flagpole of Yongdusa Temple Site (National Treasure) · broadcast as the backdrop of CJB Cheongju Broadcasting's opening coverage",
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at the Iron Flagpole at Yongdusa Temple Site (National Treasure) · broadcast as the backdrop of CJB Cheongju Broadcasting's opening coverage",
   "desc": "Media art that builds an imagined landscape of Cheongju with the craft techniques of jogakbo patchwork and quilted cloth. Every element — buildings, clouds, flowers, roads, even an airplane — is made of the grain of needlework, of cloth joined and layered. Like joining different pieces one stitch at a time, it weaves together the touch of the people and the time of craft accumulated in Cheongju. The flat-iron airplane, a symbol of Cheongju Airport, carries the wish that the sense of craft and creative energy will spread far. It shows Cheongju not only as a city that preserves the craft of the past, but as a city still being made with the sensibility of today. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
  },
  "무이 수호대, 청주 수호 작전": {
   "title": "MUUI Guardians: Operation Protect Cheongju",
   "sub": "Media facade · 2026",
-  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at the Gate of the Chungcheong-do Army Commander's Headquarters",
-  "desc": "The Gate of the Chungcheong-do Army Commander's Headquarters was the entrance to the garrison that oversaw military affairs in Chungcheong-do during the Joseon period. The work retells the gate's historical role as a story of guarding Cheongju. Six MUUI appear in the windows, stand against an attack, and join forces to spread a guardian light. A protective formation of arrows, light, traditional patterns and white magnolias turns the gate into a stage for a dynamic adventure. On the gate of a former garrison, it speaks of protecting today's Cheongju, its cultural heritage and the peace of everyday life together. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at the Main Gate of the Military Headquarters of Chungcheong-do Province",
+  "desc": "The Main Gate of the Military Headquarters of Chungcheong-do Province was the entrance to the garrison that oversaw military affairs in Chungcheong-do during the Joseon period. The work retells the gate's historical role as a story of guarding Cheongju. Six MUUI appear in the windows, stand against an attack, and join forces to spread a guardian light. A protective formation of arrows, light, traditional patterns and white magnolias turns the gate into a stage for a dynamic adventure. On the gate of a former garrison, it speaks of protecting today's Cheongju, its cultural heritage and the peace of everyday life together. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
  },
  "무이풍물단, 망선루로 가는 길": {
-  "title": "MUUI Pungmul Troupe: The Road to Mangseonnu",
+  "title": "MUUI Pungmul Troupe: The Road to Mangseollu",
   "sub": "Media facade · 2026",
-  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at Mangseonnu Pavilion",
-  "desc": "A work that reinterprets the memories left at Mangseonnu — royal processions, state examinations and banquets — as a march of the MUUI pungmul troupe. Mangseonnu is a heritage site whose history runs from King Gongmin of Goryeo's stay in Cheongju through education, assemblies and civic activity. With the rhythm, landscapes of nature, heritage, city and madang awaken, and the MUUI march toward Mangseonnu. The parade is a festival scene that shares the old processions, the footsteps of scholars and the joy of banquets with today's audience. In light and movement it revives the meaning of Mangseonnu, where people gathered to share learning, joy and the memory of community. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
+  "venue": "2026 National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light” · media facade at Mangseollu Pavilion",
+  "desc": "A work that reinterprets the memories left at Mangseollu — royal processions, state examinations and banquets — as a march of the MUUI pungmul troupe. Mangseollu is a heritage site whose history runs from King Gongmin of Goryeo's stay in Cheongju through education, assemblies and civic activity. With the rhythm, landscapes of nature, heritage, city and madang awaken, and the MUUI march toward Mangseollu. The parade is a festival scene that shares the old processions, the footsteps of scholars and the joy of banquets with today's audience. In light and movement it revives the meaning of Mangseollu, where people gathered to share learning, joy and the memory of community. Hosted by Korea Heritage Service, Chungcheongbuk-do and Cheongju City / organized by Korea Heritage Agency and Cheongju Cultural Industry Promotion Foundation."
  },
  "헤이와 둥둥": {
   "title": "Hei and Dungdung",
@@ -563,8 +639,8 @@ var EN_H={
  "0": {
   "t": "National Heritage Media Art Cheongju, “Cheongju's Treasures, Opened with Light”",
   "r": "Participating artist",
-  "w": "Cheongju, City of a Single Stitch · MUUI Guardians: Operation Protect Cheongju · MUUI Pungmul Troupe: The Road to Mangseonnu",
-  "v": "Media facades at the Iron Flagpole of Yongdusa Temple Site · Gate of the Chungcheong-do Army Commander's Headquarters · Mangseonnu Pavilion",
+  "w": "Cheongju, City of a Single Stitch · MUUI Guardians: Operation Protect Cheongju · MUUI Pungmul Troupe: The Road to Mangseollu",
+  "v": "Media facades at the Iron Flagpole at Yongdusa Temple Site · Main Gate of the Military Headquarters of Chungcheong-do Province · Mangseollu Pavilion",
   "h": "Hosted by Korea Heritage Service · Chungcheongbuk-do · Cheongju City / Organized by Korea Heritage Agency · Cheongju Cultural Industry Promotion Foundation"
  },
  "1": {
@@ -783,7 +859,9 @@ function setLang(l){
   renderHist(); renderProd(); render();
   if(document.getElementById('lb').classList.contains('on')) showLB();
 }
-setLang((function(){try{return localStorage.getItem('choin_lang')==='en'?'en':'ko';}catch(e){return 'ko';}})());
+setLang((function(){var s=null;try{s=localStorage.getItem('choin_lang');}catch(e){}
+  if(s==='en'||s==='ko') return s;
+  return /^ko/i.test(navigator.language||'ko')?'ko':'en';})());   // 처음 온 사람: 기기 언어가 한국어가 아니면 영어
 </script>
 </body>
 </html>

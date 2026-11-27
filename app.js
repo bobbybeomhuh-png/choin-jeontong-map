@@ -545,5 +545,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   $('map').innerHTML='<p style="padding:20px;color:#6f6553">지도 로드 실패 — 새로고침(Ctrl+F5) 해보세요.</p>';
 });
 
-setLang((function(){try{return localStorage.getItem('choin_lang')==='en'?'en':'ko';}catch(e){return 'ko';}})());
+setLang((function(){var s=null;try{s=localStorage.getItem('choin_lang');}catch(e){}
+  if(s==='en'||s==='ko') return s;
+  return /^ko/i.test(navigator.language||'ko')?'ko':'en';})());   // 처음 온 사람: 기기 언어가 한국어가 아니면 영어
 if(window.logEvent) logEvent('visit','');   // 페이지 방문 1건
