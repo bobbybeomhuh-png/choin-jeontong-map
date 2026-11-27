@@ -6,3 +6,5 @@ yard2.jpg    = raked_dirt
 bakseok.jpg  = grey_stone_path
 wall.jpg, wall_n.jpg = japanese_stone_wall
 2026-11-27 받음. 1k 해상도.
+brick.jpg    = red_brick
+sand.jpg     = sandstone_blocks_08 (2026-11-28)
