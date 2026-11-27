@@ -13,13 +13,13 @@ const isBrown=c=>{const h={};c.getHSL(h);return (h.h<.13||h.h>.95)&&h.s>.12&&h.l
 export function findToyTrees(scene,GY=0){scene.updateMatrixWorld(true);const fol=[],tr=[],bb=new THREE.Box3(),sz=new THREE.Vector3();
  scene.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||o.isSkinnedMesh||!o.visible||!o.geometry)return;let p=o.parent;while(p){if(!p.visible)return;p=p.parent}const m=o.material;if(!m||Array.isArray(m)||m.map||m.transparent||m.vertexColors||!m.color)return;const t=o.geometry.type;
   bb.setFromObject(o);bb.getSize(sz);const w=Math.max(sz.x,sz.z);
-  if(FOL.has(t)&&!(t==='SphereGeometry'&&o.geometry.parameters&&o.geometry.parameters.thetaLength<3)&&(isGreen(m.color)||(isAutumn(m.color)&&w>1.1&&bb.min.y>GY+1))&&sz.y>.45&&sz.y<14&&w<14&&w>.35&&bb.min.y>GY+.2)fol.push({o,min:bb.min.y,max:bb.max.y,x:(bb.min.x+bb.max.x)/2,z:(bb.min.z+bb.max.z)/2,r:w/2,cone:t==='ConeGeometry',sx:sz.x,sy:sz.y,sz:sz.z});
-  else if(t==='CylinderGeometry'&&isBrown(m.color)&&sz.y>.3&&sz.y<7&&w<2.6)tr.push({o,min:bb.min.y,max:bb.max.y,x:(bb.min.x+bb.max.x)/2,z:(bb.min.z+bb.max.z)/2,used:false})});
+  if(FOL.has(t)&&!(t==='SphereGeometry'&&o.geometry.parameters&&o.geometry.parameters.thetaLength<3)&&(isGreen(m.color)||(isAutumn(m.color)&&w>1.1&&bb.min.y>GY+1))&&sz.y>.45&&sz.y<14&&w<14&&w>.35&&(bb.min.y>GY+.2||(t==='ConeGeometry'&&sz.y>1.6&&sz.y>w*1.1&&bb.min.y>GY-1)))fol.push({o,min:bb.min.y,max:bb.max.y,x:(bb.min.x+bb.max.x)/2,z:(bb.min.z+bb.max.z)/2,r:w/2,cone:t==='ConeGeometry',sx:sz.x,sy:sz.y,sz:sz.z});
+  else if(t==='CylinderGeometry'&&isBrown(m.color)&&sz.y>.3&&sz.y<14&&w<2.6)tr.push({o,min:bb.min.y,max:bb.max.y,x:(bb.min.x+bb.max.x)/2,z:(bb.min.z+bb.max.z)/2,used:false})});
  /* 잎 덩어리 묶기: 가운데가 가까우면 한 나무 */
  const cl=[];for(const f of fol){let c=cl.find(c=>Math.hypot(c.x-f.x,c.z-f.z)<Math.max(.7,Math.min(c.r,f.r)*.75));if(!c){c={x:f.x,z:f.z,r:f.r,min:f.min,max:f.max,parts:[],cones:0};cl.push(c)}c.parts.push(f.o);c.min=Math.min(c.min,f.min);c.max=Math.max(c.max,f.max);c.r=Math.max(c.r,f.r);if(f.cone)c.cones++}
  const out=[];for(const c of cl){let best=null,bd=1e9;for(const t of tr){if(t.used)continue;const d=Math.hypot(t.x-c.x,t.z-c.z);if(d<Math.max(.6,c.r*.5)&&t.max>c.min-.8&&d<bd){bd=d;best=t}}
   const cone=c.cones*2>=c.parts.length;if(!best&&!(cone&&(c.min<GY+1.6||c.cones>=2)))continue;/* 줄기 없는 공은 나무가 아닐 수 있음(장식) */
-  if(best)best.used=true;const base=best?best.min:(c.min<GY+1.6?GY:c.min-c.r*.6);const H=c.max-base;if(H<1.2||H>16)continue;
+  if(best)best.used=true;const base=best?best.min:(c.min<GY+1.6?GY:c.min-c.r*.6);const H=c.max-base;if(H<1.2||H>22)continue;
   out.push({x:best?best.x:c.x,z:best?best.z:c.z,base,H,cone,hide:best?[...c.parts,best.o]:c.parts})}
  out.blobs=fol.filter(f=>!f.cone);return out}
 let PINE=null;
@@ -43,8 +43,8 @@ export function swapToyRoofs(scene,GY=0){scene.updateMatrixWorld(true);const L=[
 
 /* 각진 바위(12면체·20면체 단면) → 울퉁불퉁 다듬은 바위(같은 자리·크기·색) */
 let RG=null;function rockGeo(){if(RG)return RG;let g=new THREE.IcosahedronGeometry(1,3);g.deleteAttribute('normal');g.deleteAttribute('uv');g=mergeVertices(g);const pa=g.attributes.position,v=new THREE.Vector3();for(let i=0;i<pa.count;i++){v.fromBufferAttribute(pa,i);const n=1+.14*Math.sin(v.x*3.1+v.y*1.7)+.09*Math.sin(v.z*4.3-v.x*2.2)+.05*Math.sin(v.y*7.9+v.z*3)+.03*Math.sin(v.x*13+v.z*11);v.multiplyScalar(n);if(v.y<-.35)v.y=-.35-(v.y+.35)*.25;pa.setXYZ(i,v.x,v.y,v.z)}g.computeVertexNormals();return RG=g}
-export function swapToyRocks(scene){scene.updateMatrixWorld(true);const L=[];scene.traverse(o=>{if(!o.isMesh||!o.visible||!o.geometry)return;const t=o.geometry.type,P=o.geometry.parameters||{};if(!((t==='DodecahedronGeometry'&&(P.detail||0)<=1)||(t==='IcosahedronGeometry'&&(P.detail||0)===0)))return;const m=o.material;if(!m||Array.isArray(m)||m.map||!m.color||m.transparent)return;const h={};m.color.getHSL(h,THREE.SRGBColorSpace);if(h.s>.25||h.l<.2||h.l>.8)return;if(P.radius*Math.max(o.scale.x,o.scale.y,o.scale.z)<.25&&!o.isInstancedMesh)return;L.push(o)});
- for(const o of L){o.geometry=rockGeo().clone().scale(o.geometry.parameters.radius,o.geometry.parameters.radius,o.geometry.parameters.radius);const m=o.material.clone();m.flatShading=false;m.roughness=.95;m.userData={finKind:'stone'};o.material=m;m.needsUpdate=true}return L.length}
+export function swapToyRocks(scene){scene.updateMatrixWorld(true);const L=[];scene.traverse(o=>{if(!o.isMesh||!o.visible||!o.geometry)return;const t=o.geometry.type,P=o.geometry.parameters||{};if(!((t==='DodecahedronGeometry'&&(P.detail||0)<=1)||(t==='IcosahedronGeometry'&&(P.detail||0)===0)))return;const m=o.material;if(!m||Array.isArray(m)||(m.map&&!m.map.isCanvasTexture)||!m.color||m.transparent)return;const h={};texColor(m).getHSL(h,THREE.SRGBColorSpace);if(h.s>.25||h.l<.2||h.l>.8)return;if(P.radius*Math.max(o.scale.x,o.scale.y,o.scale.z)<.25&&!o.isInstancedMesh)return;L.push(o)});
+ for(const o of L){o.geometry=rockGeo().clone().scale(o.geometry.parameters.radius,o.geometry.parameters.radius,o.geometry.parameters.radius);const m=o.material.clone();if(m.map){m.color.copy(texColor(o.material));m.map=null}m.flatShading=false;m.roughness=.95;m.userData={finKind:'stone'};o.material=m;m.needsUpdate=true}return L.length}
 
 /* 흰 상자 건물 몸체 → 한옥 정면(기둥·창방 단청·띠살문·머름·회벽). 실제 폭으로 칸(2.4~3m)을 나눠 그림. 긴 면=문, 짧은 면=회벽+창 */
 const FAC=new Map(),_RC=new THREE.PerspectiveCamera();
