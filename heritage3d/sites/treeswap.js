@@ -48,9 +48,9 @@ export function swapToyRocks(scene){scene.updateMatrixWorld(true);const L=[];sce
 
 /* 흰 상자 건물 몸체 → 한옥 정면(기둥·창방 단청·띠살문·머름·회벽). 실제 폭으로 칸(2.4~3m)을 나눠 그림. 긴 면=문, 짧은 면=회벽+창 */
 const FAC=new Map(),_RC=new THREE.PerspectiveCamera();
-function facadeTex(n,ar,doors){const k=n+'_'+ar.toFixed(1)+'_'+doors;if(FAC.has(k))return FAC.get(k);const bw=128,W=bw*n,H=Math.max(96,Math.round(bw*ar));const c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d');
- q.fillStyle='#ece3cc';q.fillRect(0,0,W,H);const band=Math.round(H*.13);q.fillStyle='#2f7a64';q.fillRect(0,0,W,band);q.fillStyle='#c8352a';for(let i=0;i<n;i++){q.fillRect(i*bw+bw*.38,band*.25,bw*.24,band*.5)}q.fillStyle='#d8a838';q.fillRect(0,band-4,W,4);
- const pw=Math.max(10,bw*.1);for(let i=0;i<=n;i++){q.fillStyle='#8a3424';q.fillRect(i*bw-(i===0?0:i===n?pw:pw/2),0,pw,H);q.fillStyle='rgba(0,0,0,.18)';q.fillRect(i*bw-(i===0?0:i===n?pw:pw/2)+pw*.7,0,pw*.3,H)}
+function facadeTex(n,ar,doors,plain){/* plain(11/28): 민가 한옥 — 단청·붉은 기둥 없이 나무색 */const k=n+'_'+ar.toFixed(1)+'_'+doors+(plain?'_p':'');if(FAC.has(k))return FAC.get(k);const bw=128,W=bw*n,H=Math.max(96,Math.round(bw*ar));const c=document.createElement('canvas');c.width=W;c.height=H;const q=c.getContext('2d');
+ q.fillStyle='#ece3cc';q.fillRect(0,0,W,H);const band=Math.round(H*.13);if(plain){q.fillStyle='#6e5236';q.fillRect(0,0,W,band);q.fillStyle='rgba(0,0,0,.22)';q.fillRect(0,band-4,W,4)}else{q.fillStyle='#2f7a64';q.fillRect(0,0,W,band);q.fillStyle='#c8352a';for(let i=0;i<n;i++){q.fillRect(i*bw+bw*.38,band*.25,bw*.24,band*.5)}q.fillStyle='#d8a838';q.fillRect(0,band-4,W,4)}
+ const pw=Math.max(10,bw*.1);for(let i=0;i<=n;i++){q.fillStyle=plain?'#6a4a2e':'#8a3424';q.fillRect(i*bw-(i===0?0:i===n?pw:pw/2),0,pw,H);q.fillStyle='rgba(0,0,0,.18)';q.fillRect(i*bw-(i===0?0:i===n?pw:pw/2)+pw*.7,0,pw*.3,H)}
  const sill=Math.round(H*.16);q.fillStyle='#7a4a2a';q.fillRect(0,H-sill-6,W,6);
  for(let i=0;i<n;i++){const x0=i*bw+pw*.6,x1=(i+1)*bw-pw*.6,y0=band+8,mid=doors&&(n<3||(i>0&&i<n-1)||n===3);
   if(mid){/* 띠살문 두 짝 */const dw=(x1-x0)/2;for(let d=0;d<2;d++){const dx=x0+d*dw+2;q.fillStyle='#f2ead4';q.fillRect(dx,y0,dw-4,H-y0-6);q.strokeStyle='#6a4024';q.lineWidth=5;q.strokeRect(dx,y0,dw-4,H-y0-6);q.lineWidth=1.6;for(let x=dx+6;x<dx+dw-6;x+=6){q.beginPath();q.moveTo(x,y0);q.lineTo(x,H-6);q.stroke()}for(const f of[.12,.5,.88]){const yy=y0+(H-y0-6)*f;for(let k=-1;k<=1;k++){q.beginPath();q.moveTo(dx,yy+k*5);q.lineTo(dx+dw-4,yy+k*5);q.stroke()}}}}
@@ -61,7 +61,7 @@ function facadeTex(n,ar,doors){const k=n+'_'+ar.toFixed(1)+'_'+doors;if(FAC.has(
 export function swapWhiteBoxes(scene,GY=0){scene.updateMatrixWorld(true);const L=[],sc=new THREE.Vector3();scene.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||!o.visible||!o.geometry||o.geometry.type!=='BoxGeometry'||o.userData.facaded)return;const m=o.material;if(!m||Array.isArray(m)||m.map||!m.color||m.transparent)return;const h={};m.color.getHSL(h,THREE.SRGBColorSpace);if(!(h.l>.74&&h.s<.5))return;const P=o.geometry.parameters;o.getWorldScale(sc);const W=P.width*sc.x,H=P.height*sc.y,D=P.depth*sc.z;if(H<1.8||H>8||Math.min(W,D)<1.6||Math.max(W,D)<3)return;
   /* 위에 지붕이 덮인 건물 몸체만: 상자 바로 위 1.8m 안에 어두운(기와) 메시가 있어야 */L.push({o,W,H,D})});
  let n=0;for(const{o,W,H,D}of L){const top=new THREE.Vector3();o.getWorldPosition(top);const ray=new THREE.Raycaster(top.clone().setY(top.y+H/2+.05),new THREE.Vector3(0,1,0),0,3.5);ray.camera=_RC;const hit=ray.intersectObject(scene,true).find(x=>x.object!==o&&x.object.visible&&x.object.material&&!Array.isArray(x.object.material)&&x.object.material.color&&(()=>{const hh={};x.object.material.color.getHSL(hh,THREE.SRGBColorSpace);return hh.l<.45})());if(!hit)continue;
-  const long=W>=D;const f=(w,dr)=>facadeTex(Math.max(1,Math.round(w/2.7)),H/w*Math.max(1,Math.round(w/2.7)),dr);const fx=f(D,!long),fz=f(W,long);const orig=o.material;o.material=[fx,fx,orig,orig,fz,fz];o.userData.facaded=1;n++}
+  const long=W>=D;const pl=!!o.userData.plainFacade;const f=(w,dr)=>facadeTex(Math.max(1,Math.round(w/2.7)),H/w*Math.max(1,Math.round(w/2.7)),dr,pl);const fx=f(D,!long),fz=f(W,long);const orig=o.material;o.material=[fx,fx,orig,orig,fz,fz];o.userData.facaded=1;n++}
  return n}
 
 /* 초가지붕(11/28): 쨍한 노란 덩어리 → 묵은 볏짚 색 + 짚 결(위에서 아래로 흐르는 줄) */
