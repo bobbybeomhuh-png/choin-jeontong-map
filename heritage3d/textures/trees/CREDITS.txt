@@ -1,1 +1,2 @@
 tree_small_02_0..2.png = Poly Haven CC0 'tree_small_02' 모델을 블렌더 5.1로 0·60·120도 직교 촬영(768, 투명 배경) 2026-11-28
+island_tree_02_0..2.png = Poly Haven CC0 'island_tree_02' 블렌더 3방향 촬영 2026-11-28
