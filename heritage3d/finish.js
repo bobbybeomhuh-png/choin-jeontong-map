@@ -63,12 +63,12 @@ function yardTarget(m){const c=m.color;if(m.map&&c.r>.9&&c.g>.9&&c.b>.9)return n
 function sheetTarget(k,m){if(k==='field'){const c=texColor0(m);return [c.r*.5,c.g*.46,c.b*.3]}return k==='grass'?grassTarget(m.color):k==='bakseok'?[m.color.r*.85,m.color.g*.85,m.color.b*.85]:yardTarget(m)}
 
 /* 지형판(높낮이·정점 색, 11/28): 정점 색(배치·색)은 그대로 두고 사진의 밝기 결만 곱함. 평지=잔디 사진, 비탈=바위 사진. 색은 조금 덜 쨍하게 */
-function terrainPatch(m){m.userData.fin='ph_terrain';const ta=phTex('grass'),tb=phTex('wall'),tc=phTex('grass2');
+function terrainPatch(m){m.userData.fin='ph_terrain';if(m.flatShading){m.flatShading=false}const ta=phTex('grass'),tb=phTex('wall'),tc=phTex('grass2');
  m.onBeforeCompile=sh=>{Object.assign(sh.uniforms,{uA:{value:ta},uB:{value:tb},uC:{value:tc}});
   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vPWP;varying vec3 vPWN;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\n{vec4 fw=vec4(transformed,1.0);vPWP=(modelMatrix*fw).xyz;vPWN=normalize(mat3(modelMatrix)*objectNormal);}');
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vPWP;varying vec3 vPWN;uniform sampler2D uA;uniform sampler2D uB;uniform sampler2D uC;float tSl;')
    .replace('#include <map_fragment>','{vec3 W=vPWP;vec3 n=normalize(vPWN);tSl=1.0-smoothstep(.62,.86,abs(n.y));float ga=dot(texture2D(uA,W.xz/2.6).rgb,vec3(.333))/.213;float gc=dot(texture2D(uC,W.xz/7.1+.3).rgb,vec3(.333))/.107;float lo=dot(texture2D(uC,W.xz*.012).rgb,vec3(.333))/.107;float g=mix(ga,gc,.35*smoothstep(.8,1.2,lo));vec3 bw=pow(abs(n),vec3(4.));bw/=(bw.x+bw.y+bw.z+1e-5);float r=dot(texture2D(uB,W.zy/4.).rgb,vec3(.333))*bw.x+dot(texture2D(uB,W.xz/4.).rgb,vec3(.333))*bw.y+dot(texture2D(uB,W.xy/4.).rgb,vec3(.333))*bw.z;r/=.183;float det=mix(g,r,tSl);diffuseColor.rgb*=clamp(mix(1.0,det,.85),.35,1.8);}')
-   .replace('#include <color_fragment>','#include <color_fragment>\n#if defined( USE_COLOR ) || defined( USE_COLOR_ALPHA )\n{vec3 c=diffuseColor.rgb;float L=dot(c,vec3(.3333));float gr=smoothstep(.02,.12,c.g-max(c.r,c.b));diffuseColor.rgb=mix(mix(c,vec3(L),.28)*.92,vec3(L)*vec3(.92,1.04,.62)*.8,gr*(1.0-tSl)*.6);}\n#endif')};
+   .replace('#include <color_fragment>','#include <color_fragment>\n#if defined( USE_COLOR ) || defined( USE_COLOR_ALPHA )\n{vec3 c=diffuseColor.rgb;float L=dot(c,vec3(.3333));float gr=smoothstep(.01,.08,c.g-max(c.r,c.b));diffuseColor.rgb=mix(mix(c,vec3(L),.28)*.92,vec3(L)*vec3(.9,1.02,.6)*.78,gr*(1.0-tSl*.35)*.85);}\n#endif')};
  m.onBeforeCompile.__fin=1;m.customProgramCacheKey=()=>'ph_terrain';m.needsUpdate=true}
 function isTerrain(o,m){if(!m.vertexColors||m.transparent||o.isInstancedMesh||m.userData.finKind)return false;if(m.map&&!m.map.isCanvasTexture)return false;const g=o.geometry;if(!g||!g.attributes.position||g.attributes.position.count<400)return false;_bb.setFromObject(o);_bb.getSize(_sz);return Math.min(_sz.x,_sz.z)>30&&_sz.y<Math.max(_sz.x,_sz.z)*.5}
 
