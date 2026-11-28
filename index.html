@@ -64,7 +64,6 @@ header{display:flex;align-items:center;gap:12px;padding:13px 20px;border-bottom:
 @media(max-width:1500px){.chtabs{gap:6px;margin-left:10px}.chtab{font-size:13px;padding:6px 11px}}
 @media(max-width:1450px){.chface{display:none}.chtab{padding:6px 9px;font-size:12.5px}.chtabs{gap:5px;margin-left:6px}}
 .walk3d{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.walk3d a{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:13px;font-weight:700;color:#fff;background:#2f4a7a;border-radius:10px;padding:7px 11px}.walk3d a:hover{background:#243a62}.walk3d a i{font-style:normal;font-weight:400;opacity:.8;font-size:12px}
-@media(max-width:820px){.chtabs{display:none;}}
 .board{height:calc(100% - 110px);overflow:auto;padding:26px 30px;}
 .bwrap{max-width:1400px;margin:0 auto;padding:0 22px;box-sizing:border-box;}
 .bhead h2{font-family:var(--serif);font-size:26px;font-weight:800;margin:0 0 4px;}
@@ -316,7 +315,38 @@ circle.city{cursor:pointer;}
 .seg.on{background:var(--ink);color:var(--bg);box-shadow:0 3px 9px rgba(59,51,38,.25);}
 .seg.on .tl i{color:rgba(243,236,224,.82);}
 .seg:not(.on):hover{background:rgba(255,255,255,.5);color:var(--ink);}
-@media(max-width:1240px){.chtabs{display:none;}}
+@media(max-width:1100px){.title small{display:none;}}
+@media(max-width:1900px){
+ header{flex-wrap:wrap;row-gap:8px;}
+ .title{flex:1 1 0;min-width:0;}
+ header>.spacer{display:none;}
+ .chtabs{order:9;flex:0 0 100%;margin-left:0;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 0 2px;}
+ .chtabs::-webkit-scrollbar{display:none;}
+ .chtab{font-size:13px;padding:7px 12px;}
+}
+/* ===== 폰(≤780px): 머리말 4줄 정리 — 로고·제목·언어 / 2탭 / 채널(포트폴리오) / 보기 전환 ===== */
+@media(max-width:780px){
+ header{position:static;}
+ .title{flex:1 1 0;min-width:0;font-size:15px;}
+ .title small{display:none;}
+ header>.spacer{display:none;}
+ header>.lang:not(#viewsw){order:1;flex:0 0 auto;}
+ .segtabs{order:2;flex:1 1 100%;margin-left:0;padding:4px;}
+ .seg{flex:1 1 0;justify-content:center;height:42px;padding:0 8px;}
+ .chtabs{order:3;}
+ #viewsw{order:4;margin-right:0 !important;}
+ .lang button{min-height:34px;}
+ .vband{padding:8px 13px 10px;}
+ .vband .vtop{font-size:13.5px;}
+ .vband .vwho{flex-wrap:nowrap;gap:6px;margin-top:7px;}
+ .vband .w{flex:1 1 0;min-width:0;flex-direction:column;align-items:center;text-align:center;gap:1px;padding:7px 4px 8px;}
+ .vband .w .ic{font-size:19px;line-height:1.2;}
+ .vband .w .d{flex:none;font-size:0;line-height:0;}
+ .vband .w .d b{font-size:13px;line-height:1.3;margin:0;}
+ .vband .w .arr{font-size:11.5px;white-space:normal;line-height:1.25;}
+ .legend{padding:8px 13px;gap:5px 10px;}
+ footer{flex-wrap:wrap;gap:6px 12px;}
+}
 @media(max-width:1000px){.seg{flex-basis:auto;}.seg .tl i{display:none;}}
 /* ===== 만남의 장 뷰 ===== */
 #meet{display:none;height:calc(100% - 110px);}
@@ -582,6 +612,10 @@ circle.city{cursor:pointer;}
 #choinSplash .cs-foot{position:absolute;left:0;right:0;bottom:16px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 16px}
 #choinSplash .cs-slogan{color:#ffdccf;font-size:clamp(12px,2.4vw,16px);font-weight:600;letter-spacing:.3px;text-align:center}
 #choinSplash .cs-enter{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:var(--sans);font-size:clamp(15px,2.4vw,19px);font-weight:800;letter-spacing:.2px;border-bottom:2px solid rgba(255,255,255,.9);padding-bottom:5px;animation:csbob 1.7s ease-in-out infinite}
+#choinSplash .cs-pf{color:#fff;font-family:var(--sans);font-size:clamp(13px,2vw,15px);font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,.75);border-radius:999px;padding:8px 18px;background:rgba(120,0,8,.28);margin-top:4px}
+#choinSplash .cs-pf:hover{background:rgba(120,0,8,.5)}
+#choinSplash{padding-bottom:140px}#choinSplash .cs-logo{max-height:calc(100vh - 170px);max-height:calc(100dvh - 170px)}
+@media(max-width:780px){#choinSplash .cs-slogan .cs-en{display:none}}
 @keyframes csbob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 </style>
 <div id="choinSplash" onclick="choinEnter()" title="전통 지도로 들어가기">
@@ -590,8 +624,9 @@ circle.city{cursor:pointer;}
     <h1 class="cs-head"><span>WHAT WE DO IS</span><span>KOREA</span></h1>
   </div>
   <div class="cs-foot">
-    <div class="cs-slogan">우리가 하는 모든 일의 본질은 결국 한국이다 &nbsp;·&nbsp; What We Do Is Korea.</div>
-    <div class="cs-enter">전통 지도로 들어가기 →</div>
+    <div class="cs-slogan"><span data-en="Everything we do comes back to Korea.">우리가 하는 모든 일의 본질은 결국 한국이다</span><span class="cs-en"> &nbsp;·&nbsp; What We Do Is Korea.</span></div>
+    <div class="cs-enter" data-en="Enter the heritage map →">전통 지도로 들어가기 →</div>
+    <a class="cs-pf" href="초인_포트폴리오.html" onclick="event.stopPropagation()" data-en="✦ View CHOIN portfolio">✦ 초인 포트폴리오 보기</a>
   </div>
 </div>
 <script>
@@ -600,54 +635,67 @@ circle.city{cursor:pointer;}
   try{ if(sessionStorage.getItem('choin_entered')==='1'){ sp.parentNode.removeChild(sp); return; } }catch(e){}
   try{ var hh=decodeURIComponent((location.hash||'').replace(/^#/,'')); if(hh && hh!=='map'){ sessionStorage.setItem('choin_entered','1'); sp.parentNode.removeChild(sp); return; } }catch(e){}   // ★주소로 도시·뷰를 바로 열면(3D에서 돌아올 때 등) 표지 건너뜀
   var html=document.documentElement; html.style.overflow='hidden';
-  window.choinEnter=function(){
+  var enterMap=function(){
     try{ sessionStorage.setItem('choin_entered','1'); }catch(e){}
     sp.classList.add('hide'); html.style.overflow='';
     setTimeout(function(){ if(sp&&sp.parentNode) sp.parentNode.removeChild(sp); },560);
     if(window._pushHash) window._pushHash('map');   // ★첫 진입=지도(뒤로가기 기준점)
   };
+  window.choinEnter=enterMap;
+  // ★폰: 빨간 표지를 누르면 지도가 아니라 포트폴리오로 바로 간다. 지도는 아래 작은 버튼으로.
+  if(window.matchMedia && matchMedia('(max-width:780px)').matches){
+    window.choinEnter=function(){
+      try{ sessionStorage.setItem('choin_entered','1'); }catch(e){}   // 포트폴리오에서 지도로 넘어올 때 표지 다시 안 뜨게
+      location.href='초인_포트폴리오.html';
+    };
+    sp.title='초인 포트폴리오 보기';
+    var en=sp.querySelector('.cs-enter'), pf=sp.querySelector('.cs-pf');
+    if(en){ en.innerHTML='초인 포트폴리오 보기 →'; en.setAttribute('data-en','View our portfolio →'); }
+    if(pf){ pf.innerHTML='🗺 전통 지도 보기'; pf.setAttribute('data-en','🗺 Heritage map'); pf.removeAttribute('href');
+            pf.onclick=function(e){ e.stopPropagation(); e.preventDefault(); enterMap(); }; }
+  }
 })();
 </script>
 <header>
  <a class="homelogo" id="brand" href="./" title="메인으로"><img src="logo_full.png" alt="초인 CHOIN" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'mark',textContent:'초'}))"></a>
  <div class="title" id="ttl">초인, 대한민국의 전통을 이야기하다<small id="tag"></small></div>
  <nav class="chtabs">
-   <a class="chtab" id="tab-portfolio" href="초인_포트폴리오.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a">✦ 초인 포트폴리오</a>
-   <a class="chtab" id="tab-muui" href="muui/index.html" rel="noopener"><img src="muui_avatar.png" class="chface" alt="무이">▶ 무이 유물단</a>
-   <a class="chtab" id="tab-suksu" href="대령숙수.html" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수">▶ 대령숙수</a>
-   <a class="chtab" id="tab-lab" href="lab/index.html" rel="noopener" style="background:#1E6B58">✎ 제작 배움터</a>
-   <a class="chtab" id="tab-3d" href="world3d/" style="background:#2f4a7a" title="무이 3D 월드: 걸어 다니는 전통 마당과 전국 유산 지도">◈ 3D 월드</a>
+   <a class="chtab" id="tab-portfolio" href="초인_포트폴리오.html" style="background:#3b3326;box-shadow:inset 0 0 0 1.5px #a9803a" data-en="✦ CHOIN Portfolio">✦ 초인 포트폴리오</a>
+   <a class="chtab" id="tab-muui" href="muui/index.html" rel="noopener"><img src="muui_avatar.png" class="chface" alt="무이"><span data-en="▶ MUUI Relic Squad">▶ 무이 유물단</span></a>
+   <a class="chtab" id="tab-suksu" href="대령숙수.html" rel="noopener"><img src="suksu_avatar.png" class="chface" alt="대령숙수"><span data-en="▶ Royal Chef">▶ 대령숙수</span></a>
+   <a class="chtab" id="tab-lab" href="lab/index.html" rel="noopener" style="background:#1E6B58" data-en="✎ Making Lab">✎ 제작 배움터</a>
+   <a class="chtab" id="tab-3d" href="world3d/" style="background:#2f4a7a" title="무이 3D 월드: 걸어 다니는 전통 마당과 전국 유산 지도" data-en="◈ 3D World">◈ 3D 월드</a>
  </nav>
  <div class="segtabs" role="tablist">
-   <button class="seg on" id="m-story" onclick="mainMode('story')"><span class="ico">🗺</span><span class="tl"><b>전통 이야기</b><i>되살린 전통을 본다</i></span></button>
-   <button class="seg" id="m-meet" onclick="mainMode('meet')"><span class="ico">✦</span><span class="tl"><b>만남의 장</b><i>기회를 잡고 함께한다</i></span></button>
+   <button class="seg on" id="m-story" onclick="mainMode('story')"><span class="ico">🗺</span><span class="tl"><b data-en="Heritage Stories">전통 이야기</b><i data-en="See heritage revived">되살린 전통을 본다</i></span></button>
+   <button class="seg" id="m-meet" onclick="mainMode('meet')"><span class="ico">✦</span><span class="tl"><b data-en="Meeting Place">만남의 장</b><i data-en="Find opportunities">기회를 잡고 함께한다</i></span></button>
  </div>
  <div class="spacer"></div>
- <div class="lang" id="viewsw" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')" style="display:none">🗺 지도</button><button id="vcalls" onclick="setView('calls')" style="display:none">📋 공모·공고</button><button id="vgrid" onclick="boardView('grid')">▦ 전체보기</button><button id="vboard" onclick="boardView('board')">✎ 자유 게시판</button></div>
+ <div class="lang" id="viewsw" style="margin-right:8px"><button id="vmap" class="on" onclick="setView('map')" style="display:none" data-en="🗺 Map">🗺 지도</button><button id="vcalls" onclick="setView('calls')" style="display:none" data-en="📋 Open calls">📋 공모·공고</button><button id="vgrid" onclick="boardView('grid')" data-en="▦ All cities">▦ 전체보기</button><button id="vboard" onclick="boardView('board')" data-en="✎ Board">✎ 자유 게시판</button></div>
  <div class="lang"><button id="bk" class="on" onclick="setLang('ko')">한국어</button><button id="be" onclick="setLang('en')">EN</button></div>
 </header>
 <div class="vband">
-  <div class="vtop">전통 미디어아트 <b>창작자와 일감이 만나는</b> 지도<span class="vstat" id="vstat">이야기 90 · 열린 공모 495</span></div>
+  <div class="vtop"><span data-en="A map where heritage media-art <b>creators meet work</b>">전통 미디어아트 <b>창작자와 일감이 만나는</b> 지도</span><span class="vstat" id="vstat">이야기 90 · 열린 공모 495</span></div>
   <div class="vwho">
-    <div class="w" onclick="goMeet('gongmo')"><span class="ic">🎨</span><span class="d"><b>창작자</b>매일 열리는 전통·미디어아트 공모</span><span class="arr">공모 보기 →</span></div>
-    <div class="w" onclick="goMeet('space')"><span class="ic">🏛</span><span class="d"><b>기관·브랜드</b>함께할 창작자·공간 찾기</span><span class="arr">만남의 장 →</span></div>
-    <div class="w" onclick="chOpen()"><span class="ic">🙋</span><span class="d"><b>누구나</b>우리 동네 전통 남기고 배지 받기</span><span class="arr">지금 남기기 →</span></div>
+    <div class="w" onclick="goMeet('gongmo')"><span class="ic">🎨</span><span class="d" data-en="<b>Creators</b>Heritage &amp; media-art open calls, updated daily"><b>창작자</b>매일 열리는 전통·미디어아트 공모</span><span class="arr" data-en="Open calls →">공모 보기 →</span></div>
+    <div class="w" onclick="goMeet('space')"><span class="ic">🏛</span><span class="d" data-en="<b>Institutions &amp; brands</b>Find creators and venues to work with"><b>기관·브랜드</b>함께할 창작자·공간 찾기</span><span class="arr" data-en="Meeting place →">만남의 장 →</span></div>
+    <div class="w" onclick="chOpen()"><span class="ic">🙋</span><span class="d" data-en="<b>Everyone</b>Share your local heritage and earn a badge"><b>누구나</b>우리 동네 전통 남기고 배지 받기</span><span class="arr" data-en="Share now →">지금 남기기 →</span></div>
   </div>
 </div>
 <div class="legend" id="legend"></div>
 <div class="wrap">
  <div id="map">
    <div id="mapcard">
-     <div class="mc-head"><img src="muui_avatar.png" class="mc-ava" alt="무이"><div class="mc-title">전국 전통 복원 지도</div></div>
-     <div class="mc-sub">도시를 누르면 그 지역의 이야기가 미디어아트가 됩니다</div>
+     <div class="mc-head"><img src="muui_avatar.png" class="mc-ava" alt="무이"><div class="mc-title" data-en="Korea Heritage Revival Map">전국 전통 복원 지도</div></div>
+     <div class="mc-sub" data-en="Tap a city to see its story become media art">도시를 누르면 그 지역의 이야기가 미디어아트가 됩니다</div>
      <div class="mc-stats" id="mcStats"></div>
-     <div class="mc-lab">함께하는 창작자</div>
+     <div class="mc-lab" data-en="Creators with us">함께하는 창작자</div>
      <div id="mcArtists" class="mc-artists"></div>
-     <div class="mc-lab" style="margin-top:11px">자유 게시판 ✎</div>
+     <div class="mc-lab" style="margin-top:11px" data-en="Community board ✎">자유 게시판 ✎</div>
      <div id="mcRecent" class="mc-recent"><div class="mc-empty">불러오는 중…</div></div>
-     <div class="mc-lab" id="mcVoteLab" style="display:none">🗳 다음 복원지 투표 TOP</div>
+     <div class="mc-lab" id="mcVoteLab" style="display:none" data-en="🗳 Next revival site · top votes">🗳 다음 복원지 투표 TOP</div>
      <div id="mcVotes" class="mc-recent"></div>
-     <a class="dbtn mc-disc" id="mcDiscord" href="#" target="_blank" rel="noopener">💬 커뮤니티 참여 (디스코드)</a>
+     <a class="dbtn mc-disc" id="mcDiscord" href="#" target="_blank" rel="noopener" data-en="💬 Join the community (Discord)">💬 커뮤니티 참여 (디스코드)</a>
    </div>
  </div>
  <div id="resizer" title="드래그해서 크기 조절"></div>
@@ -668,10 +716,10 @@ circle.city{cursor:pointer;}
 -->
 <footer>
  <span id="made"></span>
- <a id="lf-choin" href="#" target="_blank" rel="noopener">초인 유튜브</a>
+ <a id="lf-choin" href="#" target="_blank" rel="noopener" data-en="CHOIN YouTube">초인 유튜브</a>
  <span class="spacer"></span>
- <span style="color:var(--t3)">데이터: 노션 〈전국 미디어아트 IP 지도〉</span>
- <a id="lf-class" href="#" target="_blank" rel="noopener" style="margin-left:12px">미디어아트 배우기 · 강의</a>
+ <span style="color:var(--t3)" data-en="Data: Notion “Nationwide Media-Art IP Map”">데이터: 노션 〈전국 미디어아트 IP 지도〉</span>
+ <a id="lf-class" href="#" target="_blank" rel="noopener" style="margin-left:12px" data-en="Learn media art · classes">미디어아트 배우기 · 강의</a>
  <a href="/admin" title="관리자 통계" style="color:var(--line2);font-size:11px;text-decoration:none;margin-left:12px">·통계·</a><a href="/ops9" title="운영" style="color:var(--line2);font-size:11px;text-decoration:none;margin-left:10px">·운영·</a>
 </footer>
 <script src="d3.min.js"></script>
@@ -686,7 +734,7 @@ circle.city{cursor:pointer;}
 <script>window.INTERNAL=false;/* 자산DB(기관·전략·미발굴)는 웹에 없음 — 노션·_asset 전용 */</script>
 <script src="en.js?v=1"></script>
 <script src="supa.js?v=15"></script>
-<script src="app.js?v=52"></script>
+<script src="app.js?v=53"></script>
 <script>
 /* 서비스워커 완전 제거 + 캐시 정리 — 옛 캐시가 지도를 깨뜨리던 문제 근본해결.
    이미 SW가 박힌 브라우저도 이 스크립트가 자동으로 해제·정리·1회 새로고침해 스스로 복구. */
@@ -1009,7 +1057,7 @@ window.boardView=function(v){var meet=document.getElementById('meet');if(meet)me
 (function(){
   try{ var c=(typeof CITIES!=='undefined'?CITIES.length:90), g=0;
     if(typeof GONGMO!=='undefined'){for(var k in GONGMO)g+=(GONGMO[k]||[]).length;}
-    var v=document.getElementById('vstat'); if(v) v.textContent='이야기 '+c+' · 열린 공모 '+g;
+    window._vstat=function(){var v=document.getElementById('vstat'); if(v) v.textContent=(typeof LANG!=='undefined'&&LANG==='en')?('Stories '+c+' · Open calls '+g):('이야기 '+c+' · 열린 공모 '+g);}; window._vstat();
   }catch(e){}
   window.goMeet=function(f){ try{ if(window.mainMode) mainMode('meet'); var chip=f&&document.querySelector('#mgfilt .f[data-f="'+f+'"]'); if(chip) chip.click(); var g=document.getElementById('mgal'); if(g) g.scrollTop=0; }catch(e){} };
   window.chOpen=function(){document.getElementById('chmodal').classList.add('on');};

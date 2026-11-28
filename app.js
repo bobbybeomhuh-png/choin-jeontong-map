@@ -411,6 +411,13 @@ function setLang(l){
   var ttl=$('ttl'); if(ttl&&ttl.childNodes[0]) ttl.childNodes[0].nodeValue = (l==='en'?"CHOIN — Retelling Korea's Heritage":'초인, 대한민국의 전통을 이야기하다');
   $('tag').textContent = T[l].tag;
   $('made').textContent = T[l].made;
+  // 고정 문구(메뉴·안내·표지): data-en 이 붙은 요소를 한/영 전환
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(el.dataset.ko==null) el.dataset.ko = el.innerHTML;
+    el.innerHTML = (l==='en') ? el.dataset.en : el.dataset.ko;
+  });
+  if(window._vstat) window._vstat();
+  try{ localStorage.setItem('choin_lang', l); }catch(e){}   // 포트폴리오 등 다른 페이지와 언어 공유
   renderLegend(); renderCity(CUR); if(window._relabel) window._relabel();
   if($('grid') && $('grid').style.display==='flex') renderGrid();
 }
@@ -463,7 +470,7 @@ d3.select('#map').append('button')
   .style('position','absolute').style('top','10px').style('right','10px')
   .style('font-size','12px').style('padding','6px 11px').style('border','1px solid #d6c9b0')
   .style('border-radius','8px').style('background','#fbf7ef').style('color','#6f6553').style('cursor','pointer')
-  .text('전체보기').on('click',()=>{ if(window.homeView) window.homeView(600); });
+  .attr('data-ko','전체보기').attr('data-en','Reset view').text(LANG==='en'?'Reset view':'전체보기').on('click',()=>{ if(window.homeView) window.homeView(600); });
 
 Promise.resolve(window.KOR_TOPO).then(topo=>{
   const feats = topojson.feature(topo, topo.objects.kor);
@@ -538,5 +545,7 @@ Promise.resolve(window.KOR_TOPO).then(topo=>{
   $('map').innerHTML='<p style="padding:20px;color:#6f6553">지도 로드 실패 — 새로고침(Ctrl+F5) 해보세요.</p>';
 });
 
-setLang('ko');
+setLang((function(){var s=null;try{s=localStorage.getItem('choin_lang');}catch(e){}
+  if(s==='en'||s==='ko') return s;
+  return /^ko/i.test(navigator.language||'ko')?'ko':'en';})());   // 처음 온 사람: 기기 언어가 한국어가 아니면 영어
 if(window.logEvent) logEvent('visit','');   // 페이지 방문 1건
