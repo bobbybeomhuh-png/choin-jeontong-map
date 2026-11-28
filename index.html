@@ -635,12 +635,25 @@ circle.city{cursor:pointer;}
   try{ if(sessionStorage.getItem('choin_entered')==='1'){ sp.parentNode.removeChild(sp); return; } }catch(e){}
   try{ var hh=decodeURIComponent((location.hash||'').replace(/^#/,'')); if(hh && hh!=='map'){ sessionStorage.setItem('choin_entered','1'); sp.parentNode.removeChild(sp); return; } }catch(e){}   // ★주소로 도시·뷰를 바로 열면(3D에서 돌아올 때 등) 표지 건너뜀
   var html=document.documentElement; html.style.overflow='hidden';
-  window.choinEnter=function(){
+  var enterMap=function(){
     try{ sessionStorage.setItem('choin_entered','1'); }catch(e){}
     sp.classList.add('hide'); html.style.overflow='';
     setTimeout(function(){ if(sp&&sp.parentNode) sp.parentNode.removeChild(sp); },560);
     if(window._pushHash) window._pushHash('map');   // ★첫 진입=지도(뒤로가기 기준점)
   };
+  window.choinEnter=enterMap;
+  // ★폰: 빨간 표지를 누르면 지도가 아니라 포트폴리오로 바로 간다. 지도는 아래 작은 버튼으로.
+  if(window.matchMedia && matchMedia('(max-width:780px)').matches){
+    window.choinEnter=function(){
+      try{ sessionStorage.setItem('choin_entered','1'); }catch(e){}   // 포트폴리오에서 지도로 넘어올 때 표지 다시 안 뜨게
+      location.href='초인_포트폴리오.html';
+    };
+    sp.title='초인 포트폴리오 보기';
+    var en=sp.querySelector('.cs-enter'), pf=sp.querySelector('.cs-pf');
+    if(en){ en.innerHTML='초인 포트폴리오 보기 →'; en.setAttribute('data-en','View our portfolio →'); }
+    if(pf){ pf.innerHTML='🗺 전통 지도 보기'; pf.setAttribute('data-en','🗺 Heritage map'); pf.removeAttribute('href');
+            pf.onclick=function(e){ e.stopPropagation(); e.preventDefault(); enterMap(); }; }
+  }
 })();
 </script>
 <header>
