@@ -74,7 +74,7 @@ export function buildHall(spec){const K0=kitMats();/* 11/23 spec.bare: 단청 �
   /* 오른쪽(x+) 난간은 계단 자리(railGap=[z0,z1])를 비움. 계단 쪽 가로 기둥에 C(x+.4..)로 막히지 않게 */if(gap){const a0=-D/2-.25,b1=D/2+.25;const L1=gap[0]-a0,L2=b1-gap[1];if(L1>.4){run(L1,'x+',(a0+gap[0])/2);S(W/2+.2,W/2+.6,y,y+1,a0,gap[0])}if(L2>.4){run(L2,'x+',(gap[1]+b1)/2);S(W/2+.2,W/2+.6,y,y+1,gap[1],b1)}}else{run(D+.5,'x+');S(W/2+.2,W/2+.6,y,y+1,-D/2-.5,D/2+.5)}}
  /* ---------- 지붕 ---------- */
  if(!s.mini){const R=s.roofScale,ex=2.1*R,X=W/2+ex,Z=D/2+ex,h0=TOP+(s.bracket==='dapo'?1.15:.95),rise=Math.max(3.4,D*.42)*R;
-  if(s.upper){/* 중층: 아래 처마(차양 지붕) + 안쪽으로 들인 위층 벽 + 위 지붕 */const bx=W/nx*.55,bz=D/nz*.55,W2=W-2*bx,D2=D-2*bz,UH=s.upper.h||3;
+  if(s.upper){/* 중층: 아래 처마(차양 지붕) + 안쪽으로 들인 위층 벽 + 위 지붕 */const _in=(s.upper.inset!=null?s.upper.inset:.55),bx=W/nx*_in,bz=D/nz*_in,W2=W-2*bx,D2=D-2*bz,UH=s.upper.h||3;
    const sk=hipRoof(MT,X,Z,Math.max(.8,W2/2),h0,h0+1.9,.8,.15,{plain:true,rs:.6});sk.traverse(o=>{if(o.isMesh)o.castShadow=true});G.add(sk);
    const y0=h0+1.2;for(const sz of[-1,1]){const w=box(W2,UH,.2,K.wall);w.position.set(0,y0+UH/2,sz*D2/2);G.add(w);const wn=new THREE.Mesh(new THREE.PlaneGeometry(W2*.9,UH*.55),K.win);wn.position.set(0,y0+UH*.45,sz*(D2/2+.11));wn.rotation.y=sz<0?Math.PI:0;G.add(wn);const cb=box(W2+.4,.42,.3,K.dan);cb.position.set(0,y0+UH-.2,sz*D2/2);G.add(cb)}
    for(const sx of[-1,1]){const w=box(.2,UH,D2,K.wall);w.position.set(sx*W2/2,y0+UH/2,0);G.add(w);const cb=box(.3,.42,D2+.4,K.dan);cb.position.set(sx*W2/2,y0+UH-.2,0);G.add(cb);for(const sz of[-1,1]){const c=new THREE.Mesh(column(UH,pr*.9,false),pillarM);c.position.set(sx*W2/2,y0,sz*D2/2);G.add(c)}}
