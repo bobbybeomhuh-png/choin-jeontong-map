@@ -2,7 +2,7 @@
    코드로 짓는 큰 건물(법당·누각·관아)을 이 부품 하나로 같은 수준으로 맞춘다. 갱신 2026-11-14
    좌표: 건물 가운데 (0,0), 앞이 +z. spec.ry는 0, π, ±π/2만. */
 import * as THREE from 'three';
-import {tex,materials,hipRoof,brackets,rafters} from './sungnyemun.js';
+import {tex,materials,hipRoof,brackets,rafters,ageMat} from './sungnyemun.js';
 let _K=null;function kitMats(){if(_K)return _K;const MT=materials();
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
  /* 띠살문: 세로 살 촘촘, 위·가운데·아래에 가로 띠 */
@@ -18,8 +18,8 @@ let _K=null;function kitMats(){if(_K)return _K;const MT=materials();
  /* 계단 장대석 */
  /* 판문(널문): 세로 널판, 가로 띠장 셋, 문고리. 사당 같은 엄숙한 건물(spec.panmun) */
  const PAN=tex(128,512,(q,w,h)=>{q.fillStyle='#7a3a26';q.fillRect(0,0,w,h);for(let x=0;x<w;x+=32){q.fillStyle=`rgba(0,0,0,${.12+((x/32)%2)*.06})`;q.fillRect(x,0,2,h);for(let y=0;y<h;y+=3){q.fillStyle=`rgba(40,14,6,${Math.random()*.08})`;q.fillRect(x+2,y,30,2)}}q.fillStyle='#5a2a1a';for(const yc of[70,256,442])q.fillRect(0,yc-14,w,28);q.fillStyle='rgba(255,220,180,.12)';for(const yc of[70,256,442])q.fillRect(0,yc-14,w,4);q.strokeStyle='#3a1a10';q.lineWidth=10;q.strokeRect(5,5,w-10,h-10);q.fillStyle='#2a2a2a';q.beginPath();q.arc(w-22,250,9,0,7);q.fill();q.strokeStyle='#4a4a4a';q.lineWidth=4;q.beginPath();q.arc(w-22,272,13,0,Math.PI);q.stroke()});
- return _K={MT,M,door:new THREE.MeshStandardMaterial({map:DOOR,roughness:.9}),pan:new THREE.MeshStandardMaterial({map:PAN,roughness:.85}),win:new THREE.MeshStandardMaterial({map:WIN,roughness:.9}),meo:new THREE.MeshStandardMaterial({map:MEO,roughness:.85}),railp:new THREE.MeshStandardMaterial({map:RAILP,roughness:.85,side:THREE.DoubleSide}),wall:new THREE.MeshStandardMaterial({map:WALL,roughness:.95}),
-  frame:M(0x7a4a2a,{roughness:.8}),stone:MT.granite,stoneTop:M(0xb9b2a4,{roughness:.9}),floor:MT.floor,dan:MT.dan,dan2:MT.dan2,bk:MT.bracket,grn:M(0x2f7a64,{roughness:.7}),red:M(0x9a3a26,{roughness:.6})}}
+ const _A=(m,f,d,k)=>ageMat(m,{fade:f,dirt:d,key:k});return _K={MT,M,door:_A(new THREE.MeshStandardMaterial({map:DOOR,roughness:.9,color:0xf0e8d8}),.15,.16,'hdoor'),pan:new THREE.MeshStandardMaterial({map:PAN,roughness:.85}),win:_A(new THREE.MeshStandardMaterial({map:WIN,roughness:.9,color:0xf0e8d8}),.15,.16,'hwin'),meo:_A(new THREE.MeshStandardMaterial({map:MEO,roughness:.85}),.15,.2,'hmeo'),railp:new THREE.MeshStandardMaterial({map:RAILP,roughness:.85,side:THREE.DoubleSide}),wall:_A(new THREE.MeshStandardMaterial({map:WALL,roughness:.95,color:0xeee6d6}),.1,.22,'hwall'),
+  frame:M(0x7a4a2a,{roughness:.8}),stone:MT.granite,stoneTop:M(0xb9b2a4,{roughness:.9}),floor:MT.floor,dan:MT.dan,dan2:MT.dan2,bk:MT.bracket,grn:M(0x3a7060,{roughness:.75}),red:M(0x8e3a2a,{roughness:.7})}}
 const box=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=b.receiveShadow=true;return b};
 function column(h,rMax,bae=true){const pts=[];for(let i=0;i<=12;i++){const t=i/12;const k=bae?(t<.33?1-(.33-t)*.12:1-(t-.33)/(.67)*.22):1-t*.08;pts.push(new THREE.Vector2(rMax*k,t*h))}return new THREE.LatheGeometry(pts,16)}
 /* spec: x,z,ry, W,D,nx,nz, FY(기단 높이), PH(기둥 높이), roof:'hip'|'gable', name(현판), pillar(색), bae(배흘림), bracket:'jusim'|'dapo'|'ik',
