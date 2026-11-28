@@ -26,7 +26,7 @@ export function plantBroad(parent,list,{shadow=true,chunk=0}={}){
  const G=broadGeo(),N=list.length;if(!N)return null;
  const bm=new THREE.MeshStandardMaterial({color:0x5a4030,roughness:.95});const lm=new THREE.MeshStandardMaterial({map:leafTex(),alphaTest:.45,side:THREE.DoubleSide,roughness:.9,vertexColors:true});
  const b=new THREE.InstancedMesh(G.bark,bm,N),l=new THREE.InstancedMesh(G.leaf,lm,N),o=new THREE.Object3D(),c=new THREE.Color();
- const CR=window.__CROWNS||(window.__CROWNS=[]);list.forEach(([x,y,z,ry,s,hex],i)=>{CR.push({x,y:y+4.2*s,z,r:3.4*s});/* 카메라용 우듬지 자리: 잎 판이 가지 끝에서 1m쯤 더 나가므로 넉넉히(2.5였을 때 잎이 카메라 앞을 가림) */o.position.set(x,y,z);o.rotation.set(0,ry,0);o.scale.setScalar(s);o.updateMatrix();b.setMatrixAt(i,o.matrix);l.setMatrixAt(i,o.matrix);l.setColorAt(i,c.set(hex==null?0x4f7f3a:hex))});
+ const CR=window.__CROWNS||(window.__CROWNS=[]);list.forEach(([x,y,z,ry,s,hex],i)=>{CR.push({x,y:y+4.2*s,z,r:3.4*s});/* 카메라용 우듬지 자리: 잎 판이 가지 끝에서 1m쯤 더 나가므로 넉넉히(2.5였을 때 잎이 카메라 앞을 가림) *//* 11/28: 그루마다 키·폭·기울기·잎 빛을 달리(똑같은 나무 복사 느낌 줄이기) */const q1=Math.abs(Math.sin(i*12.9898+x*.7)*43758.5)%1,q2=Math.abs(Math.sin(i*78.233+z*.3)*12345.6)%1;o.position.set(x,y,z);o.rotation.set((q1-.5)*.12,ry,(q2-.5)*.12);o.scale.set(s*(.8+q1*.45),s*(.78+q2*.6),s*(.8+q2*.4));o.updateMatrix();b.setMatrixAt(i,o.matrix);l.setMatrixAt(i,o.matrix);l.setColorAt(i,c.set(hex==null?0x4f7f3a:hex).offsetHSL((q1-.5)*.04,(q2-.5)*.12,(q1-.5)*.1))});
  b.castShadow=l.castShadow=shadow;b.receiveShadow=l.receiveShadow=true;parent.add(b,l);return [b,l]}
 /* 먼 산 소나무: 그린 소나무 판 두 장을 십자로(멀리서 보는 용, 아주 가벼움) */
 let PPT=null;
