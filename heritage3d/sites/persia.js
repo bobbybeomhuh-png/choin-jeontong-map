@@ -70,7 +70,7 @@ export function buildPersia(opts={}){const mini=!!opts.mini;const G=new THREE.Gr
  window.__PSDIG=()=>{window.__DETECT&&window.__DETECT({key:'persia_dig',title:'페르시아 발굴 탐지',emoji:'⛏️',bg:'#22262e',count:4,TL:150,cand:[[-24,16],[-30,2],[24,16],[30,2],[-12,22],[12,22],[-30,-14],[30,-14]],items:ITEMS,intro:'땅속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'페르시아의 은과 유리는 비단길을 따라 동쪽 끝까지 갔어요.'})};
  const meta={quest:{t:'페르시아 둘러보기',d:'페르세폴리스와 은그릇, 쿠쉬나메 판, 은 공방을 둘러보세요.',steps:[['궁전 터','페르세폴리스'],['은그릇','사산 은그릇'],['쿠쉬나메','쿠쉬나메 속 바실라'],['공방','은 공방']]},
   title:'페르시아',hint:'은그릇 둘은 클리블랜드 미술관 실측, 페르세폴리스와 놀이 은판은 간추려 지었어요.',
-  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,sign:{x:-6,z:14,lines:['페르시아','사산 은그릇(실측)','페르세폴리스','간추려 지음']}},
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:true/* 11/28: 메마른 고원 — 숲 언덕 대신 먼 바위 능선만 */,sign:{x:-6,z:14,lines:['페르시아','사산 은그릇(실측)','페르세폴리스','간추려 지음']}},
   npc:[['science',[[-12,10],[-4,10],[-4,16],[-12,16]]]],bounds:[-40,40,-44,32],level:()=>'세계',camCap:()=>Infinity,
   tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
   mini:{S:2,ox:0,oz:-8,draw(g,X,Z,S){g.fillStyle='#d8c8a0';g.fillRect(0,0,300,300);g.fillStyle='#c8b898';g.fillRect(X(PX-20),Z(PZ-12),40*S,24*S)}}};

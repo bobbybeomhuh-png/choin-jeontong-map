@@ -61,7 +61,7 @@ export function buildAfrasiab(opts={}){const mini=!!opts.mini;const G=new THREE.
  window.__AFDIG=()=>{window.__DETECT&&window.__DETECT({key:'afrasiab_dig',title:'아프라시아브 발굴 탐지',emoji:'⛏️',bg:'#2a2218',count:4,TL:150,cand:[[-30,20],[-40,0],[30,20],[40,-10],[-50,-20],[20,30],[-10,30],[50,10]],items:ITEMS,intro:'언덕 흙 속에 옛 흔적이 묻혀 있대요. 탐지기로 네 가지를 찾아 봐요!',okText:'아프라시아브는 비단길 한가운데 있던 옛 사마르칸트예요.'})};
  const meta={quest:{t:'아프라시아브 둘러보기',d:'발굴 도랑과 벽화, 층위 단면을 둘러보세요.',steps:[['발굴 도랑','아프라시아브 발굴 도랑'],['벽화','아프라시아브 궁전 벽화'],['단면','층위 단면'],['탐지','발굴 탐지 자리']]},
   title:'사마르칸트 아프라시아브',hint:'발굴 도랑은 장대 사진 실측(크기 어림), 벽화와 단면은 간추려 지었어요. 흙층을 읽어 유물의 앞뒤를 가려 봐요.',
-  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:false,groundY:-6,sign:{x:-8,z:14,lines:['사마르칸트 아프라시아브','발굴 도랑(실측, 크기 어림)','궁전 벽화 · 층위 단면','간추려 지음']}},
+  ibl:true,env:{plaza:null,beds:false,trees:false,treeAvoid:()=>true,noHills:true/* 11/28: 메마른 땅 — 숲 언덕 대신 먼 능선만 */,groundY:-6,sign:{x:-8,z:14,lines:['사마르칸트 아프라시아브','발굴 도랑(실측, 크기 어림)','궁전 벽화 · 층위 단면','간추려 지음']}},
   npc:[['science',[[-12,8],[-4,8],[-4,18],[-12,18]]]],bounds:[-90,80,-70,60],level:()=>'사마르칸트',camCap:()=>Infinity,
   tick:(P,dt)=>{try{nightTick(dt||.016)}catch(e){}},
   mini:{S:1.2,ox:0,oz:0,draw(g,X,Z,S){g.fillStyle='#a8a070';g.fillRect(0,0,300,300);g.fillStyle='#6a5a40';g.fillRect(X(DX-HW),Z(DZ-HW),HW*2*S,HW*2*S);g.fillStyle='#c8b890';g.fillRect(X(WX-5),Z(WZ-.3),10*S,1*S)}}};
