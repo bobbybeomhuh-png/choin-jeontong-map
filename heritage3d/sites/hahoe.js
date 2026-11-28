@@ -21,8 +21,8 @@ export function buildHahoe(opts={}){const mini=!!opts.mini;const MT=materials();
   const ring=new THREE.Mesh(new THREE.RingGeometry(2.2,4.4,40),dm);ring.rotation.x=-Math.PI/2;ring.position.set(0,.025,-1);G.add(ring)}
  /* ---------- 낙동강 물돌이: 마을 북쪽을 반원으로 감싸 흐름, 안쪽 흰 모래톱 ---------- */
  const WT=tex(256,256,(q,w,h)=>{q.fillStyle='#3f7d86';q.fillRect(0,0,w,h);for(let i=0;i<120;i++){const x=r()*w,y=r()*h,L=8+r()*22;q.strokeStyle='rgba(225,242,245,'+(.06+r()*.1)+')';q.lineWidth=1+r();q.beginPath();for(let k=0;k<=L;k+=2)q.lineTo(x+k,y+Math.sin((x+k)/5)*1.2);q.stroke()}},[22,3]);
- {const wg=new THREE.RingGeometry(RI,RO,120,1,T0,T1-T0);wg.rotateX(-Math.PI/2);const w=new THREE.Mesh(wg,new THREE.MeshStandardMaterial({map:WT,roughness:.15,metalness:.2,color:0xd8eeea}));w.position.set(0,.04,CZ);w.receiveShadow=true;G.add(w);G.userData.water=WT;
-  const sg=new THREE.RingGeometry(RI-4,RI,120,1,T0-.04,T1-T0+.08);sg.rotateX(-Math.PI/2);const sm=new THREE.Mesh(sg,M(0xdccfab,{roughness:1}));sm.position.set(0,.03,CZ);sm.receiveShadow=true;G.add(sm);
+ {const wg=new THREE.RingGeometry(RI,RO,120,1,T0,T1-T0);wg.rotateX(-Math.PI/2);const w=new THREE.Mesh(wg,new THREE.MeshStandardMaterial({map:WT,roughness:.15,metalness:.2,color:0x93abb0/* 11/28: 수영장 같은 옥색 → 낙동강 잿빛 청록(파랑≥초록이라야 extras 가 물로 알고 풀을 안 심음) */}));w.position.set(0,.04,CZ);w.receiveShadow=true;G.add(w);G.userData.water=WT;
+  const sg=new THREE.RingGeometry(RI-5.5,RI+.6,120,1,T0-.04,T1-T0+.08);sg.rotateX(-Math.PI/2);const sm=new THREE.Mesh(sg,M(0xdccfab,{roughness:1}));sm.position.set(0,.03,CZ);sm.receiveShadow=true;G.add(sm);
   const og=new THREE.RingGeometry(RO,RO+2.6,120,1,T0,T1-T0);og.rotateX(-Math.PI/2);const om=new THREE.Mesh(og,M(0xb9aa86,{roughness:1}));om.position.set(0,.03,CZ);G.add(om)}
  /* ---------- 부용대: 강 건너 북쪽 깎아지른 절벽(높이 약 15m로 줄여 지음), 꼭대기 소나무 ---------- */
  const CH=22,CR=50.5;/* 11/28: 실제 64m 절벽이 마을에서 낮은 둑처럼 보여 15→22 */const HUo=u=>CH*(.8+.16*Math.sin(u*9.4)+.1*Math.sin(u*23.1+1)+.06*Math.sin(u*41));const TOPAT=th=>{const u=(.8*Math.PI-th)/(.6*Math.PI);return HUo(Math.max(0,Math.min(1,u)))};
