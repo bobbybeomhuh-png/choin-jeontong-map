@@ -37,12 +37,12 @@ function parapet(par,L,x,y,{h=1.25,t=.75,seg=2.3,gap=.45}={}){const n=Math.max(1
   /* 총안(작은 구멍 자국) */const hole=new THREE.Mesh(new THREE.PlaneGeometry(.22,.28),new THREE.MeshBasicMaterial({color:0x1e1b17}));hole.position.set(x+t/2+.005,y+h*.45,cz);hole.rotation.y=Math.PI/2;par.add(hole)}}
 /* 성벽 한 줄: pts=[[x,z],...]. 바깥(+x 로컬)은 점 순서의 오른쪽. out:-1 이면 반대 */
 export function fortWall(G,SOL,pts,{H=5,T=3,batter=.32,par=true,out=1,closed=false,mat=null,top=null}={}){const WM=mat||stoneMat(),TP=top||capMat();const P=closed?[...pts,pts[0]]:pts;
- for(let i=0;i<P.length-1;i++){const[x1,z1]=P[i],[x2,z2]=P[i+1];const dx=x2-x1,dz=z2-z1,L=Math.hypot(dx,dz)+.6;if(L<.7)continue;
-  const g=new THREE.BoxGeometry(T,H,L,1,1,1).translate(0,H/2,0);const p=g.attributes.position;for(let k=0;k<p.count;k++){if(p.getY(k)>H/2&&p.getX(k)>0)p.setX(k,T/2-batter*T)}
-  worldUV(g,4,i*7.3);const seg=mesh(g,WM);const grp=new THREE.Group();grp.position.set((x1+x2)/2,0,(z1+z2)/2);grp.rotation.y=Math.atan2(dx,dz)+(out<0?Math.PI:0);grp.add(seg);
+ for(let i=0;i<P.length-1;i++){const[x1,z1,y1=0]=P[i],[x2,z2,y2=0]=P[i+1];const YB=(y1+y2)/2,DN=(y1||y2)?6:0;/* 11/28: 점마다 밑동 높이(능선 따라 오르는 성벽), 밑은 6m 더 내려 비탈에 묻힘 */const dx=x2-x1,dz=z2-z1,L=Math.hypot(dx,dz)+.6;if(L<.7)continue;
+  const g=new THREE.BoxGeometry(T,H+DN,L,1,1,1).translate(0,(H+DN)/2-DN,0);const p=g.attributes.position;for(let k=0;k<p.count;k++){if(p.getY(k)>H/2&&p.getX(k)>0)p.setX(k,T/2-batter*T)}
+  worldUV(g,4,i*7.3);const seg=mesh(g,WM);const grp=new THREE.Group();grp.position.set((x1+x2)/2,YB,(z1+z2)/2);grp.rotation.y=Math.atan2(dx,dz)+(out<0?Math.PI:0);grp.add(seg);
   const tc=mesh(new THREE.BoxGeometry(T*(1-batter)+.1,.12,L),TP);tc.position.set(-batter*T/2,H+.06,0);grp.add(tc);
   if(par)parapet(grp,L,T/2-batter*T-.38,H+.12);G.add(grp);
-  const n=Math.max(1,Math.ceil(L/2.5));for(let j=0;j<=n;j++){const t=j/n;SOL.push({cx:x1+dx*t,cz:z1+dz*t,r:T/2+.2,y0:-9,y1:H+1.4})}}}
+  const n=Math.max(1,Math.ceil(L/2.5));for(let j=0;j<=n;j++){const t=j/n;SOL.push({cx:x1+dx*t,cz:z1+dz*t,r:T/2+.2,y0:-9,y1:YB+H+1.4})}}}
 /* 홍예 성문: ry 로 돌림. 로컬 x 가 성벽 방향, z 가 문길(드나드는 방향) */
 export function archGate(G,SOL,x,z,ry,{W=11,H=5.6,T=5,aw=3.4,ah=4.2,par=true,door=true}={}){const grp=new THREE.Group();grp.position.set(x,0,z);grp.rotation.y=ry;G.add(grp);
  const R=aw/2,sy=ah-R;const sh=new THREE.Shape();sh.moveTo(-W/2,0);sh.lineTo(-R,0);sh.lineTo(-R,sy);sh.absarc(0,sy,R,Math.PI,0,true);sh.lineTo(R,0);sh.lineTo(W/2,0);sh.lineTo(W/2,H);sh.lineTo(-W/2,H);sh.closePath();
