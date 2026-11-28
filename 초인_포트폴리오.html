@@ -250,7 +250,7 @@ footer{margin-top:56px;border-top:1px solid var(--hair);}
 .caps .cap b{color:var(--ink);font-weight:700}
 
 /* ===== 폰(≤780px) 포트폴리오: QR로 들어온 사람이 바로 읽게 =====
-   머리말은 한 줄, 그 아래 바로가기 줄(고정). 순서: 소개 → 하는 일 → 작품 → 대표 프로젝트 → 선정·수상 → 진행 중 → … */
+   머리말은 한 줄, 그 아래 바로가기 줄(고정). 순서: 소개 → 선정·수상 → 작품 → 대표 프로젝트 → 진행 중 → 하는 일 → … */
 #tab-map,.qnav{display:none;}
 html{scroll-behavior:smooth;}
 @media(max-width:780px){
@@ -265,8 +265,9 @@ html{scroll-behavior:smooth;}
  .qnav a.q-mail{background:var(--ink);color:var(--bg);border-color:var(--ink);}
  .hero{order:2;padding:22px 18px 14px;}
  .herofig{order:3;padding:0 18px;}
- #makeSec{order:4;} #worksSec{order:5;} #featSec{order:6;} #histSec{order:7;} #prodSec{order:8;}
+ #histSec{order:4;} #worksSec{order:5;} #featSec{order:6;} #prodSec{order:7;} #makeSec{order:8;}
  #webSec{order:9;} #eduSec{order:10;} #methodSec{order:11;} #capSec{order:12;} #about{order:13;} footer{order:60;}
+ #histSec{margin-top:26px;}
  section[id],.about{scroll-margin-top:58px;}
  .hero .kick{margin-bottom:10px;letter-spacing:2.5px;}
  .hero h1{font-size:37px;line-height:1.12;}
@@ -338,10 +339,10 @@ html{scroll-behavior:smooth;}
 </header>
 
 <nav class="qnav" id="qnav" aria-label="포트폴리오 바로가기">
-  <a href="#makeSec" data-en="What we do">하는 일</a>
-  <a href="#worksSec" data-en="Works">작품</a>
   <a href="#histSec" data-en="Awards">선정·수상</a>
+  <a href="#worksSec" data-en="Works">작품</a>
   <a href="#prodSec" data-en="In production">진행 중</a>
+  <a href="#makeSec" data-en="What we do">하는 일</a>
   <a href="#about" data-en="About">소개</a>
   <a class="q-mail" href="mailto:choin2626@gmail.com" data-en="Contact">문의</a>
 </nav>
