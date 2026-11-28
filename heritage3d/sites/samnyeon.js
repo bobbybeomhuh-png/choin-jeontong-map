@@ -12,7 +12,7 @@ export function buildSamnyeon(opts={}){const mini=!!opts.mini;const G=new THREE.
  {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[60,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(220,220),new THREE.MeshStandardMaterial({map:GT,color:0x7a9448,roughness:1}));gr.rotation.x=-Math.PI/2;gr.receiveShadow=true;G.add(gr)}
  for(let i=0;i<10;i++){const rr=20+r()*10;const h=lumpyHill(rr,rr*.55,0x557a44,(i*11+31)|0);h.position.set(-90+i*20,0,-96-r()*10);h.rotation.y=r()*3;G.add(h)}
  /* 성벽 고리(남문 자리 비움): 신라식 납작돌 켜쌓기(점판암), 여장 없이 위가 평평, seongkit */
- const RW=36,WH=7,TM=thinMat(),GTOP=M(0x6a8a44,{roughness:1});
+ const RW=36,WH=7,TM=thinMat(),GTOP=M(0x5a6a3a,{roughness:1});GTOP.userData.finKind='grass';/* 11/28: 형광 연두 평판 → 실사 풀 결(finish 잔디 패치) */
  {const seg=(a0,a1)=>{const N=Math.ceil((a1-a0)/.1),run=[];for(let k=0;k<=N;k++){const a=a0+k/N*(a1-a0);run.push([Math.cos(a)*RW,Math.sin(a)*RW])}fortWall(G,solids,run,{H:WH,T:5.5,batter:.18,par:false,mat:TM,top:GTOP})};seg(Math.PI/2+.11,Math.PI-.075);seg(Math.PI+.075,Math.PI*2.5-.11)}
  /* 서문(현문): 문턱이 3m 높이, 위아래 성벽 사이로 문길이 뚫림 */{const x=-RW;for(const[y0,h]of[[0,3],[WH-1.4,1.4]]){const b=stoneBlock(5.6,h,3.6,TM);b.position.set(x,y0+h/2,0);b.castShadow=b.receiveShadow=true;G.add(b)}const fl=new THREE.Mesh(new THREE.BoxGeometry(5.6,.15,3.6),M(0x6a5a44));fl.position.set(x,3.07,0);G.add(fl);for(const q of[-1,1]){const j=stoneBlock(5.6,WH,.6,TM);j.position.set(x,WH/2,q*2.1);G.add(j)}}
 
