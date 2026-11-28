@@ -39,7 +39,7 @@ function patch(m,k){const t=texes()[k],p=P[k];m.userData.fin=k;
 /* 실사 결(2026-11-27): 공개 CC0 사진 재질(Poly Haven: leafy_grass, grass_ground, pebble_ground_01, raked_dirt, grey_stone_path)을 세계 좌표로 깐다.
    사진의 밝기·얼룩만 가져오고 평균 색은 장소마다 정한 색에 맞춘다(사진/평균*목표색). 큰 무늬 반복이 안 보이게 두 장을 다른 크기로 섞는다. */
 const _PH={};function phTex(n){if(_PH[n])return _PH[n];const t=new THREE.TextureLoader().load(new URL('./textures/photo/'+n+'.jpg',import.meta.url).href);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return _PH[n]=t}
-const PK={grass:{a:'grass',b:'grass2',sa:1/2.6,sb:1/6.7,avA:[.31,.228,.1],avB:[.156,.118,.048]},
+const PK={grass:{a:'grass',b:'grass2',sa:1/2.6,sb:1/6.7,avA:[.31,.228,.1],avB:[.156,.118,.048]},field:{a:'grass',b:'yard2',sa:1/1.6,sb:1/4.1,avA:[.31,.228,.1],avB:[.161,.125,.081],mixB:.3},
  yard:{a:'yard',b:'yard2',sa:1/1.7,sb:1/5.3,avA:[.281,.227,.173],avB:[.161,.125,.081],tg:[.33,.29,.23]},
  bakseok:{a:'bakseok',b:'yard',sa:1/3.2,sb:1/1.7,avA:[.112,.094,.073],avB:[.281,.227,.173],tg:[.36,.34,.30],mixB:.18}};
 function photoPatch(m,k,tgt){const p=PK[k];m.userData.fin='ph_'+k;m.userData.phT=tgt||null;const ta=phTex(p.a),tb=phTex(p.b);const T=tgt||p.tg;
@@ -56,10 +56,11 @@ function isGreyYard(o,m){if(m.map||m.vertexColors||m.transparent||o.isInstancedM
 /* 잔디 목표색: 사이트마다 정한 초록을 덜 쨍하게(채도 낮추고 노란 기 조금, 실제 잔디 밝기) */
 function grassTarget(c){const h={};c.getHSL(h);const t=new THREE.Color().setHSL(Math.min(.27,Math.max(.17,h.h*.85+.03)),Math.min(.4,h.s*.62),Math.min(.24,Math.max(.16,h.l*.7)));return [t.r,t.g,t.b]}
 
+const _TC0=new Map();function texColor0(m){if(!m.map||!m.map.image)return m.color;const k=m.map.uuid;if(!_TC0.has(k)){let c=new THREE.Color(1,1,1);try{const cv=document.createElement('canvas');cv.width=cv.height=8;const q=cv.getContext('2d');q.drawImage(m.map.image,0,0,8,8);const d=q.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2]}const n=d.length/4;c=new THREE.Color().setRGB(r/n/255,g/n/255,b/n/255,THREE.SRGBColorSpace)}catch(e){}_TC0.set(k,c)}return _TC0.get(k).clone().multiply(m.color)}
 /* 땅에 깔린 얇은 판(길·마당·광장·흙): 초록이면 잔디, 물빛이 아니면 마사토 사진에 제 색을 입힘(나뭇결·회색 판 대신) */
-function groundSheet(o,m){if((m.map&&!m.map.isCanvasTexture)||m.vertexColors||m.transparent||m.alphaTest>0||o.isInstancedMesh||o.isSkinnedMesh)return null;_bb.setFromObject(o);_bb.getSize(_sz);const slab=_sz.y>.06;if(slab&&(_sz.y>.36||m.map||_bb.min.y>GY+.02))return null;if(Math.max(_sz.x,_sz.z)<2.5||Math.min(_sz.x,_sz.z)<.8||_bb.max.y>GY+.3||_bb.min.y<GY-1.5)return null;const h={};m.color.getHSL(h);if(h.h>.45&&h.h<.75&&h.s>.15)return null;if(h.h>.15&&h.h<.45&&h.s>.12&&h.l<.6)return 'grass';if(h.s<.12&&!m.map)return 'bakseok';return 'yard'}
+function groundSheet(o,m){if((m.map&&!m.map.isCanvasTexture)||m.vertexColors||m.transparent||m.alphaTest>0||o.isInstancedMesh||o.isSkinnedMesh)return null;_bb.setFromObject(o);_bb.getSize(_sz);const slab=_sz.y>.06;let fld=false;if(m.map){const hs={};texColor0(m).getHSL(hs,THREE.SRGBColorSpace);fld=hs.h>.09&&hs.h<.18&&hs.s>.45}if(slab&&(_sz.y>.4||(m.map&&!fld)||_bb.min.y>GY+.05))return null;if(fld&&slab&&_bb.max.y<=GY+.45){return 'field'}if(Math.max(_sz.x,_sz.z)<2.5||Math.min(_sz.x,_sz.z)<.8||_bb.max.y>GY+.3||_bb.min.y<GY-1.5)return null;const h={};m.color.getHSL(h);if(h.h>.45&&h.h<.75&&h.s>.15)return null;if(h.h>.15&&h.h<.45&&h.s>.12&&h.l<.6)return 'grass';if(h.s<.12&&!m.map)return 'bakseok';{const hs={};texColor0(m).getHSL(hs,THREE.SRGBColorSpace);if(hs.h>.09&&hs.h<.18&&hs.s>.45)return 'field'}return 'yard'}
 function yardTarget(m){const c=m.color;if(m.map&&c.r>.9&&c.g>.9&&c.b>.9)return null;const k=.62;return [c.r*k,c.g*k,c.b*k]}
-function sheetTarget(k,m){return k==='grass'?grassTarget(m.color):k==='bakseok'?[m.color.r*.85,m.color.g*.85,m.color.b*.85]:yardTarget(m)}
+function sheetTarget(k,m){if(k==='field'){const c=texColor0(m);return [c.r*.5,c.g*.46,c.b*.3]}return k==='grass'?grassTarget(m.color):k==='bakseok'?[m.color.r*.85,m.color.g*.85,m.color.b*.85]:yardTarget(m)}
 
 /* 지형판(높낮이·정점 색, 11/28): 정점 색(배치·색)은 그대로 두고 사진의 밝기 결만 곱함. 평지=잔디 사진, 비탈=바위 사진. 색은 조금 덜 쨍하게 */
 function terrainPatch(m){m.userData.fin='ph_terrain';const ta=phTex('grass'),tb=phTex('wall'),tc=phTex('grass2');
