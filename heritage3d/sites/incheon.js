@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import {tex,mulb} from './sungnyemun.js';
 export function buildIncheon(opts={}){const mini=!!opts.mini;const G=new THREE.Group();const solids=[],cam=[],spots=[];const r=mulb(1883);
  const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.92},o));
- {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[50,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(600,800),new THREE.MeshStandardMaterial({map:GT,color:0xa8a49a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.x=-275;gr.receiveShadow=true;G.add(gr)}
+ {const GT=tex(256,256,(q,w,h)=>{q.fillStyle='#fff';q.fillRect(0,0,w,h);for(let i=0;i<3000;i++){const v=200+(r()*55|0);q.fillStyle=`rgb(${v},${v},${v})`;q.fillRect(r()*w,r()*h,2,2)}},[50,60]);const gr=new THREE.Mesh(new THREE.PlaneGeometry(600,800),new THREE.MeshStandardMaterial({color:0xa8a49a,roughness:1}));gr.material.userData.finKind='bakseok';/* 11/28: 결 없는 회색 판 → 돌 포장 사진 결 */gr.rotation.x=-Math.PI/2;gr.position.x=-275;gr.receiveShadow=true;G.add(gr)}
  const at=(m,x,y,z)=>{m.position.set(x,y,z);return m};const CON=M(0x9a9690),WATER=()=>M(0x2a6a8a,{roughness:.2,metalness:.1});
  /* 갑문: x 30~40, z -30~10 갑실. 바다는 z<-30, 안쪽 항구는 z>10. 물 높이(m, 0~9)는 y=높이-10으로 보임 */const LX0=30,LX1=40,LZ0=-30,LZ1=10;const Y=h=>h-10;
  const seaM=new THREE.Mesh(new THREE.PlaneGeometry(400,400),WATER());seaM.rotation.x=-Math.PI/2;seaM.position.set(225,0,-230);G.add(seaM);
