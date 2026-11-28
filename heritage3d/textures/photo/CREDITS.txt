@@ -9,3 +9,4 @@ wall.jpg, wall_n.jpg = japanese_stone_wall
 brick.jpg    = red_brick
 sand.jpg     = sandstone_blocks_08 (2026-11-28)
 gidan.jpg    = stone_block_wall (회색 보정, 2026-11-28)
+rock.jpg     = rock_wall_02 (2026-11-28)
