@@ -1,0 +1,1 @@
+하늘 HDRI: Poly Haven kloofendal_48d_partly_cloudy_puresky (CC0). sky.jpg=톤맵 JPG 4096 축소, sky_1k.hdr=환경광 2026-11-28
