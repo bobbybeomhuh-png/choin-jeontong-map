@@ -22,7 +22,7 @@ export function buildHanyang(opts={}){const mini=!!opts.mini;const MT=materials(
    for(const [dx,dy] of[[w,0],[-w,0],[0,h],[0,-h]]){q.save();q.translate(dx,dy);q.fill();q.restore()}
    const grd=q.createLinearGradient(P[0][0],P[0][1],P[2][0],P[2][1]);grd.addColorStop(0,'rgba(255,255,255,.07)');grd.addColorStop(1,'rgba(0,0,0,.08)');q.fillStyle=grd;q.fill()}
   noise(q,w,h,9000,['rgba(0,0,0,.07)','rgba(255,255,255,.07)','rgba(90,80,60,.06)'],2)});PB.wrapS=PB.wrapT=THREE.RepeatWrapping;PB.repeat.set(8,8.5);/* 돌 하나 약 1m */
- const yard=new THREE.Mesh(new THREE.PlaneGeometry(64,66),new THREE.MeshStandardMaterial({map:PB,roughness:1}));yard.rotation.x=-Math.PI/2;yard.position.set(0,.02,-8);yard.receiveShadow=true;G.add(yard);
+ const yard=new THREE.Mesh(new THREE.PlaneGeometry(64,66),new THREE.MeshStandardMaterial({map:PB,roughness:1}));yard.rotation.x=-Math.PI/2;yard.position.set(0,.02,-8);yard.receiveShadow=true;yard.material.userData.finKind="bakseok";/* 11/28: 근정전 마당=거친 화강석 박석(사진) */G.add(yard);
  /* 가운데 삼도(임금이 다니는 가운데 길이 조금 높음) */const PT=M(0xb9b09e);for(const[x,w,hh]of[[0,3.2,.12],[-2.4,1.6,.06],[2.4,1.6,.06]]){const p=box(w,hh,40,PT);p.position.set(x,hh/2,4);G.add(p)}
  /* ---------- 품계석: 동쪽 문관, 서쪽 무관, 정1품~정9품 ---------- */
  {const ST=M(0xc2baa8);const NM=['정1품','정2품','정3품','정4품','정5품','정6품','정7품','정8품','정9품'];
