@@ -3,6 +3,7 @@
    언덕·정자·비석은 공개 사진으로 간추려 지음(배치·크기 어림). 탄금정 정자, 1592년 신립 장군이 강을 등지고 싸우다 진 곳, 열두대(신립이 활을 식히려 절벽을 열두 번 오르내렸다는 이야기는 전해 오는 이야기), 위령탑, 권태응 「감자꽃」 노래비.
    놀이: 가야금 안족 조율(실측 가야금 줄마다 안족(기러기발)을 밀어 줄 소리를 본음에 맞춰요. 귀와 바늘을 함께 써요. 소리 높낮이 맞추기, 새 방식), 발굴 탐지, 밤 등. */
 import * as THREE from 'three';
+import {lumpyHill} from './treekit.js';
 import {tex,mulb} from './sungnyemun.js';
 import {buildHall} from './hallkit.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -16,7 +17,7 @@ export function buildTangeum(opts={}){const mini=!!opts.mini;const G=new THREE.G
  /* 소나무 숲: 11/23 품질 — 덩어리 나무를 지우고 실제 소나무 모델(extras pines)로 */
  const ST=M(0xa8a296),ROCK=M(0x8e8a7e,{flatShading:true});
  /* 11/28 5단계: 자연 바위 — 사진 암벽 결(rock.jpg, CC0)+울퉁불퉁 표면. 상자·매끈한 덩어리 대신 */const RT=new THREE.TextureLoader().load(new URL('../textures/photo/rock.jpg',import.meta.url).href);RT.colorSpace=THREE.SRGBColorSpace;RT.wrapS=RT.wrapT=THREE.RepeatWrapping;const RK=new THREE.MeshStandardMaterial({map:RT,color:0x9aa3ac,roughness:.95});const rockMass=(w,h,d,sd,top=.6)=>{const g=new THREE.BoxGeometry(w,h,d,Math.ceil(w*1.4),Math.ceil(h*1.4),Math.ceil(d*1.4)),pa=g.attributes.position,uv=g.attributes.uv,v=new THREE.Vector3();const N=(x,y,z)=>Math.sin(x*1.3+sd)*Math.cos(z*1.1-sd)+.6*Math.sin(y*2.1+x*.7+sd*2)+.35*Math.sin(x*3.7+z*2.9);for(let i=0;i<pa.count;i++){v.fromBufferAttribute(pa,i);const n=N(v.x,v.y,v.z);const ex=Math.abs(v.x)>=w/2-1e-3,ez=Math.abs(v.z)>=d/2-1e-3,ey=v.y>=h/2-1e-3;const k=(v.y+h/2)/h;/* 위로 갈수록 좁아지게, 겉은 잡음으로 들쭉날쭉 */const sh=1-(1-top)*k;v.x=v.x*sh+(ex?Math.sign(v.x)*n*.45:0);v.z=v.z*sh+(ez?Math.sign(v.z)*n*.45:0);if(ey)v.y+=n*.35;else if(ex||ez)v.y+=n*.12;pa.setXYZ(i,v.x,v.y,v.z);uv.setXY(i,(v.x+v.z)/3.2,v.y/3.2)}g.computeVertexNormals();const m=new THREE.Mesh(g,RK);m.castShadow=m.receiveShadow=true;return m};
- /* 탄금대 바위 + 탄금정 */const TX=0,TZ=-18;{const rk=rockMass(13,2.6,9.5,1.7,.78);rk.position.set(TX,1.2,TZ);G.add(rk);solids.push({cx:TX,cz:TZ,r:6,y0:0,y1:2.4});{const h=buildHall({x:TX,z:TZ,W:5.4,D:4.2,nx:3,nz:2,FY:2.5,PH:2.8,roof:'hip',name:'亭琴彈',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'open',right:'open',rail:true,stairs:'none',mini,solids,light:false});G.add(h.group)}}
+ /* 탄금대 바위 + 탄금정 */const TX=0,TZ=-18,HH=5;/* 11/28 실제 대조: 탄금대는 솟은 솔숲 언덕 꼭대기 정자 — 평지 위 낙은 바위 → 숲 언덕(높이 약 6m) 위로 바위·정자를 5m 올림 */{const hill=lumpyHill(17,6.4,0x3f5a34,7);hill.position.set(TX,-.3,TZ-5);hill.receiveShadow=true;G.add(hill);solids.push({cx:TX,cz:TZ-5,r:12,y0:-1,y1:6})}{const rk=rockMass(13,2.6,9.5,1.7,.78);rk.position.set(TX,1.2+HH,TZ);G.add(rk);solids.push({cx:TX,cz:TZ,r:6,y0:0,y1:2.4+HH});{const h=buildHall({x:TX,z:TZ,W:5.4,D:4.2,nx:3,nz:2,FY:2.5+HH,PH:2.8,roof:'hip',name:'亭琴彈',pillar:0x9a3a26,bracket:'ik',front:'open',back:'open',left:'open',right:'open',rail:true,stairs:'none',mini,solids,light:false});G.add(h.group)}}
  sp(TX,TZ+8,3,'탄금대','가야에서 온 악사 우륵이 이 언덕에서 가야금을 탔다고 해 "탄금대"라 불려요(전해 오는 이야기). 남한강과 달천이 만나는 곳이에요(명승).');
  /* 열두대(강가 절벽) */{const cl=rockMass(13,4.6,4.6,4.2,.7);cl.position.set(-20,2.2,-28.2);G.add(cl);solids.push({x0:-26,x1:-14,y0:0,y1:4,z0:-30,z1:-26});for(let i=0;i<12;i++){const s=new THREE.Mesh(new THREE.BoxGeometry(1.4,.2,.6),ST);s.position.set(-25+i*.9,.2+i*.3,-25.6);G.add(s)}}
  sp(-20,-22,2.8,'열두대','강가 절벽이에요. 신립 장군이 뜨거워진 활을 강물에 식히려 이 절벽을 열두 번 오르내렸다는 이야기가 전해 와요(전해 오는 이야기).');
