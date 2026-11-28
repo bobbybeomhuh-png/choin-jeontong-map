@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {tex,noise,mulb,materials,hipRoof} from './sungnyemun.js';
+import {tamePineRoots} from './treekit.js';
 import {JG_COL} from './suwon_col.js';
 const MURL=k=>new URL('../models/suwon/'+k+'.glb',import.meta.url).href;
 const TURL=k=>new URL('../textures/suwon/'+k+'.jpg',import.meta.url).href;
@@ -66,7 +67,7 @@ spots.push({x:GX,y:0,z:4,r:3,t:'장안문',h:'수원 화성의 북쪽 정문이�
  /* ---------- 오방색 깃발 줄(앞마당) ---------- */
  if(!mini){const cols=[0x2f5fa8,0xc8342c,0xe6c23a,0xf2f2ee,0x2a2a2a];for(let i=0;i<6;i++){const x=7+i*3.6,z=50;const p=new THREE.Mesh(new THREE.CylinderGeometry(.05,.06,4.2,6),M(0x6b4a2e));p.position.set(x,2.1,z);G.add(p);const f=new THREE.Mesh(new THREE.PlaneGeometry(1.1,.8),M(cols[i%5],{side:THREE.DoubleSide}));f.position.set(x+.58,3.7,z);G.add(f);solids.push({cx:x,cz:z,r:.1,y0:0,y1:4})}}
  /* ---------- 실측 나무(KCISA 화성행궁 소나무·버드나무)와 행궁 별주 ---------- */
- function many(k,list){if(mini)return;gl.load(MURL(k),m=>{const src=m.scene;src.traverse(e=>{if(e.isMesh){e.castShadow=true;if(e.material){e.material.side=THREE.DoubleSide}}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(V(0,0,0));for(const [x,z,h,ry] of list){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=ry||0;G.add(o)}},undefined,e=>console.warn('모델 못 불러옴',k,e))}
+ function many(k,list){if(mini)return;gl.load(MURL(k),m=>{const src=m.scene;if(k==='pine_lo')tamePineRoots(src)/* 11/28: 밑동 거미다리 */;src.traverse(e=>{if(e.isMesh){e.castShadow=true;if(e.material){e.material.side=THREE.DoubleSide}}});src.updateMatrixWorld(true);const b=new THREE.Box3().setFromObject(src),sz=b.getSize(V(0,0,0));for(const [x,z,h,ry] of list){const o=src.clone();const sc=h/sz.y;o.scale.setScalar(sc);o.position.set(x-(b.min.x+b.max.x)/2*sc,-b.min.y*sc,z-(b.min.z+b.max.z)/2*sc);o.rotation.y=ry||0;G.add(o)}},undefined,e=>console.warn('모델 못 불러옴',k,e))}
  const PINES=[[-14,10,9,0],[-38,30,11,1],[-42,52,8.5,2],[12,46,10,3],[36,40,9.5,1.5],[-12,48,8,.7],[38,8,10,2.4]],WILLS=[[-8.2,14,8,0],[4.4,14,7.5,1],[-8.2,30,8.5,2],[4.4,30,8,3],[-8.2,44,7.6,1.2],[4.4,44,8.2,.4]];
  many('pine_lo',[...PINES,...WILLS.map(([x,z,h,ry])=>[x,z,h+1,ry])]);for(const [x,z] of[...PINES,...WILLS])solids.push({cx:x,cz:z,r:.5,y0:0,y1:9});
  /* 행궁 별주(서남쪽) */{const bx=-26,bz=42;const pd=box(15.5,.5,21,M(0xb3aa98));pd.position.set(bx,.25,bz);G.add(pd);place('byeolchu',{x:bx,y:.5,z:bz,ry:Math.PI/2});S(bx-7.6,bx+7.6,0,9,bz-10.4,bz+10.4);
